@@ -1,0 +1,32 @@
+node(
+  name:"test signals",
+
+
+  definitions: block(
+    x ∈ Signals(Reals, rostopic:'/test/x', flow:'outgoing', autopublish:true),
+    y ∈ Signals(Reals, rostopic:'/test/y', flow:'incoming'),
+
+    x(
+      onchange:
+        block(
+          k ∈ Event('latest'),
+          print('x has changed: ' + x(k)),
+          y(k) = x(k-1)
+        ),
+
+      onnew:
+        block(
+          k ∈ Event('latest'),
+          print('x is new: ' + x(k))
+        ),
+    ),
+
+  ),
+
+  cycle(rate:1,
+    t ∈ Time('now'),
+    x(t) = x(t-1)+1,
+    print('x = ' + string(x(t)))
+  ),
+
+)

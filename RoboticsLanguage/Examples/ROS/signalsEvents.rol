@@ -1,0 +1,33 @@
+node(
+  name:"test signals",
+
+
+  definitions: block(
+    t ∈ Time("now"),
+    k ∈ Event("latest"),
+    x ∈ Signals(Reals, rostopic:'/test/x', flow:'outgoing'),
+    y ∈ Signals(Reals, rostopic:'/test/y', flow:'incoming'),
+    z ∈ Reals
+  ),
+
+  initialise:
+    print('Starting!')
+  ,
+
+  finalise:
+    print('Stoping!')
+  ,
+
+
+  cycle(rate:1,
+    x(t) = x(t-1)+1,
+    print('x = ' + string(x(t)))
+  ),
+
+  events(
+    if(eventually(interval:[0,1], y(t) > 0),
+      print('yes'),
+      print('no')
+    )
+  )
+)

@@ -1,0 +1,10 @@
+node(
+  name:"hello world",
+  initialise(
+    FiniteStateMachine<{
+        a->b
+        b->c
+        d-> RoL<<f(t+z)>>
+    }>
+  )
+)

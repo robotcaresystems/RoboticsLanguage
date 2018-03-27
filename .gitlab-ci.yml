@@ -1,0 +1,35 @@
+before_script:
+  - "export SHELL=/bin/bash"
+  - "export TERM=xterm"
+  - "export DEBIAN_FRONTEND=noninteractive"
+  - "export ROS_DISTRO=kinetic"
+
+stages:
+  - build
+  - test
+
+image: gitlab.robotcaresystems.com:5500/lea-team/roboticslanguage:latest
+
+building:
+  stage: build
+  script:
+    - pip install .
+    - rol_make_documentation
+    - rol_make_examples
+  tags:
+    - general
+
+testing:
+  stage: test
+  script:
+    - pip install .
+    - pip install coverage
+    - python -m unittest discover -s RoboticsLanguage/Scripts/tests/ -v
+    - coverage run --source=./RoboticsLanguage  -m unittest discover -s RoboticsLanguage/Scripts/tests/
+    - coverage html
+  tags:
+    - general
+  artifacts:
+    expire_in: 1 day
+    paths:
+      - htmlcov
