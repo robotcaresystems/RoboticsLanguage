@@ -6,10 +6,6 @@
 The Robotics Language (RoL) is a high level robotics programming language that generates ROS c++ nodes.
 
 
-## **note for RosIN reviewers**
-
-This software represents milestone 1 of the Robotics Language proposal. As such, the structure of the compiler is complete and working, but the capabilities of the language are very limited. These will be implemented in milestone 2. Documentation is also planned for milestone 2, so at this moment only the source code is commented. The guide below can be used to test the current state of the software.
-
 ## Install
 
 If you are a user use:
