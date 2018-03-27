@@ -1,0 +1,14 @@
+{
+  "name": "language-robotics-language",
+  "version": "0.0.1",
+  "description": "Syntax highlighting for the Robotics Language (ROL)",
+  "keywords": [
+    "language",
+    "grammar"
+  ],
+  "repository": "https://github.com/atom/language-robotics-language",
+  "license": "Apache 2.0",
+  "engines": {
+    "atom": ">=1.0.0 <2.0.0"
+  }
+}

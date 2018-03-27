@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<node>
+  <optionalArgument>
+    <name>name</name>
+    <string>hello world</string>
+  </optionalArgument>
+
+  <initialise>
+    <print>
+      <string>hello World!</string>
+    </print>
+  </initialise>
+</node>

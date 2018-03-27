@@ -1,0 +1,22 @@
+node(
+  name:"test signals",
+
+  definitions:block(
+    x ∈ Signals(Reals, rostopic:'/test/x', flow:'incoming'),
+    y ∈ Signals(Reals, rostopic:'/test/y', flow:'outgoing', autopublish:true),
+
+    x(
+      onchange:
+        block(
+          print('x has changed: ' + x),
+          y = x
+        )
+      ,
+      onnew:
+        block(
+          print('x is new: ' + x)
+      )
+    )
+  ),
+  initialise: print('Starting node.', color:'blue')
+)

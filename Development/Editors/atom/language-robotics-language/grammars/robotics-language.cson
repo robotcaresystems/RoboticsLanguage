@@ -1,0 +1,1149 @@
+# If this is your first time writing a language grammar, check out:
+#   - https://flight-manual.atom.io/hacking-atom/sections/creating-a-grammar/
+
+'scopeName': 'source.robotics-language'
+'name': 'RoboticsLanguage'
+'fileTypes': [
+  'rol'
+]
+'firstLineMatch': '''(?x)
+  # Hashbang
+  ^\\#!.*(?:\\s|\\/)
+    robotics-language
+  (?:$|\\s)
+  |
+  # Modeline
+  (?i:
+    # Emacs
+    -\\*-(?:\\s*(?=[^:;\\s]+\\s*-\\*-)|(?:.*?[;\\s]|(?<=-\\*-))mode\\s*:\\s*)
+      robotics-language
+    (?=[\\s;]|(?<![-*])-\\*-).*?-\\*-
+    |
+    # Vim
+    (?:(?:\\s|^)vi(?:m[<=>]?\\d+|m)?|\\sex)(?=:(?=\\s*set?\\s[^\\n:]+:)|:(?!\\s*set?\\s))(?:(?:\\s|\\s*:\\s*)\\w*(?:\\s*=(?:[^\\n\\\\\\s]|\\\\.)*)?)*[\\s:](?:filetype|ft|syntax)\\s*=
+      robotics-language
+    (?=\\s|:|$)
+  )
+'''
+'patterns': [
+  {
+    'match': '(new)\\s+(?:(?:(class)\\s+(\\w+(?:\\.\\w*)*)?)|(\\w+(?:\\.\\w*)*))'
+    'name': 'meta.class.instance.constructor.robotics-language'
+    'captures':
+      '1':
+        'name': 'keyword.operator.new.robotics-language'
+      '2':
+        'name': 'storage.type.class.robotics-language'
+      '3':
+        'name': 'entity.name.type.instance.robotics-language'
+      '4':
+        'name': 'entity.name.type.instance.robotics-language'
+  }
+  {
+    'begin': '\'\'\''
+    'beginCaptures':
+      '0':
+        'name': 'punctuation.definition.string.begin.robotics-language'
+    'end': '\'\'\''
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.string.end.robotics-language'
+    'name': 'string.quoted.single.heredoc.robotics-language'
+    'patterns': [
+      {
+        'captures':
+          '1':
+            'name': 'punctuation.definition.escape.backslash.robotics-language'
+        'match': '(\\\\).'
+        'name': 'constant.character.escape.backslash.robotics-language'
+      }
+    ]
+  }
+  {
+    'begin': '"""'
+    'beginCaptures':
+      '0':
+        'name': 'punctuation.definition.string.begin.robotics-language'
+    'end': '"""'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.string.end.robotics-language'
+    'name': 'string.quoted.double.heredoc.robotics-language'
+    'patterns': [
+      {
+        'captures':
+          '1':
+            'name': 'punctuation.definition.escape.backslash.robotics-language'
+        'match': '(\\\\).'
+        'name': 'constant.character.escape.backslash.robotics-language'
+      }
+      {
+        'include': '#interpolated_robotics-language'
+      }
+    ]
+  }
+  {
+    'match': '(`)(.*)(`)'
+    'name': 'string.quoted.script.robotics-language'
+    'captures':
+      '1':
+        'name': 'punctuation.definition.string.begin.robotics-language'
+      '2':
+        'name': 'source.js.embedded.robotics-language'
+        'patterns': [
+          {
+            'include': 'source.js'
+          }
+        ]
+      '3':
+        'name': 'punctuation.definition.string.end.robotics-language'
+  }
+  {
+    'begin': '(?<!#)###(?!#)'
+    'beginCaptures':
+      '0':
+        'name': 'punctuation.definition.comment.robotics-language'
+    'end': '###'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.comment.robotics-language'
+    'name': 'comment.block.robotics-language'
+    'patterns': [
+      {
+        'match': '(?<=^|\\s)@\\w*(?=\\s)'
+        'name': 'storage.type.annotation.robotics-language'
+      }
+    ]
+  }
+  {
+    'begin': '#'
+    'beginCaptures':
+      '0':
+        'name': 'punctuation.definition.comment.robotics-language'
+    'end': '$'
+    'name': 'comment.line.number-sign.robotics-language'
+  }
+  {
+    'begin': '///'
+    'end': '(///)[gimuy]*'
+    'name': 'string.regexp.multiline.robotics-language'
+    'beginCaptures':
+      '0':
+        'name': 'punctuation.definition.string.begin.robotics-language'
+    'endCaptures':
+      '1':
+        'name': 'punctuation.definition.string.end.robotics-language'
+    'patterns': [
+      {
+        'include': '#heregexp'
+      }
+    ]
+  }
+  {
+    'begin': '(?<![\\w$])(/)(?=(?![/*+?])(.+)(/)[gimuy]*(?!\\s*[\\w$/(]))'
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.definition.string.begin.robotics-language'
+    'end': '(/)[gimuy]*(?!\\s*[\\w$/(])'
+    'endCaptures':
+      '1':
+        'name': 'punctuation.definition.string.end.robotics-language'
+    'name': 'string.regexp.robotics-language'
+    'patterns': [
+      {
+        'include': 'source.js.regexp'
+      }
+    ]
+  }
+  {
+    'match': '\\b(?<![\\.\\$])(break|by|catch|continue|else|finally|for|in|of|if|return|switch|then|throw|try|unless|when|while|until|loop|do|export|import|default|from|as|yield|async|await|(?<=for)\\s+own)(?!\\s*:)\\b'
+    'name': 'keyword.control.robotics-language'
+  }
+  {
+    'match': '\\b(?<![\\.\\$])(delete|instanceof|new|typeof)(?!\\s*:)\\b'
+    'name': 'keyword.operator.$1.robotics-language'
+  }
+  {
+    'match': '\\b(?<![\\.\\$])(case|function|var|void|with|const|let|enum|native|__hasProp|__extends|__slice|__bind|__indexOf|implements|interface|package|private|protected|public|static)(?!\\s*:)\\b'
+    'name': 'keyword.reserved.robotics-language'
+  }
+  {
+    # a: -> ...
+    # a: (args) -> ...
+    'begin': '''(?x)
+      (?<=\\s|^)((@)?[a-zA-Z_$][\\w$]*)
+      \\s*([:=])\\s*
+      (?=(\\([^\\(\\)]*\\)\\s*)?[=-]>)
+    '''
+    'beginCaptures':
+      '1':
+        'name': 'entity.name.function.robotics-language'
+      '2':
+        'name': 'variable.other.readwrite.instance.robotics-language'
+      '3':
+        'name': 'keyword.operator.assignment.robotics-language'
+    'end': '[=-]>'
+    'endCaptures':
+      '0':
+        'name': 'storage.type.function.robotics-language'
+    'name': 'meta.function.robotics-language'
+    'patterns': [
+      {
+        'include': '#function_params'
+      }
+    ]
+  }
+  {
+    # "a": -> ...
+    # "a": (args) -> ...
+    'begin': '''(?x)
+      (?<=\\s|^)(?:((\')([^\']*?)(\'))|((")([^"]*?)(")))
+      \\s*([:=])\\s*
+      (?=(\\([^\\(\\)]*\\)\\s*)?[=-]>)
+    '''
+    'beginCaptures':
+      '1':
+        'name': 'string.quoted.single.robotics-language'
+      '2':
+        'name': 'punctuation.definition.string.begin.robotics-language'
+      '3':
+        'name': 'entity.name.function.robotics-language'
+      '4':
+        'name': 'punctuation.definition.string.end.robotics-language'
+      '5':
+        'name': 'string.quoted.double.robotics-language'
+      '6':
+        'name': 'punctuation.definition.string.begin.robotics-language'
+      '7':
+        'name': 'entity.name.function.robotics-language'
+      '8':
+        'name': 'punctuation.definition.string.end.robotics-language'
+      '9':
+        'name': 'keyword.operator.assignment.robotics-language'
+    'end': '[=-]>'
+    'endCaptures':
+      '0':
+        'name': 'storage.type.function.robotics-language'
+    'name': 'meta.function.robotics-language'
+    'patterns': [
+      {
+        'include': '#function_params'
+      }
+    ]
+  }
+  {
+    # (args) -> ...
+    # -> ...
+    'begin': '(?=(\\([^\\(\\)]*\\)\\s*)?[=-]>)'
+    'end': '[=-]>'
+    'endCaptures':
+      '0':
+        'name': 'storage.type.function.robotics-language'
+    'name': 'meta.function.inline.robotics-language'
+    'patterns': [
+      {
+        'include': '#function_params'
+      }
+    ]
+  }
+  {
+    'begin': '(?<=\\s|^)({)(?=[^\'"#]+?}[\\s\\]}]*=)'
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.definition.destructuring.begin.bracket.curly.robotics-language'
+    'end': '}'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.destructuring.end.bracket.curly.robotics-language'
+    'name': 'meta.variable.assignment.destructured.object.robotics-language'
+    'patterns': [
+      {
+        'include': '$self'
+      }
+      {
+        'match': '[a-zA-Z$_]\\w*'
+        'name': 'variable.assignment.robotics-language'
+      }
+    ]
+  }
+  {
+    'begin': '(?<=\\s|^)(\\[)(?=[^\'"#]+?\\][\\s\\]}]*=)'
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.definition.destructuring.begin.bracket.square.robotics-language'
+    'end': '\\]'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.destructuring.end.bracket.square.robotics-language'
+    'name': 'meta.variable.assignment.destructured.array.robotics-language'
+    'patterns': [
+      {
+        'include': '$self'
+      }
+      {
+        'match': '[a-zA-Z$_]\\w*'
+        'name': 'variable.assignment.robotics-language'
+      }
+    ]
+  }
+  {
+    'match': '\\b(?<!\\.|::)(true|on|yes)(?!\\s*[:=][^=])\\b'
+    'name': 'constant.language.boolean.true.robotics-language'
+  }
+  {
+    'match': '\\b(?<!\\.|::)(false|off|no)(?!\\s*[:=][^=])\\b'
+    'name': 'constant.language.boolean.false.robotics-language'
+  }
+  {
+    'match': '\\b(?<!\\.|::)null(?!\\s*[:=][^=])\\b'
+    'name': 'constant.language.null.robotics-language'
+  }
+  {
+    'match': '\\b(?<!\\.|::)extends(?!\\s*[:=])\\b'
+    'name': 'variable.language.robotics-language'
+  }
+  {
+    'match': '(?<!\\.)\\b(?<!\\$)(super|this|arguments)(?!\\s*[:=][^=]|\\$)\\b'
+    'name': 'variable.language.$1.robotics-language'
+  }
+  {
+    'captures':
+      '1':
+        'name': 'storage.type.class.robotics-language'
+      '2':
+        'name': 'keyword.control.inheritance.robotics-language'
+      '3':
+        'name': 'entity.other.inherited-class.robotics-language'
+    'match': '(?<=\\s|^|\\[|\\()(class)\\s+(extends)\\s+(@?[a-zA-Z\\$\\._][\\w\\.]*)'
+    'name': 'meta.class.robotics-language'
+  }
+  {
+    'captures':
+      '1':
+        'name': 'storage.type.class.robotics-language'
+      '2':
+        'name': 'entity.name.type.class.robotics-language'
+      '3':
+        'name': 'keyword.control.inheritance.robotics-language'
+      '4':
+        'name': 'entity.other.inherited-class.robotics-language'
+    'match': '(?<=\\s|^|\\[|\\()(class\\b)\\s+(@?[a-zA-Z\\$_][\\w\\.]*)?(?:\\s+(extends)\\s+(@?[a-zA-Z\\$\\._][\\w\\.]*))?'
+    'name': 'meta.class.robotics-language'
+  }
+  {
+    'match': '\\b(debugger|\\\\)\\b'
+    'name': 'keyword.other.robotics-language'
+  }
+  {
+    'match': '\\b(Array|ArrayBuffer|Blob|Boolean|Date|document|Function|Int(8|16|32|64)Array|Math|Map|Number|Object|Proxy|RegExp|Set|String|WeakMap|window|Uint(8|16|32|64)Array|XMLHttpRequest)\\b'
+    'name': 'support.class.robotics-language'
+  }
+  {
+    'match': '\\b(console)\\b'
+    'name': 'entity.name.type.object.robotics-language'
+  }
+  {
+    'match': '((?<=console\\.)(debug|warn|info|log|error|time|timeEnd|assert))\\b'
+    'name': 'support.function.console.robotics-language'
+  }
+  {
+    'match': '((?<=\\.)(apply|call|concat|every|filter|forEach|from|hasOwnProperty|indexOf|isPrototypeOf|join|lastIndexOf|map|of|pop|propertyIsEnumerable|push|reduce(Right)?|reverse|shift|slice|some|sort|splice|to(Locale)?String|unshift|valueOf))\\b'
+    'name': 'support.function.method.array.robotics-language'
+  }
+  {
+    'match': '((?<=Array\\.)(isArray))\\b'
+    'name': 'support.function.static.array.robotics-language'
+  }
+  {
+    'match': '((?<=Object\\.)(create|definePropert(ies|y)|freeze|getOwnProperty(Descriptors?|Names)|getProperty(Descriptor|Names)|getPrototypeOf|is(Extensible|Frozen|Sealed)?|isnt|keys|preventExtensions|seal))\\b'
+    'name': 'support.function.static.object.robotics-language'
+  }
+  {
+    'match': '((?<=Math\\.)(abs|acos|acosh|asin|asinh|atan|atan2|atanh|ceil|cos|cosh|exp|expm1|floor|hypot|log|log10|log1p|log2|max|min|pow|random|round|sign|sin|sinh|sqrt|tan|tanh|trunc))\\b'
+    'name': 'support.function.static.math.robotics-language'
+  }
+  {
+    'match': '((?<=Number\\.)(is(Finite|Integer|NaN)|toInteger))\\b'
+    'name': 'support.function.static.number.robotics-language'
+  }
+  {
+    'match': '(?<!\\.)\\b(module|exports|__filename|__dirname|global|process)(?!\\s*:)\\b'
+    'name': 'support.variable.robotics-language'
+  }
+  {
+    'match': '\\b(Infinity|NaN|undefined)\\b'
+    'name': 'constant.language.robotics-language'
+  }
+  {
+    'include': '#operators'
+  }
+  {
+    'include': '#method_calls'
+  }
+  {
+    'include': '#function_calls'
+  }
+  {
+    'include': '#numbers'
+  }
+  {
+    'include': '#objects'
+  }
+  {
+    'include': '#properties'
+  }
+  {
+    'match': '::'
+    'name': 'keyword.operator.prototype.robotics-language'
+  }
+  {
+    'match': '(?<!\\$)\\b[0-9]+[\\w$]*'
+    'name': 'invalid.illegal.identifier.robotics-language'
+  }
+  {
+    'match': ';'
+    'name': 'punctuation.terminator.statement.robotics-language'
+  }
+  {
+    'match': ','
+    'name': 'punctuation.separator.delimiter.robotics-language'
+  }
+  {
+    'begin': '{'
+    'beginCaptures':
+      '0':
+        'name': 'meta.brace.curly.robotics-language'
+    'end': '}'
+    'endCaptures':
+      '0':
+        'name': 'meta.brace.curly.robotics-language'
+    'patterns': [
+      {
+        'include': '$self'
+      }
+    ]
+  }
+  {
+    'begin': '\\['
+    'beginCaptures':
+      '0':
+        'name': 'punctuation.definition.array.begin.bracket.square.robotics-language'
+    'end': '\\]'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.array.end.bracket.square.robotics-language'
+    'patterns': [
+      {
+        'match': '(?<!\\.)\\.{3}' # ...
+        'name': 'keyword.operator.slice.exclusive.robotics-language'
+      }
+      {
+        'match': '(?<!\\.)\\.{2}' # ..
+        'name': 'keyword.operator.slice.inclusive.robotics-language'
+      }
+      {
+        'include': '$self'
+      }
+    ]
+  }
+  {
+    'begin': '\\('
+    'beginCaptures':
+      '0':
+        'name': 'meta.brace.round.robotics-language'
+    'end': '\\)'
+    'endCaptures':
+      '0':
+        'name': 'meta.brace.round.robotics-language'
+    'patterns': [
+      {
+        'include': '$self'
+      }
+    ]
+  }
+  {
+    'include': '#instance_variable'
+  }
+  {
+    'include': '#single_quoted_string'
+  }
+  {
+    'include': '#double_quoted_string'
+  }
+]
+'repository':
+  'arguments':
+    'patterns': [
+      {
+        'begin': '\\('
+        'beginCaptures':
+          '0':
+            'name': 'punctuation.definition.arguments.begin.bracket.round.robotics-language'
+        'end': '\\)'
+        'endCaptures':
+          '0':
+            'name': 'punctuation.definition.arguments.end.bracket.round.robotics-language'
+        'name': 'meta.arguments.robotics-language'
+        'patterns': [
+          {
+            'include': '$self'
+          }
+        ]
+      }
+      {
+        'begin': '(?=(@|@?[\\w$]+|[=-]>|\\-\\d|\\[|{|\"|\'))'
+        'end': '(?=\\s*(?<![\\w$])(of|in|then|is|isnt|and|or|for|else|when|if|unless|by|instanceof)(?![\\w$]))|(?=\\s*(}|\\]|\\)|#|$))'
+        'name': 'meta.arguments.robotics-language'
+        'patterns': [
+          {
+            'include': '$self'
+          }
+        ]
+      }
+    ]
+  'double_quoted_string':
+    'patterns': [
+      {
+        'begin': '"'
+        'beginCaptures':
+          '0':
+            'name': 'punctuation.definition.string.begin.robotics-language'
+        'end': '"'
+        'endCaptures':
+          '0':
+            'name': 'punctuation.definition.string.end.robotics-language'
+        'name': 'string.quoted.double.robotics-language'
+        'patterns': [
+          {
+            'captures':
+              '1':
+                'name': 'punctuation.definition.escape.backslash.robotics-language'
+            'match': '(\\\\)(x[0-9A-Fa-f]{2}|[0-2][0-7]{0,2}|3[0-6][0-7]|37[0-7]?|[4-7][0-7]?|.)'
+            'name': 'constant.character.escape.backslash.robotics-language'
+          }
+          {
+            'include': '#interpolated_robotics-language'
+          }
+        ]
+      }
+    ]
+  'function_calls':
+    'patterns': [
+      {
+        # functionCall(arg1, "arg2", [...])
+        'begin': '(@)?([\\w$]+)(?=\\()'
+        'beginCaptures':
+          '1':
+            'name': 'variable.other.readwrite.instance.robotics-language'
+          '2':
+            'patterns': [
+              {
+                'include': '#function_names'
+              }
+            ]
+        'end': '(?<=\\))'
+        'name': 'meta.function-call.robotics-language'
+        'patterns': [
+          {
+            'include': '#arguments'
+          }
+        ]
+      }
+      {
+        # functionCall arg1, "arg2", [...]
+        'begin': '''(?x)
+          (@)?([\\w$]+)
+          \\s*
+          (?=\\s+(?!(?<![\\w$])(of|in|then|is|isnt|and|or|for|else|when|if|unless|by|instanceof)(?![\\w$]))(?=(@?[\\w$]+|[=-]>|\\-\\d|\\[|{|\"|\')))
+        '''
+        'beginCaptures':
+          '1':
+            'name': 'variable.other.readwrite.instance.robotics-language'
+          '2':
+            'patterns': [
+              {
+                'include': '#function_names'
+              }
+            ]
+        'end': '(?=\\s*(?<![\\w$])(of|in|then|is|isnt|and|or|for|else|when|if|unless|by|instanceof)(?![\\w$]))|(?=\\s*(}|\\]|\\)|#|$))'
+        'name': 'meta.function-call.robotics-language'
+        'patterns': [
+          {
+            'include': '#arguments'
+          }
+        ]
+      }
+    ]
+  'function_names':
+    'patterns': [
+      {
+        'match': '''(?x)
+          \\b(isNaN|isFinite|eval|uneval|parseInt|parseFloat|decodeURI|
+          decodeURIComponent|encodeURI|encodeURIComponent|escape|unescape|
+          require|set(Interval|Timeout)|clear(Interval|Timeout))\\b
+        '''
+        'name': 'support.function.robotics-language'
+      }
+      {
+        'match': "[a-zA-Z_$][\\w$]*"
+        'name': 'entity.name.function.robotics-language'
+      }
+      {
+        'match': '\\d[\\w$]*'
+        'name': 'invalid.illegal.identifier.robotics-language'
+      }
+    ]
+  'function_params':
+    'patterns': [
+      {
+        'begin': '\\('
+        'beginCaptures':
+          '0':
+            'name': 'punctuation.definition.parameters.begin.bracket.round.robotics-language'
+        'end': '\\)'
+        'endCaptures':
+          '0':
+            'name': 'punctuation.definition.parameters.end.bracket.round.robotics-language'
+        'name': 'meta.parameters.robotics-language'
+        'patterns': [
+          {
+            'match': '([a-zA-Z_$][\\w$]*)(\\.\\.\\.)?'
+            'captures':
+              '1':
+                'name': 'variable.parameter.function.robotics-language'
+              '2':
+                'name': 'keyword.operator.splat.robotics-language'
+          }
+          {
+            'match': '(@(?:[a-zA-Z_$][\\w$]*)?)(\\.\\.\\.)?'
+            'captures':
+              '1':
+                'name': 'variable.parameter.function.readwrite.instance.robotics-language'
+              '2':
+                'name': 'keyword.operator.splat.robotics-language'
+          }
+          {
+            'include': '$self'
+          }
+        ]
+      }
+    ]
+  'embedded_comment':
+    'patterns': [
+      {
+        'captures':
+          '1':
+            'name': 'punctuation.definition.comment.robotics-language'
+        'match': '(?<!\\\\)(#).*$\\n?'
+        'name': 'comment.line.number-sign.robotics-language'
+      }
+    ]
+  'instance_variable':
+    'patterns': [
+      {
+        'match': '(@)([a-zA-Z_\\$]\\w*)?'
+        'name': 'variable.other.readwrite.instance.robotics-language'
+      }
+    ]
+  'interpolated_robotics-language':
+    'patterns': [
+      {
+        'begin': '\\#\\{'
+        'captures':
+          '0':
+            'name': 'punctuation.section.embedded.robotics-language'
+        'end': '\\}'
+        'name': 'source.robotics-language.embedded.source'
+        'patterns': [
+          {
+            'include': '$self'
+          }
+        ]
+      }
+    ]
+  'method_calls':
+    'patterns': [
+      {
+        # .methodCall(arg1, "arg2", [...])
+        'begin': '(?:(\\.)|(::))\\s*([\\w$]+)\\s*(?=\\()'
+        'beginCaptures':
+          '1':
+            'name': 'punctuation.separator.method.period.robotics-language'
+          '2':
+            'name': 'keyword.operator.prototype.robotics-language'
+          '3':
+            'patterns': [
+              {
+                'include': '#method_names'
+              }
+            ]
+        'end': '(?<=\\))'
+        'name': 'meta.method-call.robotics-language'
+        'patterns': [
+          {
+            'include': '#arguments'
+          }
+        ]
+      }
+      {
+        # .methodCall arg1, "arg2", [...]
+        'begin': '(?:(\\.)|(::))\\s*([\\w$]+)\\s*(?=\\s+(?!(?<![\\w$])(of|in|then|is|isnt|and|or|for|else|when|if|unless|by|instanceof)(?![\\w$]))(?=(@|@?[\\w$]+|[=-]>|\\-\\d|\\[|{|\"|\')))'
+        'beginCaptures':
+          '1':
+            'name': 'punctuation.separator.method.period.robotics-language'
+          '2':
+            'name': 'keyword.operator.prototype.robotics-language'
+          '3':
+            'patterns': [
+              {
+                'include': '#method_names'
+              }
+            ]
+        'end': '(?=\\s*(?<![\\w$])(of|in|then|is|isnt|and|or|for|else|when|if|unless|by|instanceof)(?![\\w$]))|(?=\\s*(}|\\]|\\)|#|$))'
+        'name': 'meta.method-call.robotics-language'
+        'patterns': [
+          {
+            'include': '#arguments'
+          }
+        ]
+      }
+    ]
+  'method_names':
+    'patterns': [
+      {
+        'match': '''(?x)
+          \\bon(Rowsinserted|Rowsdelete|Rowenter|Rowexit|Resize|Resizestart|Resizeend|Reset|
+          Readystatechange|Mouseout|Mouseover|Mousedown|Mouseup|Mousemove|
+          Before(cut|deactivate|unload|update|paste|print|editfocus|activate)|
+          Blur|Scrolltop|Submit|Select|Selectstart|Selectionchange|Hover|Help|
+          Change|Contextmenu|Controlselect|Cut|Cellchange|Clock|Close|Deactivate|
+          Datasetchanged|Datasetcomplete|Dataavailable|Drop|Drag|Dragstart|Dragover|
+          Dragdrop|Dragenter|Dragend|Dragleave|Dblclick|Unload|Paste|Propertychange|Error|
+          Errorupdate|Keydown|Keyup|Keypress|Focus|Load|Activate|Afterupdate|Afterprint|Abort)\\b
+        '''
+        'name': 'support.function.event-handler.robotics-language'
+      }
+      {
+        'match': '''(?x)
+          \\b(shift|showModelessDialog|showModalDialog|showHelp|scroll|scrollX|scrollByPages|
+          scrollByLines|scrollY|scrollTo|stop|strike|sizeToContent|sidebar|signText|sort|
+          sup|sub|substr|substring|splice|split|send|set(Milliseconds|Seconds|Minutes|Hours|
+          Month|Year|FullYear|Date|UTC(Milliseconds|Seconds|Minutes|Hours|Month|FullYear|Date)|
+          Time|Hotkeys|Cursor|ZOptions|Active|Resizable|RequestHeader)|search|slice|
+          savePreferences|small|home|handleEvent|navigate|char|charCodeAt|charAt|concat|
+          contextual|confirm|compile|clear|captureEvents|call|createStyleSheet|createPopup|
+          createEventObject|to(GMTString|UTCString|String|Source|UpperCase|LowerCase|LocaleString)|
+          test|taint|taintEnabled|indexOf|italics|disableExternalCapture|dump|detachEvent|unshift|
+          untaint|unwatch|updateCommands|join|javaEnabled|pop|push|plugins.refresh|paddings|parse|
+          print|prompt|preference|enableExternalCapture|exec|execScript|valueOf|UTC|find|file|
+          fileModifiedDate|fileSize|fileCreatedDate|fileUpdatedDate|fixed|fontsize|fontcolor|
+          forward|fromCharCode|watch|link|load|lastIndexOf|anchor|attachEvent|atob|apply|alert|
+          abort|routeEvents|resize|resizeBy|resizeTo|recalc|returnValue|replace|reverse|reload|
+          releaseCapture|releaseEvents|go|get(Milliseconds|Seconds|Minutes|Hours|Month|Day|Year|FullYear|
+          Time|Date|TimezoneOffset|UTC(Milliseconds|Seconds|Minutes|Hours|Day|Month|FullYear|Date)|
+          Attention|Selection|ResponseHeader|AllResponseHeaders)|moveBy|moveBelow|moveTo|
+          moveToAbsolute|moveAbove|mergeAttributes|match|margins|btoa|big|bold|borderWidths|blink|back)\\b
+        '''
+        'name': 'support.function.robotics-language'
+      }
+      {
+        'match': '''(?x)
+          \\b(acceptNode|add|addEventListener|addTextTrack|adoptNode|after|animate|append|
+          appendChild|appendData|before|blur|canPlayType|captureStream|
+          caretPositionFromPoint|caretRangeFromPoint|checkValidity|clear|click|
+          cloneContents|cloneNode|cloneRange|close|closest|collapse|
+          compareBoundaryPoints|compareDocumentPosition|comparePoint|contains|
+          convertPointFromNode|convertQuadFromNode|convertRectFromNode|createAttribute|
+          createAttributeNS|createCaption|createCDATASection|createComment|
+          createContextualFragment|createDocument|createDocumentFragment|
+          createDocumentType|createElement|createElementNS|createEntityReference|
+          createEvent|createExpression|createHTMLDocument|createNodeIterator|
+          createNSResolver|createProcessingInstruction|createRange|createShadowRoot|
+          createTBody|createTextNode|createTFoot|createTHead|createTreeWalker|delete|
+          deleteCaption|deleteCell|deleteContents|deleteData|deleteRow|deleteTFoot|
+          deleteTHead|detach|disconnect|dispatchEvent|elementFromPoint|elementsFromPoint|
+          enableStyleSheetsForSet|entries|evaluate|execCommand|exitFullscreen|
+          exitPointerLock|expand|extractContents|fastSeek|firstChild|focus|forEach|get|
+          getAll|getAnimations|getAttribute|getAttributeNames|getAttributeNode|
+          getAttributeNodeNS|getAttributeNS|getBoundingClientRect|getBoxQuads|
+          getClientRects|getContext|getDestinationInsertionPoints|getElementById|
+          getElementsByClassName|getElementsByName|getElementsByTagName|
+          getElementsByTagNameNS|getItem|getNamedItem|getSelection|getStartDate|
+          getVideoPlaybackQuality|has|hasAttribute|hasAttributeNS|hasAttributes|
+          hasChildNodes|hasFeature|hasFocus|importNode|initEvent|insertAdjacentElement|
+          insertAdjacentHTML|insertAdjacentText|insertBefore|insertCell|insertData|
+          insertNode|insertRow|intersectsNode|isDefaultNamespace|isEqualNode|
+          isPointInRange|isSameNode|item|key|keys|lastChild|load|lookupNamespaceURI|
+          lookupPrefix|matches|move|moveAttribute|moveAttributeNode|moveChild|
+          moveNamedItem|namedItem|nextNode|nextSibling|normalize|observe|open|
+          parentNode|pause|play|postMessage|prepend|preventDefault|previousNode|
+          previousSibling|probablySupportsContext|queryCommandEnabled|
+          queryCommandIndeterm|queryCommandState|queryCommandSupported|queryCommandValue|
+          querySelector|querySelectorAll|registerContentHandler|registerElement|
+          registerProtocolHandler|releaseCapture|releaseEvents|remove|removeAttribute|
+          removeAttributeNode|removeAttributeNS|removeChild|removeEventListener|
+          removeItem|replace|replaceChild|replaceData|replaceWith|reportValidity|
+          requestFullscreen|requestPointerLock|reset|scroll|scrollBy|scrollIntoView|
+          scrollTo|seekToNextFrame|select|selectNode|selectNodeContents|set|setAttribute|
+          setAttributeNode|setAttributeNodeNS|setAttributeNS|setCapture|
+          setCustomValidity|setEnd|setEndAfter|setEndBefore|setItem|setNamedItem|
+          setRangeText|setSelectionRange|setSinkId|setStart|setStartAfter|setStartBefore|
+          slice|splitText|stepDown|stepUp|stopImmediatePropagation|stopPropagation|
+          submit|substringData|supports|surroundContents|takeRecords|terminate|toBlob|
+          toDataURL|toggle|toString|values|write|writeln)\\b
+        '''
+        'name': 'support.function.dom.robotics-language'
+      }
+      {
+        'match': "[a-zA-Z_$][\\w$]*"
+        'name': 'entity.name.function.robotics-language'
+      }
+      {
+        'match': '\\d[\\w$]*'
+        'name': 'invalid.illegal.identifier.robotics-language'
+      }
+    ]
+  'numbers':
+    'patterns': [
+      {
+        'match': '\\b(?<!\\$)0(x|X)[0-9a-fA-F]+\\b(?!\\$)'
+        'name': 'constant.numeric.hex.robotics-language'
+      }
+      {
+        'match': '\\b(?<!\\$)0(b|B)[01]+\\b(?!\\$)'
+        'name': 'constant.numeric.binary.robotics-language'
+      }
+      {
+        'match': '\\b(?<!\\$)0(o|O)?[0-7]+\\b(?!\\$)'
+        'name': 'constant.numeric.octal.robotics-language'
+      }
+      {
+        'match': '''(?x)
+          (?<!\\$)(?:
+            (?:\\b[0-9]+(\\.)[0-9]+[eE][+-]?[0-9]+\\b)| # 1.1E+3
+            (?:\\b[0-9]+(\\.)[eE][+-]?[0-9]+\\b)|       # 1.E+3
+            (?:\\B(\\.)[0-9]+[eE][+-]?[0-9]+\\b)|       # .1E+3
+            (?:\\b[0-9]+[eE][+-]?[0-9]+\\b)|            # 1E+3
+            (?:\\b[0-9]+(\\.)[0-9]+\\b)|                # 1.1
+            (?:\\b[0-9]+(?=\\.{2,3}))|                  # 1 followed by a slice
+            (?:\\b[0-9]+(\\.)\\B)|                      # 1.
+            (?:\\B(\\.)[0-9]+\\b)|                      # .1
+            (?:\\b[0-9]+\\b(?!\\.))                     # 1
+          )(?!\\$)
+        '''
+        'captures':
+          '0':
+            'name': 'constant.numeric.decimal.robotics-language'
+          '1':
+            'name': 'punctuation.separator.decimal.period.robotics-language'
+          '2':
+            'name': 'punctuation.separator.decimal.period.robotics-language'
+          '3':
+            'name': 'punctuation.separator.decimal.period.robotics-language'
+          '4':
+            'name': 'punctuation.separator.decimal.period.robotics-language'
+          '5':
+            'name': 'punctuation.separator.decimal.period.robotics-language'
+          '6':
+            'name': 'punctuation.separator.decimal.period.robotics-language'
+      }
+    ]
+  'objects':
+    'patterns': [
+      {
+        # OBJ in OBJ.prop, OBJ.methodCall()
+        'match': '[A-Z][A-Z0-9_$]*(?=\\s*\\??(\\.\\s*[a-zA-Z_$]\\w*|::))'
+        'name': 'constant.other.object.robotics-language'
+      }
+      {
+        # obj in obj.prop, obj.methodCall()
+        'match': '[a-zA-Z_$][\\w$]*(?=\\s*\\??(\\.\\s*[a-zA-Z_$]\\w*|::))'
+        'name': 'variable.other.object.robotics-language'
+      }
+    ]
+  'operators':
+    'patterns': [
+      {
+        'match': '(?:([a-zA-Z$_][\\w$]*)?\\s+|(?<![\\w$]))(and=|or=)'
+        'captures':
+          '1':
+            'name': 'variable.assignment.robotics-language'
+          '2':
+            'name': 'keyword.operator.assignment.compound.robotics-language'
+      }
+      {
+        'match': '([a-zA-Z$_][\\w$]*)?\\s*(%=|\\+=|-=|\\*=|&&=|\\|\\|=|\\?=|(?<!\\()/=)'
+        'captures':
+          '1':
+            'name': 'variable.assignment.robotics-language'
+          '2':
+            'name': 'keyword.operator.assignment.compound.robotics-language'
+      }
+      {
+        'match': '([a-zA-Z$_][\\w$]*)?\\s*(&=|\\^=|<<=|>>=|>>>=|\\|=)'
+        'captures':
+          '1':
+            'name': 'variable.assignment.robotics-language'
+          '2':
+            'name': 'keyword.operator.assignment.compound.bitwise.robotics-language'
+      }
+      {
+        'match': '<<|>>>|>>'
+        'name': 'keyword.operator.bitwise.shift.robotics-language'
+      }
+      {
+        'match': '!=|<=|>=|==|<|>'
+        'name': 'keyword.operator.comparison.robotics-language'
+      }
+      {
+        'match': '&&|!|\\|\\|'
+        'name': 'keyword.operator.logical.robotics-language'
+      }
+      {
+        'match': '&|\\||\\^|~'
+        'name': 'keyword.operator.bitwise.robotics-language'
+      }
+      {
+        'match': '([a-zA-Z$_][\\w$]*)?\\s*(=|:(?!:))(?![>=])'
+        'captures':
+          '1':
+            'name': 'variable.assignment.robotics-language'
+          '2':
+            'name': 'keyword.operator.assignment.robotics-language'
+      }
+      {
+        'match': '--'
+        'name': 'keyword.operator.decrement.robotics-language'
+      }
+      {
+        'match': '\\+\\+'
+        'name': 'keyword.operator.increment.robotics-language'
+      }
+      {
+        'match': '\\.\\.\\.'
+        'name': 'keyword.operator.splat.robotics-language'
+      }
+      {
+        'match': '\\?'
+        'name': 'keyword.operator.existential.robotics-language'
+      }
+      {
+        'match': '%|\\*|/|-|\\+'
+        'name': 'keyword.operator.robotics-language'
+      }
+      {
+        'match': '''(?x)
+          \\b(?<![\\.\\$])
+          (?:
+            (and|or|not) # logical
+            |
+            (is|isnt) # comparison
+          )
+          (?!\\s*:)\\b
+        '''
+        'captures':
+          '1':
+            'name': 'keyword.operator.logical.robotics-language'
+          '2':
+            'name': 'keyword.operator.comparison.robotics-language'
+      }
+    ]
+  'properties':
+    'patterns': [
+      {
+        # PROP1 in obj.PROP1.prop2, func().PROP1.prop2
+        'match': '(?:(\\.)|(::))\\s*([A-Z][A-Z0-9_$]*\\b\\$*)(?=\\s*\\??(\\.\\s*[a-zA-Z_$]\\w*|::))'
+        'captures':
+          '1':
+            'name': 'punctuation.separator.property.period.robotics-language'
+          '2':
+            'name': 'keyword.operator.prototype.robotics-language'
+          '3':
+            'name': 'constant.other.object.property.robotics-language'
+      }
+      {
+        # prop1 in obj.prop1.prop2, func().prop1.prop2
+        'match': '(?:(\\.)|(::))\\s*(\\$*[a-zA-Z_$][\\w$]*)(?=\\s*\\??(\\.\\s*[a-zA-Z_$]\\w*|::))'
+        'captures':
+          '1':
+            'name': 'punctuation.separator.property.period.robotics-language'
+          '2':
+            'name': 'keyword.operator.prototype.robotics-language'
+          '3':
+            'name': 'variable.other.object.property.robotics-language'
+      }
+      {
+        # PROP in obj.PROP, func().PROP
+        'match': '(?:(\\.)|(::))\\s*([A-Z][A-Z0-9_$]*\\b\\$*)'
+        'captures':
+          '1':
+            'name': 'punctuation.separator.property.period.robotics-language'
+          '2':
+            'name': 'keyword.operator.prototype.robotics-language'
+          '3':
+            'name': 'constant.other.property.robotics-language'
+      }
+      {
+        # prop in obj.prop, func().prop
+        'match': '(?:(\\.)|(::))\\s*(\\$*[a-zA-Z_$][\\w$]*)'
+        'captures':
+          '1':
+            'name': 'punctuation.separator.property.period.robotics-language'
+          '2':
+            'name': 'keyword.operator.prototype.robotics-language'
+          '3':
+            'name': 'variable.other.property.robotics-language'
+      }
+      {
+        # 123illegal in obj.123illegal, func().123illegal
+        'match': '(?:(\\.)|(::))\\s*([0-9][\\w$]*)'
+        'captures':
+          '1':
+            'name': 'punctuation.separator.property.period.robotics-language'
+          '2':
+            'name': 'keyword.operator.prototype.robotics-language'
+          '3':
+            'name': 'invalid.illegal.identifier.robotics-language'
+      }
+    ]
+  'single_quoted_string':
+    'patterns': [
+      {
+        'begin': '\''
+        'beginCaptures':
+          '0':
+            'name': 'punctuation.definition.string.begin.robotics-language'
+        'end': '\''
+        'endCaptures':
+          '0':
+            'name': 'punctuation.definition.string.end.robotics-language'
+        'name': 'string.quoted.single.robotics-language'
+        'patterns': [
+          {
+            'captures':
+              '1':
+                'name': 'punctuation.definition.escape.backslash.robotics-language'
+            'match': '(\\\\)(x[0-9A-Fa-f]{2}|[0-2][0-7]{0,2}|3[0-6][0-7]?|37[0-7]?|[4-7][0-7]?|.)'
+            'name': 'constant.character.escape.backslash.robotics-language'
+          }
+        ]
+      }
+    ]
+  'regex-character-class':
+    'patterns': [
+      {
+        'match': '\\\\[wWsSdD]|\\.'
+        'name': 'constant.character.character-class.regexp'
+      }
+      {
+        'match': '\\\\([0-7]{3}|x[0-9A-Fa-f]{2}|u[0-9A-Fa-f]{4})'
+        'name': 'constant.character.numeric.regexp'
+      }
+      {
+        'match': '\\\\c[A-Z]'
+        'name': 'constant.character.control.regexp'
+      }
+      {
+        'match': '\\\\.'
+        'name': 'constant.character.escape.backslash.regexp'
+      }
+    ]
+  'heregexp':
+    'patterns': [
+      {
+        'match': '\\\\[bB]|\\^|\\$'
+        'name': 'keyword.control.anchor.regexp'
+      }
+      {
+        'match': '\\\\[1-9]\\d*'
+        'name': 'keyword.other.back-reference.regexp'
+      }
+      {
+        'match': '[?+*]|\\{(\\d+,\\d+|\\d+,|,\\d+|\\d+)\\}\\??'
+        'name': 'keyword.operator.quantifier.regexp'
+      }
+      {
+        'match': '\\|'
+        'name': 'keyword.operator.or.regexp'
+      }
+      {
+        'begin': '(\\()((\\?=)|(\\?!))'
+        'beginCaptures':
+          '1':
+            'name': 'punctuation.definition.group.regexp'
+          '3':
+            'name': 'meta.assertion.look-ahead.regexp'
+          '4':
+            'name': 'meta.assertion.negative-look-ahead.regexp'
+        'end': '(\\))'
+        'endCaptures':
+          '1':
+            'name': 'punctuation.definition.group.regexp'
+        'name': 'meta.group.assertion.regexp'
+        'patterns': [
+          {
+            'include': '#heregexp'
+          }
+        ]
+      }
+      {
+        'begin': '\\((\\?:)?'
+        'beginCaptures':
+          '0':
+            'name': 'punctuation.definition.group.regexp'
+        'end': '\\)'
+        'endCaptures':
+          '0':
+            'name': 'punctuation.definition.group.regexp'
+        'name': 'meta.group.regexp'
+        'patterns': [
+          {
+            'include': '#heregexp'
+          }
+        ]
+      }
+      {
+        'begin': '(\\[)(\\^)?'
+        'beginCaptures':
+          '1':
+            'name': 'punctuation.definition.character-class.regexp'
+          '2':
+            'name': 'keyword.operator.negation.regexp'
+        'end': '(\\])'
+        'endCaptures':
+          '1':
+            'name': 'punctuation.definition.character-class.regexp'
+        'name': 'constant.other.character-class.set.regexp'
+        'patterns': [
+          {
+            'captures':
+              '1':
+                'name': 'constant.character.numeric.regexp'
+              '2':
+                'name': 'constant.character.control.regexp'
+              '3':
+                'name': 'constant.character.escape.backslash.regexp'
+              '4':
+                'name': 'constant.character.numeric.regexp'
+              '5':
+                'name': 'constant.character.control.regexp'
+              '6':
+                'name': 'constant.character.escape.backslash.regexp'
+            'match': '(?:.|(\\\\(?:[0-7]{3}|x[0-9A-Fa-f]{2}|u[0-9A-Fa-f]{4}))|(\\\\c[A-Z])|(\\\\.))\\-(?:[^\\]\\\\]|(\\\\(?:[0-7]{3}|x[0-9A-Fa-f]{2}|u[0-9A-Fa-f]{4}))|(\\\\c[A-Z])|(\\\\.))'
+            'name': 'constant.other.character-class.range.regexp'
+          }
+          {
+            'include': '#regex-character-class'
+          }
+        ]
+      }
+      {
+        'include': '#regex-character-class'
+      }
+      {
+        'include': '#interpolated_robotics-language'
+      }
+      {
+        'include': '#embedded_comment'
+      }
+    ]

@@ -1,0 +1,7 @@
+<html>
+<body>
+<h1>
+  Node: {{parameters['node']['name']}}
+</h1>
+</body>
+</html>
