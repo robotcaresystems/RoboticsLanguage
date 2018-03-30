@@ -22,15 +22,26 @@ namespace {{parameters['node']['name']|underscore}}
   {{parameters['node']['name']|camelCase}}Class::{{parameters['node']['name']|camelCase}}Class():
     nh_("~")
   {
-    initNode();
+    definitions();
   }
 
-  /******************************* initNode ********************************************/
-  void {{parameters['node']['name']|camelCase}}Class::initNode()
+  /******************************* definitions ********************************************/
+  void {{parameters['node']['name']|camelCase}}Class::definitions()
   {
-    // Initialization
-    {{code|xpath('/node/initialise')|attribute('RosCpp')}}
+    {{code|xpath('/node')|optionalArgument('definitions')|attribute('RosCpp')}};
+  }
 
+
+  /******************************* initialise ********************************************/
+  void {{parameters['node']['name']|camelCase}}Class::initialise()
+  {
+    {{code|xpath('/node')|optionalArgument('initialise')|attribute('RosCpp')}};
+  }
+
+  /******************************* finalise ********************************************/
+  void {{parameters['node']['name']|camelCase}}Class::finalise()
+  {
+    {{code|xpath('/node')|optionalArgument('finalise')|attribute('RosCpp')}};
   }
 
   /******************************* spin ************************************************/
@@ -57,8 +68,14 @@ int main(int argc, char **argv)
   // Create the node object
   {{parameters['node']['name']|underscore}}::{{parameters['node']['name']|camelCase}}Class instance;
 
+  // initialise
+  instance.initialise();
+
   // Spin the node
   instance.spin();
+
+  // finalise
+  instance.finalise();
 
   return 0;
 }

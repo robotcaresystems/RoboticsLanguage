@@ -37,9 +37,8 @@ language = {
         },
         'output': {
             'RosCpp': '({{children|join(" * ")}})',
-            'HTMLDocumentation': 'print({{children|join(" * ")}})',
-            'HTMLGUI': '',
-            'RoL': 'print({{children|join(" * ")}})',
+            'HTMLDocumentation': '({{children|join(" * ")}})',
+            'RoL': '({{children|join(" * ")}})',
         },
         'localisation':
         {
@@ -62,9 +61,8 @@ language = {
         },
         'output': {
             'RosCpp': '({{children|join(" / ")}})',
-            'HTMLDocumentation': 'print({{children|join(" / ")}})',
-            'HTMLGUI': '',
-            'RoL': 'print({{children|join(" / ")}})',
+            'HTMLDocumentation': '({{children|join(" / ")}})',
+            'RoL': '({{children|join(" / ")}})',
         },
         'localisation':
         {

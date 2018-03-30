@@ -21,7 +21,7 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-from RoboticsLanguage.Base.Types import singleString, singleReal, manyStrings, manyExpressions, manyCodeBlocks
+from RoboticsLanguage.Base.Types import singleString, singleReal, manyStrings, manyExpressions, manyCodeBlocks, codeBlock, anything
 from RoboticsLanguage.Base.Types import returnNothing, returnCodeBlock
 
 # temp
@@ -360,14 +360,52 @@ language = {
     #     {
     #     }
     # },
+    'block': {
+        'definition': {
+            'argumentTypes': anything,
+            'returnType': returnCodeBlock
+        },
+        'output':
+        {
+        },
+        'localisation':
+        {
+        },
+        'documentation':
+        {
+        }
+    },
 
+    'anything': {
+        'definition': {
+            'argumentTypes': anything,
+            'returnType': returnNothing
+        },
+        'output':
+        {
+        },
+        'localisation':
+        {
+        },
+        'documentation':
+        {
+        }
+    },
 
     # main structures
     'node': {
         'definition': {
-            'optionalArguments': {'name': singleString, 'rate': singleReal },
-            'optionalDefaults': {'name': 'unnamed', 'rate': 1 },
-            'argumentTypes': manyCodeBlocks,
+            'optionalArguments': {'name': singleString,
+                                  'rate': singleReal,
+                                  'initialise': anything,
+                                  'finalise': anything,
+                                  'definitions': anything },
+            'optionalDefaults': {'name': 'unnamed',
+                                 'rate': 1,
+                                 'initialise':'',
+                                 'finalise':'',
+                                 'definitions':''},
+            'argumentTypes': anything,
             'returnType': returnNothing
         },
         'output':
@@ -385,45 +423,45 @@ language = {
             'usage': 'node(\n  name:"hello world",\n  initialise(print("hello world"))\n)'
         }
     },
-    'initialise': {
-        'definition': {
-            'argumentTypes': manyExpressions,
-            'returnType': returnCodeBlock
-        },
-        'output':
-        {
-            'RosCpp': '{{children|join(";\n")}};\n',
-            'HTMLDocumentation': '{{children|first}}',
-            'HTMLGUI': '{{children|first}}',
-            'RoL': '{{children|first}}',
-        },
-        'localisation':
-        {
-            'pt': 'inicializar',
-            'el': 'αρχικοποίηση',
-            'nl': 'initialiseren'
-        },
-        'documentation':
-        {
-        }
-    },
+    # 'initialise': {
+    #     'definition': {
+    #         'argumentTypes': manyExpressions,
+    #         'returnType': returnCodeBlock
+    #     },
+    #     'output':
+    #     {
+    #         'RosCpp': '{{children|join(";\n")}};\n',
+    #         'HTMLDocumentation': '{{children|first}}',
+    #         'HTMLGUI': '{{children|first}}',
+    #         'RoL': '{{children|first}}',
+    #     },
+    #     'localisation':
+    #     {
+    #         'pt': 'inicializar',
+    #         'el': 'αρχικοποίηση',
+    #         'nl': 'initialiseren'
+    #     },
+    #     'documentation':
+    #     {
+    #     }
+    # },
 
-    'finalise': {
-        'output':
-        {
-            'RosCpp': '{{children|join(";\n")}};\n',
-            'HTMLDocumentation': '{{children|first}}',
-            'HTMLGUI': '{{children|first}}',
-            'RoL': '{{children|first}}',
-        },
-        'localisation':
-        {
-            'pt': 'finalizar'
-        },
-        'documentation':
-        {
-        }
-    },
+    # 'finalise': {
+    #     'output':
+    #     {
+    #         'RosCpp': '{{children|join(";\n")}};\n',
+    #         'HTMLDocumentation': '{{children|first}}',
+    #         'HTMLGUI': '{{children|first}}',
+    #         'RoL': '{{children|first}}',
+    #     },
+    #     'localisation':
+    #     {
+    #         'pt': 'finalizar'
+    #     },
+    #     'documentation':
+    #     {
+    #     }
+    # },
 
 
     'cycle': {
@@ -443,22 +481,22 @@ language = {
         }
     },
 
-    'definitions': {
-        'output':
-        {
-            'RosCpp': '{{children|join(";\n")}};\n',
-            'HTMLDocumentation': '{{children|first}}',
-            'HTMLGUI': '{{children|first}}',
-            'RoL': '{{children|first}}',
-        },
-        'localisation':
-        {
-            'pt': 'definicoes'
-        },
-        'documentation':
-        {
-        }
-    },
+    # 'definitions': {
+    #     'output':
+    #     {
+    #         'RosCpp': '{{children|join(";\n")}};\n',
+    #         'HTMLDocumentation': '{{children|first}}',
+    #         'HTMLGUI': '{{children|first}}',
+    #         'RoL': '{{children|first}}',
+    #     },
+    #     'localisation':
+    #     {
+    #         'pt': 'definicoes'
+    #     },
+    #     'documentation':
+    #     {
+    #     }
+    # },
     'events': {
         'output':
         {

@@ -534,9 +534,12 @@ def semanticTypeChecker(code,parameters):
   if code.tag in Types.atoms:
     return code, parameters
 
-  # @TODO traverse also the optionalArguments. Maybe define it as a tag for generality
   # first recursively traverse all children elements that are not optionalArgument
   for element in code.xpath('*[not(self::optionalArgument)]'):
+    element, parameters = semanticTypeChecker(element,parameters)
+
+  # then traverse the optional arguments.
+  for element in code.xpath('optionalArgument/*[not(self::name)]'):
     element, parameters = semanticTypeChecker(element,parameters)
 
   # for this element find the parameters and arguments
@@ -546,15 +549,16 @@ def semanticTypeChecker(code,parameters):
   keys = parameters['language']
 
   # check optional arguments
-  if all([x in keys[code.tag]['definition']['optionalArguments'].keys() for x in parameter_names]):
+  if 'optionalArguments' in keys[code.tag]['definition']:
+    if all([x in keys[code.tag]['definition']['optionalArguments'].keys() for x in parameter_names]):
 
-    # check types for optional arguments
-    if not all(map(lambda x,y: keys[code.tag]['definition']['optionalArguments'][x]([y]) , parameter_names, parameter_types)):
-      # Error: incorrect types for optional arguments!
-      errorOptionalArgumentTypes(code, parameters, parameter_names, parameter_types)
-  else:
-    # Error: optional argument not defined
-    errorOptionalArgumentNotDefined(code, parameters, parameter_names)
+      # check types for optional arguments
+      if not all(map(lambda x,y: keys[code.tag]['definition']['optionalArguments'][x]([y]) , parameter_names, parameter_types)):
+        # Error: incorrect types for optional arguments!
+        errorOptionalArgumentTypes(code, parameters, parameter_names, parameter_types)
+    else:
+      # Error: optional argument not defined
+      errorOptionalArgumentNotDefined(code, parameters, parameter_names)
 
   # check mandatory argument types
   if all(keys[code.tag]['definition']['argumentTypes'](argument_types)):

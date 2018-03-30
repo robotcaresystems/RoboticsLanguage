@@ -53,8 +53,17 @@ def manyExpressions(x):
   return [True]
 
 def manyCodeBlocks(x):
-  '''code block , ... , code block'''
-  return [ xi == 'CodeBlock' for xi in x ]
+  '''block'''
+  return [ xi == 'Block' for xi in x ]
+
+def codeBlock(x):
+  '''block'''
+  return [True]
+
+def anything(x):
+  '''anything'''
+  return [True]
+
 
 def returnNothing(x):
   '''nothing'''
@@ -62,7 +71,7 @@ def returnNothing(x):
 
 def returnCodeBlock(x):
   '''code block'''
-  return 'CodeBlock'
+  return 'Block'
 
 def returnSameArgumentType(x):
   return x[0]

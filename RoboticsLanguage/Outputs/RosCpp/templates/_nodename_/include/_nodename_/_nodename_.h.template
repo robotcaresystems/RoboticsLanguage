@@ -33,15 +33,26 @@ namespace {{parameters['node']['name']|underscore}}
        */
       void spin();
 
+      /*!
+       * @brief initialise initializes anything needed for this node
+       */
+      virtual void initialise();
+
+      /*!
+       * @brief finalise the last code to run before node stops
+       */
+      virtual void finalise();
+
     private:
 
       // The ROS node handle
       ros::NodeHandle nh_; /**< "Global" NodeHandle */
 
       /*!
-       * @brief initNode initializes anything needed for this node
+       * @brief definitions initializes anything needed for this node
        */
-      virtual void initNode();
+      virtual void definitions();
+
 
   };
 }
