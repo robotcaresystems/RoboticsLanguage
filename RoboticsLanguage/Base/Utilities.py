@@ -744,3 +744,103 @@ def serialise(code, parameters, keywords, language, filters={}):
                            line_number=line_number, column_number=column_number, line=line), parameters)
 
   return snippet
+
+
+# -------------------------------------------------------------------------------------------------
+#  Parsing utilities
+# -------------------------------------------------------------------------------------------------
+
+def ExtractLanguageDefinitions(language,type,module):
+  return { key:value[type][module] for key, value in dpath.util.search(language, '/*/' + type + '/' + module + '/*').iteritems()}
+
+
+def CreateBracketGrammar(definitions):
+  # extract only bracket operators
+  bracket = dpath.util.search(definitions,'/*/bracket')
+
+  text = '\n# Bracket operators\n'
+
+  for key, value in bracket.iteritems():
+    text += key + ' = \'' + value['bracket']['open'] + '\' wws ' + value['bracket']['arguments'] + ':a wws \'' + value['bracket']['close'] + '\' -> xml(\'' + key + '\',a,self.input.position)\n'
+
+  return text, bracket.keys()
+
+
+def CreatePreInPostFixGrammar(definitions):
+
+  # partition by type of operator
+  infix = dpath.util.search(definitions,'/*/infix')
+  prefix = dpath.util.search(definitions,'/*/prefix')
+  postfix = dpath.util.search(definitions,'/*/postfix')
+
+  # get the precedence orders
+  orders = list(set(dpath.util.values(definitions,'/*/*/order')))
+  orders.sort()
+  previousOrder = dict(zip(orders+['max'],['min']+orders))
+
+  text = ''
+
+  # create grammar for infix operators
+  text += '\n# Infix operators\n'
+
+  for key, value in infix.iteritems():
+
+    flat = 'flat' in value['infix'] and value['infix']['flat'] is True
+
+    text += key + ' = P' + str(value['infix']['order']) + ':a '
+
+    if flat:
+      text += '( wws '
+    else:
+      text += 'wws '
+
+    if isinstance(value['infix']['key'],list):
+      text += '( \''+ '\' | \''.join(value['infix']['key']) + '\' )'
+    else:
+      text += '\''+ value['infix']['key'] + '\''
+
+    text += ' wws P' + str(value['infix']['order'])
+
+    if flat:
+      text += ')+:b -> xml(\'' + key + '\',[a]+b,self.input.position)\n'
+    else:
+      text += ':b -> xml(\'' + key + '\',a+b,self.input.position)\n'
+
+  # create grammar for prefix operators
+  text += '\n# Prefix operators\n'
+
+  for key, value in prefix.iteritems():
+
+    text += key + ' = '
+
+    if isinstance(value['prefix']['key'],list):
+      text += '( \''+ '\' | \''.join(value['prefix']['key']) + '\' )'
+    else:
+      text += '\''+ value['prefix']['key'] + '\''
+
+    text += ' wws P' + str(value['prefix']['order']) + ':a -> xml(\'' + key + '\',a)\n'
+
+  # create grammar for postfix operators
+  text += '\n# Postfix operators\n'
+
+  for key, value in postfix.iteritems():
+
+    text += key + ' = P' + str(value['postfix']['order']) + ':a wws '
+
+    if isinstance(value['postfix']['key'],list):
+      text += '( \''+ '\' | \''.join(value['postfix']['key']) + '\' )'
+    else:
+      text += '\''+ value['postfix']['key'] + '\''
+
+    text += ' -> xml(\'' + key + '\',a)\n'
+
+  # create precedence order
+  text += '\n# Precedence order operators\n'
+
+  for order in orders:
+
+    keys = dpath.util.search(definitions,'*/*/order', afilter = lambda x: x==order)
+
+    text += 'P' + str(previousOrder[order]) + ' = ( ' + ' | '.join(keys.keys()) + ' | P' + str(order) + ' )\n'
+
+  return text, orders[-1]
