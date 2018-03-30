@@ -23,7 +23,7 @@
 import os
 
 from . import Utilities
-from . import DefaultParameters
+from . import Parameters
 
 
 def prepareParameters():
@@ -74,7 +74,7 @@ def prepareParameters():
 
   # merge parameters collected from modules with the default system base parameters
   # At this point the default parameters and the module parameters should be jointly non-identical
-  parameters = Utilities.mergeDictionaries(parameters, DefaultParameters.default_parameters)
+  parameters = Utilities.mergeDictionaries(parameters, Parameters.parameters)
 
   # add package manifestos
   parameters['manifesto'] = manifesto
@@ -84,7 +84,7 @@ def prepareParameters():
 
   # add command line options
   parameters['command_line_flags'] = Utilities.mergeDictionaries(
-      command_line_flags, DefaultParameters.default_command_line_flags)
+      command_line_flags, Parameters.command_line_flags)
 
   # add empty memory
   parameters['memory'] = {}

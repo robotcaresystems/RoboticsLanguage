@@ -23,7 +23,7 @@
 import os
 from iso639 import languages
 
-default_parameters = {
+parameters = {
     'globals': {
         'output': 'RosCpp',
         'debug': False,
@@ -84,7 +84,7 @@ default_parameters = {
     }
 }
 
-default_command_line_flags = {
+command_line_flags = {
     'debug:xml': {
         'noArgument': True,
         'longFlag': 'debug-xml',
