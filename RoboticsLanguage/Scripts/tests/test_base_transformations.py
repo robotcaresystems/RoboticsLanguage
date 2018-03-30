@@ -107,7 +107,7 @@ class TestBaseTransformations(unittest.TestCase):
     xml_code, parameters = Transformations.Apply(xml, parameters)
 
     self.assertEqual(etree.tostring(xml_code),
-                     '<node type="Nothing"><print type="CodeBlock" RoL="print(&quot;hello&quot;)" RosCpp="ROS_INFO(&quot;hello&quot;)"><string type="Strings" RoL="&quot;hello&quot;" RosCpp="&quot;hello&quot;">hello</string><optionalArgument RoL="&quot;&quot;" RosCpp="&quot;&quot;"><name RoL="&quot;level&quot;" RosCpp="&quot;level&quot;">level</name><string RoL="&quot;info&quot;" RosCpp="&quot;info&quot;">info</string></optionalArgument></print><optionalArgument RoL="&quot;&quot;" RosCpp="&quot;&quot;"><name RoL="&quot;name&quot;" RosCpp="&quot;name&quot;">name</name><string RoL="&quot;unnamed&quot;" RosCpp="&quot;unnamed&quot;">unnamed</string></optionalArgument></node>')
+                     '<node type="Nothing"><print type="CodeBlock" RoL="print(&quot;hello&quot;)" RosCpp="ROS_INFO(&quot;hello&quot;)"><string type="Strings" RoL="&quot;hello&quot;" RosCpp="&quot;hello&quot;">hello</string><optionalArgument RoL="&quot;&quot;" RosCpp="&quot;&quot;"><name RoL="&quot;level&quot;" RosCpp="&quot;level&quot;">level</name><string type="Strings" RoL="&quot;info&quot;" RosCpp="&quot;info&quot;">info</string></optionalArgument></print><optionalArgument RoL="&quot;&quot;" RosCpp="&quot;&quot;"><name RoL="&quot;name&quot;" RosCpp="&quot;name&quot;">name</name><string type="Strings" RoL="&quot;unnamed&quot;" RosCpp="&quot;unnamed&quot;">unnamed</string></optionalArgument></node>')
 
 
 if __name__ == '__main__':

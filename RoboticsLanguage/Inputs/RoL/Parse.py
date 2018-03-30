@@ -5,7 +5,7 @@
 #   Parse.py: The parser for the Robotics Language
 #
 #   @NOTE the RoL parser currently works by generating the composition of
-#   strings of text (see functions `xml` and `xmlInfix`) that are eventually parsed into XML.
+#   strings of text (see functions `xml` and `miniLanguage`) that are eventually parsed into XML.
 #   This makes the implementation simple but my incur some performance issues when mini languages
 #   are used. Mini languages return XML objects that are converted to text to integrate into the language.
 #   When this parser returns the result is converts everything into an XML object, which means that the mini
@@ -35,240 +35,52 @@ from RoboticsLanguage.Base import Utilities
 import sys
 import funcy
 
-# creates XML text for entry
-def xml(name, content, position, keyword_dictionary={}, attributes = {}):
-  attrib = ' '.join([a+'="'+str(b)+'"' for a,b in attributes.iteritems()])
-
-  # @BUG might generate an error. Add try/except
-  # if len(keyword_dictionary) > 0:
-  #   tag = keyword_dictionary[name]
-  # else:
-  tag = name
-
-  if isinstance(content, list):
-    content = [x for x in content if x != ',']
-    return '<' + tag + ' p="' + str(position) + '" '+attrib+'>' + ''.join(content) + '</' + tag + '>'
-  else:
-    return '<' + tag + ' p="' + str(position) + '" '+attrib+'>' + content + '</' + tag + '>'
-
-def xmlInfix(start, pairs, position):
-  result = start
-  for op, value in pairs:
-    result = '<'+op+' p="' + str(position) + '">'+result+str(value)+'</'+op+'>'
-  return result
-
-
-def createPreInPostfixGrammar(parameters,input):
-  # initialise variables
-  keywords = {}
-
-  # load language definitions for all modules
-  for transform in parameters['manifesto']['Transformers'].keys():
-    keywords.update(Utilities.importModule('Transformers', transform, 'Language').Language.language)
-
-  grammar = ''
-  operators = []
-
-  for key, value in keywords.iteritems():
-    if 'input' in value.keys():
-      if input in value['input'].keys():
-        if 'pre-in-postfix' in value['input'][input].keys():
-          grammar += key+' = \''+value['input'][input]['pre-in-postfix'][0] + '\' ws ( ws expression | ws \''+value['input'][input]['pre-in-postfix'][1] + '\' )*:e ws \''+value['input'][input]['pre-in-postfix'][2] + '\' -> xml(\''+key+'\', e, self.input.position, dictionary)\n'
-          operators.append(key)
-
-  grammar += 'preinpostfixElements = '+' | '.join(operators)+'\n'
-
-  return grammar
-
-
-def createCustomGrammar(parameters,input):
-  # @BUG if first element of the custom vector is '' it does not work
-  # initialise variables
-  keywords = {}
-
-  # load language definitions for all modules
-  for transform in parameters['manifesto']['Transformers'].keys():
-    keywords.update(Utilities.importModule('Transformers', transform, 'Language').Language.language)
-
-  grammar = ''
-  operators = []
-
-  for key, value in keywords.iteritems():
-    if 'input' in value.keys():
-      if input in value['input'].keys():
-        if 'custom' in value['input'][input].keys():
-          custom = value['input'][input]['custom']
-          expressions = ['expression:e'+str(i) for i in range(len(custom)-1)]
-          infixes = [' ws \''+custom[i]+'\' ws ' for i in range(1,len(custom)-1)]
-
-          fullexpression = [x for t in zip(expressions, infixes) for x in t]
-          fullexpression.append(expressions[-1])
-
-          if custom[0] is not '':
-            fullexpression.insert(0, '\''+custom[0]+'\' ws ')
-
-          if custom[-1] is not '':
-            fullexpression.append(' ws \''+custom[0]+'\'')
-
-          grammar += key + ' = ' + ''.join(fullexpression) + ' -> xml(\''+key+'\', '+ '+'.join(['e'+str(i) for i in range(len(custom)-1)]) +', self.input.position, dictionary)\n'
-          operators.append(key)
-
-
-  grammar += 'customElements = '+' | '.join(operators)+'\n'
-
-  return grammar
-
 # @TODO generalise when RoL parameters become dictionaries
 def nodeParametersToDictionary(xml):
-  return {'node': { key:value.text for (key, value) in Utilities.optionalArguments(xml).iteritems() } }
+  return {'node': {key: value.text for (key, value) in Utilities.optionalArguments(xml).iteritems()}}
+
+
+# creates XML text for entry
+def xml(tag, content, position=0):
+  text = ''.join(content) if isinstance(content, list) else content
+  return '<' + tag + ' p="' + str(position) + '" >' + text + '</' + tag + '>'
 
 
 def miniLanguage(key, text, position, parameters):
+
   try:
-    code, parameters = Utilities.importModule('Inputs', key, 'Parse').Parse.parse(text, parameters)
+    code, parameters = Utilities.importModule(
+        'Inputs', key, 'Parse').Parse.parse(text, parameters)
     result = etree.tostring(code)
     return result
   except:
-    Utilities.logging.error("Failed to parse mini-language "+key)
-
-
-def createPrefixGrammar(parameters,input):
-  # initialise variables
-  keywords = {}
-
-  # load language definitions for all modules
-  for transform in parameters['manifesto']['Transformers'].keys():
-    keywords.update(Utilities.importModule('Transformers', transform, 'Language').Language.language)
-
-  grammar = ''
-  operators = []
-
-  for key, value in keywords.iteritems():
-    if 'input' in value.keys():
-      if input in value['input'].keys():
-        if 'prefix' in value['input'][input].keys():
-          if isinstance(value['input'][input]['prefix'],list):
-            pass
-          else:
-            grammar += key+' = \''+value['input'][input]['prefix'] + '\' ws ( language | preinpostfixElements | function | customElements | type | variable ):e -> xml(\''+key+'\', e, self.input.position, dictionary)\n'
-            operators.append(key)
-
-  grammar += 'prefixElements = '+' | '.join(operators)+'\n'
-
-  return grammar
-
-
-def createLocalisationDictionary(parameters,language):
-  # initialise variables
-  keywords = {}
-
-  # load language definitions for all modules
-  for transform in parameters['manifesto']['Transformers'].keys():
-    keywords.update(Utilities.importModule('Transformers', transform, 'Language').Language.language)
-
-  dictionary = {}
-
-  for key, value in keywords.iteritems():
-    if 'localisation' in keywords[key].keys():
-      if language in keywords[key]['localisation'].keys():
-        if isinstance(keywords[key]['localisation'][language],dict):
-          dictionary[keywords[key]['localisation'][language]['prefix']] = key
-        else:
-          dictionary[keywords[key]['localisation'][language]] = key
-      else:
-        dictionary[key] = key
-    else:
-      dictionary[key] = key
-
-  return dictionary
-
-
-def createInfixGrammar(parameters,input):
-  # initialise variables
-  keywords = {}
-
-  # load language definitions for all modules
-  for transform in parameters['manifesto']['Transformers'].keys():
-    keywords.update(Utilities.importModule('Transformers', transform, 'Language').Language.language)
-
-  infix_grammar = ''
-  infix_operators = []
-  orders = {}
-
-  for key, value in keywords.iteritems():
-    if 'input' in value.keys():
-      if input in value['input'].keys():
-        if 'infix' in value['input'][input].keys():
-          infix_operators.append({'key': key, 'infix': value['input'][input]['infix'], 'order': value['input'][input]['infixOrder']})
-
-          if value['input'][input]['infixOrder'] not in orders.keys():
-            orders[value['input'][input]['infixOrder']] = []
-
-          orders[value['input'][input]['infixOrder']].append(key)
-
-  sorted_orders = sorted(orders)
-
-  # definition of parenthesis
-  infix_grammar += 'parenthesis = \'(\' ws infixElements:e ws \')\' -> e\n'
-
-  # create language infix clauses
-  for infix in infix_operators:
-    if isinstance(infix['infix'],list):
-      symbol = '( \'' + '\' | \''.join(infix['infix']) + '\' )'
-    else:
-      symbol = '\''+infix['infix']+'\''
-
-    infix_grammar += infix['key'] + ' = ' + symbol + ' ws level' + str(infix['order']) + ':n -> (\'' + infix['key'] + '\', n )\n'
-
-  infix_grammar += 'level'+str(sorted_orders[-1])+' = language | prefixElements | customElements | preinpostfixElements | function | type | variable | parenthesis\n'
-
-  # create language level groups
-  for key, value in orders.iteritems():
-    if len(value)>1:
-      symbol = '( ' + ' | '.join(value) + ' )'
-    else:
-      symbol = ''+value[0]+''
-    infix_grammar += 'level'+str(key)+'keys = ws '+symbol + '\n'
-
-  infix_grammar += 'infixElements = level'+str(sorted_orders[0])+':left level'+str(sorted_orders[0])+'keys*:right -> xmlInfix(left,right, self.input.position)\n'
-
-  for i in range(1,len(sorted_orders)):
-    infix_grammar += 'level'+str(sorted_orders[i-1])+' = level'+str(sorted_orders[i])+':left level'+str(sorted_orders[i])+'keys*:right -> xmlInfix(left,right, self.input.position)\n'
-
-  return infix_grammar
+    Utilities.logging.error("Failed to parse mini-language " + key)
 
 
 def prepareGrammarEngine(parameters):
-  # This is the base function composition grammar
-  # Includes base types (string, numbers, booleans),
-  # comments and optional parameters using the ':' element.
 
-  function_composition_grammar = r"""
-main  = ( ws function:f ws -> f
-        | ws comment:c ws -> c
-        )*
+  keywords = {}
 
-language = word:n ws '<{' code:l '}>' ws  -> miniLanguage(n, l, self.input.position)
+  # load language definitions for all modules
+  for transform in parameters['manifesto']['Transformers'].keys():
+    keywords.update(Utilities.importModule(
+        'Transformers', transform, 'Language').Language.language)
 
-code = <(~('}>') anything)+>
-
-expression = language | prefixElements | preinpostfixElements | infixElements | function | customElements | type | variable
-
-# Function composition
-function = (word:f ws '('  ( ws optionalArgument | ws expression | ws ',' )*:p ws ')' -> xml(f, p, self.input.position,dictionary))
-
-optionalArgument = (word:p ws ':' ws expression:w -> xml('optionalArgument',xml('name',str(p),self.input.position)+str(w), self.input.position) )
-
-variable = (word:w -> xml('variable',str(w), self.input.position) )
+  # the base grammar defines atomic elements, special elements, and the flow of precedence
+  base_grammar = r"""
+digits = <digit+>
+word = <letter+>
 
 # comments
-comment = ( longComment | shortComment )
+wws = (ws longComment)* (ws shortComment)* ws
 
-longComment = ('##'  <(~('##') anything)+>:c  '##' -> xml('longComment',str(c), self.input.position))
+longComment = ('##'  <(~('##') anything)+>:c  '##' -> xml('comment',str(c), self.input.position))
 
-shortComment = ('#'  <(~('\n') anything)+>:c  '\n' -> xml('shortComment',str(c), self.input.position))
+shortComment = ('#'  <(~('\n') anything)+>:c  '\n' -> xml('comment',str(c), self.input.position))
 
-# base data types
+# types
+variable = word:a -> xml('variable', a, self.input.position)
+
 type = ( number | string | boolean )
 
 string = (('"' | '\''):q <(~exactly(q) anything)*>:xs exactly(q)) -> xml('string',xs, self.input.position)
@@ -277,34 +89,72 @@ number = ( real | integer )
 
 boolean = ( 'true' | 'false' ):b -> xml('boolean',b, self.input.position)
 
-integer = < '-'? ws digits >:x -> xml('integer',x, self.input.position)
+integer = < '-'? wws digits >:x -> xml('integer',str(x), self.input.position)
 
-real = ( <'-'? ws digits '.' digits? ( ('e' | 'E') ('+' | '-')? digits)? >
-       | <'-'? ws '.' digits ( ('e' | 'E') ('+' | '-')? digits)? >
-       | <'-'? ws digits ( ('e' | 'E') ('+' | '-')? digits) >
-       ):x -> xml('real',x, self.input.position)
+real =  < ('-' wws)? (( '.' digits | digits '.' digits? ) ( ('e' | 'E') ('+' | '-')? digits)?
+              |  digits ('e' | 'E') ('+' | '-')? digits
+              ) >:x -> xml('real',str(x), self.input.position)
 
-# base definitions
-word = <(letter|latinCharacter|greekCharacter)+>
-digits = <digit+>
-latinCharacter = :x ?(x in 'áàâãéèêíìîóòõôúùûÁÀÂÃÉÈÊÍÌÎÓÒÕÔÚÙÛ') -> x
-greekCharacter = :x ?(x in 'ΆΈΉΊ΋Ό΍ΎΏΐΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡ΢ΣΤΥΦΧΨΩΪΫάέήίΰαβγδεζηθικλμνξοπρςστυφχψωϊϋόύώϏϐϑϒϓϔϕϖϗϘϙϚϛϜϝϞϟϠϡϢϣϤϥϦϧϨϩϪϫϬϭϮϯϰϱϲϳϴϵ϶ϷϸϹϺϻϼϽϾϿ') -> x
+# special functions, brackets
+language = word:n wws '<{' code:l '}>' -> miniLanguage(n, l, self.input.position)
+
+code = <(~('}>') anything)+>
+
+function = ( word:a1 wws '(' wws mixed:a2 wws ')' -> xml(a1, a2, self.input.position)
+           | word:a1 wws '(' wws ')' -> xml(a1, '', self.input.position)
+           )
+
+part = word:a1 '[' wws values:a2 wws ']' -> xml('part',xml('variable',a1,self.input.position)+xml('index',a2,self.input.position),self.input.position)
+
+# definition of values, key-values, or mixed arguments
+optionDefinition = word:a1 wws ':' wws Pmin:a2 -> xml('optionalArgument',xml('name',a1,self.input.position)+a2,self.input.position)
+valuesDefinition = Pmin:a1 (wws ',' wws Pmin )+:a2 -> ''.join([a1]+a2)
+mixedDefinition = option:a1 (wws ',' wws option )+:a2 -> ''.join([a1]+a2)
+keyValuesDefinition = optionDefinition:a1 (wws ',' wws optionDefinition )+:a2 -> ''.join([a1]+a2)
+
+mixed = ( mixedDefinition | option )
+values = ( valuesDefinition | Pmin )
+keyValues = ( keyValuesDefinition | Pmin )
+option = ( optionDefinition | Pmin )
+
+parenthesis = '(' wws Pmin:a wws ')' -> a
 """
 
-  # load other types of grammar elements
-  extra_grammars  = createInfixGrammar(parameters,'RoL')
-  extra_grammars += createPreInPostfixGrammar(parameters,'RoL')
-  extra_grammars += createPrefixGrammar(parameters,'RoL')
-  extra_grammars += createCustomGrammar(parameters,'RoL')
+ # the structure of the main element
+  main_loop_start = r"""
+# main loop
+main = wws ( language
+         | function
+         | part
+         | """
 
-  grammar = function_composition_grammar + extra_grammars
+  main_loop_end = r"""
+         | type
+         | variable
+         ):a wws -> a
+"""
 
-  if parameters['globals']['language'] is not 'en':
-    dictionary = createLocalisationDictionary(parameters,parameters['globals']['language'])
-  else:
-    dictionary = {}
+  # extract the definitions from the language (i.e. remove the 'input/RoL' part from the path)
+  definitions = Utilities.ExtractLanguageDefinitions(keywords, 'input', 'RoL')
 
-  return grammar, dictionary
+  # create pre/in/post fix part of the grammar
+  fix_text, max_precedence = Utilities.CreatePreInPostFixGrammar(definitions)
+
+  # create the bracket operators part of the grammar
+  bracket_text, bracket_keys = Utilities.CreateBracketGrammar(definitions)
+
+  # add the brackets to the main list of elements
+  bracket_keys_text = '\n         | '.join(bracket_keys)
+
+  # set the element with maximum precedence
+  max_precedence_text = '\nP' + \
+      str(max_precedence) + ' = ( parenthesis | main )\n'
+
+  # the grammar is the concatenation of many definitions
+  grammar = base_grammar + fix_text + bracket_text + max_precedence_text + \
+      main_loop_start + bracket_keys_text + main_loop_end
+
+  return grammar
 
 
 def semanticTransformations(xml):
@@ -312,7 +162,8 @@ def semanticTransformations(xml):
   variables_defined = xml.xpath('/node/definitions/element/variable[1]/text()')
 
   # from the previous list, find tags with these variable names
-  variables_used = funcy.flatten(map(lambda x:xml.xpath('//'+x), variables_defined))
+  variables_used = funcy.flatten(
+      map(lambda x: xml.xpath('//' + x), variables_defined))
 
   # rename the variable tag to 'function' and add the name to the attribute 'name'
   for variable in variables_used:
@@ -325,37 +176,39 @@ def semanticTransformations(xml):
 
 def parse(text, parameters):
 
-  # @BUG If the command line flag --language is used may need to recompute dictionary
+  # @TODO need to reimplement language localisation
   # load cached language and grammar or create from scratch if needed
-  grammar, dictionary = Utilities.cache('RoL-language-grammar', lambda : prepareGrammarEngine(parameters))
+  grammar = Utilities.cache('RoL-language-grammar',
+                            lambda: prepareGrammarEngine(parameters))
 
-
+  # show the grammar if `--debug-rol-grammar` is set in the command line
   if parameters['Inputs']['RoL']['debug']['grammar']:
     print(grammar)
 
-  # @NOTE could not pickle the language itself. Is there a way to solve this?
+  # @NOTE could not pickle the language itself to cache. Is there a way to solve this?
   # create the grammar
   language = parsley.makeGrammar(grammar, {'xml': xml,
-                                           'xmlInfix': xmlInfix,
-                                           'dictionary': dictionary,
-                                           'miniLanguage': lambda x,y,z : miniLanguage(x, y, z, parameters) })
+                                           'miniLanguage': lambda x, y, z: miniLanguage(x, y, z, parameters)})
 
   try:
     # parse the text against the grammar
     parsed_xml_text = ''.join(language(text).main())
+
   except parsley.ParseError as error:
-    Utilities.logErrors(Utilities.formatParsleyErrorMessage(error),parameters)
+    Utilities.logErrors(Utilities.formatParsleyErrorMessage(error), parameters)
     sys.exit(1)
 
   try:
     # create XML object from xml string
     parsed_xml = etree.fromstring(parsed_xml_text)
+
   except etree.XMLSyntaxError as error:
-    Utilities.logErrors(Utilities.formatLxmlErrorMessage(error),parameters)
+    Utilities.logErrors(Utilities.formatLxmlErrorMessage(error), parameters)
     sys.exit(1)
 
   # If the node has parameters, then add them to the global parameters dictionary
-  parameters = Utilities.mergeDictionaries(nodeParametersToDictionary(parsed_xml),parameters)
+  parameters = Utilities.mergeDictionaries(
+      nodeParametersToDictionary(parsed_xml), parameters)
 
   # apply semantic changes
   parsed_xml = semanticTransformations(parsed_xml)
