@@ -5,9 +5,10 @@
     <string>hello world</string>
   </optionalArgument>
 
-  <initialise>
+  <optionalArgument>
+    <name>initialise</name>
     <print>
       <string>hello World!</string>
     </print>
-  </initialise>
+  </optionalArgument>
 </node>
