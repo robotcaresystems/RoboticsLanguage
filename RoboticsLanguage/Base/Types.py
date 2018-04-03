@@ -29,20 +29,20 @@ atoms = {
 
 def manySameNumbersOrStrings(x):
   '''number or string'''
-  return all(map(lambda y: y in ['Reals', 'Integers'], x)) or all(map(lambda y: y == 'Strings', x))
+  return [all(map(lambda y: y in ['Reals', 'Integers'], x)) or all(map(lambda y: y == 'Strings', x))]
 
 
 def singleString(x):
   '''string'''
-  return len(x) == 1 and x[0] == 'Strings'
+  return [len(x) == 1 and x[0] == 'Strings']
 
 def singleReal(x):
   '''real'''
-  return len(x) == 1 and (x[0] == 'Reals' or x[0] == 'Integers')
+  return [len(x) == 1 and (x[0] == 'Reals' or x[0] == 'Integers')]
 
 def singleBoolean(x):
   '''boolean'''
-  return len(x) == 1 and x[0] == 'Booleans'
+  return [len(x) == 1 and x[0] == 'Booleans']
 
 def manyStrings(x):
   '''string , ... , string'''

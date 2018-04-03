@@ -1,0 +1,13 @@
+node(
+  name:"example functions",
+  definitions:block(
+    defineFunction(
+      name("test"),
+      arguments( x ∈ Integers(bits:16), y ∈ Integers, z:1 ∈ Integers),
+      returnType(Integers),
+      content(
+        return(x+y+z)
+        )
+      )
+    )
+)

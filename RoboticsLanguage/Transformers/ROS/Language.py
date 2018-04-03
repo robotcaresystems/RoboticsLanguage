@@ -19,5 +19,33 @@
 #   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
+from RoboticsLanguage.Base.Types import singleString, singleReal, manyStrings, manyExpressions, manyCodeBlocks, codeBlock, anything, singleBoolean
+from RoboticsLanguage.Base.Types import returnNothing, returnCodeBlock
 
-language = {}
+
+language = {
+
+    'Signals': {
+        'definition': {
+            'optionalArguments': {'rostopic': singleString,
+                                  'flow': singleString,
+                                  'autopublish': singleBoolean},
+            'optionalDefaults': {'rostopic': '',
+                                 'flow': 'bidirectional',
+                                 'autopublish':True},
+            'argumentTypes': anything,
+            'returnType': returnNothing
+        },
+        'output':
+        {
+        },
+        'localisation':
+        {
+        },
+        'documentation':
+        {
+        }
+    },
+
+
+}

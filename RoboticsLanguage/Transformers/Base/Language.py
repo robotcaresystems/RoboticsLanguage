@@ -274,6 +274,10 @@ language = {
 
 
     'variable': {
+        'definition': {
+            'argumentTypes': anything,
+            'returnType': returnNothing
+        },
         'output':
         {
             'RosCpp': '{{text}}',
@@ -316,10 +320,14 @@ language = {
     },
 
     'element': {
+            'definition': {
+                'argumentTypes': anything,
+                'returnType': returnNothing
+            },
         'input': {
             'RoL': {
                 'infix': { 'key':['in', '∈'],
-                'order': 850 }
+                'order': 100 }
             }
         },
         'output':
@@ -334,6 +342,24 @@ language = {
             'title': 'Element of a set of type',
             'description': 'Defines a variable to be an element of a set or a type. If a set is provided, then the variable takes the type of the elements of the set',
             'usage': 'x in Reals'
+        }
+    },
+
+    'defineFunction': {
+            'definition': {
+                'argumentTypes': anything,
+                'returnType': returnNothing
+            },
+        'input': {
+            },
+        'output':
+        {
+        },
+        'localisation':
+        {
+        },
+        'documentation':
+        {
         }
     },
 

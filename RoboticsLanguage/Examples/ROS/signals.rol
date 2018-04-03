@@ -8,15 +8,14 @@ node(
     x(
       onchange:
         block(
-          print('x has changed: ' + x),
-          y = x
+          print('x has changed')
         )
       ,
       onnew:
         block(
-          print('x is new: ' + x)
+          print('x is new')
       )
     )
   ),
-  initialise: print('Starting node.', color:'blue')
+  initialise: print('Starting node.')
 )
