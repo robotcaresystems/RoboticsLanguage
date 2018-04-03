@@ -40,6 +40,11 @@ def singleReal(x):
   '''real'''
   return [len(x) == 1 and (x[0] == 'Reals' or x[0] == 'Integers')]
 
+def singleInteger(x):
+  '''integer'''
+  return [len(x) == 1 and (x[0] == 'Integers')]
+
+
 def singleBoolean(x):
   '''boolean'''
   return [len(x) == 1 and x[0] == 'Booleans']

@@ -778,7 +778,7 @@ def templateEngine(code, parameters, filepatterns, templates_path, deploy_path,
 
 
 # @WARNING this function does not work on the root node (since it uses the getparent function)
-def serialise(code, parameters, keywords, language, filters={}):
+def serialise(code, parameters, keywords, language, filters=default_template_engine_filters):
 
   snippet = ''
 
@@ -791,7 +791,7 @@ def serialise(code, parameters, keywords, language, filters={}):
       template = Template(keyword)
 
       # load the text filters
-      for key, value in filters:
+      for key, value in filters.iteritems():
         template.globals[key] = value
 
       # render tags according to dictionary
@@ -801,7 +801,8 @@ def serialise(code, parameters, keywords, language, filters={}):
                                 parentAttributes=code.getparent().attrib,
                                 parentTag=code.getparent().tag,
                                 text=text(code),
-                                parameters=parameters)
+                                parameters=parameters,
+                                code=code)
       # save text in attribute
       code.attrib[language] = snippet
 

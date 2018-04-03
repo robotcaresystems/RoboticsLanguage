@@ -22,4 +22,4 @@
 
 language = {}
 
-default_output = '/* {{tag}} */'
+default_output = ''

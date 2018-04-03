@@ -48,11 +48,8 @@ namespace {{parameters['node']['name']|underscore}}
       // The ROS node handle
       ros::NodeHandle nh_; /**< "Global" NodeHandle */
 
-      /*!
-       * @brief definitions initializes anything needed for this node
-       */
-      virtual void definitions();
-
+      /* definitions */
+      {{code|xpath('/node')|optionalArgument('definitions')|attribute('RosCpp')}};
 
   };
 }

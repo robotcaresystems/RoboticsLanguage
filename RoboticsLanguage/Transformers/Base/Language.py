@@ -21,13 +21,19 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-from RoboticsLanguage.Base.Types import singleString, singleReal, manyStrings, manyExpressions, manyCodeBlocks, codeBlock, anything
+from RoboticsLanguage.Base.Types import singleString, singleReal, singleInteger, manyStrings, manyExpressions, manyCodeBlocks, codeBlock, anything
 from RoboticsLanguage.Base.Types import returnNothing, returnCodeBlock
 
 # temp
 language = {
     # base types
     'Reals': {
+        'definition': {
+            'optionalArguments': {'bits': singleInteger},
+            'optionalDefaults': {'bits': 32},
+            'argumentTypes': anything,
+            'returnType': returnNothing
+        },
         'input':
         {
             # 'RoL':
@@ -37,10 +43,10 @@ language = {
         },
         'output':
         {
-            'RosCpp': '{{text}}',
-            'HTMLDocumentation': '{{text}}',
-            'HTMLGUI': '{{text}}',
-            'RoL': '{{text}}',
+            'RosCpp': '{% if "optionalArgument" in childrenTags %}{% if optionalArgument(code,"bits").text == "64"%}double{% else %}float{% endif %}{% else %}float{% endif %}',
+            'HTMLDocumentation': 'Real',
+            'HTMLGUI': 'Real',
+            'RoL': 'Reals',
         },
         'localisation':
         {
@@ -54,6 +60,12 @@ language = {
         }
     },
     'Integers': {
+        'definition': {
+            'optionalArguments': {'bits': singleInteger},
+            'optionalDefaults': {'bits': 32},
+            'argumentTypes': anything,
+            'returnType': returnNothing
+        },
         'input':
         {
             # 'RoL':
@@ -63,10 +75,10 @@ language = {
         },
         'output':
         {
-            'RosCpp': '{{text}}',
-            'HTMLDocumentation': '{{text}}',
-            'HTMLGUI': '{{text}}',
-            'RoL': '{{text}}',
+            'RosCpp': 'int{% if "optionalArgument" in childrenTags %}{{optionalArgument(code,"bits").text}}{% else %}32{% endif %}_u',
+            'HTMLDocumentation': 'Integer',
+            'HTMLGUI': 'Integer',
+            'RoL': 'Integers',
         },
         'localisation':
         {
@@ -76,17 +88,21 @@ language = {
         {
             'title': 'Integer numbers type',
             'description': 'A type representing integer numbers. Assumptions on the number of bits used by the compiler to represent an integer number is given as information in the editor.',
-            'usage': 'x in real'
+            'usage': 'x in Integers'
         }
 
     },
     'Strings': {
+        'definition': {
+            'argumentTypes': anything,
+            'returnType': returnNothing
+        },
         'output':
         {
-            'RosCpp': '"{{text}}"',
-            'HTMLDocumentation': '{{text}}',
-            'HTMLGUI': '{{text}}',
-            'RoL': '"{{text}}"',
+            'RosCpp': 'std::string',
+            'HTMLDocumentation': 'String',
+            'HTMLGUI': 'String',
+            'RoL': 'Strings',
         },
         'localisation':
         {
@@ -99,6 +115,10 @@ language = {
         }
     },
     'Booleans': {
+        'definition': {
+            'argumentTypes': anything,
+            'returnType': returnNothing
+        },
         'input':
         {
             # 'RoL':
@@ -108,10 +128,10 @@ language = {
         },
         'output':
         {
-            'RosCpp': '{{text}}',
-            'HTMLDocumentation': '{{text}}',
-            'HTMLGUI': '{{text}}',
-            'RoL': '{{text}}',
+            'RosCpp': 'bool',
+            'HTMLDocumentation': 'Boolean',
+            'HTMLGUI': 'Boolean',
+            'RoL': 'Booleans',
         },
         'localisation':
         {
@@ -332,6 +352,7 @@ language = {
         },
         'output':
         {
+          'RosCpp':'{{children[1]}} {{attribute(code.xpath("variable"),"name")}}'
         },
         'localisation':
         {
@@ -393,6 +414,7 @@ language = {
         },
         'output':
         {
+        'RosCpp':'{{";\n".join(children)}}'
         },
         'localisation':
         {

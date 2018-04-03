@@ -1,7 +1,12 @@
 node(
   name:"example functions",
   definitions:block(
-    defineFunction(
+    y ∈ Integers(bits:16),
+    x ∈ Integers,
+    z ∈ Reals,
+    w ∈ Reals(bits:64)
+    
+    ## defineFunction(
       name("test"),
       arguments( x ∈ Integers(bits:16), y ∈ Integers, z:1 ∈ Integers),
       returnType(Integers),
@@ -9,5 +14,6 @@ node(
         return(x+y+z)
         )
       )
+      ##
     )
 )

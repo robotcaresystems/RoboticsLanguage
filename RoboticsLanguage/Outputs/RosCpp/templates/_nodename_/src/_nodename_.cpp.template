@@ -22,13 +22,6 @@ namespace {{parameters['node']['name']|underscore}}
   {{parameters['node']['name']|camelCase}}Class::{{parameters['node']['name']|camelCase}}Class():
     nh_("~")
   {
-    definitions();
-  }
-
-  /******************************* definitions ********************************************/
-  void {{parameters['node']['name']|camelCase}}Class::definitions()
-  {
-    {{code|xpath('/node')|optionalArgument('definitions')|attribute('RosCpp')}};
   }
 
 
