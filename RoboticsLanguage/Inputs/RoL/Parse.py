@@ -111,8 +111,7 @@ parenthesis = '(' wws Pmin:a wws ')' -> a
 # main loop
 main = wws ( language
          | function
-         | part
-         | """
+         | part"""
 
   main_loop_end = r"""
          | type
@@ -131,7 +130,10 @@ main = wws ( language
   bracket_text, bracket_keys = Utilities.CreateBracketGrammar(definitions)
 
   # add the brackets to the main list of elements
-  bracket_keys_text = '\n         | '.join(bracket_keys)
+  if len(bracket_keys) > 0:
+    bracket_keys_text = '         | ' + '\n         | '.join(bracket_keys)
+  else:
+    bracket_keys_text = ''
 
   # set the element with maximum precedence
   max_precedence_text = '\nP' + \

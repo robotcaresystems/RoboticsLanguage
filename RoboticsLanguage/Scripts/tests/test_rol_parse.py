@@ -43,7 +43,6 @@ class TestRolParse(unittest.TestCase):
       code, __ = Parse.parse(text, parameters)
       self.assertEqual(etree.tostring(removePositionAttributes(code)),result)
 
-
     # using the base and linear algebra parameters
     parameters = {'manifesto': { 'Transformers': {'Base': {'order': 0,
                                   'packageName': 'Base',
@@ -52,7 +51,16 @@ class TestRolParse(unittest.TestCase):
                                   'packageName': 'Linear Algebra',
                                   'packageShortName': 'lin'}}},
                   'globals': {'language':'en'},
-                  'Inputs':{'RoL':{'debug':{'grammar':False}}}}
+                  'Inputs':{'RoL':{'debug':{'grammar':True}}},
+                  'language':
+                      {
+                          'node':{},
+                          'print':{},
+                          'string':{},
+                          'real':{},
+                          'boolean':{}
+                      }
+                  }
 
 
     # -------------------------------------------------------------------------------------------------

@@ -917,4 +917,7 @@ def CreatePreInPostFixGrammar(definitions):
 
     text += 'P' + str(previousOrder[order]) + ' = ( ' + ' | '.join(keys.keys()) + ' | P' + str(order) + ' )\n'
 
-  return text, orders[-1]
+  if len(orders) > 0:
+    return text, orders[-1]
+  else:
+    return text, 'min'
