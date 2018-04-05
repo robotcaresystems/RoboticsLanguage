@@ -27,10 +27,21 @@ atoms = {
   'integer':'Integers'
   }
 
-def manySameNumbersOrStrings(x):
+def manySameNumbers(x):
+  '''number'''
+  return [all(map(lambda y: y in ['Reals', 'Integers'], x))]
+
+def manySameNumbersStrings(x):
   '''number or string'''
   return [all(map(lambda y: y in ['Reals', 'Integers'], x)) or all(map(lambda y: y == 'Strings', x))]
 
+def manySameNumbersStringsBooleans(x):
+  '''number or string or boolean'''
+  return [all(map(lambda y: y in ['Reals', 'Integers'], x)) or all(map(lambda y: y == 'Strings', x)) or all(map(lambda y: y == 'Booleans', x))]
+
+def manySameBooleans(x):
+  '''boolean'''
+  return [all(map(lambda y: y == 'Booleans', x))]
 
 def singleString(x):
   '''string'''
@@ -72,6 +83,8 @@ def anything(x):
   '''anything'''
   return [True]
 
+# -----------------------------------------------------------------
+# return functions
 
 def returnNothing(x):
   '''nothing'''
@@ -83,3 +96,7 @@ def returnCodeBlock(x):
 
 def returnSameArgumentType(x):
   return x[0]
+
+def returnBoolean(x):
+  '''boolean'''
+  return 'Booleans'

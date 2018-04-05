@@ -220,6 +220,22 @@ language = {
         {
         }
     },
+    'natural': {
+        'output':
+        {
+            'RosCpp': 'uint({{text}})',
+            'HTMLDocumentation': '{{text}}',
+            'HTMLGUI': '{{text}}',
+            'RoL': '{{text}}',
+        },
+        'localisation':
+        {
+            'pt': 'natural'
+        },
+        'documentation':
+        {
+        }
+    },
 
     'boolean': {
         'output':
@@ -344,10 +360,10 @@ language = {
         },
         'output':
         {
-            'RosCpp': '{{text}}',
-            'HTMLDocumentation': '{{text}}',
-            'HTMLGUI': '{{text}}',
-            'RoL': '{{text}}',
+            'RosCpp': '{{attributes["name"]}}',
+            'HTMLDocumentation': '{{attributes["name"]}}',
+            'HTMLGUI': '{{attributes["name"]}}',
+            'RoL': '{{attributes["name"]}}',
         },
         'localisation':
         {
@@ -392,7 +408,7 @@ language = {
         'input': {
             'RoL': {
                 'infix': { 'key':['in', '∈'],
-                'order': 510 }
+                'order': 150 }
             }
         },
         'output':

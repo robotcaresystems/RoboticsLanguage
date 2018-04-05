@@ -25,6 +25,8 @@ manifesto = {
   'packageShortName':'roscpp',
   }
 
-parameters = {}
+parameters = { 'strict':False }
 
-command_line_flags = {}
+command_line_flags = {
+  'strict': {'suppress': True}
+}

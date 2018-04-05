@@ -23,35 +23,75 @@
 default_output = ''
 
 language = {
-  # base types
-  'Reals': {
-    'output':
-    {
-      'RosCpp': '{% if "option" in childrenTags %}{% if option(code,"bits").text == "64"%}double{% else %}float{% endif %}{% else %}float{% endif %}',
+
+    'Reals': {
+        'output':
+        {
+            'RosCpp': '{% if "option" in childrenTags %}{% if option(code,"bits").text == "64"%}double{% else %}float{% endif %}{% else %}float{% endif %}',
+        },
     },
-  },
-  'Integers': {
-    'output':
-    {
-      'RosCpp': 'int{% if "option" in childrenTags %}{{option(code,"bits").text}}{% else %}32{% endif %}_t',
+
+    'Integers': {
+        'output':
+        {
+            'RosCpp': 'int{% if "option" in childrenTags %}{{option(code,"bits").text}}{% else %}32{% endif %}_t',
+        },
     },
-  },
-  'Naturals': {
-    'output':
-    {
-      'RosCpp': 'uint{% if "option" in childrenTags %}{{option(code,"bits").text}}{% else %}32{% endif %}_t',
+
+    'Naturals': {
+        'output':
+        {
+            'RosCpp': 'uint{% if "option" in childrenTags %}{{option(code,"bits").text}}{% else %}32{% endif %}_t',
+        },
     },
-  },
-  'Strings': {
-    'output':
-    {
-      'RosCpp': 'std::string',
+
+    'Strings': {
+        'output':
+        {
+            'RosCpp': 'std::string',
+        },
     },
-  },
-  'Booleans': {
-    'output':
-    {
-      'RosCpp': 'bool',
+
+    'Booleans': {
+        'output':
+        {
+            'RosCpp': 'bool',
+        },
     },
-  }
+
+    'string': {
+        'output':
+        {
+            'RosCpp': '"{{text}}"',
+        },
+    },
+
+    'integer': {
+        'output':
+        {
+            'RosCpp': '{% if parameters["Outputs"]["RosCpp"]["strict"] %}int({{text}}){% else %}{{text}}{% endif %}',
+        },
+    },
+
+    'natural': {
+        'output':
+        {
+            'RosCpp': '{% if parameters["Outputs"]["RosCpp"]["strict"] %}uint({{text}}){% else %}{{text}}{% endif %}',
+        },
+    },
+
+    'boolean': {
+        'output':
+        {
+            'RosCpp': '{{text}}',
+        },
+    },
+
+    'real': {
+        'output':
+        {
+            'RosCpp': '{% if parameters["Outputs"]["RosCpp"]["strict"] %}double({{text}}){% else %}{{text}}{% endif %}',
+        },
+    },
+
 }
