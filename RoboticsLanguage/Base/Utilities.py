@@ -552,7 +552,7 @@ def option(xml, name):
     return None
 
 def optionalArguments(xml):
-  return {a.xpath('name/text()')[0]: a.xpath('*[not(self::name)]')[0] for a in xml.xpath('option')}
+  return {a.attrib['name']: a.xpath('*')[0] for a in xml.xpath('option')}
 
 
 def getTextMinimumPositionXML(xml):
@@ -605,8 +605,8 @@ def semanticTypeChecker(code,parameters):
       element, parameters = semanticTypeChecker(element,parameters)
 
     # for this element find the parameters and arguments
-    parameter_names = code.xpath('option/name/text()')
-    parameter_types = code.xpath('option/*/@type')
+    parameter_names = code.xpath('option/@name')
+    parameter_types = code.xpath('option/@type')
     argument_types = code.xpath('*/@type')
     keys = parameters['language']
 
@@ -652,7 +652,7 @@ def fillDefaultsInOptionalArguments(code, parameters):
   if len(dpath.util.values(parameters['language'][code.tag],'definition/optionalArguments')) > 0:
 
     # find all optional parameters
-    parameter_names = code.xpath('option/name/text()')
+    parameter_names = code.xpath('option/@name')
 
     # get the list of missing parameters
     missing_parameters = list(set(parameters['language'][code.tag]['definition']['optionalArguments'].keys()) - set(parameter_names))
@@ -661,10 +661,9 @@ def fillDefaultsInOptionalArguments(code, parameters):
 
       # create XML structure
       optional_argument_tag = etree.Element('option')
-      name_tag = etree.Element('name')
 
-      # add the name of the optinal parameter
-      name_tag.text = parameter
+      # add the name of the optional parameter
+      optional_argument_tag.attrib['name'] = parameter
 
       # @WARNING the __doc__ definition of the type functions must be correct. How to deal with non-single types?
       # get the type for the optional parameter
@@ -674,7 +673,6 @@ def fillDefaultsInOptionalArguments(code, parameters):
       value_tag.text = str(parameters['language'][code.tag]['definition']['optionalDefaults'][parameter])
 
       # append new tag to the code
-      optional_argument_tag.append(name_tag)
       optional_argument_tag.append(value_tag)
       code.append(optional_argument_tag)
 
