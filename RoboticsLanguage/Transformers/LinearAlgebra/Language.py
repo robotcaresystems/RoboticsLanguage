@@ -21,8 +21,8 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-from RoboticsLanguage.Base.Types import manySameNumbersOrStrings
-from RoboticsLanguage.Base.Types import returnSameArgumentType
+from RoboticsLanguage.Base.Types import manySameNumbersOrStrings, anything
+from RoboticsLanguage.Base.Types import returnSameArgumentType, returnNothing
 
 language = {
 
@@ -269,6 +269,10 @@ language = {
         },
     },
     'assign': {
+        'definition': {
+            'argumentTypes': anything,
+            'returnType': returnNothing
+        },
         'input': {
             'RoL': {
                 'infix': {'key':'=',

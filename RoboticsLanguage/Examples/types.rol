@@ -2,19 +2,29 @@ node(
   name:"example types",
   definitions:block(
 
-    # integers
-    a ∈ Integers,
-    b ∈ Integers(bits:16),
-    c ∈ Integers(bits:32),
+    # Integers
+    a ∈ Integers = -1,
+    b ∈ Integers(bits:8),
+    c ∈ Integers(bits:16),
+    d ∈ Integers(bits:32),
+    e ∈ Integers(bits:64),
 
     # Naturals (unsigned integers)
-    d ∈ Reals,
-    e ∈ Reals(bits:64),
+    f ∈ Naturals = 1,
+    g ∈ Naturals(bits:8),
+    h ∈ Naturals(bits:16),
+    i ∈ Naturals(bits:32),
+    j ∈ Naturals(bits:64),
+
+    # reals
+    k ∈ Reals = 1.3,
+    l ∈ Reals(bits:23),
+    m ∈ Reals(bits:64),
 
     # booleans
-    f ∈ Booleans,
+    n ∈ Booleans = true,
 
     # strings
-    g ∈ Strings
+    o ∈ Strings = "3434"
     )
 )

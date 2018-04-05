@@ -36,6 +36,12 @@ language = {
       'RosCpp': 'int{% if "option" in childrenTags %}{{option(code,"bits").text}}{% else %}32{% endif %}_t',
     },
   },
+  'Naturals': {
+    'output':
+    {
+      'RosCpp': 'uint{% if "option" in childrenTags %}{{option(code,"bits").text}}{% else %}32{% endif %}_t',
+    },
+  },
   'Strings': {
     'output':
     {

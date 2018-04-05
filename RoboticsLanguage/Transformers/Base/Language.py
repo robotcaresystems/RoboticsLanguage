@@ -21,7 +21,7 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-from RoboticsLanguage.Base.Types import singleString, singleReal, singleInteger, manyStrings, manyExpressions, manyCodeBlocks, codeBlock, anything
+from RoboticsLanguage.Base.Types import singleString, singleReal, singleInteger, singleNatural, manyStrings, manyExpressions, manyCodeBlocks, codeBlock, anything
 from RoboticsLanguage.Base.Types import returnNothing, returnCodeBlock
 
 # temp
@@ -36,10 +36,10 @@ language = {
         },
         'input':
         {
-            # 'RoL':
-            # {
-            #     'prefix': ['Reals', 'ℝ']
-            # }
+            'RoL':
+            {
+              'alternatives': ['ℝ']
+            }
         },
         'output':
         {
@@ -67,10 +67,10 @@ language = {
         },
         'input':
         {
-            # 'RoL':
-            # {
-            #     'prefix': ['Integers', 'ℤ']
-            # }
+          'RoL':
+          {
+              'alternatives': ['ℤ']
+          }
         },
         'output':
         {
@@ -87,6 +87,38 @@ language = {
             'title': 'Integer numbers type',
             'description': 'A type representing integer numbers. Assumptions on the number of bits used by the compiler to represent an integer number is given as information in the editor.',
             'usage': 'x in Integers'
+        }
+
+    },
+    'Naturals': {
+        'definition': {
+            'optionalArguments': {'bits': singleNatural},
+            'optionalDefaults': {'bits': 32},
+            'argumentTypes': anything,
+            'returnType': returnNothing
+        },
+        'input':
+        {
+          'RoL':
+          {
+              'alternatives': ['ℕ']
+          }
+        },
+        'output':
+        {
+            'HTMLDocumentation': 'Natural',
+            'HTMLGUI': 'Natural',
+            'RoL': 'Naturals',
+        },
+        'localisation':
+        {
+            'pt': 'natural'
+        },
+        'documentation':
+        {
+            'title': 'Natural numbers type',
+            'description': 'A type representing natural numbers. Assumptions on the number of bits used by the compiler to represent an natural number is given as information in the editor.',
+            'usage': 'x in Naturals'
         }
 
     },
@@ -183,6 +215,22 @@ language = {
         'localisation':
         {
             'pt': 'inteiro'
+        },
+        'documentation':
+        {
+        }
+    },
+
+    'boolean': {
+        'output':
+        {
+            'RosCpp': '{{text}}',
+            'HTMLDocumentation': '{{text}}',
+            'HTMLGUI': '{{text}}',
+            'RoL': '{{text}}',
+        },
+        'localisation':
+        {
         },
         'documentation':
         {
@@ -309,6 +357,7 @@ language = {
         {
         }
     },
+
     'option': {
         'output':
         {
@@ -322,18 +371,18 @@ language = {
         }
     },
 
-    'name': {
-        'output':
-        {
-        },
-        'localisation':
-        {
-            'pt': 'parâmetro'
-        },
-        'documentation':
-        {
-        }
-    },
+    # 'name': {
+    #     'output':
+    #     {
+    #     },
+    #     'localisation':
+    #     {
+    #         'pt': 'parâmetro'
+    #     },
+    #     'documentation':
+    #     {
+    #     }
+    # },
 
     'element': {
             'definition': {
@@ -343,7 +392,7 @@ language = {
         'input': {
             'RoL': {
                 'infix': { 'key':['in', '∈'],
-                'order': 100 }
+                'order': 510 }
             }
         },
         'output':

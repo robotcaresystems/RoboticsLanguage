@@ -44,6 +44,9 @@ def singleInteger(x):
   '''integer'''
   return [len(x) == 1 and (x[0] == 'Integers')]
 
+def singleNatural(x):
+  '''natural'''
+  return [len(x) == 1 and (x[0] == 'Naturals')]
 
 def singleBoolean(x):
   '''boolean'''
