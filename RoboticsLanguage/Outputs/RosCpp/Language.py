@@ -20,6 +20,32 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-language = {}
-
 default_output = ''
+
+language = {
+  # base types
+  'Reals': {
+    'output':
+    {
+      'RosCpp': '{% if "option" in childrenTags %}{% if option(code,"bits").text == "64"%}double{% else %}float{% endif %}{% else %}float{% endif %}',
+    },
+  },
+  'Integers': {
+    'output':
+    {
+      'RosCpp': 'int{% if "option" in childrenTags %}{{option(code,"bits").text}}{% else %}32{% endif %}_t',
+    },
+  },
+  'Strings': {
+    'output':
+    {
+      'RosCpp': 'std::string',
+    },
+  },
+  'Booleans': {
+    'output':
+    {
+      'RosCpp': 'bool',
+    },
+  }
+}

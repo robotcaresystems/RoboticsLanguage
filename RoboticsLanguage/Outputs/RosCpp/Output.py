@@ -35,11 +35,11 @@ def runPreparations(code, parameters):
   # find a file system safe name
   node_name_underscore = Utilities.underscore(parameters['node']['name'])
 
-  # list of libraries to include based on the existance of specific tags in the code
+  # list of c++ libraries to include based on the existance of specific tags in the code
   include_libraries = {'Integers':'cstdint',
                        'Strings':'string'}
 
-  # initialise
+  # initialise the list of libraries
   parameters['Outputs']['RosCpp']['globalIncludes'] = set()
 
   # add only the required libraries
