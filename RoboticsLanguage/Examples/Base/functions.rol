@@ -6,18 +6,23 @@ node(
     z ∈ Integers = 3,
     s ∈ Strings = "Hello",
 
+    # optional arguments
     define testA(x ∈ Integers, y ∈ Integers, z ∈ Integers = 1) -> Integers:
       return(x+y+z),
 
+    # single argument
     define testB(x ∈ Integers) -> Integers:
       return(x+1),
 
+    # no return
     define testC(x ∈ Strings):
       print(x),
 
+    # no arguments, no return
     define testD():
-      print("Does nothing"),
+      print("Test D"),
 
+    # return multiple parameters
     define testE(x ∈ Integers, y ∈ Integers) -> (Integers, Integers):
       return(y,x)
   ),
@@ -26,7 +31,10 @@ node(
     x = testA(x,y,z),
     x = testA(x,y),
 
-    testB("Hello test 2"),
+    testB(3),
+
+    testC(s),
+    testC("Test C"),
 
     testD(),
 
