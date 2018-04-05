@@ -545,14 +545,14 @@ def attribute(xml, name):
     return ''
 
 
-def optionalArgument(xml, name):
+def option(xml, name):
   try:
     return optionalArguments(xml)[name]
   except:
     return None
 
 def optionalArguments(xml):
-  return {a.xpath('name/text()')[0]: a.xpath('*[not(self::name)]')[0] for a in xml.xpath('optionalArgument')}
+  return {a.xpath('name/text()')[0]: a.xpath('*[not(self::name)]')[0] for a in xml.xpath('option')}
 
 
 def getTextMinimumPositionXML(xml):
@@ -596,17 +596,17 @@ def semanticTypeChecker(code,parameters):
   # if the element is part of the language
   if code.tag in parameters['language']:
 
-    # first recursively traverse all children elements that are not optionalArgument
-    for element in code.xpath('*[not(self::optionalArgument)]'):
+    # first recursively traverse all children elements that are not option
+    for element in code.xpath('*[not(self::option)]'):
       element, parameters = semanticTypeChecker(element,parameters)
 
     # then traverse the optional arguments.
-    for element in code.xpath('optionalArgument/*[not(self::name)]'):
+    for element in code.xpath('option/*[not(self::name)]'):
       element, parameters = semanticTypeChecker(element,parameters)
 
     # for this element find the parameters and arguments
-    parameter_names = code.xpath('optionalArgument/name/text()')
-    parameter_types = code.xpath('optionalArgument/*/@type')
+    parameter_names = code.xpath('option/name/text()')
+    parameter_types = code.xpath('option/*/@type')
     argument_types = code.xpath('*/@type')
     keys = parameters['language']
 
@@ -645,14 +645,14 @@ def semanticTypeChecker(code,parameters):
 def fillDefaultsInOptionalArguments(code, parameters):
   '''Fill in defaults in optional arguments in case they are not explicitely defined.'''
 
-  for element in code.xpath('*[not(self::optionalArgument)]'):
+  for element in code.xpath('*[not(self::option)]'):
     __, parameters = fillDefaultsInOptionalArguments(element, parameters)
 
   # if this tag has optional parameters defined
   if len(dpath.util.values(parameters['language'][code.tag],'definition/optionalArguments')) > 0:
 
     # find all optional parameters
-    parameter_names = code.xpath('optionalArgument/name/text()')
+    parameter_names = code.xpath('option/name/text()')
 
     # get the list of missing parameters
     missing_parameters = list(set(parameters['language'][code.tag]['definition']['optionalArguments'].keys()) - set(parameter_names))
@@ -660,7 +660,7 @@ def fillDefaultsInOptionalArguments(code, parameters):
     for parameter in missing_parameters:
 
       # create XML structure
-      optional_argument_tag = etree.Element('optionalArgument')
+      optional_argument_tag = etree.Element('option')
       name_tag = etree.Element('name')
 
       # add the name of the optinal parameter
@@ -697,7 +697,7 @@ default_template_engine_filters = {'todaysDate': todaysDate,
                                    'tag': tag,
                                    'attributes': attributes,
                                    'attribute': attribute,
-                                   'optionalArgument': optionalArgument,
+                                   'option': option,
                                    'optionalArguments': optionalArguments,
                                    'initials': initials,
                                    'underscore': underscore,

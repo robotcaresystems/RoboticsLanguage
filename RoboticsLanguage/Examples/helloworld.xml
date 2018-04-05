@@ -1,14 +1,14 @@
 <?xml version="1.0"?>
 <node>
-  <optionalArgument>
+  <option>
     <name>name</name>
     <string>hello world</string>
-  </optionalArgument>
+  </option>
 
-  <optionalArgument>
+  <option>
     <name>initialise</name>
     <print>
       <string>hello World!</string>
     </print>
-  </optionalArgument>
+  </option>
 </node>

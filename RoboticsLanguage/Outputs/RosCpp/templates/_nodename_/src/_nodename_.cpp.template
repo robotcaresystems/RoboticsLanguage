@@ -28,20 +28,20 @@ namespace {{parameters['node']['name']|underscore}}
   /******************************* initialise ********************************************/
   void {{parameters['node']['name']|camelCase}}Class::initialise()
   {
-    {{code|xpath('/node')|optionalArgument('initialise')|attribute('RosCpp')}};
+    {{code|xpath('/node')|option('initialise')|attribute('RosCpp')}};
   }
 
   /******************************* finalise ********************************************/
   void {{parameters['node']['name']|camelCase}}Class::finalise()
   {
-    {{code|xpath('/node')|optionalArgument('finalise')|attribute('RosCpp')}};
+    {{code|xpath('/node')|option('finalise')|attribute('RosCpp')}};
   }
 
   /******************************* spin ************************************************/
   void {{parameters['node']['name']|camelCase}}Class::spin()
   {
     // Sets the spin rate
-    ros::Rate r({{code|xpath('/node')|optionalArgument('rate')|attribute('RosCpp')}});
+    ros::Rate r({{code|xpath('/node')|option('rate')|attribute('RosCpp')}});
     while(ros::ok())
     {
       ros::spinOnce();

@@ -80,7 +80,7 @@ class TestRolParse(unittest.TestCase):
 
     # test optional parameters
     check(self,parameters,"node(print('hello',test:1))",
-          '<node><print><string>hello</string><optionalArgument><name>test</name><integer>1</integer></optionalArgument></print></node>')
+          '<node><print><string>hello</string><option><name>test</name><integer>1</integer></option></print></node>')
 
 
     # -------------------------------------------------------------------------------------------------

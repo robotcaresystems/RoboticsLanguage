@@ -49,7 +49,7 @@ namespace {{parameters['node']['name']|underscore}}
       ros::NodeHandle nh_; /**< "Global" NodeHandle */
 
       /* definitions */
-      {{code|xpath('/node')|optionalArgument('definitions')|attribute('RosCpp')}};
+      {{code|xpath('/node')|option('definitions')|attribute('RosCpp')}};
 
   };
 }

@@ -43,7 +43,7 @@ language = {
         },
         'output':
         {
-            'RosCpp': '{% if "optionalArgument" in childrenTags %}{% if optionalArgument(code,"bits").text == "64"%}double{% else %}float{% endif %}{% else %}float{% endif %}',
+            'RosCpp': '{% if "option" in childrenTags %}{% if option(code,"bits").text == "64"%}double{% else %}float{% endif %}{% else %}float{% endif %}',
             'HTMLDocumentation': 'Real',
             'HTMLGUI': 'Real',
             'RoL': 'Reals',
@@ -75,7 +75,7 @@ language = {
         },
         'output':
         {
-            'RosCpp': 'int{% if "optionalArgument" in childrenTags %}{{optionalArgument(code,"bits").text}}{% else %}32{% endif %}_u',
+            'RosCpp': 'int{% if "option" in childrenTags %}{{option(code,"bits").text}}{% else %}32{% endif %}_u',
             'HTMLDocumentation': 'Integer',
             'HTMLGUI': 'Integer',
             'RoL': 'Integers',
@@ -313,7 +313,7 @@ language = {
         {
         }
     },
-    'optionalArgument': {
+    'option': {
         'output':
         {
         },

@@ -33,7 +33,7 @@ def output(code, parameters):
     return
 
   # get the node name
-  node_name = Utilities.optionalArgument(code.xpath('/node')[0],'name').text
+  node_name = Utilities.option(code.xpath('/node')[0],'name').text
 
   # save the name for the templates
   parameters['node']['name'] = node_name
