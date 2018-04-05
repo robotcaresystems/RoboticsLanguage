@@ -666,6 +666,7 @@ def fillDefaultsInOptionalArguments(code, parameters):
       optional_argument_tag.attrib['name'] = parameter
 
       # @WARNING the __doc__ definition of the type functions must be correct. How to deal with non-single types?
+      # this architecture should change to be more robust
       # get the type for the optional parameter
       value_tag = etree.Element(parameters['language'][code.tag]['definition']['optionalArguments'][parameter].__doc__)
 

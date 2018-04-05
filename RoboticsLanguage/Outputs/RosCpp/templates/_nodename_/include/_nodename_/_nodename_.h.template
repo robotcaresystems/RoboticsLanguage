@@ -15,6 +15,11 @@
 // Base libraries
 #include <ros/ros.h>
 
+// extra global includes
+{% for library in parameters['Outputs']['RosCpp']['globalIncludes'] -%}
+#include <{{library}}>
+{% endfor -%}
+
 
 /***************************************************************************************
 *       {{parameters['node']['name']|camelCase }}Class Declaration

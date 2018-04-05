@@ -75,7 +75,7 @@ language = {
         },
         'output':
         {
-            'RosCpp': 'int{% if "option" in childrenTags %}{{option(code,"bits").text}}{% else %}32{% endif %}_u',
+            'RosCpp': 'int{% if "option" in childrenTags %}{{option(code,"bits").text}}{% else %}32{% endif %}_t',
             'HTMLDocumentation': 'Integer',
             'HTMLGUI': 'Integer',
             'RoL': 'Integers',
