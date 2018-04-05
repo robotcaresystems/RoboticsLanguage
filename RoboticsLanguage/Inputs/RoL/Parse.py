@@ -92,6 +92,8 @@ function = ( word:a1 wws '(' wws mixed:a2 wws ')' -> xmlFunction(a1, a2, self.in
 
 part = word:a1 '[' wws values:a2 wws ']' -> xml('part',xmlVariable(a1,self.input.position)+xml('index',a2,self.input.position),self.input.position)
 
+functionDefinition  = 'define' wws word:a1 wws '(' ( values | wws ):a2 ')' ( wws '->' wws '(' values:a3 ')' wws | wws '->' wws word:a3 wws | wws:a3 ) ':' wws function:a4 -> xmlFunctionDefinition(a1,a2,a3,a4,self.input.position)
+
 # definition of values, key-values, or mixed arguments
 optionDefinition = word:a1 wws ':' wws Pmin:a2 -> xmlAttributes('option',a2,self.input.position, attributes={'name':a1})
 valuesDefinition = Pmin:a1 (wws ',' wws Pmin )+:a2 -> ''.join([a1]+a2)
@@ -109,7 +111,8 @@ parenthesis = '(' wws Pmin:a wws ')' -> a
  # the structure of the main element
   main_loop_start = r"""
 # main loop
-main = wws ( language
+main = wws ( functionDefinition
+         | language
          | function
          | part"""
 
@@ -162,6 +165,7 @@ def parse(text, parameters):
   # create the grammar
   language = parsley.makeGrammar(grammar, {'xml': Utilities.xml,
                                            'xmlAttributes': Utilities.xmlAttributes,
+                                           'xmlFunctionDefinition': Utilities.xmlFunctionDefinition,
                                            'xmlVariable': lambda x, y: Utilities.xmlVariable(parameters, x, y),
                                            'xmlFunction': lambda x, y, z: Utilities.xmlFunction(parameters, x, y, z),
                                            'xmlMiniLanguage': lambda x, y, z: Utilities.xmlMiniLanguage(parameters, x, y, z)})

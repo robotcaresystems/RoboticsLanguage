@@ -482,6 +482,14 @@ def xmlFunction(parameters, tag, content, position=0):
     return xmlAttributes('function', content, position, attributes={'name': tag})
 
 
+def xmlFunctionDefinition(name, arguments, returns, content, position=0):
+
+  arguments_text = xml('arguments',arguments, position) if isinstance(arguments, str) else ''
+  returns_text = xml('returns',returns, position) if isinstance(returns, str) else ''
+  content_text = xml('content',content, position) if isinstance(content, str) else ''
+
+  return xmlAttributes('functionDefinition', arguments_text + returns_text + content_text, position, attributes={'name': name})
+
 
 def xmlVariable(parameters, name, position=0):
   '''creates XML for variables'''

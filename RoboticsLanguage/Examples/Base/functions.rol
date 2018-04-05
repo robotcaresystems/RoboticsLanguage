@@ -1,19 +1,36 @@
 node(
   name:"example functions",
-  definitions:block(
-    y ∈ Integers(bits:16),
-    x ∈ Integers,
-    z ∈ Reals,
-    w ∈ Reals(bits:64)
-    
-    ## defineFunction(
-      name("test"),
-      arguments( x ∈ Integers(bits:16), y ∈ Integers, z:1 ∈ Integers),
-      returnType(Integers),
-      content(
-        return(x+y+z)
-        )
-      )
-      ##
-    )
+  definitions: block(
+    y ∈ Integers = 1,
+    x ∈ Integers = 2,
+    z ∈ Integers = 3,
+    s ∈ Strings = "Hello",
+
+    define testA(x ∈ Integers, y ∈ Integers, z ∈ Integers = 1) -> Integers:
+      return(x+y+z),
+
+    define testB(x ∈ Integers) -> Integers:
+      return(x+1),
+
+    define testC(x ∈ Strings):
+      print(x),
+
+    define testD():
+      print("Does nothing"),
+
+    define testE(x ∈ Integers, y ∈ Integers) -> (Integers, Integers):
+      return(y,x)
+  ),
+
+  initialisation: block(
+    x = testA(x,y,z),
+    x = testA(x,y),
+
+    testB("Hello test 2"),
+
+    testD(),
+
+    testE(1,2)
+
+  )
 )
