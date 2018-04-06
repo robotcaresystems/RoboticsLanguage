@@ -14,6 +14,7 @@
 
 // Base libraries
 #include <ros/ros.h>
+#include <tuple>
 
 // extra global includes
 {% for library in parameters['Outputs']['RosCpp']['globalIncludes'] -%}

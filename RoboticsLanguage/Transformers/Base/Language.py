@@ -303,7 +303,7 @@ language = {
         },
         'output':
         {
-          'RosCpp':'{% if parentTag=="assign"%}tie({{children|join(", ")}}){% else %}set({{children|join(", ")}}){% endif %}'
+          'RosCpp':'{% if parentTag=="assign"%}std::tie({{children|join(", ")}}){% else %}set({{children|join(", ")}}){% endif %}'
         },
         'localisation':
         {
