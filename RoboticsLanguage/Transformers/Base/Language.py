@@ -340,12 +340,86 @@ language = {
     # base elements
 
     'function': {
+        'definition': {
+            'argumentTypes': anything,
+            'returnType': returnNothing
+        },
         'output':
         {
-            'RosCpp': '{{text}}',
-            'HTMLDocumentation': '{{text}}',
-            'HTMLGUI': '{{text}}',
-            'RoL': '{{text}}',
+            'RosCpp': '{{attributes["name"]}}({{children|join(", ")}})',
+        },
+        'documentation':
+        {
+        }
+    },
+
+    'return': {
+        'definition': {
+            'argumentTypes': anything,
+            'returnType': returnNothing
+        },
+        'output':
+        {
+          'RosCpp':'{% if children|length==1 %}return {{children|first}}{% else %}return std::make_tuple({{children|join(", ")}}){% endif %}'
+        },
+        'localisation':
+        {
+        },
+        'documentation':
+        {
+        }
+    },
+
+    'functionDefinition': {
+        'definition': {
+            'argumentTypes': anything,
+            'returnType': returnNothing
+        },
+        'output':
+        {
+            'RosCpp': '{% set returns = attribute(xpaths(code,"returns"),"RosCpp") %}{% if returns=="" %}void{% else %}{{returns}}{% endif %} {{attributes["name"]}}({{attribute(xpaths(code,"arguments"),"RosCpp")}})',
+        },
+        'documentation':
+        {
+        }
+    },
+
+    'arguments': {
+        'definition': {
+            'argumentTypes': anything,
+            'returnType': returnNothing
+        },
+        'output':
+        {
+            'RosCpp': '{{children|join(", ")}}',
+        },
+        'documentation':
+        {
+        }
+    },
+
+    'content': {
+        'definition': {
+            'argumentTypes': anything,
+            'returnType': returnNothing
+        },
+        'output':
+        {
+            'RosCpp': '{{children|join(";\n")}}',
+        },
+        'documentation':
+        {
+        }
+    },
+
+    'returns': {
+        'definition': {
+            'argumentTypes': anything,
+            'returnType': returnNothing
+        },
+        'output':
+        {
+            'RosCpp': '{% if children|length==0 %}void{% elif children|length==1 %}{{children|first}}{% else %}std::tuple<{{children|join(", ")}}>{% endif %}',
         },
         'documentation':
         {

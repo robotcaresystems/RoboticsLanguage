@@ -156,7 +156,7 @@ class TestRolParse(unittest.TestCase):
   # -------------------------------------------------------------------------------------------------
   def test_Custom_Operators(self):
     check(self,"node(define f(x in Reals)->Reals:print(x+1))",
-        '<node><functionDefinition name="f"><arguments><element><variable name="x"/><Reals/></element></arguments><returns>Reals</returns><content><print><plus><variable name="x"/><integer>1</integer></plus></print></content></functionDefinition></node>')
+        '<node><functionDefinition name="f"><arguments><element><variable name="x"/><Reals/></element></arguments><returns><Reals/></returns><content><print><plus><variable name="x"/><integer>1</integer></plus></print></content></functionDefinition></node>')
 
   # -------------------------------------------------------------------------------------------------
   #  Mini languages

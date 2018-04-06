@@ -92,7 +92,7 @@ function = ( word:a1 wws '(' wws mixed:a2 wws ')' -> xmlFunction(a1, a2, self.in
 
 part = word:a1 '[' wws values:a2 wws ']' -> xml('part',xmlVariable(a1,self.input.position)+xml('index',a2,self.input.position),self.input.position)
 
-functionDefinition  = 'define' wws word:a1 wws '(' ( values | wws ):a2 ')' ( wws '->' wws '(' values:a3 ')' wws | wws '->' wws word:a3 wws | wws:a3 ) ':' wws function:a4 -> xmlFunctionDefinition(a1,a2,a3,a4,self.input.position)
+functionDefinition  = 'define' wws word:a1 wws '(' ( values | wws ):a2 ')' ( wws '->' wws '(' values:a3 ')' wws | wws '->' wws Pmin:a3 wws | wws:a3 ) ':' wws function:a4 -> xmlFunctionDefinition(a1,a2,a3,a4,self.input.position)
 
 # definition of values, key-values, or mixed arguments
 optionDefinition = word:a1 wws ':' wws Pmin:a2 -> xmlAttributes('option',a2,self.input.position, attributes={'name':a1})

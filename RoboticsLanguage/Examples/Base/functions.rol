@@ -27,7 +27,7 @@ node(
       return(y,x)
   ),
 
-  initialisation: block(
+  initialise: block(
     x = testA(x,y,z),
     x = testA(x,y),
 

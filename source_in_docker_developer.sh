@@ -21,7 +21,8 @@ catkin build
 
 # set the development path
 mkdir -p ~/.rol
-echo "globals:\n  deploy: /root/catkin_ws/src/deploy" > ~/.rol/parameters.yaml
+echo 'globals:
+  deploy: /root/catkin_ws/src/deploy' > ~/.rol/parameters.yaml
 
 # compile the example
 rol /RoL/RoboticsLanguage/Examples/helloworld.rol -c

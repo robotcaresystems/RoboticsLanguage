@@ -48,6 +48,17 @@ namespace {{parameters['node']['name']|underscore}}
       r.sleep();
     }
   }
+
+  {% for function in code|xpaths('/node/option[@name="definitions"]/*/functionDefinition') -%}
+  /******************************* {{function|attribute('name')}} ************************************************/
+  {% set returns = function|xpaths('returns/@RosCpp')|first -%}
+  {% if returns=="" %}void{% else %}{{returns}}{% endif %} {{parameters['node']['name']|camelCase}}Class::{{function|attribute('name')}}({{function|xpaths('arguments/@RosCpp')|first}})
+  {
+    {{function|xpaths('content/@RosCpp')|first}};
+  }
+
+  {% endfor -%}
+
 }
 
 /****************************************************************************************

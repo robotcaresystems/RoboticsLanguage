@@ -40,7 +40,8 @@ class TestBaseTransformations(unittest.TestCase):
         'errors': [],
         'debug': {'parameters': False,
                   'stepCounter': 0,
-                  'step': 0
+                  'step': 0,
+                  'ignoreSemanticErrors': False
                   },
         'manifesto': {
                 'Transformers': {

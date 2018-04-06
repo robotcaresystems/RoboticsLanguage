@@ -545,10 +545,12 @@ def attributes(xml):
 
 def attribute(xml, name):
   if isinstance(xml, list):
-    xml = xml[0]
-  attributes = xml.attrib
-  if name in attributes.keys():
-    return attributes[name]
+    if len(xml) > 0:
+      xml = xml[0]
+    else:
+      return ''
+  if name in xml.attrib.keys():
+    return xml.attrib[name]
   else:
     return ''
 
@@ -585,6 +587,10 @@ def todaysDate(format):
 #  semantic type checker
 # -------------------------------------------------------------------------------------------------
 def semanticChecking(code, parameters):
+
+  # check if should ignore semantic checking
+  if parameters['debug']['ignoreSemanticErrors']:
+    return code, parameters
 
   # traverse xml and set all types for all atomic tags
   [x.set('type',b) for a,b in Types.atoms.iteritems() for x in code.xpath('//'+a)]

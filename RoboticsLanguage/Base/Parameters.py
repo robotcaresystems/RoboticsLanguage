@@ -41,9 +41,10 @@ parameters = {
         'xmlPath': '',
         'parameters': False,
         'parametersPath': '',
-        'step': 0,
+        'step': 1,
         'stepCounter': 0,
-        'stop': False
+        'stop': False,
+        'ignoreSemanticErrors': False
     },
 
     'errors': [],
@@ -108,6 +109,11 @@ command_line_flags = {
     'debug:stop': {
         'noArgument': True,
         'description': 'Stops the compiler after the step defined by \'--debug-step\''
+    },
+    'debug:ignoreSemanticErrors': {
+        'longFlag': 'ignore-semantic-errors',
+        'noArgument': True,
+        'description': 'Ignores the semantic errors and attempts to generate code. Result may not compile.'
     },
     'globals:output': {
         'flag': 'o',
