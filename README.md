@@ -63,6 +63,27 @@ or by using `roslaunch`
 roslaunch hello_world hello_world.launch
 ```
 
+## Docker image for developers
+
+If you are a developer you can get directly the standard `osrf/ros:kinetic-desktop` and then install manually the robotics language. Run the docker image:
+
+```shell
+docker run -it --rm -v `pwd`:/RoL --workdir=/RoL osrf/ros:kinetic-desktop
+```
+
+Next source the file `source_in_docker_developer.sh`:
+
+```shell
+source source_in_docker_developer.sh
+```
+
+Now you are ready to launch the example:
+
+```shell
+roslaunch hello_world hello_world.launch
+```
+
+
 ## Acknowledgements
 
 The Robotics Language is developed by Robot Care Systems B.V. (http://www.robotcaresystems.com) with the support of the **ROSIN project** (http://rosin-project.eu) and the **European Commission**. We kindly thank their support.

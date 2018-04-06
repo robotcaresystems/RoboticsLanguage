@@ -334,5 +334,62 @@ language = {
             'pt': 'atribuir'
         },
 
-    }
+    },
+
+    'negative': {
+        'definition': {
+            'argumentTypes': anything,
+            'returnType': returnSameArgumentType
+        },
+        'input': {
+            'RoL': {
+                'prefix': {'key': '-',
+                          'order': 1300}
+            }
+        },
+        'output': {
+            'RosCpp': '-({{children[0]}})',
+            'HTMLDocumentation': '-({{children[0]}})',
+            'RoL': '-({{children[0]}})',
+        },
+        'localisation':
+        {
+            'pt': 'negativo'
+        },
+        'documentation':
+        {
+            'title': 'Number negation',
+            'description': 'Normal number or variable negation. ',
+            'usage': 'a = -b'
+        }
+    },
+
+    'positive': {
+        'definition': {
+            'argumentTypes': anything,
+            'returnType': returnSameArgumentType
+        },
+        'input': {
+            'RoL': {
+                'prefix': {'key': '+',
+                          'order': 1300}
+            }
+        },
+        'output': {
+            'RosCpp': '({{children[0]}})',
+            'HTMLDocumentation': '({{children[0]}})',
+            'RoL': '({{children[0]}})',
+        },
+        'localisation':
+        {
+            'pt': 'positivo'
+        },
+        'documentation':
+        {
+            'title': 'Positive sign',
+            'description': 'Has no effect on sign.',
+            'usage': 'a = +b'
+        }
+    },
+
 }
