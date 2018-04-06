@@ -52,8 +52,8 @@ namespace {{parameters['node']['name']|underscore}}
   {% for function in code|xpaths('/node/option[@name="definitions"]/*/functionDefinition') -%}
   /******************************* {{function|attribute('name')}} ************************************************/
   {% set returns = function|xpaths('returns/@RosCpp')|first -%}
-  {% set arguments = function|xpaths('arguments/@RosCpp')|first -%}
-  {% if returns|length==0 %}void{% else %}{{returns}}{% endif %} {{parameters['node']['name']|camelCase}}Class::{{function|attribute('name')}}({% if arguments|length==0 %}void{% else %}{{arguments}}{% endif %})
+  {% set arguments = (function|xpaths('arguments/element/@RosCpp'))+(function|xpaths('arguments/*/element/@RosCpp')) -%}
+  {% if returns|length==0 %}void{% else %}{{returns}}{% endif %} {{parameters['node']['name']|camelCase}}Class::{{function|attribute('name')}}({% if arguments|length==0 %}void{% else %}{{arguments|join(", ")}}{% endif %})
   {
     {{function|xpaths('content/@RosCpp')|first}};
   }
