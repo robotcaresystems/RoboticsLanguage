@@ -2,6 +2,8 @@ node(
   name:"example types",
   definitions:block(
 
+    ## variables defined in the "definitions" optional parameter have global scope. Variables defined outside only have local scope. ##
+
     # Integers
     a ∈ ℤ = -1,
     b ∈ ℤ(bits:8),
@@ -26,5 +28,11 @@ node(
 
     # Strings
     o ∈ Strings = "3434"
-    )
+    ),
+
+    initialise:block(
+      f1 ∈ ℕ = 1,
+      f2 ∈ ℕ = 1
+      )
+
 )
