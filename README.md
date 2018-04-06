@@ -8,12 +8,12 @@ The Robotics Language (RoL) is a high level robotics programming language that g
 
 ## Install
 
-If you are a user use:
+If you are a user run:
 ```shell
 pip install .
 ```
 
-If you are a developer use:
+If you are a developer run:
 ```shell
 pip install -e .
 ```
@@ -33,21 +33,31 @@ rol -p ~/catkin_ws/src/deploy/ RoboticsLanguage/Examples/helloworld.rol -c -l
 
 ## Docker image
 
-You can test the robotics language using a docker environment. First download a standard ROS distribution
+You can test the robotics language using a docker environment. First build the docker file
 
 ```shell
-docker run -it --rm -v `pwd`:/RoL --workdir=/RoL osrf/ros:kinetic-desktop
+docker build --tag roboticslanguage .
 ```
 
-Once inside the docker container you can source the file `run_in_docker.sh`:
+Next start the container
 
+```shell
+docker run -it --rm --workdir=/root/RoboticsLanguage roboticslanguage
+```
+
+Once inside the docker container you can compile the example by sourcing the file `source_in_docker.sh`:
 
 ```shell
 source source_in_docker.sh
 ```
 
-This will perform a number of steps and eventually will compile the example node `hello_world`.
-To launch this node run:
+
+you can launch the `hello_world` node by using the RoL:
+
+```shell
+rol RoboticsLanguage/Examples/helloworld.rol -l
+```
+or by using `roslaunch`
 
 ```shell
 roslaunch hello_world hello_world.launch
