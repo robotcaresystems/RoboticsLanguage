@@ -26,7 +26,7 @@ import os
 import yaml
 import sys
 
-from . import DefaultParameters
+from . import Parameters
 from . import Utilities
 
 # paths to be searched automatically for parameters
@@ -90,7 +90,7 @@ def generateArgparseArguments(parameters, flags):
 def prepareCommandLineArguments(parameters):
 
   # remember the available choices for outputs
-  DefaultParameters.default_command_line_flags['globals:output']['choices'] = parameters['manifesto']['Outputs'].keys()
+  Parameters.command_line_flags['globals:output']['choices'] = parameters['manifesto']['Outputs'].keys()
 
   # create a subset of all the parameters
   subset = dict((x, parameters[x]) for x in ['Information', 'Transformers', 'Inputs', 'Outputs', 'globals','debug'])

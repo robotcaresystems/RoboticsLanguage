@@ -22,28 +22,43 @@ namespace {{parameters['node']['name']|underscore}}
   {{parameters['node']['name']|camelCase}}Class::{{parameters['node']['name']|camelCase}}Class():
     nh_("~")
   {
-    initNode();
   }
 
-  /******************************* initNode ********************************************/
-  void {{parameters['node']['name']|camelCase}}Class::initNode()
-  {
-    // Initialization
-    {{code|xpath('/node/initialise')|attribute('RosCpp')}}
 
+  /******************************* initialise ********************************************/
+  void {{parameters['node']['name']|camelCase}}Class::initialise()
+  {
+    {{code|xpath('/node')|option('initialise')|attribute('RosCpp')}};
+  }
+
+  /******************************* finalise ********************************************/
+  void {{parameters['node']['name']|camelCase}}Class::finalise()
+  {
+    {{code|xpath('/node')|option('finalise')|attribute('RosCpp')}};
   }
 
   /******************************* spin ************************************************/
   void {{parameters['node']['name']|camelCase}}Class::spin()
   {
     // Sets the spin rate
-    ros::Rate r({{code|xpath('/node')|optionalArgument('rate')|attribute('RosCpp')}});
+    ros::Rate r({{code|xpath('/node')|option('rate')|attribute('RosCpp')}});
     while(ros::ok())
     {
       ros::spinOnce();
       r.sleep();
     }
   }
+
+  {% for function in code|xpaths('/node/option[@name="definitions"]/*/functionDefinition') -%}
+  /******************************* {{function|attribute('name')}} ************************************************/
+  {% set returns = function|xpaths('returns/@RosCpp')|first -%}
+  {% set arguments = (function|xpaths('arguments/element/@RosCpp'))+(function|xpaths('arguments/*/element/@RosCpp')) -%}
+  {% if returns|length==0 %}void{% else %}{{returns}}{% endif %} {{parameters['node']['name']|camelCase}}Class::{{function|attribute('name')}}({% if arguments|length==0 %}void{% else %}{{arguments|join(", ")}}{% endif %})
+  {
+    {{function|xpaths('content/@RosCpp')|first}};
+  }
+  {% endfor -%}
+
 }
 
 /****************************************************************************************
@@ -57,8 +72,14 @@ int main(int argc, char **argv)
   // Create the node object
   {{parameters['node']['name']|underscore}}::{{parameters['node']['name']|camelCase}}Class instance;
 
+  // initialise
+  instance.initialise();
+
   // Spin the node
   instance.spin();
+
+  // finalise
+  instance.finalise();
 
   return 0;
 }

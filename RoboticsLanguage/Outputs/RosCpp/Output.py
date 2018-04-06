@@ -26,27 +26,43 @@ import sys
 import subprocess
 # import dpath.util
 
+
+def runPreparations(code, parameters):
+
+  # save the node name for the templates
+  parameters['node']['name'] = Utilities.option(code.xpath('/node')[0], 'name').text
+
+  # find a file system safe name
+  node_name_underscore = Utilities.underscore(parameters['node']['name'])
+
+  # list of c++ libraries to include based on the existance of specific tags in the code
+  include_libraries = {'Integers':'cstdint',
+                       'Strings':'string'}
+
+  # initialise the list of libraries
+  parameters['Outputs']['RosCpp']['globalIncludes'] = set()
+
+  # add only the required libraries
+  for tag, library in include_libraries.iteritems():
+    if len(code.xpath('//' + tag)) > 0:
+      parameters['Outputs']['RosCpp']['globalIncludes'].add(library)
+
+  return code, parameters, node_name_underscore
+
+
 def output(code, parameters):
 
+  # check if node tag is present
   if len(code.xpath('/node')) < 1:
     Utilities.logging.warning('No `node` element found. ROS C++ will not generate code!')
     return
 
-  # get the node name
-  node_name = Utilities.optionalArgument(code.xpath('/node')[0],'name').text
-
-  # save the name for the templates
-  parameters['node']['name'] = node_name
-  # @NOTE why is dpath not working?
-  # dpath.util.set(parameters,'/node/name',node_name)
-
-  # use the node name on the file patterns
-  node_name_underscore = Utilities.underscore(node_name)
-  filepatterns = {'nodename': node_name_underscore}
+  # preprocess the code to provide information for templares
+  code, parameters, node_name_underscore = runPreparations(code, parameters)
 
   # run template engine to generate node code
-  if not Utilities.templateEngine(code, parameters, filepatterns, os.path.dirname(
-      __file__) + '/templates', parameters['globals']['deploy']):
+  if not Utilities.templateEngine(code, parameters, {'nodename': node_name_underscore}, os.path.dirname(
+          __file__) + '/templates', parameters['globals']['deploy']):
     sys.exit(1)
 
   # if the flag compile is set then run catkin

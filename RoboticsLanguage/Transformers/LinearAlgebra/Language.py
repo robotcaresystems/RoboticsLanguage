@@ -21,25 +21,28 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-from RoboticsLanguage.Base.Types import manySameNumbersOrStrings
-from RoboticsLanguage.Base.Types import returnSameArgumentType
+from RoboticsLanguage.Base.Types import manySameNumbersStrings, manySameNumbers, manySameNumbersStringsBooleans, anything, manySameBooleans
+from RoboticsLanguage.Base.Types import returnSameArgumentType, returnNothing, returnBoolean
 
 language = {
 
     # math
     'times': {
+        'definition': {
+            'argumentTypes': manySameNumbers,
+            'returnType': returnSameArgumentType
+        },
         'input': {
             'RoL': {
-                'infix': {'key':'*',
-                          'order': 1000,
-                          'flat':True}
+                'infix': {'key': '*',
+                          'order': 1200,
+                          'flat': True}
             }
         },
         'output': {
             'RosCpp': '({{children|join(" * ")}})',
-            'HTMLDocumentation': 'print({{children|join(" * ")}})',
-            'HTMLGUI': '',
-            'RoL': 'print({{children|join(" * ")}})',
+            'HTMLDocumentation': '({{children|join(" * ")}})',
+            'RoL': '({{children|join(" * ")}})',
         },
         'localisation':
         {
@@ -53,18 +56,21 @@ language = {
         }
     },
     'divide': {
+        'definition': {
+            'argumentTypes': manySameNumbers,
+            'returnType': returnSameArgumentType
+        },
         'input': {
             'RoL': {
-                'infix': {'key':'/',
-                'order': 1000,
-                'flat':True}
+                'infix': {'key': '/',
+                          'order': 1200,
+                          'flat': True}
             }
         },
         'output': {
             'RosCpp': '({{children|join(" / ")}})',
-            'HTMLDocumentation': 'print({{children|join(" / ")}})',
-            'HTMLGUI': '',
-            'RoL': 'print({{children|join(" / ")}})',
+            'HTMLDocumentation': '({{children|join(" / ")}})',
+            'RoL': '({{children|join(" / ")}})',
         },
         'localisation':
         {
@@ -74,14 +80,14 @@ language = {
 
     'plus': {
         'definition': {
-            'argumentTypes': manySameNumbersOrStrings,
+            'argumentTypes': manySameNumbersStrings,
             'returnType': returnSameArgumentType
         },
         'input': {
             'RoL': {
-                'infix': {'key':'+',
-                'order': 900,
-                'flat':True}
+                'infix': {'key': '+',
+                          'order': 1100,
+                          'flat': True}
             }
         },
         'output': {
@@ -96,11 +102,15 @@ language = {
         },
     },
     'minus': {
+        'definition': {
+            'argumentTypes': manySameNumbers,
+            'returnType': returnSameArgumentType
+        },
         'input': {
             'RoL': {
-                'infix': {'key':'-',
-                'order': 900,
-                'flat':True}
+                'infix': {'key': '-',
+                          'order': 1100,
+                          'flat': True}
             }
         },
         'output': {
@@ -116,10 +126,14 @@ language = {
     },
 
     'larger': {
+        'definition': {
+            'argumentTypes': manySameNumbers,
+            'returnType': returnBoolean
+        },
         'input': {
             'RoL': {
-                'infix': {'key':'>',
-                'order': 800}
+                'infix': {'key': '>',
+                          'order': 800}
             }
         },
         'output': {
@@ -134,10 +148,14 @@ language = {
         },
     },
     'smaller': {
+        'definition': {
+            'argumentTypes': manySameNumbers,
+            'returnType': returnBoolean
+        },
         'input': {
             'RoL': {
-                'infix': {'key':'<',
-                'order': 800}
+                'infix': {'key': '<',
+                          'order': 800}
             }
         },
         'output': {
@@ -152,10 +170,14 @@ language = {
         },
     },
     'largerEqual': {
+        'definition': {
+            'argumentTypes': manySameNumbers,
+            'returnType': returnBoolean
+        },
         'input': {
             'RoL': {
-                'infix': {'key':['>=', '≥'],
-                'order': 800}
+                'infix': {'key': ['>=', '≥'],
+                          'order': 800}
             }
         },
         'output': {
@@ -170,10 +192,14 @@ language = {
         },
     },
     'smallerEqual': {
+        'definition': {
+            'argumentTypes': manySameNumbers,
+            'returnType': returnBoolean
+        },
         'input': {
             'RoL': {
-                'infix': {'key':['<=', '≤'],
-                'order': 800}
+                'infix': {'key': ['<=', '≤'],
+                          'order': 800}
             }
         },
         'output': {
@@ -189,10 +215,14 @@ language = {
     },
 
     'equal': {
+        'definition': {
+            'argumentTypes': manySameNumbersStringsBooleans,
+            'returnType': returnBoolean
+        },
         'input': {
             'RoL': {
-                'infix': {'key':['==', '≡'],
-                'order': 700}
+                'infix': {'key': ['==', '≡'],
+                          'order': 700}
             }
         },
         'output': {
@@ -207,10 +237,14 @@ language = {
         },
     },
     'notEqual': {
+        'definition': {
+            'argumentTypes': manySameNumbersStringsBooleans,
+            'returnType': returnBoolean
+        },
         'input': {
             'RoL': {
-                'infix': {'key':['!=', '≠'],
-                'order': 700}
+                'infix': {'key': ['!=', '≠'],
+                          'order': 700}
             }
         },
         'output': {
@@ -227,11 +261,15 @@ language = {
 
 
     'and': {
+        'definition': {
+            'argumentTypes': manySameBooleans,
+            'returnType': returnBoolean
+        },
         'input': {
             'RoL': {
-                'infix': {'key':['and', '∧'],
-                'order': 600,
-                'flat':True}
+                'infix': {'key': ['and', '∧'],
+                          'order': 600,
+                          'flat': True}
             }
         },
         'output': {
@@ -252,11 +290,15 @@ language = {
         }
     },
     'or': {
+        'definition': {
+            'argumentTypes': manySameBooleans,
+            'returnType': returnBoolean
+        },
         'RoL': {
             'input': {
-                'infix': {'key':['or', '∨'],
-                'order': 600,
-                'flat':True}
+                'infix': {'key': ['or', '∨'],
+                          'order': 400,
+                          'flat': True}
             }
         },
         'output': {
@@ -271,10 +313,14 @@ language = {
         },
     },
     'assign': {
+        'definition': {
+            'argumentTypes': anything,
+            'returnType': returnNothing
+        },
         'input': {
             'RoL': {
-                'infix': {'key':'=',
-                'order': 500}
+                'infix': {'key': '=',
+                          'order': 100}
             }
         },
         'output': {
@@ -288,5 +334,62 @@ language = {
             'pt': 'atribuir'
         },
 
-    }
+    },
+
+    'negative': {
+        'definition': {
+            'argumentTypes': anything,
+            'returnType': returnSameArgumentType
+        },
+        'input': {
+            'RoL': {
+                'prefix': {'key': '-',
+                          'order': 1300}
+            }
+        },
+        'output': {
+            'RosCpp': '-({{children[0]}})',
+            'HTMLDocumentation': '-({{children[0]}})',
+            'RoL': '-({{children[0]}})',
+        },
+        'localisation':
+        {
+            'pt': 'negativo'
+        },
+        'documentation':
+        {
+            'title': 'Number negation',
+            'description': 'Normal number or variable negation. ',
+            'usage': 'a = -b'
+        }
+    },
+
+    'positive': {
+        'definition': {
+            'argumentTypes': anything,
+            'returnType': returnSameArgumentType
+        },
+        'input': {
+            'RoL': {
+                'prefix': {'key': '+',
+                          'order': 1300}
+            }
+        },
+        'output': {
+            'RosCpp': '({{children[0]}})',
+            'HTMLDocumentation': '({{children[0]}})',
+            'RoL': '({{children[0]}})',
+        },
+        'localisation':
+        {
+            'pt': 'positivo'
+        },
+        'documentation':
+        {
+            'title': 'Positive sign',
+            'description': 'Has no effect on sign.',
+            'usage': 'a = +b'
+        }
+    },
+
 }

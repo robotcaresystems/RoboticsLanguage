@@ -22,7 +22,7 @@
 import unittest
 from lxml import etree
 from RoboticsLanguage.Base import Transformations
-from RoboticsLanguage.Base.Types import singleString, manyStrings, manyCodeBlocks
+from RoboticsLanguage.Base.Types import singleString, manyStrings, anything
 
 
 # =================================================================================================
@@ -36,13 +36,12 @@ class TestBaseTransformations(unittest.TestCase):
     xml = etree.fromstring('<node><print><string>hello</string></print></node>')
 
     parameters = {
-        'text': '12345678910',
+        'text': 'node(print("hello"))',
         'errors': [],
         'debug': {'parameters': False,
-                  'xmlAfterTransformations': False,
-                  'xmlBeforeTransformations': False,
                   'stepCounter': 0,
-                  'step': 0
+                  'step': 0,
+                  'ignoreSemanticErrors': False
                   },
         'manifesto': {
                 'Transformers': {
@@ -67,7 +66,7 @@ class TestBaseTransformations(unittest.TestCase):
                 'definition': {
                     'optionalArguments': {'name': singleString},
                     'optionalDefaults': {'name': 'unnamed'},
-                    'argumentTypes': manyCodeBlocks,
+                    'argumentTypes': anything,
                     'returnType': lambda x: 'Nothing'
                 },
             },
@@ -76,14 +75,14 @@ class TestBaseTransformations(unittest.TestCase):
                     'optionalArguments': {'level': singleString},
                     'optionalDefaults': {'level': 'info'},
                     'argumentTypes': manyStrings,
-                    'returnType': lambda x: 'CodeBlock'
+                    'returnType': lambda x: 'block'
                 },
                 'output':  {
                     'RosCpp': 'ROS_INFO({{children|first}})',
                     'RoL': 'print({{children|first}})',
                 }
             },
-            'optionalArgument': {
+            'option': {
                 'output': {
                     'RosCpp': '"{{text}}"',
                     'RoL': '"{{text}}"',
@@ -107,7 +106,7 @@ class TestBaseTransformations(unittest.TestCase):
     xml_code, parameters = Transformations.Apply(xml, parameters)
 
     self.assertEqual(etree.tostring(xml_code),
-                     '<node type="Nothing"><print type="CodeBlock" RoL="print(&quot;hello&quot;)" RosCpp="ROS_INFO(&quot;hello&quot;)"><string type="Strings" RoL="&quot;hello&quot;" RosCpp="&quot;hello&quot;">hello</string><optionalArgument RoL="&quot;&quot;" RosCpp="&quot;&quot;"><name RoL="&quot;level&quot;" RosCpp="&quot;level&quot;">level</name><string type="Strings" RoL="&quot;info&quot;" RosCpp="&quot;info&quot;">info</string></optionalArgument></print><optionalArgument RoL="&quot;&quot;" RosCpp="&quot;&quot;"><name RoL="&quot;name&quot;" RosCpp="&quot;name&quot;">name</name><string type="Strings" RoL="&quot;unnamed&quot;" RosCpp="&quot;unnamed&quot;">unnamed</string></optionalArgument></node>')
+                     '<node type="Nothing"><print type="block" RoL="print(&quot;hello&quot;)" RosCpp="ROS_INFO(&quot;hello&quot;)"><string type="Strings" RoL="&quot;hello&quot;" RosCpp="&quot;hello&quot;">hello</string><option name="level" RoL="&quot;&quot;" RosCpp="&quot;&quot;"><string type="Strings" RoL="&quot;info&quot;" RosCpp="&quot;info&quot;">info</string></option></print><option name="name" RoL="&quot;&quot;" RosCpp="&quot;&quot;"><string type="Strings" RoL="&quot;unnamed&quot;" RosCpp="&quot;unnamed&quot;">unnamed</string></option></node>')
 
 
 if __name__ == '__main__':

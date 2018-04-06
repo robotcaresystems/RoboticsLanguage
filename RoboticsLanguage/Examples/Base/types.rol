@@ -1,0 +1,30 @@
+node(
+  name:"example types",
+  definitions:block(
+
+    # Integers
+    a ∈ Integers = -1,
+    b ∈ Integers(bits:8),
+    c ∈ Integers(bits:16),
+    d ∈ Integers(bits:32),
+    e ∈ Integers(bits:64),
+
+    # Naturals (unsigned integers)
+    f ∈ Naturals = 1,
+    g ∈ Naturals(bits:8),
+    h ∈ Naturals(bits:16),
+    i ∈ Naturals(bits:32),
+    j ∈ Naturals(bits:64),
+
+    # reals
+    k ∈ Reals = 1.3,
+    l ∈ Reals(bits:23),
+    m ∈ Reals(bits:64),
+
+    # booleans
+    n ∈ Booleans = true,
+
+    # strings
+    o ∈ Strings = "3434"
+    )
+)

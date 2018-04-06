@@ -1,0 +1,5 @@
+node(
+  name:"example precedence",
+  initialise:
+    a ∈ Booleans = 1 + 2 * 3 >= -4 and true
+)

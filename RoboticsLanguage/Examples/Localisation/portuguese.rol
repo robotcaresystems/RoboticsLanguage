@@ -1,5 +1,4 @@
 nó(
-  inicializar(
+  inicializar:
     imprimir("Olá mundo!")
-  )
 )

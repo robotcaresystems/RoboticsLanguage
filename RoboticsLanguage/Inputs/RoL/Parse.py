@@ -5,7 +5,8 @@
 #   Parse.py: The parser for the Robotics Language
 #
 #   @NOTE the RoL parser currently works by generating the composition of
-#   strings of text (see functions `xml` and `miniLanguage`) that are eventually parsed into XML.
+#   strings of text (see functions `Utilities.xml` and `Utilities.xmlMiniLanguage`) that are eventually
+#   parsed into XML.
 #   This makes the implementation simple but my incur some performance issues when mini languages
 #   are used. Mini languages return XML objects that are converted to text to integrate into the language.
 #   When this parser returns the result is converts everything into an XML object, which means that the mini
@@ -37,34 +38,19 @@ import funcy
 
 # @TODO generalise when RoL parameters become dictionaries
 def nodeParametersToDictionary(xml):
+  '''Extracts the optional parameters given in the `node` function and adds them to the parameters dictionary'''
   return {'node': {key: value.text for (key, value) in Utilities.optionalArguments(xml).iteritems()}}
 
 
-# creates XML text for entry
-def xml(tag, content, position=0):
-  text = ''.join(content) if isinstance(content, list) else content
-  return '<' + tag + ' p="' + str(position) + '" >' + text + '</' + tag + '>'
-
-
-def miniLanguage(key, text, position, parameters):
-
-  try:
-    code, parameters = Utilities.importModule(
-        'Inputs', key, 'Parse').Parse.parse(text, parameters)
-    result = etree.tostring(code)
-    return result
-  except:
-    Utilities.logging.error("Failed to parse mini-language " + key)
-
 
 def prepareGrammarEngine(parameters):
-
-  keywords = {}
-
-  # load language definitions for all modules
-  for transform in parameters['manifesto']['Transformers'].keys():
-    keywords.update(Utilities.importModule(
-        'Transformers', transform, 'Language').Language.language)
+  '''Build the grammer for the robotics language. Can be cached'''
+  # keywords = {}
+  #
+  # # load language definitions for all modules
+  # for transform in parameters['manifesto']['Transformers'].keys():
+  #   keywords.update(Utilities.importModule(
+  #       'Transformers', transform, 'Language').Language.language)
 
   # the base grammar defines atomic elements, special elements, and the flow of precedence
   base_grammar = r"""
@@ -79,7 +65,7 @@ longComment = ('##'  <(~('##') anything)+>:c  '##' -> xml('comment',str(c), self
 shortComment = ('#'  <(~('\n') anything)+>:c  '\n' -> xml('comment',str(c), self.input.position))
 
 # types
-variable = word:a -> xml('variable', a, self.input.position)
+variable = word:a -> xmlVariable(a,self.input.position)
 
 type = ( number | string | boolean )
 
@@ -96,18 +82,20 @@ real =  < ('-' wws)? (( '.' digits | digits '.' digits? ) ( ('e' | 'E') ('+' | '
               ) >:x -> xml('real',str(x), self.input.position)
 
 # special functions, brackets
-language = word:n wws '<{' code:l '}>' -> miniLanguage(n, l, self.input.position)
+language = word:n wws '<{' code:l '}>' -> xmlMiniLanguage(n, l, self.input.position)
 
 code = <(~('}>') anything)+>
 
-function = ( word:a1 wws '(' wws mixed:a2 wws ')' -> xml(a1, a2, self.input.position)
-           | word:a1 wws '(' wws ')' -> xml(a1, '', self.input.position)
+function = ( word:a1 wws '(' wws mixed:a2 wws ')' -> xmlFunction(a1, a2, self.input.position)
+           | word:a1 wws '(' wws ')' -> xmlFunction(a1, '', self.input.position)
            )
 
-part = word:a1 '[' wws values:a2 wws ']' -> xml('part',xml('variable',a1,self.input.position)+xml('index',a2,self.input.position),self.input.position)
+part = word:a1 '[' wws values:a2 wws ']' -> xml('part',xmlVariable(a1,self.input.position)+xml('index',a2,self.input.position),self.input.position)
+
+functionDefinition  = 'define' wws word:a1 wws '(' ( values | wws ):a2 ')' ( wws '->' wws '(' values:a3 ')' wws | wws '->' wws Pmin:a3 wws | wws:a3 ) ':' wws function:a4 -> xmlFunctionDefinition(a1,a2,a3,a4,self.input.position)
 
 # definition of values, key-values, or mixed arguments
-optionDefinition = word:a1 wws ':' wws Pmin:a2 -> xml('optionalArgument',xml('name',a1,self.input.position)+a2,self.input.position)
+optionDefinition = word:a1 wws ':' wws Pmin:a2 -> xmlAttributes('option',a2,self.input.position, attributes={'name':a1})
 valuesDefinition = Pmin:a1 (wws ',' wws Pmin )+:a2 -> ''.join([a1]+a2)
 mixedDefinition = option:a1 (wws ',' wws option )+:a2 -> ''.join([a1]+a2)
 keyValuesDefinition = optionDefinition:a1 (wws ',' wws optionDefinition )+:a2 -> ''.join([a1]+a2)
@@ -123,10 +111,10 @@ parenthesis = '(' wws Pmin:a wws ')' -> a
  # the structure of the main element
   main_loop_start = r"""
 # main loop
-main = wws ( language
+main = wws ( functionDefinition
+         | language
          | function
-         | part
-         | """
+         | part"""
 
   main_loop_end = r"""
          | type
@@ -135,7 +123,8 @@ main = wws ( language
 """
 
   # extract the definitions from the language (i.e. remove the 'input/RoL' part from the path)
-  definitions = Utilities.ExtractLanguageDefinitions(keywords, 'input', 'RoL')
+  definitions = Utilities.ExtractLanguageDefinitions(
+      parameters['language'], 'input', 'RoL')
 
   # create pre/in/post fix part of the grammar
   fix_text, max_precedence = Utilities.CreatePreInPostFixGrammar(definitions)
@@ -144,7 +133,10 @@ main = wws ( language
   bracket_text, bracket_keys = Utilities.CreateBracketGrammar(definitions)
 
   # add the brackets to the main list of elements
-  bracket_keys_text = '\n         | '.join(bracket_keys)
+  if len(bracket_keys) > 0:
+    bracket_keys_text = '         | ' + '\n         | '.join(bracket_keys)
+  else:
+    bracket_keys_text = ''
 
   # set the element with maximum precedence
   max_precedence_text = '\nP' + \
@@ -157,24 +149,8 @@ main = wws ( language
   return grammar
 
 
-def semanticTransformations(xml):
-  # look for all the variables in the definitions block
-  variables_defined = xml.xpath('/node/definitions/element/variable[1]/text()')
-
-  # from the previous list, find tags with these variable names
-  variables_used = funcy.flatten(
-      map(lambda x: xml.xpath('//' + x), variables_defined))
-
-  # rename the variable tag to 'function' and add the name to the attribute 'name'
-  for variable in variables_used:
-    name = variable.tag
-    variable.tag = 'function'
-    variable.attrib['name'] = name
-
-  return xml
-
-
 def parse(text, parameters):
+  '''Main parser for the robotics language'''
 
   # @TODO need to reimplement language localisation
   # load cached language and grammar or create from scratch if needed
@@ -187,8 +163,12 @@ def parse(text, parameters):
 
   # @NOTE could not pickle the language itself to cache. Is there a way to solve this?
   # create the grammar
-  language = parsley.makeGrammar(grammar, {'xml': xml,
-                                           'miniLanguage': lambda x, y, z: miniLanguage(x, y, z, parameters)})
+  language = parsley.makeGrammar(grammar, {'xml': Utilities.xml,
+                                           'xmlAttributes': Utilities.xmlAttributes,
+                                           'xmlFunctionDefinition': Utilities.xmlFunctionDefinition,
+                                           'xmlVariable': lambda x, y: Utilities.xmlVariable(parameters, x, y),
+                                           'xmlFunction': lambda x, y, z: Utilities.xmlFunction(parameters, x, y, z),
+                                           'xmlMiniLanguage': lambda x, y, z: Utilities.xmlMiniLanguage(parameters, x, y, z)})
 
   try:
     # parse the text against the grammar
@@ -209,8 +189,5 @@ def parse(text, parameters):
   # If the node has parameters, then add them to the global parameters dictionary
   parameters = Utilities.mergeDictionaries(
       nodeParametersToDictionary(parsed_xml), parameters)
-
-  # apply semantic changes
-  parsed_xml = semanticTransformations(parsed_xml)
 
   return parsed_xml, parameters

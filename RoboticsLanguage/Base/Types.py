@@ -27,22 +27,41 @@ atoms = {
   'integer':'Integers'
   }
 
-def manySameNumbersOrStrings(x):
-  '''number or string'''
-  return all(map(lambda y: y in ['Reals', 'Integers'], x)) or all(map(lambda y: y == 'Strings', x))
+def manySameNumbers(x):
+  '''number'''
+  return [all(map(lambda y: y in ['Reals', 'Integers'], x))]
 
+def manySameNumbersStrings(x):
+  '''number or string'''
+  return [all(map(lambda y: y in ['Reals', 'Integers'], x)) or all(map(lambda y: y == 'Strings', x))]
+
+def manySameNumbersStringsBooleans(x):
+  '''number or string or boolean'''
+  return [all(map(lambda y: y in ['Reals', 'Integers'], x)) or all(map(lambda y: y == 'Strings', x)) or all(map(lambda y: y == 'Booleans', x))]
+
+def manySameBooleans(x):
+  '''boolean'''
+  return [all(map(lambda y: y == 'Booleans', x))]
 
 def singleString(x):
   '''string'''
-  return len(x) == 1 and x[0] == 'Strings'
+  return [len(x) == 1 and x[0] == 'Strings']
 
 def singleReal(x):
   '''real'''
-  return len(x) == 1 and (x[0] == 'Reals' or x[0] == 'Integers')
+  return [len(x) == 1 and (x[0] == 'Reals' or x[0] == 'Integers')]
+
+def singleInteger(x):
+  '''integer'''
+  return [len(x) == 1 and (x[0] == 'Integers')]
+
+def singleNatural(x):
+  '''natural'''
+  return [len(x) == 1 and (x[0] == 'Naturals')]
 
 def singleBoolean(x):
   '''boolean'''
-  return len(x) == 1 and x[0] == 'Booleans'
+  return [len(x) == 1 and x[0] == 'Booleans']
 
 def manyStrings(x):
   '''string , ... , string'''
@@ -53,8 +72,19 @@ def manyExpressions(x):
   return [True]
 
 def manyCodeBlocks(x):
-  '''code block , ... , code block'''
-  return [ xi == 'CodeBlock' for xi in x ]
+  '''block'''
+  return [ xi == 'Block' for xi in x ]
+
+def codeBlock(x):
+  '''block'''
+  return [True]
+
+def anything(x):
+  '''anything'''
+  return [True]
+
+# -----------------------------------------------------------------
+# return functions
 
 def returnNothing(x):
   '''nothing'''
@@ -62,7 +92,11 @@ def returnNothing(x):
 
 def returnCodeBlock(x):
   '''code block'''
-  return 'CodeBlock'
+  return 'Block'
 
 def returnSameArgumentType(x):
   return x[0]
+
+def returnBoolean(x):
+  '''boolean'''
+  return 'Booleans'

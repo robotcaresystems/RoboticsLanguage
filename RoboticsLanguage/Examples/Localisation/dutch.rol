@@ -1,5 +1,4 @@
 node(
-  initialiseren(
+  initialiseren:
     afdrukken("hallo wereld")
-  )
 )

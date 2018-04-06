@@ -5,9 +5,9 @@
 - [-] RoL Language
   - [x] infix
   - [x] prefix
-  - [ ] postfix
-  - [x] pre-in-postfix
-  - [x] custom
+  - [x] postfix
+  - [x] bracket
+  - [ ] custom
 - [x] Caching
   - [x] functionality
   - [x] Refresh cache

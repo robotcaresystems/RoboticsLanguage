@@ -184,6 +184,12 @@ def errorArgumentTypes(code, parameters, argument_types):
   logger.error(formatSemanticTypeErrorMessage(parameters['text'], parameters, getTextMinimumPositionXML(code), 'Type', message))
 
 
+def errorLanguageDefinition(code, parameters):
+  message  = 'Language element "' + code.tag +'" ill defined. Please check definition.'
+
+  logger.error(formatSemanticTypeErrorMessage(parameters['text'], parameters, getTextMinimumPositionXML(code), 'Type', message))
+
+
 # -------------------------------------------------------------------------------------------------
 #  Decorators for performance and debug
 # -------------------------------------------------------------------------------------------------
@@ -446,7 +452,68 @@ def createFolderForFile(filename):
 
 
 # -------------------------------------------------------------------------------------------------
-#  XML utilities
+#  XML utilities used in parsers
+# -------------------------------------------------------------------------------------------------
+
+
+def xml(tag, content, position=0):
+  '''creates XML text for entry'''
+  text = ''.join(content) if isinstance(content, list) else content
+  return '<' + tag + ' p="' + str(position) + '" >' + text + '</' + tag + '>'
+
+
+
+def xmlAttributes(tag, content, position=0, attributes={}):
+  '''creates XML text for entry with attributes'''
+  attributes_text = ' '.join(
+      [key + '="' + str(value) + '"' for key, value in attributes.iteritems()])
+  text = ''.join(content) if isinstance(content, list) else content
+  return '<' + tag + ' p="' + str(position) + '" ' + attributes_text + '>' + text + '</' + tag + '>'
+
+
+
+def xmlFunction(parameters, tag, content, position=0):
+  '''creates XML for functions'''
+  if tag in parameters['language'].keys():
+    # its a known function
+    return xml(tag, content, position)
+  else:
+    # its not part of the language
+    return xmlAttributes('function', content, position, attributes={'name': tag})
+
+
+def xmlFunctionDefinition(name, arguments, returns, content, position=0):
+
+  arguments_text = xml('arguments',arguments, position) if isinstance(arguments, str) else ''
+  returns_text = xml('returns',returns, position) if isinstance(returns, str) else ''
+  content_text = xml('content',content, position) if isinstance(content, str) else ''
+
+  return xmlAttributes('functionDefinition', arguments_text + returns_text + content_text, position, attributes={'name': name})
+
+
+def xmlVariable(parameters, name, position=0):
+  '''creates XML for variables'''
+  if name in parameters['language'].keys():
+    # its a known function
+    return xmlFunction(parameters, name, '', position)
+  else:
+    # its not part of the language
+    return xmlAttributes('variable', '', position, attributes={'name': name})
+
+
+def xmlMiniLanguage(parameters, key, text, position):
+  '''Calls a different parser to process inline mini languages'''
+  try:
+    code, parameters = importModule(
+        'Inputs', key, 'Parse').Parse.parse(text, parameters)
+    result = etree.tostring(code)
+    return result
+  except:
+    logging.error("Failed to parse mini-language " + key)
+
+
+# -------------------------------------------------------------------------------------------------
+#  XML utilities used in code generators
 # -------------------------------------------------------------------------------------------------
 
 def xpath(xml, path):
@@ -478,22 +545,24 @@ def attributes(xml):
 
 def attribute(xml, name):
   if isinstance(xml, list):
-    xml = xml[0]
-  attributes = xml.attrib
-  if name in attributes.keys():
-    return attributes[name]
+    if len(xml) > 0:
+      xml = xml[0]
+    else:
+      return ''
+  if name in xml.attrib.keys():
+    return xml.attrib[name]
   else:
     return ''
 
 
-def optionalArgument(xml, name):
+def option(xml, name):
   try:
     return optionalArguments(xml)[name]
   except:
     return None
 
 def optionalArguments(xml):
-  return {a.xpath('name/text()')[0]: a.xpath('*[not(self::name)]')[0] for a in xml.xpath('optionalArgument')}
+  return {a.attrib['name']: a.xpath('*')[0] for a in xml.xpath('option')}
 
 
 def getTextMinimumPositionXML(xml):
@@ -519,6 +588,10 @@ def todaysDate(format):
 # -------------------------------------------------------------------------------------------------
 def semanticChecking(code, parameters):
 
+  # check if should ignore semantic checking
+  if parameters['debug']['ignoreSemanticErrors']:
+    return code, parameters
+
   # traverse xml and set all types for all atomic tags
   [x.set('type',b) for a,b in Types.atoms.iteritems() for x in code.xpath('//'+a)]
 
@@ -534,52 +607,66 @@ def semanticTypeChecker(code,parameters):
   if code.tag in Types.atoms:
     return code, parameters
 
-  # @TODO traverse also the optionalArguments. Maybe define it as a tag for generality
-  # first recursively traverse all children elements that are not optionalArgument
-  for element in code.xpath('*[not(self::optionalArgument)]'):
-    element, parameters = semanticTypeChecker(element,parameters)
+  # if the element is part of the language
+  if code.tag in parameters['language']:
 
-  # for this element find the parameters and arguments
-  parameter_names = code.xpath('optionalArgument/name/text()')
-  parameter_types = code.xpath('optionalArgument/*/@type')
-  argument_types = code.xpath('*/@type')
-  keys = parameters['language']
+    # first recursively traverse all children elements that are not option
+    for element in code.xpath('*[not(self::option)]'):
+      element, parameters = semanticTypeChecker(element,parameters)
 
-  # check optional arguments
-  if all([x in keys[code.tag]['definition']['optionalArguments'].keys() for x in parameter_names]):
+    # then traverse the optional arguments.
+    for element in code.xpath('option/*[not(self::name)]'):
+      element, parameters = semanticTypeChecker(element,parameters)
 
-    # check types for optional arguments
-    if not all(map(lambda x,y: keys[code.tag]['definition']['optionalArguments'][x]([y]) , parameter_names, parameter_types)):
-      # Error: incorrect types for optional arguments!
-      errorOptionalArgumentTypes(code, parameters, parameter_names, parameter_types)
+    # for this element find the parameters and arguments
+    parameter_names = code.xpath('option/@name')
+    parameter_types = code.xpath('option/@type')
+    argument_types = code.xpath('*/@type')
+    keys = parameters['language']
+
+    # check optional arguments
+    try:
+      if 'optionalArguments' in keys[code.tag]['definition']:
+        if all([x in keys[code.tag]['definition']['optionalArguments'].keys() for x in parameter_names]):
+
+          # check types for optional arguments
+          if not all(map(lambda x,y: keys[code.tag]['definition']['optionalArguments'][x]([y]) , parameter_names, parameter_types)):
+            # Error: incorrect types for optional arguments!
+            errorOptionalArgumentTypes(code, parameters, parameter_names, parameter_types)
+        else:
+          # Error: optional argument not defined
+          errorOptionalArgumentNotDefined(code, parameters, parameter_names)
+
+      # check mandatory argument types
+      if all(keys[code.tag]['definition']['argumentTypes'](argument_types)):
+
+        # compute resulting type
+        code.attrib['type'] = keys[code.tag]['definition']['returnType'](argument_types)
+
+      else:
+        # Error: mandatory argument missing or incorrect
+        errorArgumentTypes(code, parameters, argument_types)
+    except:
+      errorLanguageDefinition(code, parameters)
+      sys.exit(1)
+
+    return code, parameters
   else:
-    # Error: optional argument not defined
-    errorOptionalArgumentNotDefined(code, parameters, parameter_names)
-
-  # check mandatory argument types
-  if all(keys[code.tag]['definition']['argumentTypes'](argument_types)):
-
-    # compute resulting type
-    code.attrib['type'] = keys[code.tag]['definition']['returnType'](argument_types)
-
-  else:
-    # Error: mandatory argument missing or incorrect
-    errorArgumentTypes(code, parameters, argument_types)
-
-  return code, parameters
+    # @TODO type check variables and functions
+    return code, parameters
 
 
 def fillDefaultsInOptionalArguments(code, parameters):
   '''Fill in defaults in optional arguments in case they are not explicitely defined.'''
 
-  for element in code.xpath('*[not(self::optionalArgument)]'):
+  for element in code.xpath('*[not(self::option)]'):
     __, parameters = fillDefaultsInOptionalArguments(element, parameters)
 
   # if this tag has optional parameters defined
   if len(dpath.util.values(parameters['language'][code.tag],'definition/optionalArguments')) > 0:
 
     # find all optional parameters
-    parameter_names = code.xpath('optionalArgument/name/text()')
+    parameter_names = code.xpath('option/@name')
 
     # get the list of missing parameters
     missing_parameters = list(set(parameters['language'][code.tag]['definition']['optionalArguments'].keys()) - set(parameter_names))
@@ -587,13 +674,13 @@ def fillDefaultsInOptionalArguments(code, parameters):
     for parameter in missing_parameters:
 
       # create XML structure
-      optional_argument_tag = etree.Element('optionalArgument')
-      name_tag = etree.Element('name')
+      optional_argument_tag = etree.Element('option')
 
-      # add the name of the optinal parameter
-      name_tag.text = parameter
+      # add the name of the optional parameter
+      optional_argument_tag.attrib['name'] = parameter
 
       # @WARNING the __doc__ definition of the type functions must be correct. How to deal with non-single types?
+      # this architecture should change to be more robust
       # get the type for the optional parameter
       value_tag = etree.Element(parameters['language'][code.tag]['definition']['optionalArguments'][parameter].__doc__)
 
@@ -601,7 +688,6 @@ def fillDefaultsInOptionalArguments(code, parameters):
       value_tag.text = str(parameters['language'][code.tag]['definition']['optionalDefaults'][parameter])
 
       # append new tag to the code
-      optional_argument_tag.append(name_tag)
       optional_argument_tag.append(value_tag)
       code.append(optional_argument_tag)
 
@@ -624,7 +710,7 @@ default_template_engine_filters = {'todaysDate': todaysDate,
                                    'tag': tag,
                                    'attributes': attributes,
                                    'attribute': attribute,
-                                   'optionalArgument': optionalArgument,
+                                   'option': option,
                                    'optionalArguments': optionalArguments,
                                    'initials': initials,
                                    'underscore': underscore,
@@ -705,7 +791,7 @@ def templateEngine(code, parameters, filepatterns, templates_path, deploy_path,
 
 
 # @WARNING this function does not work on the root node (since it uses the getparent function)
-def serialise(code, parameters, keywords, language, filters={}):
+def serialise(code, parameters, keywords, language, filters=default_template_engine_filters):
 
   snippet = ''
 
@@ -718,7 +804,7 @@ def serialise(code, parameters, keywords, language, filters={}):
       template = Template(keyword)
 
       # load the text filters
-      for key, value in filters:
+      for key, value in filters.iteritems():
         template.globals[key] = value
 
       # render tags according to dictionary
@@ -728,7 +814,8 @@ def serialise(code, parameters, keywords, language, filters={}):
                                 parentAttributes=code.getparent().attrib,
                                 parentTag=code.getparent().tag,
                                 text=text(code),
-                                parameters=parameters)
+                                parameters=parameters,
+                                code=code)
       # save text in attribute
       code.attrib[language] = snippet
 
@@ -843,4 +930,7 @@ def CreatePreInPostFixGrammar(definitions):
 
     text += 'P' + str(previousOrder[order]) + ' = ( ' + ' | '.join(keys.keys()) + ' | P' + str(order) + ' )\n'
 
-  return text, orders[-1]
+  if len(orders) > 0:
+    return text, orders[-1]
+  else:
+    return text, 'min'
