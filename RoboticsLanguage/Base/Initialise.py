@@ -91,7 +91,15 @@ def prepareParameters():
 
   # fill in the languages using each outputs default language structure
   for keyword, value in parameters['language'].iteritems():
-    missing = list(set(parameters['Outputs'].keys()) - set(value['output'].keys()))
+    # make sure the `output` tag is defined
+    if 'output' in value.keys():
+      # find missing outputs
+      missing = list(set(parameters['Outputs'].keys()) - set(value['output'].keys()))
+    else:
+      # all outputs are missing
+      missing = parameters['Outputs'].keys()
+      parameters['language'][keyword]['output'] = {}
+
     parameters['language'][keyword]['defaultOutput'] = []
     for item in missing:
       # fill in the missing output

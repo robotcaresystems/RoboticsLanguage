@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #
 #   This is the Robotics Language compiler
 #
@@ -93,5 +94,95 @@ language = {
             'RosCpp': '{% if parameters["Outputs"]["RosCpp"]["strict"] %}double({{text}}){% else %}{{text}}{% endif %}',
         },
     },
+
+
+    'set': {
+        'output':
+        {
+          'RosCpp':'{% if parentTag=="assign"%}std::tie({{children|join(", ")}}){% else %}set({{children|join(", ")}}){% endif %}'
+        },
+    },
+
+
+    'function': {
+        'output':
+        {
+            'RosCpp': '{{attributes["name"]}}({{children|join(", ")}})',
+        },
+    },
+
+    'return': {
+        'output':
+        {
+          'RosCpp':'{% if children|length==1 %}return {{children|first}}{% else %}return std::make_tuple({{children|join(", ")}}){% endif %}'
+        },
+    },
+
+    'functionDefinition': {
+        'output':
+        {
+            'RosCpp': '{% set returns = attribute(xpaths(code,"returns"),"RosCpp") %}{% if returns=="" %}void{% else %}{{returns}}{% endif %} {{attributes["name"]}}({{attribute(xpaths(code,"arguments"),"RosCpp")}})',
+        },
+    },
+
+    'arguments': {
+        'output':
+        {
+            'RosCpp': '{{children|join(", ")}}',
+        },
+    },
+
+    'content': {
+        'output':
+        {
+            'RosCpp': '{{children|join(";\n")}}',
+        },
+    },
+
+    'returns': {
+        'output':
+        {
+            'RosCpp': '{% if children|length==0 %}void{% elif children|length==1 %}{{children|first}}{% else %}std::tuple<{{children|join(", ")}}>{% endif %}',
+        },
+    },
+
+
+    'variable': {
+        'output':
+        {
+            'RosCpp': '{{attributes["name"]}}',
+        },
+    },
+
+    'element': {
+        'output':
+        {
+          'RosCpp':'{{children[1]}} {{attribute(code.xpath("variable"),"name")}}'
+        },
+    },
+
+    'block': {
+        'output':
+        {
+          'RosCpp':'{{";\n".join(children)}}'
+        },
+    },
+
+
+    'cycle': {
+        'output':
+        {
+            'RosCpp': '{{children|join(";\n")}};\n',
+        },
+    },
+
+
+    'print': {
+        'output':
+        {
+            'RosCpp': 'ROS_INFO_STREAM({{children|first}})',
+        },
+    },
+
 
 }
