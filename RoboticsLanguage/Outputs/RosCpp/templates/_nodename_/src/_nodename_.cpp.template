@@ -52,11 +52,11 @@ namespace {{parameters['node']['name']|underscore}}
   {% for function in code|xpaths('/node/option[@name="definitions"]/*/functionDefinition') -%}
   /******************************* {{function|attribute('name')}} ************************************************/
   {% set returns = function|xpaths('returns/@RosCpp')|first -%}
-  {% if returns=="" %}void{% else %}{{returns}}{% endif %} {{parameters['node']['name']|camelCase}}Class::{{function|attribute('name')}}({{function|xpaths('arguments/@RosCpp')|first}})
+  {% set arguments = function|xpaths('arguments/@RosCpp')|first -%}
+  {% if returns|length==0 %}void{% else %}{{returns}}{% endif %} {{parameters['node']['name']|camelCase}}Class::{{function|attribute('name')}}({% if arguments|length==0 %}void{% else %}{{arguments}}{% endif %})
   {
     {{function|xpaths('content/@RosCpp')|first}};
   }
-
   {% endfor -%}
 
 }
