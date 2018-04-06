@@ -859,6 +859,7 @@ def CreatePreInPostFixGrammar(definitions):
   infix = dpath.util.search(definitions,'/*/infix')
   prefix = dpath.util.search(definitions,'/*/prefix')
   postfix = dpath.util.search(definitions,'/*/postfix')
+  alternatives = dpath.util.search(definitions,'/*/alternatives')
 
   # get the precedence orders
   orders = list(set(dpath.util.values(definitions,'/*/*/order')))
@@ -866,6 +867,17 @@ def CreatePreInPostFixGrammar(definitions):
   previousOrder = dict(zip(orders+['max'],['min']+orders))
 
   text = ''
+
+  # create grammar for alternatives
+  text += '\n# function names alternatives\n'
+
+  for key, value in alternatives.iteritems():
+    text += key + ' = ( \''+ ' | '.join(value['alternatives']) + '\' | \'' + key + '\' ) -> \'' + key + '\'\n'
+
+  if len(alternatives.keys()) > 0:
+    text += 'functionName = ( ' + ' | '.join(alternatives.keys()) + ' | objectName )\n'
+  else:
+    text += 'functionName = objectName\n'
 
   # create grammar for infix operators
   text += '\n# Infix operators\n'

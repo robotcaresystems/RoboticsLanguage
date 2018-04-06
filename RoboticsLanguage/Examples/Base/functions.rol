@@ -1,17 +1,17 @@
 node(
   name:"example functions",
   definitions: block(
-    y ∈ Integers = 1,
-    x ∈ Integers = 2,
-    z ∈ Integers = 3,
+    y ∈ ℤ = 1,
+    x ∈ ℤ = 2,
+    z ∈ ℤ = 3,
     s ∈ Strings = "Hello",
 
     # optional arguments
-    define testA(x ∈ Integers, y ∈ Integers, z ∈ Integers = 1) -> Integers:
+    define test_1(x ∈ Integers, y ∈ Integers, z ∈ Integers = 1) -> Integers:
       return(x+y+z),
 
     # single argument
-    define testB(x ∈ Integers) -> Integers:
+    define testB(x ∈ ℝ) -> ℝ:
       return(x+1),
 
     # no return
@@ -31,8 +31,8 @@ node(
   ),
 
   initialise: block(
-    x = testA(x,y,z),
-    x = testA(x,y),
+    x = test_1(x,y,z),
+    x = test_1(x,y),
 
     testB(3),
 
