@@ -20,7 +20,10 @@ node(
 
     # no arguments, no return
     define testD():
-      print("Test D"),
+      block(
+        print("Test D"),
+        print("Works")
+      ),
 
     # return multiple parameters
     define testE(x ∈ Integers, y ∈ Integers) -> (Integers, Integers):
