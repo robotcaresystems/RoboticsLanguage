@@ -729,7 +729,7 @@ language = {
         },
         'output':
         {
-            'RosCpp': 'ROS_INFO({{children|first}})',
+            'RosCpp': 'ROS_INFO_STREAM({{children|first}})',
             'HTMLDocumentation': 'print({{children|first}})',
             'HTMLGUI': '',
             'RoL': 'print({{children|first}})',
