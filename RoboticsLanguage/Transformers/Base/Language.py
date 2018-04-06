@@ -30,10 +30,10 @@ language = {
     'Reals': {
         'input':
         {
-            'RoL':
-            {
-                'prefix': ['Reals', 'ℝ']
-            }
+            # 'RoL':
+            # {
+            #     'prefix': ['Reals', 'ℝ']
+            # }
         },
         'output':
         {
@@ -56,10 +56,10 @@ language = {
     'Integers': {
         'input':
         {
-            'RoL':
-            {
-                'prefix': ['Integers', 'ℤ']
-            }
+            # 'RoL':
+            # {
+            #     'prefix': ['Integers', 'ℤ']
+            # }
         },
         'output':
         {
@@ -101,10 +101,10 @@ language = {
     'Booleans': {
         'input':
         {
-            'RoL':
-            {
-                'prefix': ['Booleans', '𝔹']
-            }
+            # 'RoL':
+            # {
+            #     'prefix': ['Booleans', '𝔹']
+            # }
         },
         'output':
         {
@@ -196,7 +196,9 @@ language = {
     'vector': {
         'input': {
             'RoL': {
-                'pre-in-postfix': ['[', ',', ']']
+                'bracket': {'open':'[',
+                            'close':']',
+                          'arguments': 'values'}
             }
         },
         'output':
@@ -214,8 +216,9 @@ language = {
     'set': {
         'input': {
             'RoL': {
-
-                'pre-in-postfix': ['{', ',', '}']
+                'bracket': {'open':'{',
+                            'close':'}',
+                          'arguments': 'values'}
             }
         },
         'output':
@@ -230,27 +233,27 @@ language = {
         }
     },
 
-    'negate': {
+    'associativeArray': {
         'input': {
             'RoL': {
-                'prefix': '-'
+                'bracket': {'open':'{',
+                            'close':'}',
+                          'arguments': 'keyValues'}
             }
         },
-        'output':
-        {
-            'RosCpp': '-{{children|first}}',
-            'HTMLDocumentation': '-{{children|first}}',
-            'HTMLGUI': '-{{children|first}}',
-            'RoL': '-{{children|first}}',
+        'output': {
         },
         'localisation':
         {
-            'pt': 'negação'
         },
         'documentation':
         {
+            'title': 'Set',
+            'description': 'A set of values',
+            'usage': 'a = { b, c ,d }'
         }
     },
+
 
 
 
@@ -315,8 +318,8 @@ language = {
     'element': {
         'input': {
             'RoL': {
-                'infix': ['in', '∈'],
-                'infixOrder': 850
+                'infix': { 'key':['in', '∈'],
+                'order': 850 }
             }
         },
         'output':
@@ -335,28 +338,28 @@ language = {
     },
 
 
-
-    'functionDefinition': {
-        'input': {
-            'RoL': {
-                'custom': ['define', ':', '->', ',', '->', '']
-            }
-        },
-        'output':
-        {
-            'RosCpp': 'function({{children|join(",")}})',
-            'HTMLDocumentation': '{{text}}',
-            'HTMLGUI': '{{text}}',
-            'RoL': '{{text}}',
-        },
-        'localisation':
-        {
-            'pt': 'definirFunção'
-        },
-        'documentation':
-        {
-        }
-    },
+    #
+    # 'functionDefinition': {
+    #     'input': {
+    #         'RoL': {
+    #             'custom': ['define', ':', '->', ',', '->', '']
+    #         }
+    #     },
+    #     'output':
+    #     {
+    #         'RosCpp': 'function({{children|join(",")}})',
+    #         'HTMLDocumentation': '{{text}}',
+    #         'HTMLGUI': '{{text}}',
+    #         'RoL': '{{text}}',
+    #     },
+    #     'localisation':
+    #     {
+    #         'pt': 'definirFunção'
+    #     },
+    #     'documentation':
+    #     {
+    #     }
+    # },
 
 
     # main structures
@@ -535,40 +538,40 @@ language = {
     },
 
 
-
-    # special keywords
-    'shortComment': {
-        'output':
-        {
-            'RosCpp': '/* {{text}} */',
-            'HTMLDocumentation': 'print({{children|first}})',
-            'HTMLGUI': '',
-            'RoL': '# {{text}}',
-        },
-        'localisation':
-        {
-        },
-        'documentation':
-        {
-        }
-    },
-
-    # special keywords
-    'longComment': {
-        'output':
-        {
-            'RosCpp': 'ROS_INFO({{children|first}})',
-            'HTMLDocumentation': 'print({{children|first}})',
-            'HTMLGUI': '',
-            'RoL': 'print({{children|first}})',
-        },
-        'localisation':
-        {
-        },
-        'documentation':
-        {
-        }
-    },
+    #
+    # # special keywords
+    # 'shortComment': {
+    #     'output':
+    #     {
+    #         'RosCpp': '/* {{text}} */',
+    #         'HTMLDocumentation': 'print({{children|first}})',
+    #         'HTMLGUI': '',
+    #         'RoL': '# {{text}}',
+    #     },
+    #     'localisation':
+    #     {
+    #     },
+    #     'documentation':
+    #     {
+    #     }
+    # },
+    #
+    # # special keywords
+    # 'longComment': {
+    #     'output':
+    #     {
+    #         'RosCpp': 'ROS_INFO({{children|first}})',
+    #         'HTMLDocumentation': 'print({{children|first}})',
+    #         'HTMLGUI': '',
+    #         'RoL': 'print({{children|first}})',
+    #     },
+    #     'localisation':
+    #     {
+    #     },
+    #     'documentation':
+    #     {
+    #     }
+    # },
 
 
 }

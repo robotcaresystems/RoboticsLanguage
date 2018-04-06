@@ -137,8 +137,8 @@ class TestRolParse(unittest.TestCase):
     #  Prefix operators
     # -------------------------------------------------------------------------------------------------
 
-    # negate
-    check(self,parameters,"node(-a)",'<node><negate><variable>a</variable></negate></node>')
+    # # negate
+    # check(self,parameters,"node(-a)",'<node><negate><variable>a</variable></negate></node>')
 
 
     # -------------------------------------------------------------------------------------------------
@@ -151,8 +151,8 @@ class TestRolParse(unittest.TestCase):
     # -------------------------------------------------------------------------------------------------
     #  Custom operators
     # -------------------------------------------------------------------------------------------------
-    check(self,parameters,"node(define f:Reals->Reals,x->x+1)",
-          '<node><functionDefinition><variable>f</variable><variable>Reals</variable><variable>Reals</variable><variable>x</variable><plus><variable>x</variable><integer>1</integer></plus></functionDefinition></node>')
+    # check(self,parameters,"node(define f:Reals->Reals,x->x+1)",
+    #       '<node><functionDefinition><variable>f</variable><variable>Reals</variable><variable>Reals</variable><variable>x</variable><plus><variable>x</variable><integer>1</integer></plus></functionDefinition></node>')
 
     # -------------------------------------------------------------------------------------------------
     #  Mini languages

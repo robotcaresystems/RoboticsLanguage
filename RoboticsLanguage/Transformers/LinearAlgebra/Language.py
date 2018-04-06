@@ -30,8 +30,9 @@ language = {
     'times': {
         'input': {
             'RoL': {
-                'infix': '*',
-                'infixOrder': 1000
+                'infix': {'key':'*',
+                          'order': 1000,
+                          'flat':True}
             }
         },
         'output': {
@@ -54,8 +55,9 @@ language = {
     'divide': {
         'input': {
             'RoL': {
-                'infix': '/',
-                'infixOrder': 1000
+                'infix': {'key':'/',
+                'order': 1000,
+                'flat':True}
             }
         },
         'output': {
@@ -77,8 +79,9 @@ language = {
         },
         'input': {
             'RoL': {
-                'infix': '+',
-                'infixOrder': 900
+                'infix': {'key':'+',
+                'order': 900,
+                'flat':True}
             }
         },
         'output': {
@@ -95,8 +98,9 @@ language = {
     'minus': {
         'input': {
             'RoL': {
-                'infix': '-',
-                'infixOrder': 900
+                'infix': {'key':'-',
+                'order': 900,
+                'flat':True}
             }
         },
         'output': {
@@ -114,8 +118,8 @@ language = {
     'larger': {
         'input': {
             'RoL': {
-                'infix': '>',
-                'infixOrder': 800
+                'infix': {'key':'>',
+                'order': 800}
             }
         },
         'output': {
@@ -132,8 +136,8 @@ language = {
     'smaller': {
         'input': {
             'RoL': {
-                'infix': '<',
-                'infixOrder': 800
+                'infix': {'key':'<',
+                'order': 800}
             }
         },
         'output': {
@@ -150,8 +154,8 @@ language = {
     'largerEqual': {
         'input': {
             'RoL': {
-                'infix': ['>=', '≥'],
-                'infixOrder': 800
+                'infix': {'key':['>=', '≥'],
+                'order': 800}
             }
         },
         'output': {
@@ -168,8 +172,8 @@ language = {
     'smallerEqual': {
         'input': {
             'RoL': {
-                'infix': ['<=', '≤'],
-                'infixOrder': 800
+                'infix': {'key':['<=', '≤'],
+                'order': 800}
             }
         },
         'output': {
@@ -187,8 +191,8 @@ language = {
     'equal': {
         'input': {
             'RoL': {
-                'infix': ['==', '≡'],
-                'infixOrder': 700
+                'infix': {'key':['==', '≡'],
+                'order': 700}
             }
         },
         'output': {
@@ -205,8 +209,8 @@ language = {
     'notEqual': {
         'input': {
             'RoL': {
-                'infix': ['!=', '≠'],
-                'infixOrder': 700
+                'infix': {'key':['!=', '≠'],
+                'order': 700}
             }
         },
         'output': {
@@ -225,8 +229,9 @@ language = {
     'and': {
         'input': {
             'RoL': {
-                'infix': ['and', '∧'],
-                'infixOrder': 600
+                'infix': {'key':['and', '∧'],
+                'order': 600,
+                'flat':True}
             }
         },
         'output': {
@@ -249,8 +254,9 @@ language = {
     'or': {
         'RoL': {
             'input': {
-                'infix': ['or', '∨'],
-                'infixOrder': 600
+                'infix': {'key':['or', '∨'],
+                'order': 600,
+                'flat':True}
             }
         },
         'output': {
@@ -267,8 +273,8 @@ language = {
     'assign': {
         'input': {
             'RoL': {
-                'infix': '=',
-                'infixOrder': 500
+                'infix': {'key':'=',
+                'order': 500}
             }
         },
         'output': {
