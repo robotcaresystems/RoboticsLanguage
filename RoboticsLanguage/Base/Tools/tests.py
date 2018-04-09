@@ -25,9 +25,6 @@ from contextlib import contextmanager
 from RoboticsLanguage.Base import Messages
 from RoboticsLanguage.Base import Utilities
 
-# USAGE
-# exception('key',parameters,code,level='debug', stop=True)
-# handler({'KeyError':'key', 'IndexError':'index'},parameters,code,level='debug')
 
 
 formatJinjaErrorMessage
@@ -446,23 +443,44 @@ main()
 
 
 import parsley
+from RoboticsLanguage.Base.Tools import ErrorHandling
+from RoboticsLanguage.Base import Messages
+
+
+parameters = {'messages':Messages.messages, 'errorExceptionFunctions':Messages.error_exception_functions,'globals':{'compilerLanguage':'pt'}}
 
 
 grammar = '''
-main = digit
+main = ws digit ws
 '''
 
 a = parsley.makeGrammar(grammar,{})
 
 
 try:
-  a('sf').main()
+  a('   34f ').main()
 except Exception as e:
-  print e.__module__
-  print e.error
+  w = parameters['errorExceptionFunctions'][e.__module__][type(e).__name__]['default'](e,parameters)
 
-sf
-^
+w
+
+
+type(z).__name__
+z.__module__
+z.formatReason()
+z.formatError()
+z.position
+z.input
+z.args
+z.error
+z.trail
+
+
+
+
+error_handling_functions = {'ometa.runtime':{'ParseError':{'default': lambda z: ErrorHandling.createErrorMessage(parameters,'Parsing',z.formatReason(),line=z.input,line_number=0, column_number=z.position)}}}
+
+
 Parse error at line 1, column 0: expected a digit. trail: [digit main]
 
 ['__class__', '__delattr__', '__dict__', '__doc__', '__eq__', '__format__', '__getattribute__', '__getitem__', '__getslice__', '__hash__', '__init__', '__module__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__setstate__', '__sizeof__', '__str__', '__subclasshook__', '__unicode__', '__weakref__', 'args', 'error', 'formatError', 'formatReason', 'input', 'mergeWith', 'message', 'position', 'trail', 'withMessage']
@@ -481,3 +499,28 @@ ValueError
 TypeError
 ParseError
 EOFError
+
+
+
+def z(x):
+  yield range(x)
+
+for x in z(5):
+  print x
+
+
+@contextmanager
+def handling(x):
+  result = yield
+  print result
+  if result:
+    print('yes' + x)
+  else:
+    print('no' + x)
+
+
+def larger(a,b):
+  return a>b
+
+with handling('hello'):
+  larger(14,2)

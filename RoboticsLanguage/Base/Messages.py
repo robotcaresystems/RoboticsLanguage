@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #
 #   This is the Robotics Language compiler
 #
@@ -19,56 +20,55 @@
 #   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
-
-
-
-default_error_message = {
-    'en': 'An error has occured processing error messages. If you are developping a plug-in, please check your `Messages.py` file. If you are not developping a plug-in please contact the developpers of the Robotics Language.',
-    'pt': 'Ocurreu um erros no processamento de mensagens. Se esta a desenvolver um module, por favor verifique o ficheiro `Messages.py`. Caso nao estaja a desenvolver um modulo entao contacte a equipa de desenvolvimento da linguagem da robotics.'
-    }
+from RoboticsLanguage.Base.Tools import ErrorHandling
 
 messages = {
-  # base messages for error handling
+    # base messages for error handling
+    'default_error_message': {
+        'en': 'An error has occured processing error messages. If you are developping a plug-in, please check your `Messages.py` file. If you are not developping a plug-in please contact the developpers of the Robotics Language.',
+        'pt': 'Ocurreu um erros no processamento de mensagens. Se esta a desenvolver um module, por favor verifique o ficheiro `Messages.py`. Caso nao estaja a desenvolver um modulo entao contacte a equipa de desenvolvimento da linguagem da robotics.'
+    },
     'error-in-file':
-  {
-    'en':' in file:\n"{}"\n',
-    'pt':' no ficheiro:\n"{}"\n'
-  },
-  'error-at-line':
-  {
-    'en':' in line {}',
-    'pt':' na linha {}'
-  },
-  'error-at-column':
-  {
-    'en':' column {}',
-    'pt':' coluna {}'
-  },
-  'error-sentence':
-  {
-    # The structure of the sentence is the following:
-    # 0 - the snipped of code where the error occurs
-    # 1 - the error type
-    # 2 - the filename
-    # 3 - the line number
-    # 4 - the column number
-    # 5 - the description of the reason of the error
-    'en':'{0} {1} error {2} {3} {4}: \033[1m {5} \033[0m',
-    'pt':'{0} {1} erro {2} {3} {4}: \033[1m {5} \033[0m'
-  },
-  # other messages
+    {
+        'en': ' in file:\n"{}"\n',
+        'pt': ' no ficheiro:\n"{}"\n'
+    },
+    'error-at-line':
+    {
+        'en': ' in line {}',
+        'pt': ' na linha {}'
+    },
+    'error-at-column':
+    {
+        'en': ' column {}',
+        'pt': ' coluna {}'
+    },
+    'error-sentence':
+    {
+        # The structure of the sentence is the following:
+        # 0 - the snipped of code where the error occurs
+        # 1 - the error type
+        # 2 - the filename
+        # 3 - the line number
+        # 4 - the column number
+        # 5 - the description of the reason of the error
+        'en': '{0} {1} error {2} {3} {4}: \033[1m {5} \033[0m',
+        'pt': '{0} {1} erro {2} {3} {4}: \033[1m {5} \033[0m'
+    },
+    'parsing':
+    {
+        'en': 'parsing',
+        'pt': 'análise'
+    }
+    # other messages
 }
 
 
-exception_messages = {
-    'KeyError':
-    {
-        'type1': {
-            'en': 'hello {}',
-            'pt': 'ola {}'
-        },
-        'default': {
-            'en': 'Key error'
+error_exception_functions = {
+    # parsley exceptions
+    'ometa.runtime': {
+        'ParseError': {
+            'default': lambda e, parameters, **data: ErrorHandling.createErrorMessage(parameters, tryMessageInLanguage('parsing', parameters).title(), e.formatReason(), line=e.input, line_number=0, column_number=e.position)
         }
     }
 }
