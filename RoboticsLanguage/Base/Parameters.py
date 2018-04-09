@@ -44,7 +44,8 @@ parameters = {
         'step': 1,
         'stepCounter': 0,
         'stop': False,
-        'ignoreSemanticErrors': False
+        'ignoreSemanticErrors': False,
+        'ignoreErrors': False
     },
 
     'errors': [],
@@ -114,6 +115,11 @@ command_line_flags = {
         'longFlag': 'ignore-semantic-errors',
         'noArgument': True,
         'description': 'Ignores the semantic errors and attempts to generate code. Result may not compile.'
+    },
+    'debug:ignoreErrors': {
+        'longFlag': 'ignore-errors',
+        'noArgument': True,
+        'description': 'Ignores errors and attempts to generate code. Result may not compile.'
     },
     'globals:output': {
         'flag': 'o',

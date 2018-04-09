@@ -632,9 +632,11 @@ def semanticTypeChecker(code,parameters):
           # check types for optional arguments
           if not all(map(lambda x,y: keys[code.tag]['definition']['optionalArguments'][x]([y]) , parameter_names, parameter_types)):
             # Error: incorrect types for optional arguments!
+            # Error.handler('OptionalArgumentTypes', code, parameters, parameter_names, parameter_types)
             errorOptionalArgumentTypes(code, parameters, parameter_names, parameter_types)
         else:
           # Error: optional argument not defined
+          # Error.handler('OptionalArgumentNotDefined', code, parameters, parameter_names)
           errorOptionalArgumentNotDefined(code, parameters, parameter_names)
 
       # check mandatory argument types
@@ -645,8 +647,10 @@ def semanticTypeChecker(code,parameters):
 
       else:
         # Error: mandatory argument missing or incorrect
+        # Error.handler('ArgumentTypes',code, parameters, argument_types)
         errorArgumentTypes(code, parameters, argument_types)
     except:
+      # with Error.exception(parameters,code, stop=True, message='LanguageDefinition')
       errorLanguageDefinition(code, parameters)
       sys.exit(1)
 
@@ -763,6 +767,7 @@ def templateEngine(code, parameters, filepatterns, templates_path, deploy_path,
         # fill in the text
         text_body = template_body.render(code=code, parameters=parameters)
       except TemplateError as e:
+        # with Error.exception(parameters, filename=files_to_process[i])
         logErrors(formatJinjaErrorMessage(e, filename=files_to_process[i]), parameters)
         return False
 
@@ -785,6 +790,7 @@ def templateEngine(code, parameters, filepatterns, templates_path, deploy_path,
       logging.debug('Copied file ' + new_copy_files[i] + '...')
 
   except OSError as e:
+    # with Error.exception(parameters, stop=True)
     logErrors(formatOSErrorMessage(e), parameters)
     return False
   return True
@@ -820,6 +826,7 @@ def serialise(code, parameters, keywords, language, filters=default_template_eng
       code.attrib[language] = snippet
 
     except TemplateError as e:
+      # with Error.exception(parameters)
       logErrors(formatJinjaErrorMessage(e), parameters)
 
   except KeyError:

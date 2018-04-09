@@ -175,6 +175,7 @@ def parse(text, parameters):
     parsed_xml_text = ''.join(language(text).main())
 
   except parsley.ParseError as error:
+    # with Error.exception(parameters, stop=True)
     Utilities.logErrors(Utilities.formatParsleyErrorMessage(error), parameters)
     sys.exit(1)
 
@@ -183,6 +184,7 @@ def parse(text, parameters):
     parsed_xml = etree.fromstring(parsed_xml_text)
 
   except etree.XMLSyntaxError as error:
+    # with Error.exception(parameters, stop=True)
     Utilities.logErrors(Utilities.formatLxmlErrorMessage(error), parameters)
     sys.exit(1)
 
