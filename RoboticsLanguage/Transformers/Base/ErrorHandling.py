@@ -24,30 +24,30 @@ from RoboticsLanguage.Base.Tools import ErrorHandling
 
 error_exception_functions = {
     # parsley exceptions
-    "<class 'ometa.runtime.EOFError'>": {
+    "ometa.runtime.EOFError": {
         'default': lambda e, parameters, **data: ErrorHandling.createErrorMessage(parameters, ErrorHandling.tryMessageInLanguage('eof-error', parameters).title(), e.formatReason(), line=e.input, line_number=0, column_number=e.position)
     },
-    "<class 'ometa.runtime.ParseError'>": {
+    "ometa.runtime.ParseError": {
         'default': lambda e, parameters, **data: ErrorHandling.createErrorMessage(parameters, ErrorHandling.tryMessageInLanguage('parsing', parameters).title(), e.formatReason(), line=e.input, line_number=0, column_number=e.position)
     },
 
     # jinja2 exceptions
-    "<class 'jinja2.exceptions.TemplateSyntaxError'>": {
+    "jinja2.exceptions.TemplateSyntaxError": {
         'default': lambda e, parameters, **data: ErrorHandling.createErrorMessage(parameters, ErrorHandling.tryMessageInLanguage('template-syntax', parameters).title(), e.message, line=ErrorHandling.fileLineNumberToLine(e.filename, e.lineno), line_number=e.lineno, filename=e.filename)
     },
-    "<class 'jinja2.exceptions.TemplateAssertionError'>": {
+    "jinja2.exceptions.TemplateAssertionError": {
         'default': lambda e, parameters, **data: ErrorHandling.createErrorMessage(parameters, ErrorHandling.tryMessageInLanguage('template-assertion', parameters).title(), e.message, line=ErrorHandling.fileLineNumberToLine(e.filename, e.lineno), line_number=e.lineno, filename=e.filename)
     },
 
     # system exceptions
-    "<type 'exceptions.IOError'>": {
+    "exceptions.IOError": {
         'default': lambda e, parameters, **data: ErrorHandling.createErrorMessage(parameters, ErrorHandling.tryMessageInLanguage('file-system', parameters).title(), e.strerror),
         'copy-error': lambda e, parameters, **data: ErrorHandling.createErrorMessage(parameters, ErrorHandling.tryMessageInLanguage('copy-error', parameters).title(), ErrorHandling.tryMessageInLanguage('copy-error-reason', parameters).format(data['filename'], data['location'])),
 
     },
 
     # lxml exceptions
-    "<class 'lxml.etree.XMLSyntaxError'>" : {
+    "lxml.etree.XMLSyntaxError" : {
       'default': lambda e, parameters, **data: '\n'.join([ErrorHandling.createErrorMessage(parameters, 'Erro' , error.message, line=ErrorHandling.textLineNumberToLine(data['text'], error.line),line_number=error.line, column_number=error.column) for error in e.error_log])
     }
 }

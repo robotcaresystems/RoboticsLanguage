@@ -21,6 +21,7 @@
 #   limitations under the License.
 from contextlib import contextmanager
 import sys
+import re
 from RoboticsLanguage.Base import Utilities
 
 
@@ -142,10 +143,18 @@ def exception(e, parameters, key='default', **options):
     level = options['level'] if 'level' in options.keys() else 'error'
 
     try:
+      # try the desired exception
+      exception_emmiter = re.search("<.*'([^']*)'>", str(type(e))).group(1)
       # create a message
-      message = parameters['errorExceptionFunctions'][str(type(e))][key](e,parameters, **options)
+      message = parameters['errorExceptionFunctions'][exception_emmiter][key](e,parameters, **options)
     except:
-      message = default_error_message(parameters)
+      try:
+        # try the default exception for the emmiter class
+        exception_emmiter = '.'.join(exception_emmiter.split('.')[:-1])
+        message = parameters['errorExceptionFunctions'][exception_emmiter]['default'](e,parameters, **options)
+      except:
+        # return the default error message
+        message = default_error_message(parameters)
 
     # show the message
     Utilities.logger.log(level, message)

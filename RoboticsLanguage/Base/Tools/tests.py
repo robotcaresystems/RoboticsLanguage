@@ -563,6 +563,12 @@ except Exception as e:
 
 str(type(zz))
 
+import re
+
+result = re.search("<.*'([^']*)'>", str(type(zz)))
+
+result
+
 from RoboticsLanguage.Base.Tools import ErrorHandling
 from RoboticsLanguage.Transformers.Base import Messages
 Messages.messages
