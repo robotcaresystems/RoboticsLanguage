@@ -68,7 +68,7 @@ messages = {
     'template-syntax':
     {
         'en': 'template syntax',
-        'pt': 'na syntaxe do modelo'
+        'pt': 'na sintaxe do modelo'
     },
     'template-assertion':
     {
@@ -89,6 +89,10 @@ messages = {
     {
         'en': 'The file "{}" could not be copied to "{}".',
         'pt': 'Nao foi possivel copiar o ficheiro "{}" para "{}".'
+    },
+    'xml-syntax':
+    {
+        'en': 'XML syntax',
+        'pt': 'na sintaxe do XML'
     }
-
 }

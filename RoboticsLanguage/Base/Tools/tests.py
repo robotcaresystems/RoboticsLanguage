@@ -447,7 +447,7 @@ from RoboticsLanguage.Base.Tools import ErrorHandling
 from RoboticsLanguage.Base import Messages
 
 
-parameters = {'messages':Messages.messages, 'errorExceptionFunctions':Messages.error_exception_functions,'globals':{'compilerLanguage':'pt'}}
+parameters = {'messages':Messages.messages, 'globals':{'compilerLanguage':'pt'}}
 
 
 grammar = '''
@@ -548,6 +548,51 @@ except Exception as e:
   z = e
   print type(e).__name__
   print e.__module__
+
+
+from lxml import etree
+try:
+
+  xml = etree.fromstring('<hello </>')
+
+  print xml
+
+except Exception as e:
+  zz = e
+  print type(e).__name__
+
+str(type(zz))
+
+from RoboticsLanguage.Base.Tools import ErrorHandling
+from RoboticsLanguage.Transformers.Base import Messages
+Messages.messages
+
+ErrorHandling.createErrorMessage(parameters, '' , '')
+
+ErrorHandling.tryMessageInLanguage('xml-syntax', parameters).title()
+
+
+'\n'.join([ErrorHandling.createErrorMessage(parameters, 'Erro' , error.message, line=ErrorHandling.textLineNumberToLine(text, error.line),line_number=error.line, column_number=error.column) for error in zz.error_log])
+
+
+
+
+
+
+
+def formatLxmlErrorMessage(exception, text=''):
+  errors = []
+  for error in exception.error_log:
+    if text is not '':
+      line = textLineNumberToLine(text, error.line)
+    else:
+      line = ''
+    errors.append('\n' + errorMessage('XML parsing', error.message,
+                                      line=line, line_number=error.line, column_number=error.column))
+  return errors
+
+
+
 
 
 

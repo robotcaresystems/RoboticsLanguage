@@ -65,6 +65,34 @@ def default_error_message(parameters):
 
   return tryInLanguage('default_error_message', parameters['globals']['compilerLanguage'])
 
+def fileLineNumberToLine(filename, line_number):
+  '''given a file name and a line number, returns the text line'''
+  with open(filename) as file:
+    line = [next(file) for x in xrange(line_number)][-1]
+  return line
+
+
+def textLineNumberToLine(text, line_number):
+  '''given a text string and a line number, returns the text line'''
+  return text.split('\n')[line_number - 1]
+
+
+
+def positionToLineColumn(position, text):
+  '''given a position (byte counter) and text, returns the line, line number and column number'''
+  lines = str(text).split('\n')
+  counter = 0
+  line_number = 1
+  column_number = 0
+  for line in lines:
+    new_counter = counter + len(line)
+    if new_counter > position:
+      column_number = position - counter
+      break
+    else:
+      counter += len(line) + 1
+      line_number += 1
+  return line_number, column_number, line
 
 
 @contextmanager
