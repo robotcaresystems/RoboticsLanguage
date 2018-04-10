@@ -1,10 +1,9 @@
-# -*- coding: utf-8 -*-
 #
 #   This is the Robotics Language compiler
 #
-#   Default Parameters.py: These are the default parameters that are passed to the compiler
+#   Manifesto.py: Definition of the parameters for this package
 #
-#   Created on: October 25, 2017
+#   Created on: June 22, 2017
 #       Author: Gabriel A. D. Lopes
 #      Licence: Apache 2.0
 #    Copyright: 2014-2017 Robot Care Systems BV, The Hague, The Netherlands. All rights reserved.
@@ -21,23 +20,7 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-
-
-# from googletrans import Translator
-# translator = Translator()
-# result = translator.translate('안녕하세요.')
-#
-#  # https://translate.googleapis.com/translate_a/single?client=gtx&sl={0}&tl={1}&dt=t&q={2}
-
-def sentence(s,language):
-  if s in sentences_list.keys():
-    if language in sentences_list[s]:
-      return sentences_list[s][language]
-  return s
-
-
-sentences_list = {
- 'the following files have unknown formal': {
-   'pt':'os ficheiros seguintes têm um formato desconhecido'
- }
-}
+manifesto = {
+  'packageName':'ROS c++',
+  'packageShortName':'roscpp',
+  }

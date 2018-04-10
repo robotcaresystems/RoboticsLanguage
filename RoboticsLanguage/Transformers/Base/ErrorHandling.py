@@ -2,7 +2,7 @@
 #
 #   This is the Robotics Language compiler
 #
-#   Messages.py: Definition of various messages
+#   ErrorHandling.py: Definition of various messages
 #
 #   Created on: June 22, 2017
 #       Author: Gabriel A. D. Lopes
@@ -21,79 +21,6 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 from RoboticsLanguage.Base.Tools import ErrorHandling
-
-messages = {
-    # base messages for error handling
-    'default_error_message': {
-        'en': 'An error has occured processing error messages. If you are developping a plug-in, please check your `Messages.py` file. If you are not developping a plug-in please contact the developpers of the Robotics Language.',
-        'pt': 'Ocurreu um erros no processamento de mensagens. Se esta a desenvolver um module, por favor verifique o ficheiro `Messages.py`. Caso nao estaja a desenvolver um modulo entao contacte a equipa de desenvolvimento da linguagem da robotics.'
-    },
-    'error-in-file':
-    {
-        'en': ' in file:\n"{}"\n',
-        'pt': ' no ficheiro:\n"{}"\n'
-    },
-    'error-at-line':
-    {
-        'en': ' in line {}',
-        'pt': ' na linha {}'
-    },
-    'error-at-column':
-    {
-        'en': ' column {}',
-        'pt': ' coluna {}'
-    },
-    'error-sentence':
-    {
-        # The structure of the sentence is the following:
-        # 0 - the snipped of code where the error occurs
-        # 1 - the error type
-        # 2 - the filename
-        # 3 - the line number
-        # 4 - the column number
-        # 5 - the description of the reason of the error
-        'en': '{0} {1} error {2} {3} {4}: \033[1m {5} \033[0m',
-        'pt': '{0} Erro {1} {2} {3} {4}: \033[1m {5} \033[0m'
-    },
-    'parsing':
-    {
-        'en': 'parsing',
-        'pt': 'análise'
-    },
-    'eof-error':
-    {
-        'en': 'end-of-file',
-        'pt': 'fim de ficheiro'
-    },
-    # other messages
-    'template-syntax':
-    {
-        'en': 'template syntax',
-        'pt': 'na syntaxe do modelo'
-    },
-    'template-assertion':
-    {
-        'en': 'template assertion',
-        'pt': 'na asserção do modelo'
-    },
-    'file-system':
-    {
-        'en': 'file system',
-        'pt': 'sistema de ficheiros'
-    },
-    'copy-error':
-    {
-        'en': 'copy',
-        'pt': 'na copia'
-    },
-    'copy-error-reason':
-    {
-        'en': 'The file "{}" could not be copied to "{}".',
-        'pt': 'Nao foi possivel copiar o ficheiro "{}" para "{}".'
-    }
-
-}
-
 
 error_exception_functions = {
     # parsley exceptions
@@ -119,3 +46,5 @@ error_exception_functions = {
 
     }
 }
+
+error_handling_functions = {}

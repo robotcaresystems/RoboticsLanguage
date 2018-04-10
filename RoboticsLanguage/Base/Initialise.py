@@ -35,42 +35,82 @@ def prepareParameters():
   manifesto = {'Inputs': {}, 'Outputs': {}, 'Transformers': {}}
   parameters = {'Inputs': {}, 'Outputs': {}, 'Transformers': {}}
   language = {}
+  messages = {}
   command_line_flags = {}
+  error_handling = {}
+  error_exceptions = {}
   default_output = {}
 
   # load the parameters form all the modules dynamically
-  for element in Utilities.findFileName('Parameters.py', language_path):
-    module_name = element.replace(language_path, '').replace('/Parameters.py', '').replace('/', '.')
+  for element in Utilities.findFileName('Manifesto.py', language_path):
+    module_name = element.replace(language_path, '').replace('/Manifesto.py', '').replace('/', '.')
 
     # break the module name into pieces
     name_split = module_name.split('.')
 
     if len(name_split) == 3 and name_split[1] in ['Inputs', 'Outputs', 'Transformers']:
-      # load only the parameter and language modules
-      parameters_module = __import__(module_name + '.Parameters', globals(), locals(), ['Parameters'])
-      language_module = __import__(module_name + '.Language', globals(), locals(), ['Language'])
 
-      # read manifesto
-      manifesto[name_split[1]][name_split[2]] = parameters_module.manifesto
+      # The manifesto
+      try:
+        manifesto_module = __import__(module_name + '.Manifesto', globals(), locals(), ['Manifesto'])
 
-      # read parameters
-      parameters[name_split[1]][name_split[2]] = parameters_module.parameters
+        # read manifesto
+        manifesto[name_split[1]][name_split[2]] = manifesto_module.manifesto
+      except:
+        pass
 
-      # append to each keyword in the language information from which package it comes from
-      for keyword in language_module.language.keys():
-        language_module.language[keyword]['package']=name_split[1]+':'+name_split[2]
+      # The parameters
+      try:
+        parameters_module = __import__(module_name + '.Parameters', globals(), locals(), ['Parameters'])
 
-      # append language definitions
-      language = Utilities.mergeDictionaries(language, language_module.language)
+        # read parameters
+        parameters[name_split[1]][name_split[2]] = parameters_module.parameters
 
-      # read the default output for each language keyword per package
-      if name_split[1] == 'Outputs':
-        default_output[name_split[2]] = language_module.default_output
+        # read command_line_flags
+        command_line = parameters_module.command_line_flags
+        for key, value in command_line.iteritems():
+          command_line_flags[name_split[1] + ':' + name_split[2] + ':' + key] = value
+      except:
+        pass
 
-      # read command_line_flags
-      command_line = parameters_module.command_line_flags
-      for key, value in command_line.iteritems():
-        command_line_flags[name_split[1] + ':' + name_split[2] + ':' + key] = value
+      # The language
+      try:
+        language_module = __import__(module_name + '.Language', globals(), locals(), ['Language'])
+
+        # append to each keyword in the language information from which package it comes from
+        for keyword in language_module.language.keys():
+          language_module.language[keyword]['package']=name_split[1]+':'+name_split[2]
+
+        # append language definitions
+        language = Utilities.mergeDictionaries(language, language_module.language)
+
+        # read the default output for each language keyword per package
+        if name_split[1] == 'Outputs':
+          default_output[name_split[2]] = language_module.default_output
+      except:
+        pass
+
+      # The messages
+      try:
+        messages_module = __import__(module_name + '.Messages', globals(), locals(), ['Messages'])
+
+        # append messages definitions
+        messages = Utilities.mergeDictionaries(messages, messages_module.messages)
+      except:
+        pass
+
+      # The error handling functions
+      try:
+        error_module = __import__(module_name + '.ErrorHandling', globals(), locals(), ['ErrorHandling'])
+
+        # append error handling definitions
+        error_handling = Utilities.mergeDictionaries(error_handling, error_module.error_handling_functions)
+
+        # append error exceptions definitions
+        error_exceptions = Utilities.mergeDictionaries(error_exceptions, error_module.error_exception_functions)
+      except:
+        pass
+
 
   # merge parameters collected from modules with the default system base parameters
   # At this point the default parameters and the module parameters should be jointly non-identical
@@ -81,6 +121,15 @@ def prepareParameters():
 
   # add package language definitions
   parameters['language'] = language
+
+  # add package messages definitions
+  parameters['messages'] = messages
+
+  # add package error exceptions definitions
+  parameters['errorExceptions'] = error_exceptions
+
+  # add package error handling definitions
+  parameters['errorHandling'] = error_handling
 
   # add command line options
   parameters['command_line_flags'] = Utilities.mergeDictionaries(

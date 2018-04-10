@@ -1,10 +1,9 @@
-# -*- coding: utf-8 -*-
 #
 #   This is the Robotics Language compiler
 #
-#   Default Parameters.py: These are the default parameters that are passed to the compiler
+#   Manifesto.py: Definition of the parameters for this package
 #
-#   Created on: October 25, 2017
+#   Created on: June 22, 2017
 #       Author: Gabriel A. D. Lopes
 #      Licence: Apache 2.0
 #    Copyright: 2014-2017 Robot Care Systems BV, The Hague, The Netherlands. All rights reserved.
@@ -21,18 +20,8 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-def dictionary(s,language):
-  if s in dictionary_list.keys():
-    if language in dictionary_list[s]:
-      return dictionary_list[s][language]
-  return s
-
-
-dictionary_list = {
-  'print': {
-            'pt':'imprimir',
-            'hi':'लिखो',
-            'el':'εκτύπωσε',
-            'nl':'afdrukken'
-            }
-}
+manifesto = {
+  'packageName':'ROS',
+  'packageShortName':'ros',
+  'order':10
+  }

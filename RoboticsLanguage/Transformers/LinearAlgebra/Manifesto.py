@@ -1,7 +1,7 @@
 #
 #   This is the Robotics Language compiler
 #
-#   Parameters.py: Definition of the parameters for this package
+#   Manifesto.py: Definition of the parameters for this package
 #
 #   Created on: June 22, 2017
 #       Author: Gabriel A. D. Lopes
@@ -21,11 +21,7 @@
 #   limitations under the License.
 
 manifesto = {
-  'packageName':'Robotics Language XML',
-  'packageShortName':'RoLXML',
-  'fileFormat': 'xml',
+  'packageName':'Linear Algebra',
+  'packageShortName':'lin',
+  'order':100
   }
-
-parameters = {}
-
-command_line_flags = {}

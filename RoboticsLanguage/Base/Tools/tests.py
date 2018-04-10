@@ -454,13 +454,23 @@ grammar = '''
 main = ws digit ws
 '''
 
+from parsley import ParseError as ZZZ
+
 a = parsley.makeGrammar(grammar,{})
 
-
 try:
-  a('   34f ').main()
-except Exception as e:
-  w = parameters['errorExceptionFunctions'][e.__module__][type(e).__name__]['default'](e,parameters)
+  a(' ff').main()
+except Exception as pp:
+  q2 = pp
+
+q2
+
+type(q2) == parsley.ParseError
+
+repr(type(w))
+repr(parsley.ParseError)
+repr(IOError)
+w = parameters['errorExceptionFunctions'][e.__module__][type(e).__name__]['default'](e,parameters)
 
 w
 
@@ -524,3 +534,62 @@ def larger(a,b):
 
 with handling('hello'):
   larger(14,2)
+
+try:
+  from jinja2 import Template
+
+  template = Template("<{{texty}>")
+
+  snippet = template.render(text = "hello")
+
+  print snippet
+
+except Exception as e:
+  z = e
+  print type(e).__name__
+  print e.__module__
+
+
+
+from shutil import copy
+
+try:
+  copy('~/test.txt','~/Projects')
+except Exception as e:
+  w = e
+  print type(e).__name__
+
+  print dir(type(e))
+y=q1
+
+z.__class__
+w.__class__
+y.__class__
+
+type(z).__name__
+type(w).__name__
+type(y).__name__
+
+z
+w
+y
+
+type(z).__name__
+id(z)
+repr(z)
+repr(y)
+repr(w)
+
+unicode(type(z))
+vars(y)
+z.__doc__
+y.__doc__
+w.__doc__
+
+
+IOError
+['__class__', '__delattr__', '__dict__', '__doc__', '__format__', '__getattribute__', '__getitem__', '__getslice__', '__hash__', '__init__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__setstate__', '__sizeof__', '__str__', '__subclasshook__', '__unicode__', 'args', 'errno', 'filename', 'message', 'strerror']
+
+
+IOError
+['__class__', '__delattr__', '__dict__', '__doc__', '__format__', '__getattribute__', '__getitem__', '__getslice__', '__hash__', '__init__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__setstate__', '__sizeof__', '__str__', '__subclasshook__', '__unicode__', 'args', 'errno', 'filename', 'message', 'strerror']

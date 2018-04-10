@@ -1,7 +1,7 @@
 #
 #   This is the Robotics Language compiler
 #
-#   Parameters.py: Definition of the parameters for this package
+#   Manifesto.py: Definition of the parameters for this package
 #
 #   Created on: June 22, 2017
 #       Author: Gabriel A. D. Lopes
@@ -20,16 +20,7 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-
-parameters = {
-    'debug':
-    {'grammar': False}
-}
-
-command_line_flags = {
-    'debug:grammar': {
-        'noArgument': True,
-        'longFlag': 'debug-rol-grammar',
-        'description': 'Prints the generated grammar for the Robotics Language format'
-    }
-}
+manifesto = {
+  'packageName':'Robotics Language XML',
+  'packageShortName':'rolxml',
+  }

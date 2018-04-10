@@ -1,7 +1,7 @@
 #
 #   This is the Robotics Language compiler
 #
-#   Language.py: Definition of the language for this package
+#   Manifesto.py: Definition of the parameters for this package
 #
 #   Created on: June 22, 2017
 #       Author: Gabriel A. D. Lopes
@@ -20,4 +20,8 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-language = {}
+manifesto = {
+  'packageName':'Finite State Machine',
+  'packageShortName':'FiniteStateMachine',
+  'fileFormat': 'fsm',
+  }

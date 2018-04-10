@@ -115,7 +115,7 @@ def exception(e, parameters, key='default', **options):
 
     try:
       # create a message
-      message = parameters['errorExceptionFunctions'][e.__module__][type(e).__name__][key](e,parameters, **options)
+      message = parameters['errorExceptionFunctions'][str(type(e))][key](e,parameters, **options)
     except:
       message = default_error_message(parameters)
 

@@ -24,7 +24,6 @@ from RoboticsLanguage.Base import Utilities
 import os
 import sys
 import subprocess
-# import dpath.util
 
 
 def runPreparations(code, parameters):

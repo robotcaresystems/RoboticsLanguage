@@ -20,10 +20,7 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-manifesto = {
-  'packageName':'ROS c++',
-  'packageShortName':'roscpp',
-  }
+
 
 parameters = { 'strict':False }
 

@@ -9,6 +9,4 @@
 #    Copyright: {{parameters['Information']['software']['copyright']}}
 #
 
-parameters = {}
-
-command_line_flags = {}
+messages = {}

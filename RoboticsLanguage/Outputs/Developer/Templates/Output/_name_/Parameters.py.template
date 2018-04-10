@@ -9,13 +9,6 @@
 #    Copyright: {{parameters['Information']['software']['copyright']}}
 #
 
-
-manifesto = {
-  'packageName':'{{parameters['Outputs']['Developer']['create']['output']}}',
-  'packageShortName':'{{parameters['Outputs']['Developer']['create']['output']|camelCase}}',
-  }
-
-
 parameters = {}
 
 command_line_flags = {}
