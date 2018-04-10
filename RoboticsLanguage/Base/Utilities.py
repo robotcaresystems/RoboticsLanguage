@@ -695,6 +695,11 @@ def fillDefaultsInOptionalArguments(code, parameters):
       optional_argument_tag.append(value_tag)
       code.append(optional_argument_tag)
 
+  # fill in parameters for children
+  for element in code.xpath('option'):
+    for child in element.getchildren():
+      __, parameters = fillDefaultsInOptionalArguments(child, parameters)
+
   return code, parameters
 
 

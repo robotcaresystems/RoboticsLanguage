@@ -157,7 +157,7 @@ language = {
     'element': {
         'output':
         {
-          'RosCpp':'{{children[1]}} {{attribute(code.xpath("variable"),"name")}}'
+          'RosCpp':'{% if children[1]|length > 0 %}{{children[1]}} {{attribute(code.xpath("variable"),"name")}}{% endif %}'
         },
     },
 

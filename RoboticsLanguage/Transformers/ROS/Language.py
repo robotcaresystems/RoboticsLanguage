@@ -27,12 +27,18 @@ language = {
 
     'Signals': {
         'definition': {
-            'optionalArguments': {'rostopic': singleString,
+            'optionalArguments': {'rosTopic': singleString,
                                   'flow': singleString,
-                                  'autopublish': singleBoolean},
-            'optionalDefaults': {'rostopic': '',
+                                  'autoPublish': singleBoolean,
+                                  'onChange': codeBlock,
+                                  'onNew': codeBlock
+                                  },
+            'optionalDefaults': {'rosTopic': '',
                                  'flow': 'bidirectional',
-                                 'autopublish':True},
+                                 'autoPublish':True,
+                                  'onChange': '',
+                                  'onNew': ''
+                                 },
             'argumentTypes': anything,
             'returnType': returnNothing
         },

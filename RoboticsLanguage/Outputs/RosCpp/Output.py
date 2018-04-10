@@ -38,9 +38,6 @@ def runPreparations(code, parameters):
   include_libraries = {'Integers':'cstdint',
                        'Strings':'string'}
 
-  # initialise the list of libraries
-  parameters['Outputs']['RosCpp']['globalIncludes'] = set()
-
   # add only the required libraries
   for tag, library in include_libraries.iteritems():
     if len(code.xpath('//' + tag)) > 0:

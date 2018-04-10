@@ -22,8 +22,13 @@
 
 
 
-parameters = { 'strict':False }
+parameters = { 'strict':False,
+               'globalIncludes':set(),
+               'localIncludes':set()
+               }
 
 command_line_flags = {
-  'strict': {'suppress': True}
+  'strict': {'suppress': True},
+  'globalIncludes': {'suppress': True},
+  'localIncludes': {'suppress': True}
 }

@@ -57,6 +57,21 @@ namespace {{parameters['node']['name']|underscore}}
       /* definitions */
       {{code|xpath('/node')|option('definitions')|attribute('RosCpp')}};
 
+      {% if parameters['Transformers']['ROS']['topicDefinitions']|length > 0 -%}
+      /* ROS topics */
+        {% for topic in parameters['Transformers']['ROS']['topicDefinitions'] -%}
+          {% if topic['flow'] == 'outgoing' or topic['flow'] == 'bidirectional' -%}
+      ros::Publisher {{topic['variable']}}_publisher;
+          {% endif -%}
+
+          {% if topic['flow'] == 'incoming' or topic['flow'] == 'bidirectional' -%}
+      ros::Subscriber {{topic['variable']}}_subscriber;
+      void signal_{{topic['variable']}}_callback(const {{topic['topic_type']}}& message);
+          {% endif -%}
+
+      {{topic['topic_type']}} {{topic['variable']}};
+        {% endfor -%}
+      {% endif -%}
   };
 }
 

@@ -28,6 +28,21 @@ namespace {{parameters['node']['name']|underscore}}
   /******************************* initialise ********************************************/
   void {{parameters['node']['name']|camelCase}}Class::initialise()
   {
+
+    {% if parameters['Transformers']['ROS']['topicDefinitions']|length > 0 -%}
+    /* ROS topics */
+      {% for topic in parameters['Transformers']['ROS']['topicDefinitions'] -%}
+        {% if topic['flow'] == 'outgoing' or topic['flow'] == 'bidirectional' -%}
+    {{topic['variable']}}_publisher = nh_.advertise<{{topic['topic_type']}}>("{{topic['topic_name']}}",10);
+        {% endif -%}
+
+        {% if topic['flow'] == 'incoming' or topic['flow'] == 'bidirectional' -%}
+    {{topic['variable']}}_subscriber = nh_.subscribe("{{topic['topic_name']}}", 10, &{{parameters['node']['name']|camelCase}}Class::signal_{{topic['variable']}}_callback, this);
+        {% endif -%}
+      {% endfor -%}
+    {% endif -%}
+
+    /* initialisation */
     {{code|xpath('/node')|option('initialise')|attribute('RosCpp')}};
   }
 
@@ -58,6 +73,40 @@ namespace {{parameters['node']['name']|underscore}}
     {{function|xpaths('content/@RosCpp')|first}};
   }
   {% endfor -%}
+
+
+  {% if parameters['Transformers']['ROS']['topicDefinitions']|length > 0 -%}
+    /* Callbacks for signals */
+    {% for topic in parameters['Transformers']['ROS']['topicDefinitions'] -%}
+      {% if topic['flow'] == 'incoming' or topic['flow'] == 'bidirectional' -%}
+      /******************************* signal_{{topic['variable']}}_callback ************************************************/
+     void {{parameters['node']['name']|camelCase}}Class::signal_{{topic['variable']}}_callback(const {{topic['topic_type']}}& message)
+     {
+       {% if topic['on_change']|length > 0 -%}
+       /* remember the last value for the topic */
+       {{topic['topic_type']}} previous = {{topic['variable']}};
+       {% endif -%}
+
+       /* Cache a copy of this signal inside the class */
+       {{topic['variable']}} = message;
+
+       {% if topic['on_change']|length > 0 -%}
+       if (previous.data != message.data)
+       {
+         /* on change */
+         {{topic['on_change']}};
+       }
+       {% endif -%}
+
+       /* on new */
+       {{topic['on_new']}};
+
+     };
+      {% endif -%}
+    {% endfor -%}
+  {% endif -%}
+
+
 
 }
 
