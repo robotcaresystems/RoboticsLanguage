@@ -53,22 +53,69 @@ messages = {
         # 4 - the column number
         # 5 - the description of the reason of the error
         'en': '{0} {1} error {2} {3} {4}: \033[1m {5} \033[0m',
-        'pt': '{0} {1} erro {2} {3} {4}: \033[1m {5} \033[0m'
+        'pt': '{0} Erro {1} {2} {3} {4}: \033[1m {5} \033[0m'
     },
     'parsing':
     {
         'en': 'parsing',
         'pt': 'análise'
-    }
+    },
+    'eof-error':
+    {
+        'en': 'end-of-file',
+        'pt': 'fim de ficheiro'
+    },
     # other messages
+    'template-syntax':
+    {
+        'en': 'template syntax',
+        'pt': 'na syntaxe do modelo'
+    },
+    'template-assertion':
+    {
+        'en': 'template assertion',
+        'pt': 'na asserção do modelo'
+    },
+    'file-system':
+    {
+        'en': 'file system',
+        'pt': 'sistema de ficheiros'
+    },
+    'copy-error':
+    {
+        'en': 'copy',
+        'pt': 'na copia'
+    },
+    'copy-error-reason':
+    {
+        'en': 'The file "{}" could not be copied to "{}".',
+        'pt': 'Nao foi possivel copiar o ficheiro "{}" para "{}".'
+    }
+
 }
 
 
 error_exception_functions = {
     # parsley exceptions
-    'ometa.runtime': {
-        'ParseError': {
-            'default': lambda e, parameters, **data: ErrorHandling.createErrorMessage(parameters, tryMessageInLanguage('parsing', parameters).title(), e.formatReason(), line=e.input, line_number=0, column_number=e.position)
-        }
+    "<class 'ometa.runtime.EOFError'>": {
+        'default': lambda e, parameters, **data: ErrorHandling.createErrorMessage(parameters, tryMessageInLanguage('eof-error', parameters).title(), e.formatReason(), line=e.input, line_number=0, column_number=e.position)
+    },
+    "<class 'ometa.runtime.ParseError'>": {
+        'default': lambda e, parameters, **data: ErrorHandling.createErrorMessage(parameters, tryMessageInLanguage('parsing', parameters).title(), e.formatReason(), line=e.input, line_number=0, column_number=e.position)
+    },
+
+    # jinja2 exceptions
+    "<class 'jinja2.exceptions.TemplateSyntaxError'>": {
+        'default': lambda e, parameters, **data: ErrorHandling.createErrorMessage(parameters, tryMessageInLanguage('template-syntax', parameters).title(), e.message, line=fileLineNumberToLine(e.filename, e.lineno), line_number=e.lineno, filename=e.filename)
+    },
+    "<class 'jinja2.exceptions.TemplateAssertionError'>": {
+        'default': lambda e, parameters, **data: ErrorHandling.createErrorMessage(parameters, tryMessageInLanguage('template-assertion', parameters).title(), e.message, line=fileLineNumberToLine(e.filename, e.lineno), line_number=e.lineno, filename=e.filename)
+    },
+
+    # system exceptions
+    "<type 'exceptions.IOError'>": {
+        'default': lambda e, parameters, **data: ErrorHandling.createErrorMessage(parameters, tryMessageInLanguage('file-system', parameters).title(), e.strerror),
+        'copy-error': lambda e, parameters, **data: ErrorHandling.createErrorMessage(parameters, tryMessageInLanguage('copy-error', parameters).title(), tryMessageInLanguage('copy-error-reason', parameters).format(data['filename'], data['location'])),
+
     }
 }
