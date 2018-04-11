@@ -20,29 +20,32 @@
 #   limitations under the License.
 import os
 import re
+import yaml
+import shutil
+import subprocess
 import dpath.util
 from RoboticsLanguage.Base import Utilities
-import yaml
 
 language_path = os.path.dirname(__file__) + '/../../'
 reference_path = language_path + 'Documentation/Compiler/Reference/'
-ignore = [ 'Scripts/tests', '__init__.py' , 'Tools/tests.py', 'Manifesto.py', 'Parameters.py', 'Language.py']
+ignore = ['Scripts/tests', '__init__.py', 'Tools/tests.py', 'Manifesto.py', 'Parameters.py', 'Language.py']
 
 # get all the modules to document
-list_of_modules = filter(lambda x: x is not None,[file.replace(language_path,'').replace('.py','') if all([text not in file for text in ignore]) else None for file in Utilities.findFileType('py',language_path)])
+list_of_modules = filter(lambda x: x is not None, [file.replace(language_path, '').replace('.py', '') if all(
+    [text not in file for text in ignore]) else None for file in Utilities.findFileType('py', language_path)])
 
 # create generation list
-generate = '\n'.join(['- ' + file + '/README.md:\n  - ' + file.replace('/','.')+'+' for file in list_of_modules])
+generate = '\n'.join(['- ' + file + '/README.md:\n  - ' + file.replace('/', '.') + '+' for file in list_of_modules])
 
 # create a tree to make the page structure
 tree = {}
-[ dpath.util.new(tree,item, item + '/README.md') for item in list_of_modules ]
+[dpath.util.new(tree, item, item + '/README.md') for item in list_of_modules]
 
 # export in yaml format
 pages_list = yaml.dump(tree, default_flow_style=False)
 
 # append `-` to each line
-pages = re.sub(r'(\s*)([a-zA-Z]*:.*)',r'\1- \2',pages_list)
+pages = re.sub(r'(\s*)([a-zA-Z]*:.*)', r'\1- \2', pages_list)
 
 # the template for the pyDocMd yaml file
 template = '''
@@ -56,7 +59,7 @@ pages:
 {}
 
 docs_dir: sources
-gens_dir: .     # This will end up as the MkDocs 'docs_dir'
+gens_dir: _build/pydocmd     # This will end up as the MkDocs 'docs_dir'
 site_dir: _build/site
 theme:    readthedocs
 loader:   pydocmd.loader.PythonLoader
@@ -67,11 +70,11 @@ additional_search_paths:
 '''
 
 # save the pydocmd.yml file
-with open(reference_path+'pydocmd.yml','w') as pydoc:
-  pydoc.write(template.format(generate,pages))
+with open(reference_path + 'pydocmd.yml', 'w') as pydoc:
+  pydoc.write(template.format(generate, pages))
 
 # create the index for the README.md file
-index = re.sub(r'(\s*)([a-zA-Z]*):',r'\1- \2',re.sub(r'(\s*)([a-zA-Z]*):(.+)',r'\1- [\2](\3)',pages_list))
+index = re.sub(r'(\s*)([a-zA-Z]*):', r'\1- \2', re.sub(r'(\s*)([a-zA-Z]*):(.+)', r'\1- [\2](\3)', pages_list))
 
 # the template for the README.md file
 template = """
@@ -81,5 +84,18 @@ template = """
 """
 
 # save the README.md file
-with open(reference_path+'README.md','w') as readme:
+with open(reference_path + 'README.md', 'w') as readme:
   readme.write(template.format(index))
+
+# run the pydocmd script
+process = subprocess.Popen(['pydocmd', 'build'], cwd=reference_path)
+process.wait()
+
+# move files
+for filename in os.listdir(reference_path + '_build/pydocmd/'):
+  shutil.move(reference_path + '_build/pydocmd/' + filename, reference_path + filename)
+
+# clean up
+shutil.rmtree(reference_path + '_build')
+os.remove(reference_path + 'index.md')
+os.remove(reference_path + 'pydocmd.yml')
