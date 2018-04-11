@@ -27,7 +27,8 @@ import dpath.util
 from RoboticsLanguage.Base import Utilities
 
 language_path = os.path.dirname(__file__) + '/../../'
-reference_path = language_path + 'Documentation/Compiler/Reference/'
+compiler_reference_path = language_path + 'Documentation/Compiler/Reference/'
+language_reference_path = language_path + 'Documentation/Language/Reference/'
 ignore = ['Scripts/tests', '__init__.py', 'Tools/tests.py', 'Manifesto.py', 'Parameters.py', 'Language.py']
 
 # get all the modules to document
@@ -70,7 +71,7 @@ additional_search_paths:
 '''
 
 # save the pydocmd.yml file
-with open(reference_path + 'pydocmd.yml', 'w') as pydoc:
+with open(compiler_reference_path + 'pydocmd.yml', 'w') as pydoc:
   pydoc.write(template.format(generate, pages))
 
 # create the index for the README.md file
@@ -84,18 +85,22 @@ template = """
 """
 
 # save the README.md file
-with open(reference_path + 'README.md', 'w') as readme:
+with open(compiler_reference_path + 'README.md', 'w') as readme:
   readme.write(template.format(index))
 
 # run the pydocmd script
-process = subprocess.Popen(['pydocmd', 'build'], cwd=reference_path)
+process = subprocess.Popen(['pydocmd', 'build'], cwd=compiler_reference_path)
 process.wait()
 
 # move files
-for filename in os.listdir(reference_path + '_build/pydocmd/'):
-  shutil.move(reference_path + '_build/pydocmd/' + filename, reference_path + filename)
+for filename in os.listdir(compiler_reference_path + '_build/pydocmd/'):
+  shutil.move(compiler_reference_path + '_build/pydocmd/' + filename, compiler_reference_path + filename)
 
 # clean up
-shutil.rmtree(reference_path + '_build')
-os.remove(reference_path + 'index.md')
-os.remove(reference_path + 'pydocmd.yml')
+shutil.rmtree(compiler_reference_path + '_build')
+os.remove(compiler_reference_path + 'index.md')
+os.remove(compiler_reference_path + 'pydocmd.yml')
+
+# create RoL language Reference
+process = subprocess.Popen(['rol', language_path+'Examples/helloworld.rol', '-o', 'Developer', '--create-reference-documentation', '-p', language_reference_path])
+process.wait()

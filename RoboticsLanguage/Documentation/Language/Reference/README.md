@@ -1,72 +1,294 @@
-# Robotics Language reference
+# Robotics Language language reference
 
 
 
-## and
-
-<table border="1">
+## Index of keywords
 
 
-<tr><td>Infix notation: </td>
-<td><p>
+- Outputs
+  
+  - RosCpp
 
-<pre><span style="color:gray">type</span> and <span style="color:gray">type</span></pre><br>
+    [arguments](#arguments), [block](#block), [boolean](#boolean), [content](#content), [cycle](#cycle), [function](#function), [functionDefinition](#functiondefinition), [integer](#integer), [natural](#natural), [print](#print), [real](#real), [return](#return), [returns](#returns), [string](#string), [Strings](#strings), [variable](#variable)
+  
 
-<pre><span style="color:gray">type</span> ∧ <span style="color:gray">type</span></pre><br>
+- Transformers
+  
+  - TemporalLogic
 
-</p></td></tr>
+    [always](#always), [eventually](#eventually)
+  
+  - Base
 
+    [anything](#anything), [defineFunction](#definefunction), [Event](#event), [events](#events), [if](#if), [node](#node), [option](#option), [Signals](#signals), [Time](#time)
+  
+  - LinearAlgebra
 
+    [and](#and), [assign](#assign), [divide](#divide), [equal](#equal), [larger](#larger), [largerEqual](#largerequal), [minus](#minus), [negative](#negative), [notEqual](#notequal), [or](#or), [plus](#plus), [positive](#positive), [smaller](#smaller), [smallerEqual](#smallerequal), [times](#times)
+  
 
+- Inputs
+  
+  - RoL
 
-
-
-
-
-
-
-<tr><td>
-Function notation:
-</td><td>
-<pre>and()</pre>
-</td></tr>
-
-<tr><td>
-Internal XML notation:
-</td><td>
-<pre> &lt;and&gt; &lt;/and&gt;</pre>
-</td></tr>
-</table>
-
- **Boolean and operator**
-
-  Boolean and operator ...
-
-  ```
-  a = b and c
-  ```
-
-  Localisation available for:
-<table border="1">
-
-<tr><td>pt </td><td> {'prefix': 'e', 'infix': ['e', '\xe2\x88\xa7']} </td></tr>
-
-  </table>
-
-
-
-  <span style="color:red">Missing:</span>
+    [associativeArray](#associativearray), [Booleans](#booleans), [element](#element), [Integers](#integers), [Naturals](#naturals), [Reals](#reals), [set](#set), [vector](#vector)
+  
 
 
 
 
 
+
+
+# Outputs, RosCpp
+
+
+
+## arguments
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Definition:
+
+`arguments` ( `anything` ) -> `nothing`
+
+
+
+
+
+
+
+
+
+Alternative notations
+
+notation | example code
+--|--
+functional | `arguments()`
+xml | `<arguments> </arguments>`
+
+
+
+
+
+
+&#x274C; Missing:
+
+
+ - definition: optional arguments 
+
+ - documentation: title 
+ - documentation: description 
+ - documentation: usage 
+ - documentation: localisation 
+
+
+## block
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Definition:
+
+`block` ( `anything` ) -> `code block`
+
+
+
+
+
+
+
+
+
+Alternative notations
+
+notation | example code
+--|--
+functional | `block()`
+xml | `<block> </block>`
+
+
+Localisation available for:
+
+language | keyword
+--|--
+
+
+
+
+&#x274C; Missing:
+
+
+ - definition: optional arguments 
+
+ - documentation: title 
+ - documentation: description 
+ - documentation: usage 
+
+
+
+## boolean
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Alternative notations
+
+notation | example code
+--|--
+functional | `boolean()`
+xml | `<boolean> </boolean>`
+
+
+Localisation available for:
+
+language | keyword
+--|--
+
+
+
+
+&#x274C; Missing:
+
+ - definition: argument types 
+ - definition: optional arguments 
+ - definition: return type 
+ - documentation: title 
+ - documentation: description 
+ - documentation: usage 
+
+
+
+## content
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Definition:
+
+`content` ( `anything` ) -> `nothing`
+
+
+
+
+
+
+
+
+
+Alternative notations
+
+notation | example code
+--|--
+functional | `content()`
+xml | `<content> </content>`
+
+
+
+
+
+
+&#x274C; Missing:
+
+
+ - definition: optional arguments 
+
+ - documentation: title 
+ - documentation: description 
+ - documentation: usage 
+ - documentation: localisation 
+
+
+## cycle
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Alternative notations
+
+notation | example code
+--|--
+functional | `cycle()`
+xml | `<cycle> </cycle>`
+
+
+Localisation available for:
+
+language | keyword
+--|--
+pt | repetir
+
+
+
+
+&#x274C; Missing:
+
+ - definition: argument types 
+ - definition: optional arguments 
+ - definition: return type 
+ - documentation: title 
+ - documentation: description 
+ - documentation: usage 
 
 
 
 ## function
 
-<table border="1">
 
 
 
@@ -78,673 +300,45 @@ Internal XML notation:
 
 
 
-<tr><td>
-Function notation:
-</td><td>
-<pre>function()</pre>
-</td></tr>
 
-<tr><td>
-Internal XML notation:
-</td><td>
-<pre> &lt;function&gt; &lt;/function&gt;</pre>
-</td></tr>
-</table>
 
- ****
+Definition:
 
+`function` ( `anything` ) -> `nothing`
 
 
-  ```
 
-  ```
 
 
 
 
-  <span style="color:red">Missing:</span>
 
 
+Alternative notations
 
-   - localisation
+notation | example code
+--|--
+functional | `function()`
+xml | `<function> </function>`
 
 
 
 
-## smaller
 
-<table border="1">
 
+&#x274C; Missing:
 
-<tr><td>Infix notation: </td>
-<td><p>
 
-<pre><span style="color:gray">type</span> < <span style="color:gray">type</span></pre><br>
+ - definition: optional arguments 
 
-</p></td></tr>
-
-
-
-
-
-
-
-
-
-
-<tr><td>
-Function notation:
-</td><td>
-<pre>smaller()</pre>
-</td></tr>
-
-<tr><td>
-Internal XML notation:
-</td><td>
-<pre> &lt;smaller&gt; &lt;/smaller&gt;</pre>
-</td></tr>
-</table>
-
- ****
-
-
-
-  ```
-
-  ```
-
-  Localisation available for:
-<table border="1">
-
-<tr><td>pt </td><td> menor </td></tr>
-
-  </table>
-
-
-
-  <span style="color:red">Missing:</span>
-
-
-
-
-
-
-
-
-## divide
-
-<table border="1">
-
-
-<tr><td>Infix notation: </td>
-<td><p>
-
-<pre><span style="color:gray">type</span> / <span style="color:gray">type</span></pre><br>
-
-</p></td></tr>
-
-
-
-
-
-
-
-
-
-
-<tr><td>
-Function notation:
-</td><td>
-<pre>divide()</pre>
-</td></tr>
-
-<tr><td>
-Internal XML notation:
-</td><td>
-<pre> &lt;divide&gt; &lt;/divide&gt;</pre>
-</td></tr>
-</table>
-
- ****
-
-
-
-  ```
-
-  ```
-
-  Localisation available for:
-<table border="1">
-
-<tr><td>pt </td><td> dividir </td></tr>
-
-  </table>
-
-
-
-  <span style="color:red">Missing:</span>
-
-
-
-
-
-
-
-
-## eventually
-
-<table border="1">
-
-
-
-
-
-
-
-
-
-
-
-<tr><td>
-Function notation:
-</td><td>
-<pre>eventually()</pre>
-</td></tr>
-
-<tr><td>
-Internal XML notation:
-</td><td>
-<pre> &lt;eventually&gt; &lt;/eventually&gt;</pre>
-</td></tr>
-</table>
-
- ****
-
-
-
-  ```
-
-  ```
-
-  Localisation available for:
-<table border="1">
-
-<tr><td>pt </td><td> eventualmente </td></tr>
-
-  </table>
-
-
-
-  <span style="color:red">Missing:</span>
-
-
-
-
-
-
-
-
-## Signals
-
-<table border="1">
-
-
-
-
-
-
-
-
-
-
-
-<tr><td>
-Function notation:
-</td><td>
-<pre>Signals()</pre>
-</td></tr>
-
-<tr><td>
-Internal XML notation:
-</td><td>
-<pre> &lt;Signals&gt; &lt;/Signals&gt;</pre>
-</td></tr>
-</table>
-
- **A time or event based signal**
-
-  Defines a signal type.
-
-  ```
-  x in Signals(Reals,rostopic:'/test/signal')
-  ```
-
-  Localisation available for:
-<table border="1">
-
-<tr><td>pt </td><td> sinal </td></tr>
-
-  </table>
-
-
-
-  <span style="color:red">Missing:</span>
-
-
-
-
-
-
-
-
-## set
-
-<table border="1">
-
-
-
-
-
-
-
-<tr><td>Notation: </td></tr>
-
-
-
-
-
-<tr><td>
-Function notation:
-</td><td>
-<pre>set()</pre>
-</td></tr>
-
-<tr><td>
-Internal XML notation:
-</td><td>
-<pre> &lt;set&gt; &lt;/set&gt;</pre>
-</td></tr>
-</table>
-
- ****
-
-
-
-  ```
-
-  ```
-
-  Localisation available for:
-<table border="1">
-
-<tr><td>pt </td><td> conjunto </td></tr>
-
-  </table>
-
-
-
-  <span style="color:red">Missing:</span>
-
-
-
-
-
-
-
-
-## negate
-
-<table border="1">
-
-
-
-
-
-<tr><td>Prefix notation: </td>
-<td><p>
-
- <pre>- ( <span style="color:gray">type</span> ) </pre><br>
-
-</p></td></tr>
-
-
-
-
-
-
-
-<tr><td>
-Function notation:
-</td><td>
-<pre>negate()</pre>
-</td></tr>
-
-<tr><td>
-Internal XML notation:
-</td><td>
-<pre> &lt;negate&gt; &lt;/negate&gt;</pre>
-</td></tr>
-</table>
-
- ****
-
-
-
-  ```
-
-  ```
-
-  Localisation available for:
-<table border="1">
-
-<tr><td>pt </td><td> negação </td></tr>
-
-  </table>
-
-
-
-  <span style="color:red">Missing:</span>
-
-
-
-
-
-
-
-
-## events
-
-<table border="1">
-
-
-
-
-
-
-
-
-
-
-
-<tr><td>
-Function notation:
-</td><td>
-<pre>events()</pre>
-</td></tr>
-
-<tr><td>
-Internal XML notation:
-</td><td>
-<pre> &lt;events&gt; &lt;/events&gt;</pre>
-</td></tr>
-</table>
-
- ****
-
-
-
-  ```
-
-  ```
-
-  Localisation available for:
-<table border="1">
-
-<tr><td>pt </td><td> eventos </td></tr>
-
-  </table>
-
-
-
-  <span style="color:red">Missing:</span>
-
-
-
-
-
-
-
-
-## Reals
-
-<table border="1">
-
-
-
-
-
-<tr><td>Prefix notation: </td>
-<td><p>
-
- <pre>Reals ( <span style="color:gray">type</span> ) </pre><br>
-
- <pre>ℝ ( <span style="color:gray">type</span> ) </pre><br>
-
-</p></td></tr>
-
-
-
-
-
-
-
-<tr><td>
-Function notation:
-</td><td>
-<pre>Reals()</pre>
-</td></tr>
-
-<tr><td>
-Internal XML notation:
-</td><td>
-<pre> &lt;Reals&gt; &lt;/Reals&gt;</pre>
-</td></tr>
-</table>
-
- **Real numbers type**
-
-  A type representing real numbers. Assumptions on the number of bits used by the compiler to represent a real number is given as information in the editor.
-
-  ```
-  x in Reals
-  ```
-
-  Localisation available for:
-<table border="1">
-
-<tr><td>pt </td><td> real </td></tr>
-
-  </table>
-
-
-
-  <span style="color:red">Missing:</span>
-
-
-
-
-
-
-
-
-## times
-
-<table border="1">
-
-
-<tr><td>Infix notation: </td>
-<td><p>
-
-<pre><span style="color:gray">type</span> * <span style="color:gray">type</span></pre><br>
-
-</p></td></tr>
-
-
-
-
-
-
-
-
-
-
-<tr><td>
-Function notation:
-</td><td>
-<pre>times()</pre>
-</td></tr>
-
-<tr><td>
-Internal XML notation:
-</td><td>
-<pre> &lt;times&gt; &lt;/times&gt;</pre>
-</td></tr>
-</table>
-
- **Number multiplication**
-
-  Normal number, vector, or matrix multiplication.
-
-  ```
-  a = 2*3
-  ```
-
-  Localisation available for:
-<table border="1">
-
-<tr><td>pt </td><td> multiplicar </td></tr>
-
-  </table>
-
-
-
-  <span style="color:red">Missing:</span>
-
-
-
-
-
-
-
-
-## if
-
-<table border="1">
-
-
-
-
-
-
-
-
-
-
-
-<tr><td>
-Function notation:
-</td><td>
-<pre>if()</pre>
-</td></tr>
-
-<tr><td>
-Internal XML notation:
-</td><td>
-<pre> &lt;if&gt; &lt;/if&gt;</pre>
-</td></tr>
-</table>
-
- ****
-
-
-
-  ```
-
-  ```
-
-  Localisation available for:
-<table border="1">
-
-<tr><td>pt </td><td> se </td></tr>
-
-  </table>
-
-
-
-  <span style="color:red">Missing:</span>
-
-
-
-
-
-
-
-
-## smallerEqual
-
-<table border="1">
-
-
-<tr><td>Infix notation: </td>
-<td><p>
-
-<pre><span style="color:gray">type</span> <= <span style="color:gray">type</span></pre><br>
-
-<pre><span style="color:gray">type</span> ≤ <span style="color:gray">type</span></pre><br>
-
-</p></td></tr>
-
-
-
-
-
-
-
-
-
-
-<tr><td>
-Function notation:
-</td><td>
-<pre>smallerEqual()</pre>
-</td></tr>
-
-<tr><td>
-Internal XML notation:
-</td><td>
-<pre> &lt;smallerEqual&gt; &lt;/smallerEqual&gt;</pre>
-</td></tr>
-</table>
-
- ****
-
-
-
-  ```
-
-  ```
-
-  Localisation available for:
-<table border="1">
-
-<tr><td>pt </td><td> menorIgual </td></tr>
-
-  </table>
-
-
-
-  <span style="color:red">Missing:</span>
-
-
-
-
-
-
+ - documentation: title 
+ - documentation: description 
+ - documentation: usage 
+ - documentation: localisation 
 
 
 ## functionDefinition
 
-<table border="1">
 
 
 
@@ -755,53 +349,45 @@ Internal XML notation:
 
 
 
-<tr><td>Custom notation:</td></tr>
 
 
-<tr><td>
-Function notation:
-</td><td>
-<pre>functionDefinition()</pre>
-</td></tr>
 
-<tr><td>
-Internal XML notation:
-</td><td>
-<pre> &lt;functionDefinition&gt; &lt;/functionDefinition&gt;</pre>
-</td></tr>
-</table>
+Definition:
 
- ****
+`functionDefinition` ( `anything` ) -> `nothing`
 
 
 
-  ```
 
-  ```
 
-  Localisation available for:
-<table border="1">
 
-<tr><td>pt </td><td> definirFunção </td></tr>
 
-  </table>
 
 
+Alternative notations
 
-  <span style="color:red">Missing:</span>
+notation | example code
+--|--
+functional | `functionDefinition()`
+xml | `<functionDefinition> </functionDefinition>`
 
 
 
 
 
 
+&#x274C; Missing:
 
 
-## or
+ - definition: optional arguments 
 
-<table border="1">
+ - documentation: title 
+ - documentation: description 
+ - documentation: usage 
+ - documentation: localisation 
 
 
+## integer
 
 
 
@@ -811,167 +397,88 @@ Internal XML notation:
 
 
 
-<tr><td>
-Function notation:
-</td><td>
-<pre>or()</pre>
-</td></tr>
 
-<tr><td>
-Internal XML notation:
-</td><td>
-<pre> &lt;or&gt; &lt;/or&gt;</pre>
-</td></tr>
-</table>
 
- ****
 
 
 
-  ```
 
-  ```
 
-  Localisation available for:
-<table border="1">
+Alternative notations
 
-<tr><td>pt </td><td> {'prefix': 'ou', 'infix': ['ou', '\xe2\x88\xa7']} </td></tr>
+notation | example code
+--|--
+functional | `integer()`
+xml | `<integer> </integer>`
 
-  </table>
 
+Localisation available for:
 
+language | keyword
+--|--
+pt | inteiro
 
-  <span style="color:red">Missing:</span>
 
 
 
+&#x274C; Missing:
 
+ - definition: argument types 
+ - definition: optional arguments 
+ - definition: return type 
+ - documentation: title 
+ - documentation: description 
+ - documentation: usage 
 
 
 
+## natural
 
-## Booleans
 
-<table border="1">
 
 
 
 
 
-<tr><td>Prefix notation: </td>
-<td><p>
 
- <pre>Booleans ( <span style="color:gray">type</span> ) </pre><br>
 
- <pre>𝔹 ( <span style="color:gray">type</span> ) </pre><br>
 
-</p></td></tr>
 
 
 
 
 
 
+Alternative notations
 
-<tr><td>
-Function notation:
-</td><td>
-<pre>Booleans()</pre>
-</td></tr>
+notation | example code
+--|--
+functional | `natural()`
+xml | `<natural> </natural>`
 
-<tr><td>
-Internal XML notation:
-</td><td>
-<pre> &lt;Booleans&gt; &lt;/Booleans&gt;</pre>
-</td></tr>
-</table>
 
- ****
+Localisation available for:
 
+language | keyword
+--|--
+pt | natural
 
 
-  ```
 
-  ```
 
-  Localisation available for:
-<table border="1">
+&#x274C; Missing:
 
-<tr><td>pt </td><td> boleano </td></tr>
-
-  </table>
-
-
-
-  <span style="color:red">Missing:</span>
-
-
-
-
-
-
-
-
-## initialise
-
-<table border="1">
-
-
-
-
-
-
-
-
-
-
-
-<tr><td>
-Function notation:
-</td><td>
-<pre>initialise()</pre>
-</td></tr>
-
-<tr><td>
-Internal XML notation:
-</td><td>
-<pre> &lt;initialise&gt; &lt;/initialise&gt;</pre>
-</td></tr>
-</table>
-
- ****
-
-
-
-  ```
-
-  ```
-
-  Localisation available for:
-<table border="1">
-
-<tr><td>el </td><td> αρχικοποίηση </td></tr>
-
-<tr><td>nl </td><td> initialiseren </td></tr>
-
-<tr><td>pt </td><td> inicializar </td></tr>
-
-  </table>
-
-
-
-  <span style="color:red">Missing:</span>
-
-
-
-
-
+ - definition: argument types 
+ - definition: optional arguments 
+ - definition: return type 
+ - documentation: title 
+ - documentation: description 
+ - documentation: usage 
 
 
 
 ## print
 
-<table border="1">
 
 
 
@@ -983,209 +490,58 @@ Internal XML notation:
 
 
 
-<tr><td>
-Function notation:
-</td><td>
-<pre>print()</pre>
-</td></tr>
 
-<tr><td>
-Internal XML notation:
-</td><td>
-<pre> &lt;print&gt; &lt;/print&gt;</pre>
-</td></tr>
-</table>
 
- ****
+Definition:
 
+`print` ( `string , ... , string` ) -> `nothing`
 
 
-  ```
 
-  ```
 
-  Localisation available for:
-<table border="1">
 
-<tr><td>el </td><td> εκτύπωσε </td></tr>
 
-<tr><td>nl </td><td> afdrukken </td></tr>
+Optional parameters:
 
-<tr><td>pt </td><td> imprimir </td></tr>
+name | type
+--|--
+`level` | `string`
 
-  </table>
 
 
 
-  <span style="color:red">Missing:</span>
+Alternative notations
 
+notation | example code
+--|--
+functional | `print()`
+xml | `<print> </print>`
 
 
+Localisation available for:
 
+language | keyword
+--|--
+el | εκτύπωσε
+nl | afdrukken
+pt | imprimir
 
 
 
 
-## shortComment
+&#x274C; Missing:
 
-<table border="1">
 
 
 
-
-
-
-
-
-
-
-
-<tr><td>
-Function notation:
-</td><td>
-<pre>shortComment()</pre>
-</td></tr>
-
-<tr><td>
-Internal XML notation:
-</td><td>
-<pre> &lt;shortComment&gt; &lt;/shortComment&gt;</pre>
-</td></tr>
-</table>
-
- ****
-
-
-
-  ```
-
-  ```
-
-  Localisation available for:
-<table border="1">
-
-  </table>
-
-
-
-  <span style="color:red">Missing:</span>
-
-
-
-
-
-
-
-
-## parameter
-
-<table border="1">
-
-
-
-
-
-
-
-
-
-
-
-<tr><td>
-Function notation:
-</td><td>
-<pre>parameter()</pre>
-</td></tr>
-
-<tr><td>
-Internal XML notation:
-</td><td>
-<pre> &lt;parameter&gt; &lt;/parameter&gt;</pre>
-</td></tr>
-</table>
-
- ****
-
-
-
-  ```
-
-  ```
-
-  Localisation available for:
-<table border="1">
-
-<tr><td>pt </td><td> parâmetro </td></tr>
-
-  </table>
-
-
-
-  <span style="color:red">Missing:</span>
-
-
-
-
-
-
-
-
-## finalise
-
-<table border="1">
-
-
-
-
-
-
-
-
-
-
-
-<tr><td>
-Function notation:
-</td><td>
-<pre>finalise()</pre>
-</td></tr>
-
-<tr><td>
-Internal XML notation:
-</td><td>
-<pre> &lt;finalise&gt; &lt;/finalise&gt;</pre>
-</td></tr>
-</table>
-
- ****
-
-
-
-  ```
-
-  ```
-
-  Localisation available for:
-<table border="1">
-
-<tr><td>pt </td><td> finalizar </td></tr>
-
-  </table>
-
-
-
-  <span style="color:red">Missing:</span>
-
-
-
-
-
+ - documentation: title 
+ - documentation: description 
+ - documentation: usage 
 
 
 
 ## real
 
-<table border="1">
 
 
 
@@ -1197,110 +553,94 @@ Internal XML notation:
 
 
 
-<tr><td>
-Function notation:
-</td><td>
-<pre>real()</pre>
-</td></tr>
 
-<tr><td>
-Internal XML notation:
-</td><td>
-<pre> &lt;real&gt; &lt;/real&gt;</pre>
-</td></tr>
-</table>
 
- ****
 
 
+Alternative notations
 
-  ```
+notation | example code
+--|--
+functional | `real()`
+xml | `<real> </real>`
 
-  ```
 
-  Localisation available for:
-<table border="1">
+Localisation available for:
 
-<tr><td>pt </td><td> real </td></tr>
+language | keyword
+--|--
+pt | real
 
-  </table>
 
 
 
-  <span style="color:red">Missing:</span>
+&#x274C; Missing:
 
+ - definition: argument types 
+ - definition: optional arguments 
+ - definition: return type 
+ - documentation: title 
+ - documentation: description 
+ - documentation: usage 
 
 
 
+## return
 
 
 
 
-## Integers
 
-<table border="1">
 
 
 
 
 
-<tr><td>Prefix notation: </td>
-<td><p>
 
- <pre>Integers ( <span style="color:gray">type</span> ) </pre><br>
 
- <pre>ℤ ( <span style="color:gray">type</span> ) </pre><br>
 
-</p></td></tr>
 
+Definition:
 
+`return` ( `anything` ) -> `nothing`
 
 
 
 
 
-<tr><td>
-Function notation:
-</td><td>
-<pre>Integers()</pre>
-</td></tr>
 
-<tr><td>
-Internal XML notation:
-</td><td>
-<pre> &lt;Integers&gt; &lt;/Integers&gt;</pre>
-</td></tr>
-</table>
 
- **Integer numbers type**
 
-  A type representing integer numbers. Assumptions on the number of bits used by the compiler to represent an integer number is given as information in the editor.
 
-  ```
-  x in real
-  ```
+Alternative notations
 
-  Localisation available for:
-<table border="1">
+notation | example code
+--|--
+functional | `return()`
+xml | `<return> </return>`
 
-<tr><td>pt </td><td> inteiro </td></tr>
 
-  </table>
+Localisation available for:
 
+language | keyword
+--|--
 
 
-  <span style="color:red">Missing:</span>
 
 
+&#x274C; Missing:
 
 
+ - definition: optional arguments 
 
+ - documentation: title 
+ - documentation: description 
+ - documentation: usage 
 
 
 
-## repeat
+## returns
 
-<table border="1">
 
 
 
@@ -1312,103 +652,607 @@ Internal XML notation:
 
 
 
-<tr><td>
-Function notation:
-</td><td>
-<pre>repeat()</pre>
-</td></tr>
 
-<tr><td>
-Internal XML notation:
-</td><td>
-<pre> &lt;repeat&gt; &lt;/repeat&gt;</pre>
-</td></tr>
-</table>
 
- ****
+Definition:
 
+`returns` ( `anything` ) -> `nothing`
 
 
-  ```
 
-  ```
 
-  Localisation available for:
-<table border="1">
 
-<tr><td>pt </td><td> repetir </td></tr>
 
-  </table>
 
 
 
-  <span style="color:red">Missing:</span>
+Alternative notations
 
+notation | example code
+--|--
+functional | `returns()`
+xml | `<returns> </returns>`
 
 
 
 
+
+
+&#x274C; Missing:
+
+
+ - definition: optional arguments 
+
+ - documentation: title 
+ - documentation: description 
+ - documentation: usage 
+ - documentation: localisation 
+
+
+## string
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Alternative notations
+
+notation | example code
+--|--
+functional | `string()`
+xml | `<string> </string>`
+
+
+Localisation available for:
+
+language | keyword
+--|--
+pt | texto
+
+
+
+
+&#x274C; Missing:
+
+ - definition: argument types 
+ - definition: optional arguments 
+ - definition: return type 
+ - documentation: title 
+ - documentation: description 
+ - documentation: usage 
+
+
+
+## Strings
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Definition:
+
+`Strings` ( `anything` ) -> `nothing`
+
+
+
+
+
+
+
+
+
+Alternative notations
+
+notation | example code
+--|--
+functional | `Strings()`
+xml | `<Strings> </Strings>`
+
+
+Localisation available for:
+
+language | keyword
+--|--
+pt | texto
+
+
+
+
+&#x274C; Missing:
+
+
+ - definition: optional arguments 
+
+ - documentation: title 
+ - documentation: description 
+ - documentation: usage 
+
+
+
+## variable
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Definition:
+
+`variable` ( `anything` ) -> `nothing`
+
+
+
+
+
+
+
+
+
+Alternative notations
+
+notation | example code
+--|--
+functional | `variable()`
+xml | `<variable> </variable>`
+
+
+Localisation available for:
+
+language | keyword
+--|--
+pt | variável
+
+
+
+
+&#x274C; Missing:
+
+
+ - definition: optional arguments 
+
+ - documentation: title 
+ - documentation: description 
+ - documentation: usage 
+
+
+
+
+
+
+# Transformers, TemporalLogic
+
+
+
+## always
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Alternative notations
+
+notation | example code
+--|--
+functional | `always()`
+xml | `<always> </always>`
+
+
+Localisation available for:
+
+language | keyword
+--|--
+pt | sempre
+
+
+
+
+&#x274C; Missing:
+
+ - definition: argument types 
+ - definition: optional arguments 
+ - definition: return type 
+ - documentation: title 
+ - documentation: description 
+ - documentation: usage 
+
+
+
+## eventually
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Alternative notations
+
+notation | example code
+--|--
+functional | `eventually()`
+xml | `<eventually> </eventually>`
+
+
+Localisation available for:
+
+language | keyword
+--|--
+pt | eventualmente
+
+
+
+
+&#x274C; Missing:
+
+ - definition: argument types 
+ - definition: optional arguments 
+ - definition: return type 
+ - documentation: title 
+ - documentation: description 
+ - documentation: usage 
+
+
+
+
+# Transformers, Base
+
+
+
+## anything
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Definition:
+
+`anything` ( `anything` ) -> `nothing`
+
+
+
+
+
+
+
+
+
+Alternative notations
+
+notation | example code
+--|--
+functional | `anything()`
+xml | `<anything> </anything>`
+
+
+Localisation available for:
+
+language | keyword
+--|--
+
+
+
+
+&#x274C; Missing:
+
+
+ - definition: optional arguments 
+
+ - documentation: title 
+ - documentation: description 
+ - documentation: usage 
+
+
+
+## defineFunction
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Definition:
+
+`defineFunction` ( `anything` ) -> `nothing`
+
+
+
+
+
+
+
+
+
+Alternative notations
+
+notation | example code
+--|--
+functional | `defineFunction()`
+xml | `<defineFunction> </defineFunction>`
+
+
+Localisation available for:
+
+language | keyword
+--|--
+
+
+
+
+&#x274C; Missing:
+
+
+ - definition: optional arguments 
+
+ - documentation: title 
+ - documentation: description 
+ - documentation: usage 
+
+
+
+## Event
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Alternative notations
+
+notation | example code
+--|--
+functional | `Event()`
+xml | `<Event> </Event>`
+
+
+Localisation available for:
+
+language | keyword
+--|--
+pt | eventos
+
+
+
+
+&#x274C; Missing:
+
+ - definition: argument types 
+ - definition: optional arguments 
+ - definition: return type 
+ - documentation: title 
+ - documentation: description 
+ - documentation: usage 
+
+
+
+## events
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Alternative notations
+
+notation | example code
+--|--
+functional | `events()`
+xml | `<events> </events>`
+
+
+Localisation available for:
+
+language | keyword
+--|--
+pt | eventos
+
+
+
+
+&#x274C; Missing:
+
+ - definition: argument types 
+ - definition: optional arguments 
+ - definition: return type 
+ - documentation: title 
+ - documentation: description 
+ - documentation: usage 
+
+
+
+## if
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Alternative notations
+
+notation | example code
+--|--
+functional | `if()`
+xml | `<if> </if>`
+
+
+Localisation available for:
+
+language | keyword
+--|--
+pt | se
+
+
+
+
+&#x274C; Missing:
+
+ - definition: argument types 
+ - definition: optional arguments 
+ - definition: return type 
+ - documentation: title 
+ - documentation: description 
+ - documentation: usage 
 
 
 
 ## node
 
-<table border="1">
 
 
 
 
 
+**The main software node**
 
 
 
+ This is the main RoL node. Definitions, initialisation, events, etc., are defined here.
 
 
 
-<tr><td>
-Function notation:
-</td><td>
-<pre>node()</pre>
-</td></tr>
+ Usage:
+```coffeescript
+node(
+  name:"hello world",
+  initialise(print("hello world"))
+)
+```
 
-<tr><td>
-Internal XML notation:
-</td><td>
-<pre> &lt;node&gt; &lt;/node&gt;</pre>
-</td></tr>
-</table>
 
- ****
 
 
 
-  ```
+Definition:
 
-  ```
+`node` ( `anything` ) -> `nothing`
 
-  Localisation available for:
-<table border="1">
 
-<tr><td>el </td><td> κόμβος </td></tr>
 
-<tr><td>pt </td><td> nó </td></tr>
 
-  </table>
 
 
+Optional parameters:
 
-  <span style="color:red">Missing:</span>
+name | type
+--|--
+`definitions` | `anything`
+`rate` | `real`
+`initialise` | `anything`
+`name` | `string`
+`finalise` | `anything`
 
 
 
 
+Alternative notations
 
+notation | example code
+--|--
+functional | `node()`
+xml | `<node> </node>`
 
 
+Localisation available for:
 
-## string
+language | keyword
+--|--
+el | κόμβος
+pt | nó
 
-<table border="1">
 
 
 
@@ -1420,159 +1264,115 @@ Internal XML notation:
 
 
 
-<tr><td>
-Function notation:
-</td><td>
-<pre>string()</pre>
-</td></tr>
 
-<tr><td>
-Internal XML notation:
-</td><td>
-<pre> &lt;string&gt; &lt;/string&gt;</pre>
-</td></tr>
-</table>
+## option
 
- ****
 
 
 
-  ```
 
-  ```
 
-  Localisation available for:
-<table border="1">
 
-<tr><td>pt </td><td> texto </td></tr>
 
-  </table>
 
 
 
-  <span style="color:red">Missing:</span>
 
 
 
 
 
+Alternative notations
 
+notation | example code
+--|--
+functional | `option()`
+xml | `<option> </option>`
 
 
-## minus
+Localisation available for:
 
-<table border="1">
+language | keyword
+--|--
+pt | parâmetro
 
 
-<tr><td>Infix notation: </td>
-<td><p>
 
-<pre><span style="color:gray">type</span> - <span style="color:gray">type</span></pre><br>
 
-</p></td></tr>
+&#x274C; Missing:
 
+ - definition: argument types 
+ - definition: optional arguments 
+ - definition: return type 
+ - documentation: title 
+ - documentation: description 
+ - documentation: usage 
 
 
 
+## Signals
 
 
 
 
 
 
-<tr><td>
-Function notation:
-</td><td>
-<pre>minus()</pre>
-</td></tr>
+**A time or event based signal**
 
-<tr><td>
-Internal XML notation:
-</td><td>
-<pre> &lt;minus&gt; &lt;/minus&gt;</pre>
-</td></tr>
-</table>
 
- ****
 
+ Defines a signal type.
 
 
-  ```
 
-  ```
+ Usage:
+```coffeescript
+x in Signals(Reals,rostopic:'/test/signal')
+```
 
-  Localisation available for:
-<table border="1">
 
-<tr><td>pt </td><td> subtrair </td></tr>
 
-  </table>
 
 
+Definition:
 
-  <span style="color:red">Missing:</span>
+`Signals` ( `anything` ) -> `nothing`
 
 
 
 
 
 
+Optional parameters:
 
+name | type
+--|--
+`onNew` | `block`
+`onChange` | `block`
+`flow` | `string`
+`rosTopic` | `string`
 
-## largerEqual
 
-<table border="1">
 
 
-<tr><td>Infix notation: </td>
-<td><p>
+Alternative notations
 
-<pre><span style="color:gray">type</span> >= <span style="color:gray">type</span></pre><br>
+notation | example code
+--|--
+functional | `Signals()`
+xml | `<Signals> </Signals>`
 
-<pre><span style="color:gray">type</span> ≥ <span style="color:gray">type</span></pre><br>
 
-</p></td></tr>
+Localisation available for:
 
+language | keyword
+--|--
+pt | sinal
 
 
 
 
 
-
-
-
-
-<tr><td>
-Function notation:
-</td><td>
-<pre>largerEqual()</pre>
-</td></tr>
-
-<tr><td>
-Internal XML notation:
-</td><td>
-<pre> &lt;largerEqual&gt; &lt;/largerEqual&gt;</pre>
-</td></tr>
-</table>
-
- ****
-
-
-
-  ```
-
-  ```
-
-  Localisation available for:
-<table border="1">
-
-<tr><td>pt </td><td> maiorIgual </td></tr>
-
-  </table>
-
-
-
-  <span style="color:red">Missing:</span>
 
 
 
@@ -1583,7 +1383,6 @@ Internal XML notation:
 
 ## Time
 
-<table border="1">
 
 
 
@@ -1595,715 +1394,101 @@ Internal XML notation:
 
 
 
-<tr><td>
-Function notation:
-</td><td>
-<pre>Time()</pre>
-</td></tr>
 
-<tr><td>
-Internal XML notation:
-</td><td>
-<pre> &lt;Time&gt; &lt;/Time&gt;</pre>
-</td></tr>
-</table>
 
- ****
 
 
+Alternative notations
 
-  ```
+notation | example code
+--|--
+functional | `Time()`
+xml | `<Time> </Time>`
 
-  ```
 
-  Localisation available for:
-<table border="1">
+Localisation available for:
 
-<tr><td>pt </td><td> eventos </td></tr>
+language | keyword
+--|--
+pt | eventos
 
-  </table>
 
 
 
-  <span style="color:red">Missing:</span>
+&#x274C; Missing:
 
+ - definition: argument types 
+ - definition: optional arguments 
+ - definition: return type 
+ - documentation: title 
+ - documentation: description 
+ - documentation: usage 
 
 
 
 
+# Transformers, LinearAlgebra
 
 
 
-## variable
+## and
 
-<table border="1">
 
 
 
 
 
+**Logical `and` operator**
 
 
 
+ Is the logical AND function. It evaluates its arguments in order, giving False immediately if any of them are False, and True if they are all True. 
 
 
 
-<tr><td>
-Function notation:
-</td><td>
-<pre>variable()</pre>
-</td></tr>
+ Usage:
+```coffeescript
+a = b and c
+```
 
-<tr><td>
-Internal XML notation:
-</td><td>
-<pre> &lt;variable&gt; &lt;/variable&gt;</pre>
-</td></tr>
-</table>
 
- ****
 
 
 
-  ```
+Definition:
 
-  ```
+`and` ( `boolean` ) -> `boolean`
 
-  Localisation available for:
-<table border="1">
 
-<tr><td>pt </td><td> variável </td></tr>
 
-  </table>
 
 
 
-  <span style="color:red">Missing:</span>
 
 
 
+Alternative notations
 
+notation | example code
+--|--
+infix | `type` `{'flat': True, 'order': 600, 'key': ['and', '\xe2\x88\xa7']}` `type`
+functional | `and()`
+xml | `<and> </and>`
 
 
+Localisation available for:
 
+language | keyword
+--|--
+pt | e
 
-## integer
 
-<table border="1">
 
 
+&#x274C; Missing:
 
 
-
-
-
-
-
-
-
-<tr><td>
-Function notation:
-</td><td>
-<pre>integer()</pre>
-</td></tr>
-
-<tr><td>
-Internal XML notation:
-</td><td>
-<pre> &lt;integer&gt; &lt;/integer&gt;</pre>
-</td></tr>
-</table>
-
- ****
-
-
-
-  ```
-
-  ```
-
-  Localisation available for:
-<table border="1">
-
-<tr><td>pt </td><td> inteiro </td></tr>
-
-  </table>
-
-
-
-  <span style="color:red">Missing:</span>
-
-
-
-
-
-
-
-
-## Strings
-
-<table border="1">
-
-
-
-
-
-
-
-
-
-
-
-<tr><td>
-Function notation:
-</td><td>
-<pre>Strings()</pre>
-</td></tr>
-
-<tr><td>
-Internal XML notation:
-</td><td>
-<pre> &lt;Strings&gt; &lt;/Strings&gt;</pre>
-</td></tr>
-</table>
-
- ****
-
-
-
-  ```
-
-  ```
-
-  Localisation available for:
-<table border="1">
-
-<tr><td>pt </td><td> texto </td></tr>
-
-  </table>
-
-
-
-  <span style="color:red">Missing:</span>
-
-
-
-
-
-
-
-
-## notEqual
-
-<table border="1">
-
-
-<tr><td>Infix notation: </td>
-<td><p>
-
-<pre><span style="color:gray">type</span> != <span style="color:gray">type</span></pre><br>
-
-<pre><span style="color:gray">type</span> ≠ <span style="color:gray">type</span></pre><br>
-
-</p></td></tr>
-
-
-
-
-
-
-
-
-
-
-<tr><td>
-Function notation:
-</td><td>
-<pre>notEqual()</pre>
-</td></tr>
-
-<tr><td>
-Internal XML notation:
-</td><td>
-<pre> &lt;notEqual&gt; &lt;/notEqual&gt;</pre>
-</td></tr>
-</table>
-
- ****
-
-
-
-  ```
-
-  ```
-
-  Localisation available for:
-<table border="1">
-
-<tr><td>pt </td><td> diferente </td></tr>
-
-  </table>
-
-
-
-  <span style="color:red">Missing:</span>
-
-
-
-
-
-
-
-
-## always
-
-<table border="1">
-
-
-
-
-
-
-
-
-
-
-
-<tr><td>
-Function notation:
-</td><td>
-<pre>always()</pre>
-</td></tr>
-
-<tr><td>
-Internal XML notation:
-</td><td>
-<pre> &lt;always&gt; &lt;/always&gt;</pre>
-</td></tr>
-</table>
-
- ****
-
-
-
-  ```
-
-  ```
-
-  Localisation available for:
-<table border="1">
-
-<tr><td>pt </td><td> sempre </td></tr>
-
-  </table>
-
-
-
-  <span style="color:red">Missing:</span>
-
-
-
-
-
-
-
-
-## longComment
-
-<table border="1">
-
-
-
-
-
-
-
-
-
-
-
-<tr><td>
-Function notation:
-</td><td>
-<pre>longComment()</pre>
-</td></tr>
-
-<tr><td>
-Internal XML notation:
-</td><td>
-<pre> &lt;longComment&gt; &lt;/longComment&gt;</pre>
-</td></tr>
-</table>
-
- ****
-
-
-
-  ```
-
-  ```
-
-  Localisation available for:
-<table border="1">
-
-  </table>
-
-
-
-  <span style="color:red">Missing:</span>
-
-
-
-
-
-
-
-
-## larger
-
-<table border="1">
-
-
-<tr><td>Infix notation: </td>
-<td><p>
-
-<pre><span style="color:gray">type</span> > <span style="color:gray">type</span></pre><br>
-
-</p></td></tr>
-
-
-
-
-
-
-
-
-
-
-<tr><td>
-Function notation:
-</td><td>
-<pre>larger()</pre>
-</td></tr>
-
-<tr><td>
-Internal XML notation:
-</td><td>
-<pre> &lt;larger&gt; &lt;/larger&gt;</pre>
-</td></tr>
-</table>
-
- ****
-
-
-
-  ```
-
-  ```
-
-  Localisation available for:
-<table border="1">
-
-<tr><td>pt </td><td> maior </td></tr>
-
-  </table>
-
-
-
-  <span style="color:red">Missing:</span>
-
-
-
-
-
-
-
-
-## equal
-
-<table border="1">
-
-
-<tr><td>Infix notation: </td>
-<td><p>
-
-<pre><span style="color:gray">type</span> == <span style="color:gray">type</span></pre><br>
-
-<pre><span style="color:gray">type</span> ≡ <span style="color:gray">type</span></pre><br>
-
-</p></td></tr>
-
-
-
-
-
-
-
-
-
-
-<tr><td>
-Function notation:
-</td><td>
-<pre>equal()</pre>
-</td></tr>
-
-<tr><td>
-Internal XML notation:
-</td><td>
-<pre> &lt;equal&gt; &lt;/equal&gt;</pre>
-</td></tr>
-</table>
-
- ****
-
-
-
-  ```
-
-  ```
-
-  Localisation available for:
-<table border="1">
-
-<tr><td>pt </td><td> igual </td></tr>
-
-  </table>
-
-
-
-  <span style="color:red">Missing:</span>
-
-
-
-
-
-
-
-
-## element
-
-<table border="1">
-
-
-<tr><td>Infix notation: </td>
-<td><p>
-
-<pre><span style="color:gray">type</span> in <span style="color:gray">type</span></pre><br>
-
-<pre><span style="color:gray">type</span> ∈ <span style="color:gray">type</span></pre><br>
-
-</p></td></tr>
-
-
-
-
-
-
-
-
-
-
-<tr><td>
-Function notation:
-</td><td>
-<pre>element()</pre>
-</td></tr>
-
-<tr><td>
-Internal XML notation:
-</td><td>
-<pre> &lt;element&gt; &lt;/element&gt;</pre>
-</td></tr>
-</table>
-
- **Element of a set of type**
-
-  Defines a variable to be an element of a set or a type. If a set is provided, then the variable takes the type of the elements of the set
-
-  ```
-  x in Reals
-  ```
-
-  Localisation available for:
-<table border="1">
-
-<tr><td>pt </td><td> elemento </td></tr>
-
-  </table>
-
-
-
-  <span style="color:red">Missing:</span>
-
-
-
-
-
-
-
-
-## vector
-
-<table border="1">
-
-
-
-
-
-
-
-<tr><td>Notation: </td></tr>
-
-
-
-
-
-<tr><td>
-Function notation:
-</td><td>
-<pre>vector()</pre>
-</td></tr>
-
-<tr><td>
-Internal XML notation:
-</td><td>
-<pre> &lt;vector&gt; &lt;/vector&gt;</pre>
-</td></tr>
-</table>
-
- ****
-
-
-
-  ```
-
-  ```
-
-  Localisation available for:
-<table border="1">
-
-<tr><td>pt </td><td> vector </td></tr>
-
-  </table>
-
-
-
-  <span style="color:red">Missing:</span>
-
-
-
-
-
-
-
-
-## plus
-
-<table border="1">
-
-
-<tr><td>Infix notation: </td>
-<td><p>
-
-<pre><span style="color:gray">type</span> + <span style="color:gray">type</span></pre><br>
-
-</p></td></tr>
-
-
-
-
-
-
-
-
-
-
-<tr><td>
-Function notation:
-</td><td>
-<pre>plus()</pre>
-</td></tr>
-
-<tr><td>
-Internal XML notation:
-</td><td>
-<pre> &lt;plus&gt; &lt;/plus&gt;</pre>
-</td></tr>
-</table>
-
- ****
-
-
-
-  ```
-
-  ```
-
-  Localisation available for:
-<table border="1">
-
-<tr><td>pt </td><td> adicionar </td></tr>
-
-  </table>
-
-
-
-  <span style="color:red">Missing:</span>
-
-
-
-
-
-
-
-
-## definitions
-
-<table border="1">
-
-
-
-
-
-
-
-
-
-
-
-<tr><td>
-Function notation:
-</td><td>
-<pre>definitions()</pre>
-</td></tr>
-
-<tr><td>
-Internal XML notation:
-</td><td>
-<pre> &lt;definitions&gt; &lt;/definitions&gt;</pre>
-</td></tr>
-</table>
-
- ****
-
-
-
-  ```
-
-  ```
-
-  Localisation available for:
-<table border="1">
-
-<tr><td>pt </td><td> definicoes </td></tr>
-
-  </table>
-
-
-
-  <span style="color:red">Missing:</span>
-
+ - definition: optional arguments 
 
 
 
@@ -2313,67 +1498,6 @@ Internal XML notation:
 
 ## assign
 
-<table border="1">
-
-
-<tr><td>Infix notation: </td>
-<td><p>
-
-<pre><span style="color:gray">type</span> = <span style="color:gray">type</span></pre><br>
-
-</p></td></tr>
-
-
-
-
-
-
-
-
-
-
-<tr><td>
-Function notation:
-</td><td>
-<pre>assign()</pre>
-</td></tr>
-
-<tr><td>
-Internal XML notation:
-</td><td>
-<pre> &lt;assign&gt; &lt;/assign&gt;</pre>
-</td></tr>
-</table>
-
- ****
-
-
-
-  ```
-
-  ```
-
-  Localisation available for:
-<table border="1">
-
-<tr><td>pt </td><td> atribuir </td></tr>
-
-  </table>
-
-
-
-  <span style="color:red">Missing:</span>
-
-
-
-
-
-
-
-
-## Event
-
-<table border="1">
 
 
 
@@ -2385,34 +1509,1335 @@ Internal XML notation:
 
 
 
-<tr><td>
-Function notation:
-</td><td>
-<pre>Event()</pre>
-</td></tr>
 
-<tr><td>
-Internal XML notation:
-</td><td>
-<pre> &lt;Event&gt; &lt;/Event&gt;</pre>
-</td></tr>
-</table>
 
- ****
+Definition:
+
+`assign` ( `anything` ) -> `nothing`
 
 
 
-  ```
-
-  ```
-
-  Localisation available for:
-<table border="1">
-
-<tr><td>pt </td><td> eventos </td></tr>
-
-  </table>
 
 
 
-  <span style="color:red">Missing:</span>
+
+
+
+Alternative notations
+
+notation | example code
+--|--
+infix | `type` `{'order': 100, 'key': '='}` `type`
+functional | `assign()`
+xml | `<assign> </assign>`
+
+
+Localisation available for:
+
+language | keyword
+--|--
+pt | atribuir
+
+
+
+
+&#x274C; Missing:
+
+
+ - definition: optional arguments 
+
+ - documentation: title 
+ - documentation: description 
+ - documentation: usage 
+
+
+
+## divide
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Definition:
+
+`divide` ( `number` ) -> `None`
+
+
+
+
+
+
+
+
+
+Alternative notations
+
+notation | example code
+--|--
+infix | `type` `{'flat': True, 'order': 1200, 'key': '/'}` `type`
+functional | `divide()`
+xml | `<divide> </divide>`
+
+
+Localisation available for:
+
+language | keyword
+--|--
+pt | dividir
+
+
+
+
+&#x274C; Missing:
+
+
+ - definition: optional arguments 
+
+ - documentation: title 
+ - documentation: description 
+ - documentation: usage 
+
+
+
+## equal
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Definition:
+
+`equal` ( `number or string or boolean` ) -> `boolean`
+
+
+
+
+
+
+
+
+
+Alternative notations
+
+notation | example code
+--|--
+infix | `type` `{'order': 700, 'key': ['==', '\xe2\x89\xa1']}` `type`
+functional | `equal()`
+xml | `<equal> </equal>`
+
+
+Localisation available for:
+
+language | keyword
+--|--
+pt | igual
+
+
+
+
+&#x274C; Missing:
+
+
+ - definition: optional arguments 
+
+ - documentation: title 
+ - documentation: description 
+ - documentation: usage 
+
+
+
+## larger
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Definition:
+
+`larger` ( `number` ) -> `boolean`
+
+
+
+
+
+
+
+
+
+Alternative notations
+
+notation | example code
+--|--
+infix | `type` `{'order': 800, 'key': '>'}` `type`
+functional | `larger()`
+xml | `<larger> </larger>`
+
+
+Localisation available for:
+
+language | keyword
+--|--
+pt | maior
+
+
+
+
+&#x274C; Missing:
+
+
+ - definition: optional arguments 
+
+ - documentation: title 
+ - documentation: description 
+ - documentation: usage 
+
+
+
+## largerEqual
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Definition:
+
+`largerEqual` ( `number` ) -> `boolean`
+
+
+
+
+
+
+
+
+
+Alternative notations
+
+notation | example code
+--|--
+infix | `type` `{'order': 800, 'key': ['>=', '\xe2\x89\xa5']}` `type`
+functional | `largerEqual()`
+xml | `<largerEqual> </largerEqual>`
+
+
+Localisation available for:
+
+language | keyword
+--|--
+pt | maiorIgual
+
+
+
+
+&#x274C; Missing:
+
+
+ - definition: optional arguments 
+
+ - documentation: title 
+ - documentation: description 
+ - documentation: usage 
+
+
+
+## minus
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Definition:
+
+`minus` ( `number` ) -> `None`
+
+
+
+
+
+
+
+
+
+Alternative notations
+
+notation | example code
+--|--
+infix | `type` `{'flat': True, 'order': 1100, 'key': '-'}` `type`
+functional | `minus()`
+xml | `<minus> </minus>`
+
+
+Localisation available for:
+
+language | keyword
+--|--
+pt | subtrair
+
+
+
+
+&#x274C; Missing:
+
+
+ - definition: optional arguments 
+
+ - documentation: title 
+ - documentation: description 
+ - documentation: usage 
+
+
+
+## negative
+
+
+
+
+
+
+**Number negation**
+
+
+
+ Normal number or variable negation. 
+
+
+
+ Usage:
+```coffeescript
+a = -b
+```
+
+
+
+
+
+Definition:
+
+`negative` ( `anything` ) -> `None`
+
+
+
+
+
+
+
+
+
+Alternative notations
+
+notation | example code
+--|--
+prefix | `{'order': 1300, 'key': '-'}` ( `type` )
+functional | `negative()`
+xml | `<negative> </negative>`
+
+
+Localisation available for:
+
+language | keyword
+--|--
+pt | negativo
+
+
+
+
+&#x274C; Missing:
+
+
+ - definition: optional arguments 
+
+
+
+
+
+
+
+## notEqual
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Definition:
+
+`notEqual` ( `number or string or boolean` ) -> `boolean`
+
+
+
+
+
+
+
+
+
+Alternative notations
+
+notation | example code
+--|--
+infix | `type` `{'order': 700, 'key': ['!=', '\xe2\x89\xa0']}` `type`
+functional | `notEqual()`
+xml | `<notEqual> </notEqual>`
+
+
+Localisation available for:
+
+language | keyword
+--|--
+pt | diferente
+
+
+
+
+&#x274C; Missing:
+
+
+ - definition: optional arguments 
+
+ - documentation: title 
+ - documentation: description 
+ - documentation: usage 
+
+
+
+## or
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Definition:
+
+`or` ( `boolean` ) -> `boolean`
+
+
+
+
+
+
+
+
+
+Alternative notations
+
+notation | example code
+--|--
+functional | `or()`
+xml | `<or> </or>`
+
+
+Localisation available for:
+
+language | keyword
+--|--
+pt | {'prefix': 'ou', 'infix': ['ou', '\xe2\x88\xa7']}
+
+
+
+
+&#x274C; Missing:
+
+
+ - definition: optional arguments 
+
+ - documentation: title 
+ - documentation: description 
+ - documentation: usage 
+
+
+
+## plus
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Definition:
+
+`plus` ( `number or string` ) -> `None`
+
+
+
+
+
+
+
+
+
+Alternative notations
+
+notation | example code
+--|--
+infix | `type` `{'flat': True, 'order': 1100, 'key': '+'}` `type`
+functional | `plus()`
+xml | `<plus> </plus>`
+
+
+Localisation available for:
+
+language | keyword
+--|--
+pt | adicionar
+
+
+
+
+&#x274C; Missing:
+
+
+ - definition: optional arguments 
+
+ - documentation: title 
+ - documentation: description 
+ - documentation: usage 
+
+
+
+## positive
+
+
+
+
+
+
+**Positive sign**
+
+
+
+ Has no effect on sign.
+
+
+
+ Usage:
+```coffeescript
+a = +b
+```
+
+
+
+
+
+Definition:
+
+`positive` ( `anything` ) -> `None`
+
+
+
+
+
+
+
+
+
+Alternative notations
+
+notation | example code
+--|--
+prefix | `{'order': 1300, 'key': '+'}` ( `type` )
+functional | `positive()`
+xml | `<positive> </positive>`
+
+
+Localisation available for:
+
+language | keyword
+--|--
+pt | positivo
+
+
+
+
+&#x274C; Missing:
+
+
+ - definition: optional arguments 
+
+
+
+
+
+
+
+## smaller
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Definition:
+
+`smaller` ( `number` ) -> `boolean`
+
+
+
+
+
+
+
+
+
+Alternative notations
+
+notation | example code
+--|--
+infix | `type` `{'order': 800, 'key': '<'}` `type`
+functional | `smaller()`
+xml | `<smaller> </smaller>`
+
+
+Localisation available for:
+
+language | keyword
+--|--
+pt | menor
+
+
+
+
+&#x274C; Missing:
+
+
+ - definition: optional arguments 
+
+ - documentation: title 
+ - documentation: description 
+ - documentation: usage 
+
+
+
+## smallerEqual
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Definition:
+
+`smallerEqual` ( `number` ) -> `boolean`
+
+
+
+
+
+
+
+
+
+Alternative notations
+
+notation | example code
+--|--
+infix | `type` `{'order': 800, 'key': ['<=', '\xe2\x89\xa4']}` `type`
+functional | `smallerEqual()`
+xml | `<smallerEqual> </smallerEqual>`
+
+
+Localisation available for:
+
+language | keyword
+--|--
+pt | menorIgual
+
+
+
+
+&#x274C; Missing:
+
+
+ - definition: optional arguments 
+
+ - documentation: title 
+ - documentation: description 
+ - documentation: usage 
+
+
+
+## times
+
+
+
+
+
+
+**Number multiplication**
+
+
+
+ Normal number, vector, or matrix multiplication. 
+
+
+
+ Usage:
+```coffeescript
+a = 2*3
+```
+
+
+
+
+
+Definition:
+
+`times` ( `number` ) -> `None`
+
+
+
+
+
+
+
+
+
+Alternative notations
+
+notation | example code
+--|--
+infix | `type` `{'flat': True, 'order': 1200, 'key': '*'}` `type`
+functional | `times()`
+xml | `<times> </times>`
+
+
+Localisation available for:
+
+language | keyword
+--|--
+pt | multiplicar
+
+
+
+
+&#x274C; Missing:
+
+
+ - definition: optional arguments 
+
+
+
+
+
+
+
+
+
+
+# Inputs, RoL
+
+
+
+## associativeArray
+
+
+
+
+
+
+**Set**
+
+
+
+ A set of values
+
+
+
+ Usage:
+```coffeescript
+a = { b, c ,d }
+```
+
+
+
+
+
+
+
+Alternative notations
+
+notation | example code
+--|--
+functional | `associativeArray()`
+xml | `<associativeArray> </associativeArray>`
+
+
+Localisation available for:
+
+language | keyword
+--|--
+
+
+
+
+&#x274C; Missing:
+
+ - definition: argument types 
+ - definition: optional arguments 
+ - definition: return type 
+
+
+
+
+
+
+## Booleans
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Definition:
+
+`Booleans` ( `anything` ) -> `nothing`
+
+
+
+
+
+
+
+
+
+Alternative notations
+
+notation | example code
+--|--
+functional | `Booleans()`
+xml | `<Booleans> </Booleans>`
+
+
+Localisation available for:
+
+language | keyword
+--|--
+pt | boleano
+
+
+
+
+&#x274C; Missing:
+
+
+ - definition: optional arguments 
+
+ - documentation: title 
+ - documentation: description 
+ - documentation: usage 
+
+
+
+## element
+
+
+
+
+
+
+**Element of a set of type**
+
+
+
+ Defines a variable to be an element of a set or a type. If a set is provided, then the variable takes the type of the elements of the set
+
+
+
+ Usage:
+```coffeescript
+x in Reals
+```
+
+
+
+
+
+Definition:
+
+`element` ( `anything` ) -> `nothing`
+
+
+
+
+
+
+
+
+
+Alternative notations
+
+notation | example code
+--|--
+infix | `type` `{'order': 150, 'key': ['in', '\xe2\x88\x88']}` `type`
+functional | `element()`
+xml | `<element> </element>`
+
+
+Localisation available for:
+
+language | keyword
+--|--
+pt | elemento
+
+
+
+
+&#x274C; Missing:
+
+
+ - definition: optional arguments 
+
+
+
+
+
+
+
+## Integers
+
+
+
+
+
+
+**Integer numbers type**
+
+
+
+ A type representing integer numbers. Assumptions on the number of bits used by the compiler to represent an integer number is given as information in the editor.
+
+
+
+ Usage:
+```coffeescript
+x in Integers
+```
+
+
+
+
+
+Definition:
+
+`Integers` ( `anything` ) -> `nothing`
+
+
+
+
+
+
+Optional parameters:
+
+name | type
+--|--
+`bits` | `integer`
+
+
+
+
+Alternative notations
+
+notation | example code
+--|--
+functional | `Integers()`
+xml | `<Integers> </Integers>`
+
+
+Localisation available for:
+
+language | keyword
+--|--
+pt | inteiro
+
+
+
+
+
+
+
+
+
+
+
+
+
+## Naturals
+
+
+
+
+
+
+**Natural numbers type**
+
+
+
+ A type representing natural numbers. Assumptions on the number of bits used by the compiler to represent an natural number is given as information in the editor.
+
+
+
+ Usage:
+```coffeescript
+x in Naturals
+```
+
+
+
+
+
+Definition:
+
+`Naturals` ( `anything` ) -> `nothing`
+
+
+
+
+
+
+Optional parameters:
+
+name | type
+--|--
+`bits` | `natural`
+
+
+
+
+Alternative notations
+
+notation | example code
+--|--
+functional | `Naturals()`
+xml | `<Naturals> </Naturals>`
+
+
+Localisation available for:
+
+language | keyword
+--|--
+pt | natural
+
+
+
+
+
+
+
+
+
+
+
+
+
+## Reals
+
+
+
+
+
+
+**Real numbers type**
+
+
+
+ A type representing real numbers. Assumptions on the number of bits used by the compiler to represent a real number is given as information in the editor.
+
+
+
+ Usage:
+```coffeescript
+x in Reals
+```
+
+
+
+
+
+Definition:
+
+`Reals` ( `anything` ) -> `nothing`
+
+
+
+
+
+
+Optional parameters:
+
+name | type
+--|--
+`bits` | `integer`
+
+
+
+
+Alternative notations
+
+notation | example code
+--|--
+functional | `Reals()`
+xml | `<Reals> </Reals>`
+
+
+Localisation available for:
+
+language | keyword
+--|--
+pt | real
+
+
+
+
+
+
+
+
+
+
+
+
+
+## set
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Alternative notations
+
+notation | example code
+--|--
+functional | `set()`
+xml | `<set> </set>`
+
+
+Localisation available for:
+
+language | keyword
+--|--
+pt | conjunto
+
+
+
+
+&#x274C; Missing:
+
+ - definition: argument types 
+ - definition: optional arguments 
+ - definition: return type 
+ - documentation: title 
+ - documentation: description 
+ - documentation: usage 
+
+
+
+## vector
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Alternative notations
+
+notation | example code
+--|--
+functional | `vector()`
+xml | `<vector> </vector>`
+
+
+Localisation available for:
+
+language | keyword
+--|--
+pt | vector
+
+
+
+
+&#x274C; Missing:
+
+ - definition: argument types 
+ - definition: optional arguments 
+ - definition: return type 
+ - documentation: title 
+ - documentation: description 
+ - documentation: usage 
+
+
+
+
+
+
+
+
+
+# Outputs matrix
+
+
+keyword | RoL | RosCpp | HTMLDocumentation | RoLXML | HTMLGUI | Developer 
+--|--|--|--|--|--|--
+always | &#x26A0;| &#x26A0;| &#x26A0;| &#x26A0;| &#x26A0;| &#x26A0;
+and | &#x2714;| &#x2714;| &#x2714;| &#x26A0;| &#x2714;| &#x26A0;
+anything | &#x26A0;| &#x26A0;| &#x26A0;| &#x26A0;| &#x26A0;| &#x26A0;
+arguments | &#x26A0;| &#x2714;| &#x26A0;| &#x26A0;| &#x26A0;| &#x26A0;
+assign | &#x2714;| &#x2714;| &#x2714;| &#x26A0;| &#x2714;| &#x26A0;
+associativeArray | &#x26A0;| &#x26A0;| &#x26A0;| &#x26A0;| &#x26A0;| &#x26A0;
+block | &#x26A0;| &#x2714;| &#x26A0;| &#x26A0;| &#x26A0;| &#x26A0;
+boolean | &#x2714;| &#x2714;| &#x2714;| &#x26A0;| &#x2714;| &#x26A0;
+Booleans | &#x2714;| &#x2714;| &#x2714;| &#x26A0;| &#x2714;| &#x26A0;
+content | &#x26A0;| &#x2714;| &#x26A0;| &#x26A0;| &#x26A0;| &#x26A0;
+cycle | &#x2714;| &#x2714;| &#x2714;| &#x26A0;| &#x2714;| &#x26A0;
+defineFunction | &#x26A0;| &#x26A0;| &#x26A0;| &#x26A0;| &#x26A0;| &#x26A0;
+divide | &#x2714;| &#x2714;| &#x2714;| &#x26A0;| &#x26A0;| &#x26A0;
+element | &#x26A0;| &#x2714;| &#x26A0;| &#x26A0;| &#x26A0;| &#x26A0;
+equal | &#x2714;| &#x2714;| &#x2714;| &#x26A0;| &#x2714;| &#x26A0;
+Event | &#x26A0;| &#x26A0;| &#x26A0;| &#x26A0;| &#x26A0;| &#x26A0;
+events | &#x26A0;| &#x26A0;| &#x26A0;| &#x26A0;| &#x26A0;| &#x26A0;
+eventually | &#x26A0;| &#x26A0;| &#x26A0;| &#x26A0;| &#x26A0;| &#x26A0;
+function | &#x26A0;| &#x2714;| &#x26A0;| &#x26A0;| &#x26A0;| &#x26A0;
+functionDefinition | &#x26A0;| &#x2714;| &#x26A0;| &#x26A0;| &#x26A0;| &#x26A0;
+if | &#x26A0;| &#x26A0;| &#x26A0;| &#x26A0;| &#x26A0;| &#x26A0;
+integer | &#x2714;| &#x2714;| &#x2714;| &#x26A0;| &#x2714;| &#x26A0;
+Integers | &#x2714;| &#x2714;| &#x2714;| &#x26A0;| &#x2714;| &#x26A0;
+larger | &#x2714;| &#x2714;| &#x2714;| &#x26A0;| &#x2714;| &#x26A0;
+largerEqual | &#x2714;| &#x2714;| &#x2714;| &#x26A0;| &#x2714;| &#x26A0;
+minus | &#x2714;| &#x2714;| &#x2714;| &#x26A0;| &#x2714;| &#x26A0;
+natural | &#x2714;| &#x2714;| &#x2714;| &#x26A0;| &#x2714;| &#x26A0;
+Naturals | &#x2714;| &#x2714;| &#x2714;| &#x26A0;| &#x2714;| &#x26A0;
+negative | &#x2714;| &#x2714;| &#x2714;| &#x26A0;| &#x26A0;| &#x26A0;
+node | &#x26A0;| &#x26A0;| &#x26A0;| &#x26A0;| &#x26A0;| &#x26A0;
+notEqual | &#x2714;| &#x2714;| &#x2714;| &#x26A0;| &#x2714;| &#x26A0;
+option | &#x26A0;| &#x26A0;| &#x26A0;| &#x26A0;| &#x26A0;| &#x26A0;
+or | &#x2714;| &#x2714;| &#x2714;| &#x26A0;| &#x2714;| &#x26A0;
+plus | &#x2714;| &#x2714;| &#x2714;| &#x26A0;| &#x2714;| &#x26A0;
+positive | &#x2714;| &#x2714;| &#x2714;| &#x26A0;| &#x26A0;| &#x26A0;
+print | &#x2714;| &#x2714;| &#x2714;| &#x26A0;| &#x2714;| &#x26A0;
+real | &#x2714;| &#x2714;| &#x2714;| &#x26A0;| &#x2714;| &#x26A0;
+Reals | &#x2714;| &#x2714;| &#x2714;| &#x26A0;| &#x2714;| &#x26A0;
+return | &#x26A0;| &#x2714;| &#x26A0;| &#x26A0;| &#x26A0;| &#x26A0;
+returns | &#x26A0;| &#x2714;| &#x26A0;| &#x26A0;| &#x26A0;| &#x26A0;
+set | &#x26A0;| &#x2714;| &#x26A0;| &#x26A0;| &#x26A0;| &#x26A0;
+Signals | &#x26A0;| &#x26A0;| &#x26A0;| &#x26A0;| &#x26A0;| &#x26A0;
+smaller | &#x2714;| &#x2714;| &#x2714;| &#x26A0;| &#x2714;| &#x26A0;
+smallerEqual | &#x2714;| &#x2714;| &#x2714;| &#x26A0;| &#x2714;| &#x26A0;
+string | &#x2714;| &#x2714;| &#x2714;| &#x26A0;| &#x2714;| &#x26A0;
+Strings | &#x2714;| &#x2714;| &#x2714;| &#x26A0;| &#x2714;| &#x26A0;
+Time | &#x26A0;| &#x26A0;| &#x26A0;| &#x26A0;| &#x26A0;| &#x26A0;
+times | &#x2714;| &#x2714;| &#x2714;| &#x26A0;| &#x26A0;| &#x26A0;
+variable | &#x2714;| &#x2714;| &#x2714;| &#x26A0;| &#x2714;| &#x26A0;
+vector | &#x26A0;| &#x26A0;| &#x26A0;| &#x26A0;| &#x26A0;| &#x26A0;
