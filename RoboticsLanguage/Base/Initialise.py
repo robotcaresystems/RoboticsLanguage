@@ -21,12 +21,12 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 import os
-
 from . import Utilities
 from . import Parameters
 
 
 def prepareParameters():
+  '''Collects parameters, language, messages, and error handling functions from all list_of_modules. This function is cached in `rol`. To refresh the cache run `rol --remove-cache`.'''
 
   # read the path
   language_path = os.path.dirname(__file__) + '/../../'
@@ -79,7 +79,7 @@ def prepareParameters():
 
         # append to each keyword in the language information from which package it comes from
         for keyword in language_module.language.keys():
-          language_module.language[keyword]['package']=name_split[1]+':'+name_split[2]
+          language_module.language[keyword]['package'] = name_split[1] + ':' + name_split[2]
 
         # append language definitions
         language = Utilities.mergeDictionaries(language, language_module.language)
@@ -110,7 +110,6 @@ def prepareParameters():
         error_exceptions = Utilities.mergeDictionaries(error_exceptions, error_module.error_exception_functions)
       except:
         pass
-
 
   # merge parameters collected from modules with the default system base parameters
   # At this point the default parameters and the module parameters should be jointly non-identical
@@ -159,9 +158,10 @@ def prepareParameters():
   return parameters
 
 
-def Initialise(command_line_parameters):
+def Initialise(remove_cache):
+  '''The main initialisation file of `rol`. Grabs information from all modules to assemble a `parameters` dictionary.'''
   # remove cache if requested
-  if '--remove-cache' in command_line_parameters:
+  if remove_cache:
     Utilities.removeCache()
 
   # load cached parameters or create if necessary

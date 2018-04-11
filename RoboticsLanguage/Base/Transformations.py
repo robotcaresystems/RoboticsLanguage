@@ -1,7 +1,7 @@
 #
 #   This is the Robotics Language compiler
 #
-#   Transformations.py: Applies tranformations to the XML structure
+#   Transformations.py: Applies transformations to the XML structure
 #
 #   Created on: June 22, 2017
 #       Author: Gabriel A. D. Lopes
@@ -23,7 +23,7 @@
 from . import Utilities
 import sys
 
-def prepareTranformations(parameters):
+def prepareTransformations(parameters):
   # get the list of transformations
   transformations_list = { x:y['order'] for x,y in parameters['manifesto']['Transformers'].iteritems() }
 
@@ -42,7 +42,7 @@ def Apply(code, parameters):
   code, parameters = Utilities.semanticChecking(code, parameters)
 
   # load the list of transformations by order
-  ordered_transformations_list = Utilities.cache('tranformations-language', lambda : prepareTranformations(parameters))
+  ordered_transformations_list = Utilities.cache('transformations-language', lambda : prepareTransformations(parameters))
 
   # load the transform modules
   transform_function_list = [Utilities.importModule('Transformers', t ,'Transform') for t in ordered_transformations_list]

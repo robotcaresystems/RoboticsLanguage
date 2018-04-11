@@ -25,9 +25,8 @@ import sys
 
 if __name__ == "__main__":
 
-  # @TODO add inline filter for remove cache
-  # initialise compiler
-  parameters = Initialise.Initialise(sys.argv)
+  # initialise compiler, and check if it should remove the cache
+  parameters = Initialise.Initialise('--remove-cache' in sys.argv)
 
   # process command line arguments
   file_name , file_type, outputs, parameters = CommandLine.ProcessArguments(sys.argv, parameters)
