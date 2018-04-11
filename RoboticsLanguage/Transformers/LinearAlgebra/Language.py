@@ -324,7 +324,7 @@ language = {
             }
         },
         'output': {
-            'RosCpp': '{{children|join(" = ")}}',
+            'RosCpp': '{% if "assignFunction" in attributes %}{{attributes["assignFunction"]}}({{children[1]}}){% else %}{{children|join(" = ")}}{% endif %}',
             'HTMLDocumentation': 'print({{children|join(" = ")}})',
             'HTMLGUI': '',
             'RoL': 'print({{children|join(" = ")}})',

@@ -19,8 +19,16 @@ node(
     # An outgoing signal
     y ∈ Signals(Reals,
       rosTopic:'/test/y',
-      flow:'outgoing',
-      autoPublish:true
+      flow:'outgoing'
+    ),
+
+    # flows defaults to bidirectional
+    z ∈ Signals(Strings, rosTopic:'/test/z'),
+    w ∈ Signals(Strings, rosTopic:'/test/w',
+      onNew: block(
+        print(w),
+        z = w
+      )
     )
   ),
 

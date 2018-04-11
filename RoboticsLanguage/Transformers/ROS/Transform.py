@@ -48,17 +48,27 @@ def processTopics(code, parameters):
     # get the parent element to extract the variable name
     variable = signal.getparent().xpath('variable/@name')[0]
 
+    # Save the variable name on the `Signals` tag. Helps simplifying code
+    signal.attrib['ROSvariable'] = variable
+
+    # look for assignments for this variable
+    assignments = code.xpath('//assign/variable[1][@name="' + variable + '"]')
+    assign_function = ''
+
+    if len(assignments) > 0:
+      # add an assignment function to publish the signal automatically
+      assign_function = 'signal_' + variable + '_assign'
+
+      # Tell every assignment with this variable in the left side to run an assignment function
+      for element in assignments:
+        element.getparent().attrib['assignFunction'] = assign_function
+
     # get the type of the signal
     topic_type = signal.getchildren()[0]
 
     # get options
     topic_name = signal.xpath('option[@name="rosTopic"]')[0].getchildren()[0].text
     flow = signal.xpath('option[@name="flow"]')[0].getchildren()[0].text
-    auto_publish = signal.xpath('option[@name="autoPublish"]')[0].getchildren()[0].text
-
-    # get code blocks
-    on_new = signal.xpath('option[@name="onNew"]')[0].getchildren()[0].attrib['RosCpp']
-    on_change = signal.xpath('option[@name="onChange"]')[0].getchildren()[0].attrib['RosCpp']
 
     # Find the type for the topic
     if topic_type.tag in ['Reals', 'Integers', 'Naturals']:
@@ -88,9 +98,7 @@ def processTopics(code, parameters):
                                                                   'topic_type': ros_type,
                                                                   'topic_name': topic_name,
                                                                   'flow': flow,
-                                                                  'auto_publish': auto_publish,
-                                                                  'on_new': on_new,
-                                                                  'on_change': on_change})
+                                                                  'assign_function':assign_function})
   return code, parameters
 
 

@@ -28,18 +28,22 @@ namespace {{parameters['node']['name']|underscore}}
   /******************************* initialise ********************************************/
   void {{parameters['node']['name']|camelCase}}Class::initialise()
   {
-
+    {# ROS TOPICS #################################### #}
     {% if parameters['Transformers']['ROS']['topicDefinitions']|length > 0 -%}
     /* ROS topics */
       {% for topic in parameters['Transformers']['ROS']['topicDefinitions'] -%}
+    /* signal {{topic['variable']}} */
+      {# PUBLISHER #################################### #}
         {% if topic['flow'] == 'outgoing' or topic['flow'] == 'bidirectional' -%}
     {{topic['variable']}}_publisher = nh_.advertise<{{topic['topic_type']}}>("{{topic['topic_name']}}",10);
         {% endif -%}
 
+        {# SUBSCRIBER #################################### #}
         {% if topic['flow'] == 'incoming' or topic['flow'] == 'bidirectional' -%}
     {{topic['variable']}}_subscriber = nh_.subscribe("{{topic['topic_name']}}", 10, &{{parameters['node']['name']|camelCase}}Class::signal_{{topic['variable']}}_callback, this);
         {% endif -%}
-      {% endfor -%}
+
+      {% endfor %}
     {% endif -%}
 
     /* initialisation */
@@ -64,6 +68,7 @@ namespace {{parameters['node']['name']|underscore}}
     }
   }
 
+  {# FUNCTIONS #################################### #}
   {% for function in code|xpaths('/node/option[@name="definitions"]/*/functionDefinition') -%}
   /******************************* {{function|attribute('name')}} ************************************************/
   {% set returns = function|xpaths('returns/@RosCpp')|first -%}
@@ -74,15 +79,20 @@ namespace {{parameters['node']['name']|underscore}}
   }
   {% endfor -%}
 
-
+  {# ROS TOPICS #################################### #}
   {% if parameters['Transformers']['ROS']['topicDefinitions']|length > 0 -%}
     /* Callbacks for signals */
     {% for topic in parameters['Transformers']['ROS']['topicDefinitions'] -%}
+    {# CALLBACK #################################### #}
       {% if topic['flow'] == 'incoming' or topic['flow'] == 'bidirectional' -%}
       /******************************* signal_{{topic['variable']}}_callback ************************************************/
      void {{parameters['node']['name']|camelCase}}Class::signal_{{topic['variable']}}_callback(const {{topic['topic_type']}}& message)
      {
-       {% if topic['on_change']|length > 0 -%}
+       {# Get serialised code #}
+       {% set onChange = code|xpath('//Signals[@ROSvariable="' + topic['variable'] + '"]')|option('onChange')|attribute('RosCpp') %}
+       {% set onNew = code|xpath('//Signals[@ROSvariable="' + topic['variable'] + '"]')|option('onNew')|attribute('RosCpp') %}
+
+       {% if onChange|length > 0 -%}
        /* remember the last value for the topic */
        {{topic['topic_type']}} previous = {{topic['variable']}};
        {% endif -%}
@@ -90,19 +100,34 @@ namespace {{parameters['node']['name']|underscore}}
        /* Cache a copy of this signal inside the class */
        {{topic['variable']}} = message;
 
-       {% if topic['on_change']|length > 0 -%}
+       {% if onChange|length > 0 -%}
        if (previous.data != message.data)
        {
          /* on change */
-         {{topic['on_change']}};
+         {{onChange}};
        }
        {% endif -%}
 
        /* on new */
-       {{topic['on_new']}};
+       {{onNew}};
 
      };
       {% endif -%}
+
+      {# ASSIGN FUNCTION #################################### #}
+      {% if topic['assign_function']|length > 0 -%}
+      /******************************* signal_{{topic['variable']}}_assign ************************************************/
+     void {{parameters['node']['name']|camelCase}}Class::signal_{{topic['variable']}}_assign(const {{topic['topic_type']}}& {{topic['variable']}}_assignment)
+     {
+       /* make assignment */
+       {{topic['variable']}} = {{topic['variable']}}_assignment;
+
+       /* publish value */
+       {{topic['variable']}}_publisher.publish({{topic['variable']}});
+     };
+      {% endif -%}
+
+
     {% endfor -%}
   {% endif -%}
 

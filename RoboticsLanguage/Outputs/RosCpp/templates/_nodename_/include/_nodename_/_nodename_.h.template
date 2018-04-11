@@ -57,20 +57,30 @@ namespace {{parameters['node']['name']|underscore}}
       /* definitions */
       {{code|xpath('/node')|option('definitions')|attribute('RosCpp')}};
 
+      {# ROS TOPICS #################################### #}
       {% if parameters['Transformers']['ROS']['topicDefinitions']|length > 0 -%}
       /* ROS topics */
         {% for topic in parameters['Transformers']['ROS']['topicDefinitions'] -%}
+      /* signal {{topic['variable']}} */
+        {# PUBLISHER #################################### #}
           {% if topic['flow'] == 'outgoing' or topic['flow'] == 'bidirectional' -%}
       ros::Publisher {{topic['variable']}}_publisher;
           {% endif -%}
 
+          {# SUBSCRIBER + CALLBACK #################################### #}
           {% if topic['flow'] == 'incoming' or topic['flow'] == 'bidirectional' -%}
       ros::Subscriber {{topic['variable']}}_subscriber;
       void signal_{{topic['variable']}}_callback(const {{topic['topic_type']}}& message);
           {% endif -%}
 
+          {# ASSIGN FUNCTION #################################### #}
+          {% if topic['assign_function']|length > 0 %}
+      void signal_{{topic['variable']}}_assign(const {{topic['topic_type']}}& {{topic['variable']}}_assignment);
+          {% endif -%}
+
       {{topic['topic_type']}} {{topic['variable']}};
-        {% endfor -%}
+
+        {% endfor %}
       {% endif -%}
   };
 }

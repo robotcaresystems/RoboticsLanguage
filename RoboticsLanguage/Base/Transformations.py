@@ -47,11 +47,6 @@ def Apply(code, parameters):
   # load the transform modules
   transform_function_list = [Utilities.importModule('Transformers', t ,'Transform') for t in ordered_transformations_list]
 
-  # serialize for each output
-  for language in Utilities.ensureList(parameters['globals']['output']):
-    for xml_child in code.getchildren():
-      Utilities.serialise(xml_child, parameters, parameters['language'], language)
-
   # apply transformations
   for transform_function, transform_name in zip(transform_function_list,ordered_transformations_list):
 
@@ -63,6 +58,11 @@ def Apply(code, parameters):
 
     # show debug information
     Utilities.showDebugInformation(code,parameters)
+
+  # serialize for each output
+  for language in Utilities.ensureList(parameters['globals']['output']):
+    for xml_child in code.getchildren():
+      Utilities.serialise(xml_child, parameters, parameters['language'], language)
 
   # check if semantic errors have occured
   if len(parameters['errors']) > 0:

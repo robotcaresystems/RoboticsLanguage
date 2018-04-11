@@ -29,13 +29,11 @@ language = {
         'definition': {
             'optionalArguments': {'rosTopic': singleString,
                                   'flow': singleString,
-                                  'autoPublish': singleBoolean,
                                   'onChange': codeBlock,
                                   'onNew': codeBlock
                                   },
             'optionalDefaults': {'rosTopic': '',
-                                 'flow': 'bidirectional',
-                                 'autoPublish':True,
+                                 'flow': 'bidirectional', # @REFACTOR currently defaults to bidirectional. Detect automatically?
                                   'onChange': '',
                                   'onNew': ''
                                  },
