@@ -1,15 +1,22 @@
 # The Robotics Language compiler philosophy
 
-
 <!-- TOC START min:1 max:3 link:true update:true -->
 - [The Robotics Language compiler philosophy](#the-robotics-language-compiler-philosophy)
   - [The parameters](#the-parameters)
     - [Viewing parameters in the command line](#viewing-parameters-in-the-command-line)
     - [Using and loading extra parameters](#using-and-loading-extra-parameters)
+    - [Parameters in plug-ins](#parameters-in-plug-ins)
     - [Parameters structure](#parameters-structure)
   - [The code](#the-code)
+    - [Viewing the code in the command line](#viewing-the-code-in-the-command-line)
+    - [Code's tree evolution](#codes-tree-evolution)
+    - [Base representation](#base-representation)
+    - [Special tags](#special-tags)
+    - [Special attributes](#special-attributes)
+  - [The plug-in / modules](#the-plug-in--modules)
 
 <!-- TOC END -->
+
 
 
 
@@ -444,7 +451,7 @@ Special tags are used with the attribute `name` to simplify the xml code tree. T
 A design goal of the RoL abstract syntax tree is to use attribute free xml structures. Each module can then add its own attributes (annotations). However, in order so simplify the code structure two special attributes are used:
 
 - `name` for naming variables, options, functions
-- `p` for keeping track of the position of the tag in the original text source code. This is needed for error and warning messages.
+- `p` for keeping track of the position of the tag in the original text source code. This is needed for error and warning messages
 
 
 
