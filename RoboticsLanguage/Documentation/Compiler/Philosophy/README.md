@@ -1,5 +1,20 @@
 # The Robotics Language compiler philosophy
 
+
+<!-- TOC START min:1 max:3 link:true update:true -->
+- [The Robotics Language compiler philosophy](#the-robotics-language-compiler-philosophy)
+  - [The parameters](#the-parameters)
+    - [Viewing parameters in the command line](#viewing-parameters-in-the-command-line)
+    - [Using and loading extra parameters](#using-and-loading-extra-parameters)
+    - [Parameters structure](#parameters-structure)
+  - [The code](#the-code)
+
+<!-- TOC END -->
+
+
+
+
+
 The `rol` compiler implements a generic engine that works by processing two types of information, **code** and **parameters**, thought three steps: **input**, **transformations**, and **output**.
 
 
@@ -24,13 +39,14 @@ Parameters are represented internally by a python dictionary.
 
 All parameters can be assigned to command line flags that are loaded when the compiler is called. Parameters can also be loaded via YAML files.
 
+### Viewing parameters in the command line
+
 Parameters can be printed in the terminal using the flag `--debug-parameters`:
 
 ```shell
 rol helloworld.rol --debug-parameters
 ```
 
-### Viewing parameters in the command line
 
 The previous command will probably show too much information. To print only a subset of the parameters the flag `--debug-parameters-path 'path'` can be used. For example, to see only the `globals` section, one can type:
 
@@ -52,7 +68,7 @@ which returns:
  'verbose': 'none'}
 ```
 
-If you type `rol -h` you will be show the full help for the compiler. The section on `globals` appears as (for more information on creating custom messages for the command line see the section on [Command line options](#command-line-options) ):
+If you type `rol -h` you will be show the full help for the compiler. The section on `globals` appears as:
 
 ```
 globals:
@@ -71,6 +87,7 @@ globals:
                         Shows verbose information for the compiler and its modules
 ```
 
+For more information on creating custom messages for the command line see the section on [Command line options](#command-line-options).
 
 
 Note that the flag `--debug-parameters-path` uses the [dpath](https://github.com/akesterson/dpath-python) library. Please read the _dpath_ documentation for the available search options. For example, to get all the values for the key `name` in the `Information` domain one can write:
@@ -206,8 +223,30 @@ The `package.xml` file reads:
 </package>
 ```
 
-### Parameters structure
+### Parameters in plug-ins
 
+Each plug-in can define parameters that are included automatically in the list of parameters with the domain name of the plug-in.
+
+For example, the parameters defined in the file [RoboticsLanguage/Outputs/RosCpp/Parameters.py](../../RoboticsLanguage/Outputs/RosCpp/Parameters.py):
+
+```python
+parameters = { 'strict':False,
+               'globalIncludes':set(),
+               'localIncludes':set()
+               }
+```
+
+are included in the general parameters using the domain name `Outputs/RosCpp`:
+
+```shell
+rol helloworld.rol --debug-parameters-path 'Outputs/RosCpp'
+```
+
+```python
+{'globalIncludes': set([]), 'localIncludes': set([]), 'strict': False}
+```
+
+### Parameters structure
 
 The parameters dictionary is organised according to the following list:
 
@@ -217,23 +256,197 @@ The parameters dictionary is organised according to the following list:
 
 - `Information` Personal and company information that is embedded in the code generated. These parameters are usually stored in the files `~/.rol/parameters.yaml` and local `rol.parameters.yaml`. See [`RoboticsLanguage/Base/Parameters.py`](../../RoboticsLanguage/Base/Parameters.py) for defaults.
 
-- `Inputs` 
+- `Inputs` Parameters from the input modules. These parameters are cached.
 
-- `Transformers`
+- `Transformers` Parameters from the input modules. These parameters are cached.
 
-- `Outputs`
+- `Outputs` Parameters from the input modules. These parameters are cached.
 
-- `manifesto`
+- `manifesto` A structure with the names of each module.
 
-- `language`
+- `language` A flat list describing the internal RoL language.
 
-- `messages`
+- `messages` A flat list containing all messages used by the `rol` compiler in different spoken languages.
 
-
-
-
-
-
+- Other parameters used for internal use include `errorExceptions` and `errorHandling` for error handling, and `command_line_flags` for defining how parameters appear in the command line help.
 
 ## The code
-Code is represented internally by an XML object.
+Code is represented internally by an xml object. The xml tree structure evolves by including new annotations by each of the modules. The base RoL compiler also makes tree modifications to, e.g. include default values of functions, etc.
+
+
+### Viewing the code in the command line
+
+Just as in the case of the parameters, the internal xml code can also be printed to the terminal using the flag `--debug-code`:
+
+```shell
+rol helloworld.rol --debug-code
+```
+
+To print only a subset of the code the flag `--debug-code-path 'path'` can be used. For example, to see only all the string tags one can type:
+
+```shell
+rol helloworld.rol --debug-code-path '//string'
+```
+
+The flag `--debug-code-path` uses the [lxml](http://lxml.de) implementation of [XPath](https://en.wikipedia.org/wiki/XPath). As such, complex queries can performed. For example, to find all the function options called `initialise` one can use:
+
+```shell
+rol helloworld.rol --debug-code-path '//option[@name="initialise"]'
+```
+
+### Code's tree evolution
+
+Each module can add annotations (or in special cases tree modifications) to the code. Using the flag `--debug-step` each phase of the evolution can be printed in the command line. It can be combined with `--debug-stop`, as in the case for the parameters.
+
+The first step is usually the direct output of the parser:
+
+
+```shell
+rol helloworld.rol --debug-code --debug-step 1
+```
+
+```xml
+<node p="64">
+  <option p="26" name="name">
+    <string p="26">hello world</string>
+  </option>
+  <option p="63" name="initialise">
+    <print p="62">
+      <string p="61">hello world!</string>
+    </print>
+  </option>
+</node>
+```
+
+
+Note the attributes `p` represent the position of the tag on the original text source code. The `p` attribute is used for warning and error messages of the compiler. The special attribute `name` is used by a few special tags to simplify the xml structure.
+
+The 2nd step is usually the output of the RoL preprocessor. It does semantic checking, fill in default function parameters, etc.
+
+
+```shell
+rol helloworld.rol --debug-code --debug-step 2
+```
+
+```xml
+<node p="64" type="Nothing">
+  <option p="26" name="name">
+    <string p="26" type="Strings">hello world</string>
+  </option>
+  <option p="63" name="initialise">
+    <print p="62" type="Nothing">
+      <string p="61" type="Strings">hello world!</string>
+      <option name="level">
+        <string type="Strings">info</string>
+      </option>
+    </print>
+  </option>
+  <option name="definitions">
+    <anything type="Nothing"></anything>
+  </option>
+  <option name="rate">
+    <real type="Reals">1</real>
+  </option>
+  <option name="finalise">
+    <anything type="Nothing"></anything>
+  </option>
+</node>
+```
+
+In the previous example the default parameters `definitions`, `rate`, and `finalise` for the tag `node` were introduced. The option `level` was introduced for the `print` tag. The semantic checker performed type checking and annotated the tags with the attribute `type`.
+
+The final step will run the `serialise` function and annotate the code with snippets of the output text.
+
+```shell
+rol helloworld.rol --debug-code --debug-step 7
+```
+
+```xml
+<node p="64" type="Nothing">
+  <option p="26" name="name" RosCpp="">
+    <string p="26" type="Strings" RosCpp="&quot;hello world&quot;">hello world</string>
+  </option>
+  <option p="63" name="initialise" RosCpp="">
+    <print p="62" type="Nothing" RosCpp="ROS_INFO_STREAM(&quot;hello world!&quot;)">
+      <string p="61" type="Strings" RosCpp="&quot;hello world!&quot;">hello world!</string>
+      <option name="level" RosCpp="">
+        <string type="Strings" RosCpp="&quot;info&quot;">info</string>
+      </option>
+    </print>
+  </option>
+  <option name="definitions" RosCpp="">
+    <anything type="Nothing" RosCpp=""></anything>
+  </option>
+  <option name="rate" RosCpp="">
+    <real type="Reals" RosCpp="1">1</real>
+  </option>
+  <option name="finalise" RosCpp="">
+    <anything type="Nothing" RosCpp=""></anything>
+  </option>
+</node>
+```
+
+In the previous example, since the output module is `RosCpp` the attribute `RosCpp` has been added to the code.
+
+
+The general evolution of the code is the following:
+
+step | process | new elements
+--|--| --
+1 | Parser  |   xml structure with `p` attributes specifying the position of the tag on the text source code. The attribute `name` is added to some special tags.
+2  | Semantic checker  | Default function arguments are filled in, possibly introducing new tree elements. Type checking is performed introducing the attribute `type`.
+3 - to last before outputs | Modules  | Usually create own annotations to code  
+last before outputs  | Code serialiser  | Create an attribute for each output with the same name. Insert snippets of serialised code on the attribute.
+outputs  | Code generators  |  Normally at this point the code does not change anymore. Code is used by the template engine to create output text code.
+
+
+
+
+### Base representation
+
+The base representation of the abstract syntax tree consists of an xml structure with no attributes (except for the [special function](###-Special-tags))
+
+```xml
+<print>
+  <string>hello world!</string>
+</print>
+```
+
+The previous example is the output of the RoL code:
+
+```coffeescript
+print('hello world!')
+```
+
+
+### Special tags
+
+Special tags are used with the attribute `name` to simplify the xml code tree. These tags include a variable, option, or function:
+
+```xml
+<variable name="x"/>
+```
+
+```xml
+<option name="rate">
+  ...
+</option>
+```
+
+```xml
+<function name="f">
+  ...
+</function>
+```
+
+### Special attributes
+
+A design goal of the RoL abstract syntax tree is to use attribute free xml structures. Each module can then add its own attributes (annotations). However, in order so simplify the code structure two special attributes are used:
+
+- `name` for naming variables, options, functions
+- `p` for keeping track of the position of the tag in the original text source code. This is needed for error and warning messages.
+
+
+
+
+## The plug-in / modules
