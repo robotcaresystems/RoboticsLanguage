@@ -1,4 +1,4 @@
-![](RoboticsLanguage/Documentation/Logo/rol-logo.png)
+![](RoboticsLanguage/Documentation/Assets/rol-logo.png)
 
 # The Robotics Language
 

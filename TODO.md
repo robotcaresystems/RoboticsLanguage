@@ -45,7 +45,7 @@
   - [x] lxml
   - [-] file system
 - [ ] ROS package
-  - [ ] topics
+  - [x] topics
   - [ ] action server
   - [ ] service
   - [ ] timer
