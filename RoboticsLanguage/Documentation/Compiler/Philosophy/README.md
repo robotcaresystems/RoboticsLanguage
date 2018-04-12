@@ -1,5 +1,6 @@
 # The Robotics Language compiler philosophy
 
+
 <!-- TOC START min:1 max:3 link:true update:true -->
 - [The Robotics Language compiler philosophy](#the-robotics-language-compiler-philosophy)
   - [The parameters](#the-parameters)
@@ -14,11 +15,17 @@
     - [Special tags](#special-tags)
     - [Special attributes](#special-attributes)
   - [The plug-in / modules](#the-plug-in--modules)
+    - [Input modules](#input-modules)
+    - [Transformer modules](#transformer-modules)
+    - [Output modules](#output-modules)
+  - [The abstract syntax tree language](#the-abstract-syntax-tree-language)
+  - [Extra tools](#extra-tools)
+    - [Code serialiser](#code-serialiser)
+    - [Template engine](#template-engine)
+    - [Command line parameters](#command-line-parameters)
+    - [Error handling](#error-handling)
 
 <!-- TOC END -->
-
-
-
 
 
 
@@ -234,7 +241,7 @@ The `package.xml` file reads:
 
 Each plug-in can define parameters that are included automatically in the list of parameters with the domain name of the plug-in.
 
-For example, the parameters defined in the file [RoboticsLanguage/Outputs/RosCpp/Parameters.py](../../RoboticsLanguage/Outputs/RosCpp/Parameters.py):
+For example, the parameters defined in the file [RoboticsLanguage/Outputs/RosCpp/Parameters.py](../../Outputs/RosCpp/Parameters.py):
 
 ```python
 parameters = { 'strict':False,
@@ -257,11 +264,11 @@ rol helloworld.rol --debug-parameters-path 'Outputs/RosCpp'
 
 The parameters dictionary is organised according to the following list:
 
-- `globals` These are the main generic parameters for the compiler. These include elements such as compiler language, list of outputs, verbosity, debugging, etc. The globals are defined in the file  [`RoboticsLanguage/Base/Parameters.py`](../../RoboticsLanguage/Base/Parameters.py).
+- `globals` These are the main generic parameters for the compiler. These include elements such as compiler language, list of outputs, verbosity, debugging, etc. The globals are defined in the file  [`RoboticsLanguage/Base/Parameters.py`](../../Base/Parameters.py).
 
-- `debug` Options for printing code and parameters, stoping compiler, etc. Definition in file [`RoboticsLanguage/Base/Parameters.py`](../../RoboticsLanguage/Base/Parameters.py).
+- `debug` Options for printing code and parameters, stoping compiler, etc. Definition in file [`RoboticsLanguage/Base/Parameters.py`](../../Base/Parameters.py).
 
-- `Information` Personal and company information that is embedded in the code generated. These parameters are usually stored in the files `~/.rol/parameters.yaml` and local `rol.parameters.yaml`. See [`RoboticsLanguage/Base/Parameters.py`](../../RoboticsLanguage/Base/Parameters.py) for defaults.
+- `Information` Personal and company information that is embedded in the code generated. These parameters are usually stored in the files `~/.rol/parameters.yaml` and local `rol.parameters.yaml`. See [`RoboticsLanguage/Base/Parameters.py`](../../Base/Parameters.py) for defaults.
 
 - `Inputs` Parameters from the input modules. These parameters are cached.
 
@@ -411,7 +418,7 @@ outputs  | Code generators  |  Normally at this point the code does not change a
 
 ### Base representation
 
-The base representation of the abstract syntax tree consists of an xml structure with no attributes (except for the [special function](###-Special-tags))
+The base representation of the abstract syntax tree consists of an xml structure with no attributes (except for the [special function](#special-tags))
 
 ```xml
 <print>
@@ -454,6 +461,29 @@ A design goal of the RoL abstract syntax tree is to use attribute free xml struc
 - `p` for keeping track of the position of the tag in the original text source code. This is needed for error and warning messages
 
 
-
-
 ## The plug-in / modules
+
+There are 3 type of modules: `Inputs`, `Transformers`, and `Outputs`. These are stored in the folders with the same name. Templates of new modules can be created using the `rol` compiler with the flags `-o Developer` and  `--create-input-template`, `--create-transformer-template` or `--create-output-template`:
+
+```shell
+rol -o Developer --create-input-template "Module Name"
+```
+
+### Input modules
+
+### Transformer modules
+
+### Output modules
+
+## The abstract syntax tree language
+
+
+## Extra tools
+
+### Code serialiser
+
+### Template engine
+
+### Command line parameters
+
+### Error handling
