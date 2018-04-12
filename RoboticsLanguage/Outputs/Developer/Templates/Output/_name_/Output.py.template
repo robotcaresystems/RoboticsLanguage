@@ -13,7 +13,7 @@
 from lxml import etree
 from RoboticsLanguage.Base import Utilities
 
-def output(xml, dictionary, parameters):
+def output(code, dictionary, parameters):
   Utilities.logging.info("Output {{parameters['Outputs']['Developer']['create']['output']}}...")
 
   return 0

@@ -37,8 +37,8 @@ parameters = {
     },
 
     'debug': {
-        'xml': False,
-        'xmlPath': '',
+        'code': False,
+        'codePath': '',
         'parameters': False,
         'parametersPath': '',
         'step': 1,
@@ -87,13 +87,13 @@ parameters = {
 }
 
 command_line_flags = {
-    'debug:xml': {
+    'debug:code': {
         'noArgument': True,
-        'longFlag': 'debug-xml',
+        'longFlag': 'debug-code',
         'description': 'Prints the internal XML representation of the code'
     },
-    'debug:xmlPath': {
-        'longFlag': 'debug-xml-path',
+    'debug:codePath': {
+        'longFlag': 'debug-code-path',
         'description': 'Prints the internal XML representation of the code for a specific path'
     },
     'debug:parameters': {

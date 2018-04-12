@@ -6,9 +6,16 @@ The `rol` compiler implements a generic engine that works by processing two type
 
 ![](../../Assets/compiler-flow.png)
 
-In this document we will use the words _Inputs_ or _Parser_ interchangeably meaning the process of transforming text written in a particular language to an abstract syntax tree: the internal representation of the code.
+In this document we will use the words **inputs** or **parser** interchangeably, meaning the process of transforming text written in a particular language to an [abstract syntax tree](https://en.wikipedia.org/wiki/Abstract_syntax_tree) implemented in [xml](https://en.wikipedia.org/wiki/XML), i.e. the internal representation of the source code.
 
-The words _Outputs_ and _Code generation_ mean the process of transforming the abstract syntax tree into text documents, such as, c++ code, HTML pages, etc.
+The words **outputs** and **code generation** mean the process of transforming the abstract syntax tree into text documents, such as, c++ code, HTML pages, etc.
+
+The word **code** refers to the abstract syntax tree implemented in **xml**. The xml structure was chosen for its ability to store attributes on each tag. Attributes can be used by each module to store information for a particular element of the abstract syntax tree, acting as _an annotation_ that can be used for decision making or code generation.
+
+The word **parameters** refer to generic information, independent of the code, used in all the processing steps of the compiler.
+
+The words **plug-in** or **modules** refer to processing blocks that operate on text (for input or output), code, or the parameters. The `rol` compiler is designed to be modular, composed of modules that are sequenced to process from inputs to outputs.
+
 
 ## The parameters
 
@@ -22,6 +29,8 @@ Parameters can be printed in the terminal using the flag `--debug-parameters`:
 ```shell
 rol helloworld.rol --debug-parameters
 ```
+
+### Viewing parameters in the command line
 
 The previous command will probably show too much information. To print only a subset of the parameters the flag `--debug-parameters-path 'path'` can be used. For example, to see only the `globals` section, one can type:
 
@@ -70,6 +79,9 @@ Note that the flag `--debug-parameters-path` uses the [dpath](https://github.com
  rol helloworld.rol --debug-parameters-path 'Information/*/name'
  ```
 
+ ### Compiler steps
+
+
 The compiler follows a number of steps, represented by each individual plug-in (see figure above). You can view these steps by using the `-v` or `--verbose` flag:
 
  ```shell
@@ -90,21 +102,133 @@ If you are developing a new plug-in it may happen that the full process from par
  rol helloworld.rol --debug-parameters-path 'Outputs' --debug-step 2 --debug-stop
  ```
 
+### Using and loading extra parameters
 
+
+Parameters can also be loaded using [YAML](https://en.wikipedia.org/wiki/YAML) files
+
+```shell
+rol helloworld.rol parameters.yaml
+```
+
+Many parameters can be loaded at once. Each dictionary extracted is merged with the built in parameters. Parameters may be overwritten in this process.
+
+```shell
+rol helloworld.rol parameters1.yaml parameters2.yaml parameters3.yaml
+```
+
+In addition, the `rol` compiler will look and load automatically for the files `~/.rol/parameters.yaml` and `rol.parmameters.yaml` residing in the same folder as the `.rol` file. The order of loading is the following:
+
+order | parameters
+--|--
+1 | Defaults from `rol` and from all modules (can be cached)
+2 | global file `~/.rol/parameters.yaml` loaded automatically
+3 | local file `rol.parameters.yaml` residing in the same folder as `.rol`, loaded automatically
+4 | list of yaml files passed as arguments
+5 | command line parameters specified by flags
+
+For example the `~/.rol/parameters.yaml` can contain information about your company and yourself, so that it is inserted into the code generated automatically:
+
+```yaml
+Information:
+  user:
+    name: Gabriel Lopes
+    email: g.lopes@robotcaresystems.com
+    web: http://www.dcsc.tudelft.nl/~glopes
+  company:
+    name: Robot Care Systems B.V.
+    address: Taco Scheltemastraat 5
+    zipcode: 2509 JJ
+    city: The Hague
+    country: Netherlands
+    email: info@robotcaresystems.com
+    web: http://www.robotcaresystems.com
+    telephone: +31 88 111 00 90
+```
+
+In the local `rol.parameters.yaml` you can include information about the license and copyright for that particular node:
+
+```yaml
+Information:
+  software:
+    name: SuperRobot
+    version: 1.0.0
+    description: The supervisory control engine for the robot
+    maintainer:
+      name: John
+      email: john@some_company.com
+    author:
+      name: Gabriel Lopes
+      email: g.lopes@robotcaresystems.com
+    url: http://www.robotcaresystems.com
+    license: Apache 2.0
+    copyright: Robot Care Systems B.V., 2015-2018
+    year: 2018
+```
+
+The c++ headers of the code generated using the RosCpp module read:
+
+```c++
+/*
+ * Node name: hello world
+ *
+ * Generated on: 12 April, 2018
+ *       Author: Gabriel Lopes
+ *      Licence: Apache 2.0
+ *    Copyright: Robot Care Systems B.V., 2015-2018
+ *
+ *    THIS FILE WAS AUTOMATICALLY GENERATED USING THE ROBOTICS LANGUAGE
+ *
+ */
+```
+
+The `package.xml` file reads:
+
+```xml
+<?xml version="1.0"?>
+<package>
+  <name>hello_world</name>
+  <version>1.0.0</version>
+  <description>The supervisory control engine for the robot</description>
+  <maintainer email="john@some_company.com">John</maintainer>
+  <license>Apache 2.0</license>
+  <url type="website">http://www.robotcaresystems.com</url>
+  <author email="g.lopes@robotcaresystems.com">Gabriel Lopes</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>roscpp</build_depend>
+  <build_depend>std_msgs</build_depend>
+
+  <run_depend>roscpp</run_depend>
+  <run_depend>std_msgs</run_depend>
+
+</package>
+```
+
+### Parameters structure
 
 
 The parameters dictionary is organised according to the following list:
 
-- `globals` These are the main generic parameters for the compiler. These include elements such as compiler language, list of outputs, verbosity, debugging, etc. The globals are defined in the file  [`RoboticsLanguage/Base/Parameters.py`](../../RoboticsLanguage/Base/Parameters.py)
+- `globals` These are the main generic parameters for the compiler. These include elements such as compiler language, list of outputs, verbosity, debugging, etc. The globals are defined in the file  [`RoboticsLanguage/Base/Parameters.py`](../../RoboticsLanguage/Base/Parameters.py).
 
-- `debug`
-- `Information`
-- `Inputs`
+- `debug` Options for printing code and parameters, stoping compiler, etc. Definition in file [`RoboticsLanguage/Base/Parameters.py`](../../RoboticsLanguage/Base/Parameters.py).
+
+- `Information` Personal and company information that is embedded in the code generated. These parameters are usually stored in the files `~/.rol/parameters.yaml` and local `rol.parameters.yaml`. See [`RoboticsLanguage/Base/Parameters.py`](../../RoboticsLanguage/Base/Parameters.py) for defaults.
+
+- `Inputs` 
+
 - `Transformers`
+
 - `Outputs`
+
 - `manifesto`
+
 - `language`
+
 - `messages`
+
 
 
 

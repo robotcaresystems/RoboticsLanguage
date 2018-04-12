@@ -257,7 +257,7 @@ def showDebugInformation(code,parameters):
     if parameters['debug']['step'] == parameters['debug']['stepCounter']:
 
       # show debug information for xml code
-      if parameters['debug']['xml']:
+      if parameters['debug']['code']:
         print(etree.tostring(code,pretty_print=True))
 
       # show debug information for parameters
@@ -265,12 +265,12 @@ def showDebugInformation(code,parameters):
         pprint.pprint(parameters)
 
       # show debug information for specific xml code
-      if parameters['debug']['xmlPath'] is not '':
+      if parameters['debug']['codePath'] is not '':
         try:
-          for element in code.xpath(parameters['debug']['xmlPath']):
+          for element in code.xpath(parameters['debug']['codePath']):
             print(etree.tostring(element,pretty_print=True))
         except:
-          logger.warning("The path'" + parameters['debug']['xmlPath'] + "' is not present in the code")
+          logger.warning("The path'" + parameters['debug']['codePath'] + "' is not present in the code")
 
       # show debug information for specific parameters
       if parameters['debug']['parametersPath'] is not '':

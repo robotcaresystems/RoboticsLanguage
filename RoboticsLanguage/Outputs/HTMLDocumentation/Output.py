@@ -21,6 +21,6 @@
 #   limitations under the License.
 
 
-def output(xml, parameters):
+def output(code, parameters):
 
   return 0

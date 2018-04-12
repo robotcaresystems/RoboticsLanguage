@@ -20,6 +20,6 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-def transform(xml, parameters):
+def transform(code, parameters):
 
-  return xml, parameters
+  return code, parameters
