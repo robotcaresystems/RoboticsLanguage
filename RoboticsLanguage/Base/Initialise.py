@@ -134,9 +134,6 @@ def prepareParameters():
   parameters['command_line_flags'] = Utilities.mergeDictionaries(
       command_line_flags, Parameters.command_line_flags)
 
-  # add empty memory
-  parameters['memory'] = {}
-
   # fill in the languages using each outputs default language structure
   for keyword, value in parameters['language'].iteritems():
     # make sure the `output` tag is defined
