@@ -29,11 +29,15 @@
 
 
 
+
+![](../../Assets/compiler-flow.png)
+
+
+
 The `rol` compiler implements a generic engine that works by processing two types of information, **code** and **parameters**, thought three steps: **input**, **transformations**, and **output**.
 
 
 
-![](../../Assets/compiler-flow.png)
 
 In this document we will use the words **inputs** or **parser** interchangeably, meaning the process of transforming text written in a particular language to an [abstract syntax tree](https://en.wikipedia.org/wiki/Abstract_syntax_tree) implemented in [xml](https://en.wikipedia.org/wiki/XML), i.e. the internal representation of the source code.
 
@@ -241,7 +245,7 @@ The `package.xml` file reads:
 
 Each plug-in can define parameters that are included automatically in the list of parameters with the domain name of the plug-in.
 
-For example, the parameters defined in the file [RoboticsLanguage/Outputs/RosCpp/Parameters.py](../../Outputs/RosCpp/Parameters.py):
+For example, the parameters defined in the file [RoboticsLanguage/Outputs/RosCpp/Parameters.py](../../../Outputs/RosCpp/Parameters.py):
 
 ```python
 parameters = { 'strict':False,
@@ -264,11 +268,11 @@ rol helloworld.rol --debug-parameters-path 'Outputs/RosCpp'
 
 The parameters dictionary is organised according to the following list:
 
-- `globals` These are the main generic parameters for the compiler. These include elements such as compiler language, list of outputs, verbosity, debugging, etc. The globals are defined in the file  [`RoboticsLanguage/Base/Parameters.py`](../../Base/Parameters.py).
+- `globals` These are the main generic parameters for the compiler. These include elements such as compiler language, list of outputs, verbosity, debugging, etc. The globals are defined in the file  [`RoboticsLanguage/Base/Parameters.py`](../../../Base/Parameters.py).
 
-- `debug` Options for printing code and parameters, stoping compiler, etc. Definition in file [`RoboticsLanguage/Base/Parameters.py`](../../Base/Parameters.py).
+- `debug` Options for printing code and parameters, stoping compiler, etc. Definition in file [`RoboticsLanguage/Base/Parameters.py`](../../../Base/Parameters.py).
 
-- `Information` Personal and company information that is embedded in the code generated. These parameters are usually stored in the files `~/.rol/parameters.yaml` and local `rol.parameters.yaml`. See [`RoboticsLanguage/Base/Parameters.py`](../../Base/Parameters.py) for defaults.
+- `Information` Personal and company information that is embedded in the code generated. These parameters are usually stored in the files `~/.rol/parameters.yaml` and local `rol.parameters.yaml`. See [`RoboticsLanguage/Base/Parameters.py`](../../../Base/Parameters.py) for defaults.
 
 - `Inputs` Parameters from the input modules. These parameters are cached.
 
