@@ -1,6 +1,5 @@
 # The Robotics Language compiler philosophy
 
-
 <!-- TOC START min:1 max:3 link:true update:true -->
 - [The Robotics Language compiler philosophy](#the-robotics-language-compiler-philosophy)
   - [The parameters](#the-parameters)
@@ -23,9 +22,11 @@
     - [Code serialiser](#code-serialiser)
     - [Template engine](#template-engine)
     - [Command line parameters](#command-line-parameters)
+    - [Multi-lingual messages](#multi-lingual-messages)
     - [Error handling](#error-handling)
 
 <!-- TOC END -->
+
 
 
 
@@ -467,17 +468,230 @@ A design goal of the RoL abstract syntax tree is to use attribute free xml struc
 
 ## The plug-in / modules
 
-There are 3 type of modules: `Inputs`, `Transformers`, and `Outputs`. These are stored in the folders with the same name. Templates of new modules can be created using the `rol` compiler with the flags `-o Developer` and  `--create-input-template`, `--create-transformer-template` or `--create-output-template`:
+There are 3 type of modules: `Inputs`, `Transformers`, and `Outputs`. These are stored in the folders with the same name. Templates of new modules can be created using the `rol` compiler with the flags `-o Developer` and  `--create-input-template`, `--create-transformer-template` or `--create-output-template`.
 
-```shell
-rol -o Developer --create-input-template "Module Name"
-```
 
 ### Input modules
 
+You can use the templates provided to create a new input module:
+
+```shell
+rol -o Developer --create-input-template "My input"
+```
+
+
+Input modules must follow a file structure, listed below
+
+```
+RoboticsLanguage
+│
+└───Inputs
+    │
+    └───MyInput
+        │   __init__.py
+        │   ErrorHandling.py
+        │   Language.py
+        │   Manifesto.py
+        │   Messages.py
+        │   Parameters.py
+        │   Parse.py
+        │   README.md
+```
+- `Manifesto.py` contains the base information of the module. The `rol` compiler uses this file to detect and initialise this module. This file is **mandatory**. The content of the manifesto is a dictionary:
+
+  ```python
+  manifesto = {
+    'packageName':'My input',
+    'packageShortName':'MyInput',
+    'fileFormat': 'mi',
+    }
+  ```
+
+  1. The `packageName` should be a space separated list of words.
+
+  2. The `packageShortName` should be a Camel case version of the module name. This should match with the folder name.
+
+  3. The `fileFormat` instructs the `rol` compiler to open `.mp` files for parsing using this module.
+
+
+- `Parse.py` is the main parsing file. It should contain a function
+
+  ```coffeescript
+  parse(text, parameters) -> (code, parameters)
+  ```
+   that takes as input text and the dictionary of parameters, and return an `lxml.etree` object, plus updated parameters:
+
+  ```python
+  from lxml import etree
+
+  def parse(text, parameters):
+
+    # Place your parser here. Must return an lxml.etree object
+    code = ...
+
+    return code , parameters
+  ```
+
+  This `parse` function is called automatically by the compiler ([`RoboticsLanguage/Base/Inputs.py`](../../../Base/Inputs.py)) when needed. This function can also be called when used as a mini-language. For example, the [`xmlMiniLanguage`](../../../Base/Utilities.py#L504) function can be used by your parser to call other parsers for mini-languages. This file is **mandatory**.
+
+- `Parameters.py` lists the parameters for this package:
+
+  ```python
+  parameters = {}
+
+  command_line_flags = {}
+  ```
+
+  For more information on the `command_line_flags` structure see section [Command Line Flags](#command_line_flags). This file is optional.
+
+- `Messages.py` list possible messages in different spoken languages. This file is optional.
+
+  ```python
+  messages = {}
+  ```
+
+- `Language.py` adds new keywords to the abstract syntax tree language definition. For more information see section [The abstract syntax tree language](#the-abstract-syntax-tree-language). This file is optional.
+
+  ```python
+  messages = {}
+  ```
+
+- `ErrorHandling.py` allows adding new error handling functions. For more information see [Error handling](#error-handling). This file is optional.
+
+
+
 ### Transformer modules
 
+
+You can use the templates provided to create a new transformer module:
+
+```shell
+rol -o Developer --create-transformer-template "My transformer"
+```
+
+
+Transformer modules must follow a file structure, listed below
+
+```
+RoboticsLanguage
+│
+└───Transformers
+    │
+    └───MyTransformer
+        │   __init__.py
+        │   ErrorHandling.py
+        │   Language.py
+        │   Manifesto.py
+        │   Messages.py
+        │   Parameters.py
+        │   Transform.py
+        │   README.md
+```
+- `Manifesto.py` contains the base information of the module. The `rol` compiler uses this file to detect and initialise this module. This file is **mandatory**. The content of the manifesto is a dictionary:
+
+  ```python
+  manifesto = {
+    'packageName':'My transformer',
+    'packageShortName':'MyTransformer',
+    'order':0
+    }
+  ```
+
+  1. The `packageName` should be a space separated list of words.
+
+  2. The `packageShortName` should be a Camel case version of the module name. This should match with the folder name.
+
+  3. The `order` sets the order in which modules are sequenced in the process.
+
+
+- `Transform.py` is the main tranformation file. It should contain a function
+
+  ```coffeescript
+  transform(code, parameters) -> (code, parameters)
+  ```
+   that takes as input code as an `lxml.etree` object and the dictionary of parameters, and returns updated code and parameters.
+
+  ```python
+  from lxml import etree
+
+  def transform(code, parameters):
+
+    # place here your transformation code
+
+    return code, parameters
+  ```
+
+  This `transform` function is **always** called by the compiler ([`RoboticsLanguage/Base/Transformations.py`](../../../Base/Transformations.py)) in the specified order. This file is **mandatory**.
+
+- The files `Parameters.py`, `Messages.py`, `Language.py`, `ErrorHandling.py` are the same as in section [Input modules](#input-modules) and are optional.
+
+
+
+
 ### Output modules
+
+
+
+You can use the templates provided to create a new output module:
+
+```shell
+rol -o Developer --create-output-template "My output"
+```
+
+
+Output modules must follow a file structure, listed below
+
+```
+RoboticsLanguage
+│
+└───Outputs
+    │
+    └───MyOutput
+        │   __init__.py
+        │   ErrorHandling.py
+        │   Language.py
+        │   Manifesto.py
+        │   Messages.py
+        │   Parameters.py
+        │   Output.py
+        │   README.md
+```
+- `Manifesto.py` contains the base information of the module. The `rol` compiler uses this file to detect and initialise this module. This file is **mandatory**. The content of the manifesto is a dictionary:
+
+  ```python
+  manifesto = {
+    'packageName':'My output',
+    'packageShortName':'MyOutput',
+    }
+  ```
+
+  1. The `packageName` should be a space separated list of words.
+
+  2. The `packageShortName` should be a Camel case version of the module name. This should match with the folder name.
+
+
+
+- `Output.py` is the main output file. It should contain a function
+
+  ```coffeescript
+  output(code, parameters) -> nothing
+  ```
+   that takes as input code as an `lxml.etree` object and the dictionary of parameters, and does not return anything.
+
+  ```python
+  from lxml import etree
+
+  def output(code, parameters):
+
+    # place here your output code
+
+    return
+  ```
+
+  This `output` function is called by the compiler ([`RoboticsLanguage/Base/Outputs.py`](../../../Base/Outputs.py)) if the this output is set with the flag `-o`. This file is **mandatory**.
+
+- The files `Parameters.py`, `Messages.py`, `Language.py`, `ErrorHandling.py` are the same as in section [Input modules](#input-modules) and are optional.
+
 
 ## The abstract syntax tree language
 
@@ -489,5 +703,7 @@ rol -o Developer --create-input-template "Module Name"
 ### Template engine
 
 ### Command line parameters
+
+### Multi-lingual messages
 
 ### Error handling
