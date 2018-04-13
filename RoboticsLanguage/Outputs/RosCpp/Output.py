@@ -24,7 +24,6 @@ from RoboticsLanguage.Base import Utilities
 import os
 import sys
 import subprocess
-# import dpath.util
 
 
 def runPreparations(code, parameters):
@@ -38,9 +37,6 @@ def runPreparations(code, parameters):
   # list of c++ libraries to include based on the existance of specific tags in the code
   include_libraries = {'Integers':'cstdint',
                        'Strings':'string'}
-
-  # initialise the list of libraries
-  parameters['Outputs']['RosCpp']['globalIncludes'] = set()
 
   # add only the required libraries
   for tag, library in include_libraries.iteritems():

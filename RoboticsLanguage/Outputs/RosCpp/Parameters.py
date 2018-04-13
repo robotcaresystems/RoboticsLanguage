@@ -20,13 +20,15 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-manifesto = {
-  'packageName':'ROS c++',
-  'packageShortName':'roscpp',
-  }
 
-parameters = { 'strict':False }
+
+parameters = { 'strict':False,
+               'globalIncludes':set(),
+               'localIncludes':set()
+               }
 
 command_line_flags = {
-  'strict': {'suppress': True}
+  'strict': {'suppress': True},
+  'globalIncludes': {'suppress': True},
+  'localIncludes': {'suppress': True}
 }

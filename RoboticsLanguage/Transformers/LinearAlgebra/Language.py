@@ -294,9 +294,9 @@ language = {
             'argumentTypes': manySameBooleans,
             'returnType': returnBoolean
         },
-        'RoL': {
-            'input': {
-                'infix': {'key': ['or', '∨'],
+        'input': {
+            'RoL': {
+                          'infix': {'key': ['or', '∨'],
                           'order': 400,
                           'flat': True}
             }
@@ -324,7 +324,6 @@ language = {
             }
         },
         'output': {
-            'RosCpp': '{{children|join(" = ")}}',
             'HTMLDocumentation': 'print({{children|join(" = ")}})',
             'HTMLGUI': '',
             'RoL': 'print({{children|join(" = ")}})',

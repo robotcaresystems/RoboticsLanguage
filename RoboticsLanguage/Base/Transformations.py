@@ -1,7 +1,7 @@
 #
 #   This is the Robotics Language compiler
 #
-#   Transformations.py: Applies tranformations to the XML structure
+#   Transformations.py: Applies transformations to the XML structure
 #
 #   Created on: June 22, 2017
 #       Author: Gabriel A. D. Lopes
@@ -23,7 +23,7 @@
 from . import Utilities
 import sys
 
-def prepareTranformations(parameters):
+def prepareTransformations(parameters):
   # get the list of transformations
   transformations_list = { x:y['order'] for x,y in parameters['manifesto']['Transformers'].iteritems() }
 
@@ -42,15 +42,10 @@ def Apply(code, parameters):
   code, parameters = Utilities.semanticChecking(code, parameters)
 
   # load the list of transformations by order
-  ordered_transformations_list = Utilities.cache('tranformations-language', lambda : prepareTranformations(parameters))
+  ordered_transformations_list = Utilities.cache('transformations-language', lambda : prepareTransformations(parameters))
 
   # load the transform modules
   transform_function_list = [Utilities.importModule('Transformers', t ,'Transform') for t in ordered_transformations_list]
-
-  # serialize for each output
-  for language in Utilities.ensureList(parameters['globals']['output']):
-    for xml_child in code.getchildren():
-      Utilities.serialise(xml_child, parameters, parameters['language'], language)
 
   # apply transformations
   for transform_function, transform_name in zip(transform_function_list,ordered_transformations_list):
@@ -63,6 +58,11 @@ def Apply(code, parameters):
 
     # show debug information
     Utilities.showDebugInformation(code,parameters)
+
+  # serialize for each output
+  for language in Utilities.ensureList(parameters['globals']['output']):
+    for xml_child in code.getchildren():
+      Utilities.serialise(xml_child, parameters, parameters['language'], language)
 
   # check if semantic errors have occured
   if len(parameters['errors']) > 0:

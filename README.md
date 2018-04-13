@@ -1,9 +1,65 @@
-
-![](RoboticsLanguage/Documentation/Logo/rol-logo.png)
+![](RoboticsLanguage/Documentation/Assets/rol-logo.png)
 
 # The Robotics Language
 
 The Robotics Language (RoL) is a high level robotics programming language that generates ROS c++ nodes.
+
+```coffeescript
+# A simple topic echo node
+node(
+  name:"example echo",
+
+  definitions: block(
+    # the input signal
+    echo_in ∈ Signals(Strings, rosTopic:'/echo/in', onNew: echo_out = echo_in ),
+
+    # the echo signal
+    echo_out ∈ Signals(Strings, rosTopic:'/echo/out')
+  )
+)
+```
+
+The power of the RoL is in its ability to integrate mini-languages to build code abstractions.
+
+```coffeescript
+# A finite state machine
+node(
+  name:"example state machine",
+
+  definitions: block(
+
+    # a mini-language: code is defined within `<{ }>`
+    FiniteStateMachine<{
+
+        name:machine
+        initial:idle
+
+        idle -(start)-> running
+        running -(stop)-> idle
+
+      }>,
+
+    # the start signal
+    start ∈ Signals(Empty, rosTopic:'/start', onNew: fire(machine,"start")),
+
+    # the stop signal
+    stop ∈ Signals(Empty, rosTopic:'/stop', onNew: fire(machine,"stop"))
+
+  )
+)
+```
+
+## Documentation
+
+- The Robotics Language
+  - [Philosophy](RoboticsLanguage/Documentation/Language/Philosophy/README.md)
+  - [Tutorials](RoboticsLanguage/Documentation/Language/Tutorials/README.md)
+  - [Reference](RoboticsLanguage/Documentation/Language/Reference/README.md)
+
+- The Robotics Language compiler
+  - [Philosophy](RoboticsLanguage/Documentation/Compiler/Philosophy/README.md)
+  - [Tutorials](RoboticsLanguage/Documentation/Compiler/Tutorials/README.md)
+  - [Reference](RoboticsLanguage/Documentation/Compiler/Reference/README.md)
 
 
 ## Install
@@ -31,7 +87,7 @@ This will create a ROS node in the folder `~/deploy`. If you have installed the 
 rol -p ~/catkin_ws/src/deploy/ RoboticsLanguage/Examples/helloworld.rol -c -l
 ```
 
-## Docker image
+## Docker image for users
 
 You can test the robotics language using a docker environment. First build the docker file
 

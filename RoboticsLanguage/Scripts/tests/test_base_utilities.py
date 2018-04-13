@@ -39,7 +39,7 @@ class TestBaseUtilities(unittest.TestCase):
   #  Module utilities
   # -------------------------------------------------------------------------------------------------
   def test_importModule(self):
-    self.assertEqual(Utilities.importModule('Outputs','RosCpp','Parameters').Parameters.manifesto['packageShortName'],'roscpp')
+    self.assertEqual(Utilities.importModule('Outputs','RosCpp','Manifesto').Manifesto.manifesto['packageShortName'],'roscpp')
 
 
 

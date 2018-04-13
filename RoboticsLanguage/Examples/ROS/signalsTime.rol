@@ -3,7 +3,7 @@ node(
 
 
   definitions: block(
-    x ∈ Signals(Reals, rostopic:'/test/x', flow:'outgoing', autopublish:true),
+    x ∈ Signals(Reals, rostopic:'/test/x', flow:'outgoing'),
     y ∈ Signals(Reals, rostopic:'/test/y', flow:'incoming'),
 
     x(

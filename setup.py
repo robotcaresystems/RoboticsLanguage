@@ -31,11 +31,7 @@ setup(name='RoboticsLanguage',
       packages=find_packages(),
       scripts=['RoboticsLanguage/Scripts/rol',
                'RoboticsLanguage/Scripts/make/rol_make_examples',
-               'RoboticsLanguage/Scripts/make/rol_make_documentation',
-               'RoboticsLanguage/Scripts/tests/test_base_commandline.py',
-               'RoboticsLanguage/Scripts/tests/test_base_transformations.py',
-               'RoboticsLanguage/Scripts/tests/test_base_utilities.py',
-               'RoboticsLanguage/Scripts/tests/test_rol_parse.py'],
+               'RoboticsLanguage/Scripts/make/rol_make_documentation'],
       install_requires=[
           'parsley', 'argparse', 'argcomplete', 'jinja2', 'dpath', 'coloredlogs', 'lxml', 'iso-639', 'funcy', 'dill'
       ],

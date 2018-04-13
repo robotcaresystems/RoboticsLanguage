@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #
 #   This is the Robotics Language compiler
 #
@@ -20,4 +21,84 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-language = {}
+language = {
+    # base types
+    'Reals': {
+        'input':
+        {
+            'RoL':
+            {
+                'alternatives': ['ℝ']
+            }
+        },
+    },
+
+    'Integers': {
+        'input':
+        {
+            'RoL':
+            {
+                'alternatives': ['ℤ']
+            }
+        },
+    },
+
+    'Naturals': {
+        'input':
+        {
+            'RoL':
+            {
+                'alternatives': ['ℕ']
+            }
+        },
+    },
+
+    'Booleans': {
+        'input':
+        {
+            'RoL':
+            {
+                'alternatives': ['𝔹']
+            }
+        },
+    },
+
+    'vector': {
+        'input': {
+            'RoL': {
+                'bracket': {'open': '[',
+                            'close': ']',
+                            'arguments': 'values'}
+            }
+        },
+    },
+
+    'set': {
+        'input': {
+            'RoL': {
+                'bracket': {'open': '{',
+                            'close': '}',
+                            'arguments': 'values'}
+            }
+        },
+    },
+
+    'associativeArray': {
+        'input': {
+            'RoL': {
+                'bracket': {'open': '{',
+                            'close': '}',
+                            'arguments': 'keyValues'}
+            }
+        },
+    },
+
+    'element': {
+        'input': {
+            'RoL': {
+                'infix': {'key': ['in', '∈'],
+                          'order': 150}
+            }
+        },
+    },
+}

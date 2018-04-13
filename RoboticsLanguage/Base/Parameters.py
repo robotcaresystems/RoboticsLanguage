@@ -37,14 +37,15 @@ parameters = {
     },
 
     'debug': {
-        'xml': False,
-        'xmlPath': '',
+        'code': False,
+        'codePath': '',
         'parameters': False,
         'parametersPath': '',
         'step': 1,
         'stepCounter': 0,
         'stop': False,
-        'ignoreSemanticErrors': False
+        'ignoreSemanticErrors': False,
+        'ignoreErrors': False
     },
 
     'errors': [],
@@ -86,13 +87,13 @@ parameters = {
 }
 
 command_line_flags = {
-    'debug:xml': {
+    'debug:code': {
         'noArgument': True,
-        'longFlag': 'debug-xml',
+        'longFlag': 'debug-code',
         'description': 'Prints the internal XML representation of the code'
     },
-    'debug:xmlPath': {
-        'longFlag': 'debug-xml-path',
+    'debug:codePath': {
+        'longFlag': 'debug-code-path',
         'description': 'Prints the internal XML representation of the code for a specific path'
     },
     'debug:parameters': {
@@ -114,6 +115,11 @@ command_line_flags = {
         'longFlag': 'ignore-semantic-errors',
         'noArgument': True,
         'description': 'Ignores the semantic errors and attempts to generate code. Result may not compile.'
+    },
+    'debug:ignoreErrors': {
+        'longFlag': 'ignore-errors',
+        'noArgument': True,
+        'description': 'Ignores errors and attempts to generate code. Result may not compile.'
     },
     'globals:output': {
         'flag': 'o',

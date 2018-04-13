@@ -27,12 +27,16 @@ language = {
 
     'Signals': {
         'definition': {
-            'optionalArguments': {'rostopic': singleString,
+            'optionalArguments': {'rosTopic': singleString,
                                   'flow': singleString,
-                                  'autopublish': singleBoolean},
-            'optionalDefaults': {'rostopic': '',
-                                 'flow': 'bidirectional',
-                                 'autopublish':True},
+                                  'onChange': codeBlock,
+                                  'onNew': codeBlock
+                                  },
+            'optionalDefaults': {'rosTopic': '',
+                                 'flow': 'bidirectional', # @REFACTOR currently defaults to bidirectional. Detect automatically?
+                                  'onChange': '',
+                                  'onNew': ''
+                                 },
             'argumentTypes': anything,
             'returnType': returnNothing
         },

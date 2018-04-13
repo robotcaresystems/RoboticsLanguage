@@ -20,11 +20,6 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-manifesto = {
-  'packageName':'Linear Algebra',
-  'packageShortName':'lin',
-  'order':100
-  }
 
 parameters = {}
 

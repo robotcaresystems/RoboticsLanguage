@@ -24,22 +24,14 @@
 from RoboticsLanguage.Base.Types import singleString, singleReal, singleInteger, singleNatural, manyStrings, manyExpressions, manyCodeBlocks, codeBlock, anything
 from RoboticsLanguage.Base.Types import returnNothing, returnCodeBlock
 
-# temp
 language = {
-    # base types
+
     'Reals': {
         'definition': {
             'optionalArguments': {'bits': singleInteger},
             'optionalDefaults': {'bits': 32},
             'argumentTypes': anything,
             'returnType': returnNothing
-        },
-        'input':
-        {
-            'RoL':
-            {
-              'alternatives': ['ℝ']
-            }
         },
         'output':
         {
@@ -58,19 +50,13 @@ language = {
             'usage': 'x in Reals'
         }
     },
+
     'Integers': {
         'definition': {
             'optionalArguments': {'bits': singleInteger},
             'optionalDefaults': {'bits': 32},
             'argumentTypes': anything,
             'returnType': returnNothing
-        },
-        'input':
-        {
-          'RoL':
-          {
-              'alternatives': ['ℤ']
-          }
         },
         'output':
         {
@@ -88,21 +74,14 @@ language = {
             'description': 'A type representing integer numbers. Assumptions on the number of bits used by the compiler to represent an integer number is given as information in the editor.',
             'usage': 'x in Integers'
         }
-
     },
+
     'Naturals': {
         'definition': {
             'optionalArguments': {'bits': singleNatural},
             'optionalDefaults': {'bits': 32},
             'argumentTypes': anything,
             'returnType': returnNothing
-        },
-        'input':
-        {
-          'RoL':
-          {
-              'alternatives': ['ℕ']
-          }
         },
         'output':
         {
@@ -120,8 +99,8 @@ language = {
             'description': 'A type representing natural numbers. Assumptions on the number of bits used by the compiler to represent an natural number is given as information in the editor.',
             'usage': 'x in Naturals'
         }
-
     },
+
     'Strings': {
         'definition': {
             'argumentTypes': anything,
@@ -139,21 +118,13 @@ language = {
         },
         'documentation':
         {
-
-
         }
     },
+
     'Booleans': {
         'definition': {
             'argumentTypes': anything,
             'returnType': returnNothing
-        },
-        'input':
-        {
-            # 'RoL':
-            # {
-            #     'prefix': ['Booleans', '𝔹']
-            # }
         },
         'output':
         {
@@ -171,25 +142,21 @@ language = {
     },
 
     'Signals': {
-            'output':
-            {
-            },
-            'localisation':
-            {
-                'pt': 'sinal'
-            },
-            'documentation':
-            {
-                'title': 'A time or event based signal',
-                'description': 'Defines a signal type.',
-                'usage': 'x in Signals(Reals,rostopic:\'/test/signal\')'
-            }
+        'localisation':
+        {
+            'pt': 'sinal'
+        },
+        'documentation':
+        {
+            'title': 'A time or event based signal',
+            'description': 'Defines a signal type.',
+            'usage': 'x in Signals(Reals,rostopic:\'/test/signal\')'
+        }
     },
 
     'string': {
         'output':
         {
-            'RosCpp': '"{{text}}"',
             'HTMLDocumentation': '{{text}}',
             'HTMLGUI': '{{text}}',
             'RoL': '"{{text}}"',
@@ -203,11 +170,9 @@ language = {
         }
     },
 
-
     'integer': {
         'output':
         {
-            'RosCpp': 'int({{text}})',
             'HTMLDocumentation': '{{text}}',
             'HTMLGUI': '{{text}}',
             'RoL': '{{text}}',
@@ -220,10 +185,10 @@ language = {
         {
         }
     },
+
     'natural': {
         'output':
         {
-            'RosCpp': 'uint({{text}})',
             'HTMLDocumentation': '{{text}}',
             'HTMLGUI': '{{text}}',
             'RoL': '{{text}}',
@@ -240,7 +205,6 @@ language = {
     'boolean': {
         'output':
         {
-            'RosCpp': '{{text}}',
             'HTMLDocumentation': '{{text}}',
             'HTMLGUI': '{{text}}',
             'RoL': '{{text}}',
@@ -253,12 +217,9 @@ language = {
         }
     },
 
-
-
     'real': {
         'output':
         {
-            'RosCpp': 'float({{text}})',
             'HTMLDocumentation': '{{text}}',
             'HTMLGUI': '{{text}}',
             'RoL': '{{text}}',
@@ -272,18 +233,7 @@ language = {
         }
     },
 
-    # special types
     'vector': {
-        'input': {
-            'RoL': {
-                'bracket': {'open':'[',
-                            'close':']',
-                          'arguments': 'values'}
-            }
-        },
-        'output':
-        {
-        },
         'localisation':
         {
             'pt': 'vector'
@@ -294,17 +244,6 @@ language = {
     },
 
     'set': {
-        'input': {
-            'RoL': {
-                'bracket': {'open':'{',
-                            'close':'}',
-                          'arguments': 'values'}
-            }
-        },
-        'output':
-        {
-          'RosCpp':'{% if parentTag=="assign"%}std::tie({{children|join(", ")}}){% else %}set({{children|join(", ")}}){% endif %}'
-        },
         'localisation':
         {
             'pt': 'conjunto'
@@ -315,15 +254,6 @@ language = {
     },
 
     'associativeArray': {
-        'input': {
-            'RoL': {
-                'bracket': {'open':'{',
-                            'close':'}',
-                          'arguments': 'keyValues'}
-            }
-        },
-        'output': {
-        },
         'localisation':
         {
         },
@@ -335,19 +265,10 @@ language = {
         }
     },
 
-
-
-
-    # base elements
-
     'function': {
         'definition': {
             'argumentTypes': anything,
             'returnType': returnNothing
-        },
-        'output':
-        {
-            'RosCpp': '{{attributes["name"]}}({{children|join(", ")}})',
         },
         'documentation':
         {
@@ -358,10 +279,6 @@ language = {
         'definition': {
             'argumentTypes': anything,
             'returnType': returnNothing
-        },
-        'output':
-        {
-          'RosCpp':'{% if children|length==1 %}return {{children|first}}{% else %}return std::make_tuple({{children|join(", ")}}){% endif %}'
         },
         'localisation':
         {
@@ -376,10 +293,6 @@ language = {
             'argumentTypes': anything,
             'returnType': returnNothing
         },
-        'output':
-        {
-            'RosCpp': '{% set returns = attribute(xpaths(code,"returns"),"RosCpp") %}{% if returns=="" %}void{% else %}{{returns}}{% endif %} {{attributes["name"]}}({{attribute(xpaths(code,"arguments"),"RosCpp")}})',
-        },
         'documentation':
         {
         }
@@ -389,10 +302,6 @@ language = {
         'definition': {
             'argumentTypes': anything,
             'returnType': returnNothing
-        },
-        'output':
-        {
-            'RosCpp': '{{children|join(", ")}}',
         },
         'documentation':
         {
@@ -404,10 +313,6 @@ language = {
             'argumentTypes': anything,
             'returnType': returnNothing
         },
-        'output':
-        {
-            'RosCpp': '{{children|join(";\n")}}',
-        },
         'documentation':
         {
         }
@@ -418,15 +323,10 @@ language = {
             'argumentTypes': anything,
             'returnType': returnNothing
         },
-        'output':
-        {
-            'RosCpp': '{% if children|length==0 %}void{% elif children|length==1 %}{{children|first}}{% else %}std::tuple<{{children|join(", ")}}>{% endif %}',
-        },
         'documentation':
         {
         }
     },
-
 
     'variable': {
         'definition': {
@@ -435,7 +335,6 @@ language = {
         },
         'output':
         {
-            'RosCpp': '{{attributes["name"]}}',
             'HTMLDocumentation': '{{attributes["name"]}}',
             'HTMLGUI': '{{attributes["name"]}}',
             'RoL': '{{attributes["name"]}}',
@@ -450,9 +349,6 @@ language = {
     },
 
     'option': {
-        'output':
-        {
-        },
         'localisation':
         {
             'pt': 'parâmetro'
@@ -462,33 +358,10 @@ language = {
         }
     },
 
-    # 'name': {
-    #     'output':
-    #     {
-    #     },
-    #     'localisation':
-    #     {
-    #         'pt': 'parâmetro'
-    #     },
-    #     'documentation':
-    #     {
-    #     }
-    # },
-
     'element': {
-            'definition': {
-                'argumentTypes': anything,
-                'returnType': returnNothing
-            },
-        'input': {
-            'RoL': {
-                'infix': { 'key':['in', '∈'],
-                'order': 150 }
-            }
-        },
-        'output':
-        {
-          'RosCpp':'{{children[1]}} {{attribute(code.xpath("variable"),"name")}}'
+        'definition': {
+            'argumentTypes': anything,
+            'returnType': returnNothing
         },
         'localisation':
         {
@@ -503,14 +376,9 @@ language = {
     },
 
     'defineFunction': {
-            'definition': {
-                'argumentTypes': anything,
-                'returnType': returnNothing
-            },
-        'input': {
-            },
-        'output':
-        {
+        'definition': {
+            'argumentTypes': anything,
+            'returnType': returnNothing
         },
         'localisation':
         {
@@ -520,37 +388,10 @@ language = {
         }
     },
 
-
-    #
-    # 'functionDefinition': {
-    #     'input': {
-    #         'RoL': {
-    #             'custom': ['define', ':', '->', ',', '->', '']
-    #         }
-    #     },
-    #     'output':
-    #     {
-    #         'RosCpp': 'function({{children|join(",")}})',
-    #         'HTMLDocumentation': '{{text}}',
-    #         'HTMLGUI': '{{text}}',
-    #         'RoL': '{{text}}',
-    #     },
-    #     'localisation':
-    #     {
-    #         'pt': 'definirFunção'
-    #     },
-    #     'documentation':
-    #     {
-    #     }
-    # },
     'block': {
         'definition': {
             'argumentTypes': anything,
             'returnType': returnCodeBlock
-        },
-        'output':
-        {
-        'RosCpp':'{{";\n".join(children)}}'
         },
         'localisation':
         {
@@ -565,9 +406,6 @@ language = {
             'argumentTypes': anything,
             'returnType': returnNothing
         },
-        'output':
-        {
-        },
         'localisation':
         {
         },
@@ -576,24 +414,20 @@ language = {
         }
     },
 
-    # main structures
     'node': {
         'definition': {
             'optionalArguments': {'name': singleString,
                                   'rate': singleReal,
                                   'initialise': anything,
                                   'finalise': anything,
-                                  'definitions': anything },
+                                  'definitions': anything},
             'optionalDefaults': {'name': 'unnamed',
                                  'rate': 1,
-                                 'initialise':'',
-                                 'finalise':'',
-                                 'definitions':''},
+                                 'initialise': '',
+                                 'finalise': '',
+                                 'definitions': ''},
             'argumentTypes': anything,
             'returnType': returnNothing
-        },
-        'output':
-        {
         },
         'localisation':
         {
@@ -607,51 +441,10 @@ language = {
             'usage': 'node(\n  name:"hello world",\n  initialise(print("hello world"))\n)'
         }
     },
-    # 'initialise': {
-    #     'definition': {
-    #         'argumentTypes': manyExpressions,
-    #         'returnType': returnCodeBlock
-    #     },
-    #     'output':
-    #     {
-    #         'RosCpp': '{{children|join(";\n")}};\n',
-    #         'HTMLDocumentation': '{{children|first}}',
-    #         'HTMLGUI': '{{children|first}}',
-    #         'RoL': '{{children|first}}',
-    #     },
-    #     'localisation':
-    #     {
-    #         'pt': 'inicializar',
-    #         'el': 'αρχικοποίηση',
-    #         'nl': 'initialiseren'
-    #     },
-    #     'documentation':
-    #     {
-    #     }
-    # },
-
-    # 'finalise': {
-    #     'output':
-    #     {
-    #         'RosCpp': '{{children|join(";\n")}};\n',
-    #         'HTMLDocumentation': '{{children|first}}',
-    #         'HTMLGUI': '{{children|first}}',
-    #         'RoL': '{{children|first}}',
-    #     },
-    #     'localisation':
-    #     {
-    #         'pt': 'finalizar'
-    #     },
-    #     'documentation':
-    #     {
-    #     }
-    # },
-
 
     'cycle': {
         'output':
         {
-            'RosCpp': '{{children|join(";\n")}};\n',
             'HTMLDocumentation': '{{children|first}}',
             'HTMLGUI': '{{children|first}}',
             'RoL': '{{children|first}}',
@@ -665,26 +458,7 @@ language = {
         }
     },
 
-    # 'definitions': {
-    #     'output':
-    #     {
-    #         'RosCpp': '{{children|join(";\n")}};\n',
-    #         'HTMLDocumentation': '{{children|first}}',
-    #         'HTMLGUI': '{{children|first}}',
-    #         'RoL': '{{children|first}}',
-    #     },
-    #     'localisation':
-    #     {
-    #         'pt': 'definicoes'
-    #     },
-    #     'documentation':
-    #     {
-    #     }
-    # },
     'events': {
-        'output':
-        {
-        },
         'localisation':
         {
             'pt': 'eventos'
@@ -695,9 +469,6 @@ language = {
     },
 
     'Event': {
-        'output':
-        {
-        },
         'localisation':
         {
             'pt': 'eventos'
@@ -708,9 +479,6 @@ language = {
     },
 
     'Time': {
-        'output':
-        {
-        },
         'localisation':
         {
             'pt': 'eventos'
@@ -720,7 +488,6 @@ language = {
         }
     },
 
-    # special keywords
     'print': {
         'definition': {
             'optionalArguments': {'level': singleString},
@@ -730,7 +497,6 @@ language = {
         },
         'output':
         {
-            'RosCpp': 'ROS_INFO_STREAM({{children|first}})',
             'HTMLDocumentation': 'print({{children|first}})',
             'HTMLGUI': '',
             'RoL': 'print({{children|first}})',
@@ -747,9 +513,6 @@ language = {
     },
 
     'if': {
-        'output':
-        {
-        },
         'localisation':
         {
             'pt': 'se',
@@ -758,42 +521,4 @@ language = {
         {
         }
     },
-
-
-    #
-    # # special keywords
-    # 'shortComment': {
-    #     'output':
-    #     {
-    #         'RosCpp': '/* {{text}} */',
-    #         'HTMLDocumentation': 'print({{children|first}})',
-    #         'HTMLGUI': '',
-    #         'RoL': '# {{text}}',
-    #     },
-    #     'localisation':
-    #     {
-    #     },
-    #     'documentation':
-    #     {
-    #     }
-    # },
-    #
-    # # special keywords
-    # 'longComment': {
-    #     'output':
-    #     {
-    #         'RosCpp': 'ROS_INFO({{children|first}})',
-    #         'HTMLDocumentation': 'print({{children|first}})',
-    #         'HTMLGUI': '',
-    #         'RoL': 'print({{children|first}})',
-    #     },
-    #     'localisation':
-    #     {
-    #     },
-    #     'documentation':
-    #     {
-    #     }
-    # },
-
-
 }

@@ -39,7 +39,7 @@ def prepareGroups(parameters):
 
     return groups
 
-def output(xml, parameters):
+def output(code, parameters):
 
   if parameters['Outputs']['Developer']['create']['reference']:
 
@@ -48,7 +48,7 @@ def output(xml, parameters):
     parameters['memory']['documentation']={'groups': groups }
 
     # run template engine to generate code API
-    if not Utilities.templateEngine(xml,parameters,{},
+    if not Utilities.templateEngine(code,parameters,{},
                              os.path.dirname(__file__)+'/templates/Documentation/Reference',
                              parameters['globals']['deploy']):
       sys.exit(1)
@@ -58,7 +58,7 @@ def output(xml, parameters):
       filepatterns = {'name':Utilities.camelCase(parameters['Outputs']['Developer']['create'][type])}
 
       # run template engine to generate node code
-      if not Utilities.templateEngine(xml,parameters,
+      if not Utilities.templateEngine(code,parameters,
                                filepatterns,os.path.dirname(__file__)+'/templates/'+type.title(),
                                parameters['globals']['deploy']):
         sys.exit(1)

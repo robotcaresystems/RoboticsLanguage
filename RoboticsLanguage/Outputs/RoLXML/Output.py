@@ -24,13 +24,13 @@ from lxml import etree
 import copy
 from RoboticsLanguage.Base import Utilities
 
-def output(xml, parameters):
+def output(code, parameters):
 
   # get node name
   node_name_underscore = Utilities.underscore(parameters['node']['name'])
 
   # make a copy of the xml tree
-  xml_copy = copy.deepcopy(xml)
+  xml_copy = copy.deepcopy(code)
 
   # delete all atributes
   for element in xml_copy.iter():

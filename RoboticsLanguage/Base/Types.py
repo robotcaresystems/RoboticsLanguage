@@ -1,7 +1,7 @@
 #
 #   This is the Robotics Language compiler
 #
-#   Transformations.py: Applies tranformations to the XML structure
+#   Transformations.py: Applies transformations to the XML structure
 #
 #   Created on: June 22, 2017
 #       Author: Gabriel A. D. Lopes

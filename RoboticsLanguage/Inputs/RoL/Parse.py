@@ -55,7 +55,7 @@ def prepareGrammarEngine(parameters):
   # the base grammar defines atomic elements, special elements, and the flow of precedence
   base_grammar = r"""
 digits = <digit+>
-word = <letter+>
+objectName = <letter ( letter | '_' | digit )*>
 
 # comments
 wws = (ws longComment)* (ws shortComment)* ws
@@ -65,7 +65,7 @@ longComment = ('##'  <(~('##') anything)+>:c  '##' -> xml('comment',str(c), self
 shortComment = ('#'  <(~('\n') anything)+>:c  '\n' -> xml('comment',str(c), self.input.position))
 
 # types
-variable = word:a -> xmlVariable(a,self.input.position)
+variable = functionName:a -> xmlVariable(a,self.input.position)
 
 type = ( number | string | boolean )
 
@@ -82,20 +82,20 @@ real =  < ('-' wws)? (( '.' digits | digits '.' digits? ) ( ('e' | 'E') ('+' | '
               ) >:x -> xml('real',str(x), self.input.position)
 
 # special functions, brackets
-language = word:n wws '<{' code:l '}>' -> xmlMiniLanguage(n, l, self.input.position)
+language = objectName:n wws '<{' code:l '}>' -> xmlMiniLanguage(n, l, self.input.position)
 
 code = <(~('}>') anything)+>
 
-function = ( word:a1 wws '(' wws mixed:a2 wws ')' -> xmlFunction(a1, a2, self.input.position)
-           | word:a1 wws '(' wws ')' -> xmlFunction(a1, '', self.input.position)
+function = ( functionName:a1 wws '(' wws mixed:a2 wws ')' -> xmlFunction(a1, a2, self.input.position)
+           | functionName:a1 wws '(' wws ')' -> xmlFunction(a1, '', self.input.position)
            )
 
-part = word:a1 '[' wws values:a2 wws ']' -> xml('part',xmlVariable(a1,self.input.position)+xml('index',a2,self.input.position),self.input.position)
+part = objectName:a1 '[' wws values:a2 wws ']' -> xml('part',xmlVariable(a1,self.input.position)+xml('index',a2,self.input.position),self.input.position)
 
-functionDefinition  = 'define' wws word:a1 wws '(' ( values | wws ):a2 ')' ( wws '->' wws '(' values:a3 ')' wws | wws '->' wws Pmin:a3 wws | wws:a3 ) ':' wws function:a4 -> xmlFunctionDefinition(a1,a2,a3,a4,self.input.position)
+functionDefinition  = 'define' wws functionName:a1 wws '(' ( values | wws ):a2 ')' ( wws '->' wws '(' values:a3 ')' wws | wws '->' wws Pmin:a3 wws | wws:a3 ) ':' wws function:a4 -> xmlFunctionDefinition(a1,a2,a3,a4,self.input.position)
 
 # definition of values, key-values, or mixed arguments
-optionDefinition = word:a1 wws ':' wws Pmin:a2 -> xmlAttributes('option',a2,self.input.position, attributes={'name':a1})
+optionDefinition = objectName:a1 wws ':' wws Pmin:a2 -> xmlAttributes('option',a2,self.input.position, attributes={'name':a1})
 valuesDefinition = Pmin:a1 (wws ',' wws Pmin )+:a2 -> ''.join([a1]+a2)
 mixedDefinition = option:a1 (wws ',' wws option )+:a2 -> ''.join([a1]+a2)
 keyValuesDefinition = optionDefinition:a1 (wws ',' wws optionDefinition )+:a2 -> ''.join([a1]+a2)
@@ -175,6 +175,7 @@ def parse(text, parameters):
     parsed_xml_text = ''.join(language(text).main())
 
   except parsley.ParseError as error:
+    # with Error.exception(parameters, stop=True)
     Utilities.logErrors(Utilities.formatParsleyErrorMessage(error), parameters)
     sys.exit(1)
 
@@ -183,6 +184,7 @@ def parse(text, parameters):
     parsed_xml = etree.fromstring(parsed_xml_text)
 
   except etree.XMLSyntaxError as error:
+    # with Error.exception(parameters, stop=True)
     Utilities.logErrors(Utilities.formatLxmlErrorMessage(error), parameters)
     sys.exit(1)
 

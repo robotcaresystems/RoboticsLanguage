@@ -257,7 +257,7 @@ def showDebugInformation(code,parameters):
     if parameters['debug']['step'] == parameters['debug']['stepCounter']:
 
       # show debug information for xml code
-      if parameters['debug']['xml']:
+      if parameters['debug']['code']:
         print(etree.tostring(code,pretty_print=True))
 
       # show debug information for parameters
@@ -265,12 +265,12 @@ def showDebugInformation(code,parameters):
         pprint.pprint(parameters)
 
       # show debug information for specific xml code
-      if parameters['debug']['xmlPath'] is not '':
+      if parameters['debug']['codePath'] is not '':
         try:
-          for element in code.xpath(parameters['debug']['xmlPath']):
+          for element in code.xpath(parameters['debug']['codePath']):
             print(etree.tostring(element,pretty_print=True))
         except:
-          logger.warning("The path'" + parameters['debug']['xmlPath'] + "' is not present in the code")
+          logger.warning("The path'" + parameters['debug']['codePath'] + "' is not present in the code")
 
       # show debug information for specific parameters
       if parameters['debug']['parametersPath'] is not '':
@@ -632,9 +632,11 @@ def semanticTypeChecker(code,parameters):
           # check types for optional arguments
           if not all(map(lambda x,y: keys[code.tag]['definition']['optionalArguments'][x]([y]) , parameter_names, parameter_types)):
             # Error: incorrect types for optional arguments!
+            # Error.handler('OptionalArgumentTypes', code, parameters, parameter_names, parameter_types)
             errorOptionalArgumentTypes(code, parameters, parameter_names, parameter_types)
         else:
           # Error: optional argument not defined
+          # Error.handler('OptionalArgumentNotDefined', code, parameters, parameter_names)
           errorOptionalArgumentNotDefined(code, parameters, parameter_names)
 
       # check mandatory argument types
@@ -645,8 +647,10 @@ def semanticTypeChecker(code,parameters):
 
       else:
         # Error: mandatory argument missing or incorrect
+        # Error.handler('ArgumentTypes',code, parameters, argument_types)
         errorArgumentTypes(code, parameters, argument_types)
     except:
+      # with Error.exception(parameters,code, stop=True, message='LanguageDefinition')
       errorLanguageDefinition(code, parameters)
       sys.exit(1)
 
@@ -690,6 +694,11 @@ def fillDefaultsInOptionalArguments(code, parameters):
       # append new tag to the code
       optional_argument_tag.append(value_tag)
       code.append(optional_argument_tag)
+
+  # fill in parameters for children
+  for element in code.xpath('option'):
+    for child in element.getchildren():
+      __, parameters = fillDefaultsInOptionalArguments(child, parameters)
 
   return code, parameters
 
@@ -763,6 +772,7 @@ def templateEngine(code, parameters, filepatterns, templates_path, deploy_path,
         # fill in the text
         text_body = template_body.render(code=code, parameters=parameters)
       except TemplateError as e:
+        # with Error.exception(parameters, filename=files_to_process[i])
         logErrors(formatJinjaErrorMessage(e, filename=files_to_process[i]), parameters)
         return False
 
@@ -785,6 +795,7 @@ def templateEngine(code, parameters, filepatterns, templates_path, deploy_path,
       logging.debug('Copied file ' + new_copy_files[i] + '...')
 
   except OSError as e:
+    # with Error.exception(parameters, stop=True)
     logErrors(formatOSErrorMessage(e), parameters)
     return False
   return True
@@ -807,9 +818,13 @@ def serialise(code, parameters, keywords, language, filters=default_template_eng
       for key, value in filters.iteritems():
         template.globals[key] = value
 
+      # get all children that are not 'option'
+      children_elements = code.xpath('*[not(self::option)]')
+
       # render tags according to dictionary
-      snippet = template.render(children=map(lambda x: serialise(x, parameters, keywords, language, filters), code.getchildren()),
-                                childrenTags=map(lambda x: x.tag, code.getchildren()),
+      snippet = template.render(children=map(lambda x: serialise(x, parameters, keywords, language, filters), children_elements),
+                                childrenTags=map(lambda x: x.tag, children_elements),
+                                options = dict(zip(code.xpath('option/@name'),map(lambda x: serialise(x, parameters, keywords, language, filters), code.xpath('option/*')))),
                                 attributes=code.attrib,
                                 parentAttributes=code.getparent().attrib,
                                 parentTag=code.getparent().tag,
@@ -820,6 +835,7 @@ def serialise(code, parameters, keywords, language, filters=default_template_eng
       code.attrib[language] = snippet
 
     except TemplateError as e:
+      # with Error.exception(parameters)
       logErrors(formatJinjaErrorMessage(e), parameters)
 
   except KeyError:
@@ -859,6 +875,7 @@ def CreatePreInPostFixGrammar(definitions):
   infix = dpath.util.search(definitions,'/*/infix')
   prefix = dpath.util.search(definitions,'/*/prefix')
   postfix = dpath.util.search(definitions,'/*/postfix')
+  alternatives = dpath.util.search(definitions,'/*/alternatives')
 
   # get the precedence orders
   orders = list(set(dpath.util.values(definitions,'/*/*/order')))
@@ -866,6 +883,17 @@ def CreatePreInPostFixGrammar(definitions):
   previousOrder = dict(zip(orders+['max'],['min']+orders))
 
   text = ''
+
+  # create grammar for alternatives
+  text += '\n# function names alternatives\n'
+
+  for key, value in alternatives.iteritems():
+    text += key + ' = ( \''+ ' | '.join(value['alternatives']) + '\' | \'' + key + '\' ) -> \'' + key + '\'\n'
+
+  if len(alternatives.keys()) > 0:
+    text += 'functionName = ( ' + ' | '.join(alternatives.keys()) + ' | objectName )\n'
+  else:
+    text += 'functionName = objectName\n'
 
   # create grammar for infix operators
   text += '\n# Infix operators\n'

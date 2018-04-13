@@ -1,0 +1,128 @@
+# Robotics Language language reference
+{# ------------------------------------------------------------------- #}
+{# Index ------------------------------------------------------------- #}
+
+## Index of keywords
+
+{% for k,v in parameters['memory']['documentation']['groups'].iteritems() %}
+- {{k}}
+  {% for kk, vv in v.iteritems() %}
+  - {{kk}}
+
+    {% for keyword in vv|sort%}[{{keyword}}](#{{keyword|lower}}){% if not loop.last %}, {% endif %}{% endfor %}
+  {% endfor %}
+{% endfor %}
+
+{# ------------------------------------------------------------------- #}
+{# All keywords ------------------------------------------------------ #}
+
+{% for k,v in parameters['memory']['documentation']['groups'].iteritems() %}
+{% for kk, vv in v.iteritems() %}
+# {{k}}, {{kk}}
+
+{% for keyword in vv|sort %}
+
+## {{keyword}}
+
+{% if parameters['language'][keyword]|isDefined('definition/class') %}Class:  <kbd>[{{parameters['language'][keyword]|dpath('definition/class')}}](#the-url)</kbd>{% endif %}
+
+{# titles and description --------------------------------------------- #}
+
+{% if parameters['language'][keyword]|isDefined('documentation/title') %}
+**{{parameters['language'][keyword]['documentation']['title']}}**
+{% endif %}
+
+{% if parameters['language'][keyword]|isDefined('documentation/description') %}
+ {{parameters['language'][keyword]['documentation']['description']}}
+{% endif %}
+
+{% if parameters['language'][keyword]|isDefined('documentation/usage') %}
+ Usage:
+```coffeescript
+{{parameters['language'][keyword]['documentation']['usage']}}
+```
+{% endif %}
+
+{# formal definition ------------------------------------------------------ #}
+
+{% if parameters['language'][keyword]|isDefined('definition/argumentTypes') and parameters['language'][keyword]|isDefined('definition/returnType') %}
+Definition:
+
+`{{keyword}}` ( `{{parameters['language'][keyword]['definition']['argumentTypes'].__doc__}}` ) -> `{{parameters['language'][keyword]['definition']['returnType'].__doc__}}`
+
+{# `{{keyword}}` : `{{parameters['language'][keyword]|dpath('definition/mandatory')|join('` x `')}}` -> {{parameters['language'][keyword]|dpath('definition/return')|join('` x `')}} #}
+
+{# optional parameters ------------------------------------------------------ #}
+
+{% if parameters['language'][keyword]['definition']['optionalArguments']|length > 0 %}
+Optional parameters:
+
+name | type
+--|--
+{% for p,t in parameters['language'][keyword]['definition']['optionalArguments'].iteritems() -%}
+`{{p}}` | `{{t.__doc__}}`
+{% endfor -%}
+{% endif %}
+{% endif %}
+
+{# alternative notations ------------------------------------------------------ #}
+Alternative notations
+
+notation | example code
+--|--
+{% if parameters['language'][keyword]|isDefined('input/RoL/infix') -%}
+{% for infix in parameters['language'][keyword]|dpath('input/RoL/infix')|ensureList -%}
+infix | `type` `{{infix}}` `type`
+{% endfor -%}
+{% endif -%}
+{% if parameters['language'][keyword]|isDefined('input/RoL/prefix') -%}
+{% for prefix in parameters['language'][keyword]|dpath('input/RoL/prefix')|ensureList -%}
+prefix | `{{prefix}}` ( `type` )
+{% endfor -%}
+{% endif -%}
+{% if parameters['language'][keyword]|isDefined('input/RoL/pre-in-postfix') -%}
+pre-postfix | {{parameters['language'][keyword]|dpath('input/RoL/pre-in-postfix')|join(' `type` ')}}
+{% endif -%}
+{% if parameters['language'][keyword]|isDefined('input/RoL/custom') -%}
+custom | {{parameters['language'][keyword]|dpath('input/RoL/custom')|join(' `type` ')}}
+{% endif -%}
+functional | `{{keyword}}()`
+xml | `<{{keyword}}> </{{keyword}}>`
+
+{# localisation ------------------------------------------------------ #}
+{% if parameters['language'][keyword]|isDefined('localisation') %}Localisation available for:
+
+language | keyword
+--|--
+{% for key, vvalue in parameters['language'][keyword]['localisation'].iteritems() -%}
+{{key}} | {{vvalue}}
+{% endfor -%}
+{% endif %}
+
+{# Missing elements ------------------------------------------------------ #}
+{% if not (parameters['language'][keyword]|isDefined('definition/optionalArguments') and parameters['language'][keyword]|isDefined('definition/argumentTypes')  and parameters['language'][keyword]|isDefined('definition/returnType') and parameters['language'][keyword]|isDefined('documentation/title')  and parameters['language'][keyword]|isDefined('documentation/description') and parameters['language'][keyword]|isDefined('documentation/usage')  and parameters['language'][keyword]|isDefined('localisation')) %}
+&#x274C; Missing:
+{% endif %}
+{% if not parameters['language'][keyword]|isDefined('definition/argumentTypes') %} - definition: argument types {% endif %}
+{% if not parameters['language'][keyword]|isDefined('definition/optionalArguments') %} - definition: optional arguments {% endif %}
+{% if not parameters['language'][keyword]|isDefined('definition/returnType') %} - definition: return type {% endif %}
+{% if not parameters['language'][keyword]|isDefined('documentation/title') %} - documentation: title {% endif %}
+{% if not parameters['language'][keyword]|isDefined('documentation/description') %} - documentation: description {% endif %}
+{% if not parameters['language'][keyword]|isDefined('documentation/usage') %} - documentation: usage {% endif %}
+{% if not parameters['language'][keyword]|isDefined('localisation') %} - documentation: localisation {% endif %}
+{% endfor %}
+
+{% endfor %}
+{% endfor %}
+
+{# --------------------------------------------------------------------- #}
+{# Outputs matrix ------------------------------------------------------ #}
+
+# Outputs matrix
+
+
+keyword {% for output in parameters['Outputs'].keys()  -%} | {{output}} {% endfor %}
+-{% for output in parameters['Outputs'].keys()  -%}-|-{% endfor %}-{% for keyword, keyword_value in parameters['language']|dictsort %}
+{{keyword}} {% for output in parameters['Outputs'].keys()  -%}
+ | {% if output in parameters['language'][keyword]['defaultOutput'] %}&#x26A0;{% else %}&#x2714;{% endif %}{% endfor -%}
+{% endfor %}
