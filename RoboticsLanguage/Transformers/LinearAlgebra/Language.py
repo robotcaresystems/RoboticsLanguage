@@ -294,9 +294,9 @@ language = {
             'argumentTypes': manySameBooleans,
             'returnType': returnBoolean
         },
-        'RoL': {
-            'input': {
-                'infix': {'key': ['or', '∨'],
+        'input': {
+            'RoL': {
+                          'infix': {'key': ['or', '∨'],
                           'order': 400,
                           'flat': True}
             }

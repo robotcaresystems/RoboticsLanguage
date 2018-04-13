@@ -513,6 +513,8 @@ language = {
     },
 
     'if': {
+      'output':
+      {'RosCpp': 'if({{children[0]}})\n{ {{children[1]}} }\n {% if children|length>2 %}else \n{ {{children[2]}} }{% endif %}'},
         'localisation':
         {
             'pt': 'se',

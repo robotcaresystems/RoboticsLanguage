@@ -818,9 +818,13 @@ def serialise(code, parameters, keywords, language, filters=default_template_eng
       for key, value in filters.iteritems():
         template.globals[key] = value
 
+      # get all children that are not 'option'
+      children_elements = code.xpath('*[not(self::option)]')
+
       # render tags according to dictionary
-      snippet = template.render(children=map(lambda x: serialise(x, parameters, keywords, language, filters), code.getchildren()),
-                                childrenTags=map(lambda x: x.tag, code.getchildren()),
+      snippet = template.render(children=map(lambda x: serialise(x, parameters, keywords, language, filters), children_elements),
+                                childrenTags=map(lambda x: x.tag, children_elements),
+                                options = dict(zip(code.xpath('option/@name'),map(lambda x: serialise(x, parameters, keywords, language, filters), code.xpath('option/*')))),
                                 attributes=code.attrib,
                                 parentAttributes=code.getparent().attrib,
                                 parentTag=code.getparent().tag,

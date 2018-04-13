@@ -180,7 +180,7 @@ language = {
     'print': {
         'output':
         {
-            'RosCpp': 'ROS_INFO_STREAM({{children|first}})',
+            'RosCpp': 'ROS_INFO_STREAM({{children|join(" << ")}})',
         },
     },
 

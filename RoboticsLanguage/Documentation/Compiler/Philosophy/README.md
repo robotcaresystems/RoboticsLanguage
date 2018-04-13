@@ -33,28 +33,30 @@
 
 ![](../../Assets/compiler-flow.png)
 
+## Definitions
+
+The `rol` compiler implements a generic engine that works by processing two types of information, **code** and **parameters**, through three steps: **input**, **transformations**, and **output**.
 
 
-The `rol` compiler implements a generic engine that works by processing two types of information, **code** and **parameters**, thought three steps: **input**, **transformations**, and **output**.
+In this document we will use the words **input** or **parser** interchangeably, meaning the process of transforming text written in a particular language to an [abstract syntax tree](https://en.wikipedia.org/wiki/Abstract_syntax_tree) implemented in [xml](https://en.wikipedia.org/wiki/XML), i.e. the internal representation of the source code.
 
-
-
-
-In this document we will use the words **inputs** or **parser** interchangeably, meaning the process of transforming text written in a particular language to an [abstract syntax tree](https://en.wikipedia.org/wiki/Abstract_syntax_tree) implemented in [xml](https://en.wikipedia.org/wiki/XML), i.e. the internal representation of the source code.
-
-The words **outputs** and **code generation** mean the process of transforming the abstract syntax tree into text documents, such as, c++ code, HTML pages, etc.
+The words **output** and **code generation** mean the process of transforming the abstract syntax tree into text documents, such as, c++ code, HTML pages, etc.
 
 The word **code** refers to the abstract syntax tree implemented in **xml**. The xml structure was chosen for its ability to store attributes on each tag. Attributes can be used by each module to store information for a particular element of the abstract syntax tree, acting as _an annotation_ that can be used for decision making or code generation.
 
-The word **parameters** refer to generic information, independent of the code, used in all the processing steps of the compiler.
+The word **parameters** refer to generic information, independent of the code, used in all the processing steps of the compiler. Parameters change the behaviour of the processing functions.
 
 The words **plug-in** or **modules** refer to processing blocks that operate on text (for input or output), code, or the parameters. The `rol` compiler is designed to be modular, composed of modules that are sequenced to process from inputs to outputs.
+
+To summarise, the process is:
+  1. Code (written in text) is parsed into the abstract syntax tree (represented in xml)
+  2. Transformers annotate the abstract syntax tree
+  3. The abstract syntax tree is output into various types of text formats.
 
 
 ## The parameters
 
-Parameters are any piece of information that may be relevant for the parsing, transformation, and code generation parts of the compiler.
-Parameters are represented internally by a python dictionary.
+Parameters are any piece of information that may be relevant for the parsing, transformation, and code generation parts of the compiler. Parameters change the behaviour of the processing functions. Parameters are represented internally by a python dictionary.
 
 All parameters can be assigned to command line flags that are loaded when the compiler is called. Parameters can also be loaded via YAML files.
 
