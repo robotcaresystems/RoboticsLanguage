@@ -20,7 +20,7 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-type_mapping = {
+ros_type_mapping = {
     'Booleans': 'Bool',
     'Reals32': 'Float32',
     'Reals64': 'Float64',
@@ -35,6 +35,20 @@ type_mapping = {
     'Strings': 'String',
 }
 
+cpp_type_mapping = {
+    'Booleans': 'bool',
+    'Reals32': 'float',
+    'Reals64': 'double',
+    'Integers8': 'int8_t',
+    'Integers16': 'int16_t',
+    'Integers32': 'int32_t',
+    'Integers64': 'int64_t',
+    'Naturals8': 'uint8_t',
+    'Naturals16': 'uint16_t',
+    'Naturals32': 'uint32_t',
+    'Naturals64': 'uint64_t',
+    'Strings': 'string',
+}
 
 def processTopics(code, parameters):
   '''Processes all the ROS topics in the RoL code'''
@@ -53,15 +67,20 @@ def processTopics(code, parameters):
 
     # look for assignments for this variable
     assignments = code.xpath('//assign/variable[1][@name="' + variable + '"]')
-    assign_function = ''
 
     if len(assignments) > 0:
-      # add an assignment function to publish the signal automatically
-      assign_function = 'signal_' + variable + '_assign'
-
-      # Tell every assignment with this variable in the left side to run an assignment function
+      # Tell every assignment with this variable in the left side to use to data domain
       for element in assignments:
-        element.getparent().attrib['assignFunction'] = assign_function
+        element.getparent().attrib['assignDomain'] = '.data'
+
+    # look for usages of this variable
+    usages = code.xpath('//variable[@name="' + variable + '"]')
+
+    # for those that are not assignments use the data domain
+    if len(usages) > 0:
+      for use in usages:
+        if 'assignFunction' not in use.getparent().attrib.keys() and use.getparent().tag != 'element':
+          use.attrib['returnDomain'] = '.data'
 
     # get the type of the signal
     topic_type = signal.getchildren()[0]
@@ -81,24 +100,27 @@ def processTopics(code, parameters):
         if option.attrib['name'] is 'bits':
           bits = option.getchildren()[0].attrib['RosCpp']
 
-      ros_type = 'std_msgs::' + type_mapping[topic_type.tag + bits]
+      ros_type = 'std_msgs::' + ros_type_mapping[topic_type.tag + bits]
+      cpp_type = cpp_type_mapping[topic_type.tag + bits]
 
     elif topic_type.tag in ['Booleans', 'Strings']:
-      ros_type = 'std_msgs::' + type_mapping[topic_type.tag]
+      ros_type = 'std_msgs::' + ros_type_mapping[topic_type.tag]
+      cpp_type = cpp_type_mapping[topic_type.tag]
 
     else:
       # @REFACTOR just a placeholder for now
       ros_type = 'std_msgs::Empty'
+      cpp_type = 'int'
 
     # add header file for msg
     parameters['Outputs']['RosCpp']['globalIncludes'].add(ros_type.replace('::','/') + '.h')
 
     # save the topic definitions
     parameters['Transformers']['ROS']['topicDefinitions'].append({'variable': variable,
-                                                                  'topic_type': ros_type,
+                                                                  'ros_type': ros_type,
+                                                                  'cpp_type': cpp_type,
                                                                   'topic_name': topic_name,
-                                                                  'flow': flow,
-                                                                  'assign_function':assign_function})
+                                                                  'flow': flow})
   return code, parameters
 
 

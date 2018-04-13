@@ -35,7 +35,7 @@ namespace {{parameters['node']['name']|underscore}}
     /* signal {{topic['variable']}} */
       {# PUBLISHER #################################### #}
         {% if topic['flow'] == 'outgoing' or topic['flow'] == 'bidirectional' -%}
-    {{topic['variable']}}_publisher = nh_.advertise<{{topic['topic_type']}}>("{{topic['topic_name']}}",10);
+    {{topic['variable']}}_publisher = nh_.advertise<{{topic['ros_type']}}>("{{topic['topic_name']}}",10);
         {% endif -%}
 
         {# SUBSCRIBER #################################### #}
@@ -86,7 +86,7 @@ namespace {{parameters['node']['name']|underscore}}
     {# CALLBACK #################################### #}
       {% if topic['flow'] == 'incoming' or topic['flow'] == 'bidirectional' -%}
       /******************************* signal_{{topic['variable']}}_callback ************************************************/
-     void {{parameters['node']['name']|camelCase}}Class::signal_{{topic['variable']}}_callback(const {{topic['topic_type']}}& message)
+     void {{parameters['node']['name']|camelCase}}Class::signal_{{topic['variable']}}_callback(const {{topic['ros_type']}}& message)
      {
        {# Get serialised code #}
        {% set onChange = code|xpath('//Signals[@ROSvariable="' + topic['variable'] + '"]')|option('onChange')|attribute('RosCpp') %}
@@ -94,7 +94,7 @@ namespace {{parameters['node']['name']|underscore}}
 
        {% if onChange|length > 0 -%}
        /* remember the last value for the topic */
-       {{topic['topic_type']}} previous = {{topic['variable']}};
+       {{topic['ros_type']}} previous = {{topic['variable']}};
        {% endif -%}
 
        /* Cache a copy of this signal inside the class */
@@ -114,18 +114,6 @@ namespace {{parameters['node']['name']|underscore}}
      };
       {% endif -%}
 
-      {# ASSIGN FUNCTION #################################### #}
-      {% if topic['assign_function']|length > 0 -%}
-      /******************************* signal_{{topic['variable']}}_assign ************************************************/
-     void {{parameters['node']['name']|camelCase}}Class::signal_{{topic['variable']}}_assign(const {{topic['topic_type']}}& {{topic['variable']}}_assignment)
-     {
-       /* make assignment */
-       {{topic['variable']}} = {{topic['variable']}}_assignment;
-
-       /* publish value */
-       {{topic['variable']}}_publisher.publish({{topic['variable']}});
-     };
-      {% endif -%}
 
 
     {% endfor -%}

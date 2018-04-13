@@ -146,11 +146,17 @@ language = {
         },
     },
 
+    'assign': {
+        'output': {
+            'RosCpp': '{{children[0]}}{% if "assignDomain" in attributes %}{{attributes["assignFunction"]}}{% endif %} = {{children[1]}}',
+        },
+    },
+
 
     'variable': {
         'output':
         {
-            'RosCpp': '{{attributes["name"]}}',
+            'RosCpp': '{{attributes["name"]}}{% if "returnDomain" in attributes %}{{attributes["returnDomain"]}}{% endif %}',
         },
     },
 
@@ -176,6 +182,12 @@ language = {
         },
     },
 
+    'if': {
+      'output':
+      {
+        'RosCpp': 'if({{children[0]}})\n{ {{children[1]}}; }\n {% if children|length>2 %}else \n{ {{children[2]}}; }{% endif %}'
+       }
+    },
 
     'print': {
         'output':

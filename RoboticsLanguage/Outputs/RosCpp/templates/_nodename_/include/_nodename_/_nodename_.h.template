@@ -70,15 +70,11 @@ namespace {{parameters['node']['name']|underscore}}
           {# SUBSCRIBER + CALLBACK #################################### #}
           {% if topic['flow'] == 'incoming' or topic['flow'] == 'bidirectional' -%}
       ros::Subscriber {{topic['variable']}}_subscriber;
-      void signal_{{topic['variable']}}_callback(const {{topic['topic_type']}}& message);
+      void signal_{{topic['variable']}}_callback(const {{topic['ros_type']}}& message);
           {% endif -%}
 
-          {# ASSIGN FUNCTION #################################### #}
-          {% if topic['assign_function']|length > 0 %}
-      void signal_{{topic['variable']}}_assign(const {{topic['topic_type']}}& {{topic['variable']}}_assignment);
-          {% endif -%}
 
-      {{topic['topic_type']}} {{topic['variable']}};
+      {{topic['ros_type']}} {{topic['variable']}};
 
         {% endfor %}
       {% endif -%}

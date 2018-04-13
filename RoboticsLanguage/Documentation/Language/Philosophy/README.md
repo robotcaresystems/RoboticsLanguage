@@ -51,12 +51,9 @@ node(
   name:"example Fibonacci",
   definitions: block(
 
-    # Definition of variables
-    a ∈ ℤ = -1,
-    b ∈ ℝ = 1.3,
-    c ∈ 𝔹 = true,
-    d ∈ Strings = "3434",
-    e ∈ Signals(Strings, rosTopic:'/test'),
+    # incoming and outgoing signals
+    question ∈ Signals(ℕ, rosTopic: '/fibonacci/question', onNew: answer = Fibonacci(question)),
+    answer ∈ Signals(ℕ, rosTopic: '/fibonacci/answer'),
 
     # Definition of a function
     define Fibonacci(n ∈ ℕ) -> ℕ:
@@ -64,15 +61,6 @@ node(
           return(n),
           return(Fibonacci(n-1)+Fibonacci(n-2))
         )
-  ),
-
-  # Node structure elements
-  initialise: block(
-
-    result ∈ ℤ = Fibonacci(10),
-
-    print("The Fibonacci number 10 is ",result)
-
   )
 )
 ```
