@@ -2,6 +2,7 @@
 
 <!-- TOC START min:1 max:3 link:true update:true -->
 - [The Robotics Language compiler philosophy](#the-robotics-language-compiler-philosophy)
+  - [Definitions](#definitions)
   - [The parameters](#the-parameters)
     - [Viewing parameters in the command line](#viewing-parameters-in-the-command-line)
     - [Using and loading extra parameters](#using-and-loading-extra-parameters)
@@ -19,6 +20,7 @@
     - [Output modules](#output-modules)
   - [The abstract syntax tree language](#the-abstract-syntax-tree-language)
   - [Extra tools](#extra-tools)
+    - [The RoL parser](#the-rol-parser)
     - [Code serialiser](#code-serialiser)
     - [Template engine](#template-engine)
     - [Command line parameters](#command-line-parameters)
@@ -81,7 +83,7 @@ which returns:
 {'compile': False,
  'compilerLanguage': 'en',
  'debug': False,
- 'deploy': '/Users/glopes/deploy/',
+ 'deploy': '/home/<user>/deploy',
  'language': 'en',
  'launch': False,
  'output': 'RosCpp',
@@ -111,7 +113,7 @@ globals:
 For more information on creating custom messages for the command line see the section on [Command line options](#command-line-options).
 
 
-Note that the flag `--debug-parameters-path` uses the [dpath](https://github.com/akesterson/dpath-python) library. Please read the _dpath_ documentation for the available search options. For example, to get all the values for the key `name` in the `Information` domain one can write:
+Note that the flag `--debug-parameters-path` uses the [dpath](https://github.com/akesterson/dpath-python) library. Please read the [dpath documentation]([dpath](https://github.com/akesterson/dpath-python)) for the available search options. For example, to get all the values for the key `name` in the `Information` domain one can write:
 
 ```shell
  rol helloworld.rol --debug-parameters-path 'Information/*/name'
@@ -129,7 +131,7 @@ The compiler follows a number of steps, represented by each individual plug-in (
  As the compiler progresses the parameters might be updated by each plug-in. You can use the flag `--debug-step` to show the state of the parameters for a particular step:
 
  ```shell
- rol helloworld.rol --debug-parameters-path 'Outputs' --debug-step 7
+ rol helloworld.rol --debug-parameters-path 'Transformers' --debug-step 7
  ```
 
 If the flag `--debug-step` is not specified, then by default the step is 1.
@@ -137,7 +139,7 @@ If the flag `--debug-step` is not specified, then by default the step is 1.
 If you are developing a new plug-in it may happen that the full process from parsing to code generation will not work. You can interrupt the compiler at a particular step by using the flag `--debug-stop` in combination with `--debug-step`:
 
  ```shell
- rol helloworld.rol --debug-parameters-path 'Outputs' --debug-step 2 --debug-stop
+ rol helloworld.rol --debug-parameters-path 'Transformers' --debug-step 2 --debug-stop
  ```
 
 ### Using and loading extra parameters
@@ -279,9 +281,9 @@ The parameters dictionary is organised according to the following list:
 
 - `Inputs` Parameters from the input modules. These parameters are cached.
 
-- `Transformers` Parameters from the input modules. These parameters are cached.
+- `Transformers` Parameters from the transformer modules. These parameters are cached.
 
-- `Outputs` Parameters from the input modules. These parameters are cached.
+- `Outputs` Parameters from the output modules. These parameters are cached.
 
 - `manifesto` A structure with the names of each module.
 
@@ -289,7 +291,7 @@ The parameters dictionary is organised according to the following list:
 
 - `messages` A flat list containing all messages used by the `rol` compiler in different spoken languages.
 
-- Other parameters used for internal use include `errorExceptions` and `errorHandling` for error handling, and `command_line_flags` for defining how parameters appear in the command line help.
+- Other parameters used internally include `errorExceptions` and `errorHandling` for error handling, and `command_line_flags` for defining how parameters appear in the command line help.
 
 ## The code
 Code is represented internally by an xml object. The xml tree structure evolves by including new annotations by each of the modules. The base RoL compiler also makes tree modifications to, e.g. include default values of functions, etc.
@@ -376,6 +378,8 @@ rol helloworld.rol --debug-code --debug-step 2
 
 In the previous example the default parameters `definitions`, `rate`, and `finalise` for the tag `node` were introduced. The option `level` was introduced for the `print` tag. The semantic checker performed type checking and annotated the tags with the attribute `type`.
 
+In between steps 3 to 6 the transformer modules annotate the xml code.
+
 The final step will run the `serialise` function and annotate the code with snippets of the output text.
 
 ```shell
@@ -416,9 +420,9 @@ step | process | new elements
 --|--| --
 1 | Parser  |   xml structure with `p` attributes specifying the position of the tag on the text source code. The attribute `name` is added to some special tags.
 2  | Semantic checker  | Default function arguments are filled in, possibly introducing new tree elements. Type checking is performed introducing the attribute `type`.
-3 - to last before outputs | Modules  | Usually create own annotations to code  
-last before outputs  | Code serialiser  | Create an attribute for each output with the same name. Insert snippets of serialised code on the attribute.
-outputs  | Code generators  |  Normally at this point the code does not change anymore. Code is used by the template engine to create output text code.
+3 | Modules  | Usually create own annotations to code  
+4  | Code serialiser  | Create an attribute for each output with the same name. Insert snippets of serialised code on the attribute.
+5  | Code generators  |  Normally at this point the code does not change anymore. Code is used by the template engine to create output text code.
 
 
 
@@ -513,7 +517,7 @@ RoboticsLanguage
 
   2. The `packageShortName` should be a Camel case version of the module name. This should match with the folder name.
 
-  3. The `fileFormat` instructs the `rol` compiler to open `.mp` files for parsing using this module.
+  3. The `fileFormat` instructs the `rol` compiler to open `.mi` files for parsing using this module.
 
 
 - `Parse.py` is the main parsing file. It should contain a function
@@ -555,7 +559,7 @@ RoboticsLanguage
 - `Language.py` adds new keywords to the abstract syntax tree language definition. For more information see section [The abstract syntax tree language](#the-abstract-syntax-tree-language). This file is optional.
 
   ```python
-  messages = {}
+  language = {}
   ```
 
 - `ErrorHandling.py` allows adding new error handling functions. For more information see [Error handling](#error-handling). This file is optional.
@@ -699,6 +703,8 @@ RoboticsLanguage
 
 
 ## Extra tools
+
+### The RoL parser
 
 ### Code serialiser
 
