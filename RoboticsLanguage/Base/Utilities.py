@@ -58,12 +58,16 @@ def logErrors(errors, parameters):
     parameters['errors'].append(errors)
 
 # given a file name and a line number, returns the text line
+
+
 def fileLineNumberToLine(filename, line_number):
   with open(filename) as file:
     line = [next(file) for x in xrange(line_number)][-1]
   return line
 
 # given a text string and a line number, returns the text line
+
+
 def textLineNumberToLine(text, line_number):
   return text.split('\n')[line_number - 1]
 
@@ -89,13 +93,15 @@ def positionToLineColumn(position, text):
 
 def errorMessage(error_type, reason, line='', filename='', line_number=0, column_number=0):
 
-  line_text = '\n' + line.strip('\n') + '\n' + (' ' * column_number + '^') + '\n' if line is not '' else ''
+  line_text = '\n' + line.strip('\n') + '\n' + (' ' *
+                                                column_number + '^') + '\n' if line is not '' else ''
 
   file_text = ' in file:\n"' + filename + '"\n' if filename is not '' else ''
 
   line_number_text = ' at line ' + str(line_number) if line_number > 0 else ''
 
-  column_number_text = ' column ' + str(column_number) if column_number > 0 else ''
+  column_number_text = ' column ' + \
+      str(column_number) if column_number > 0 else ''
 
   return (line_text + error_type + ' error' + file_text + line_number_text + column_number_text + ': ' +
           color.BOLD + reason + color.END)
@@ -120,7 +126,8 @@ def formatJinjaErrorMessage(exception, filename=''):
 
 def formatParsleyErrorMessage(exception):
   # get the line and column numbers
-  line_number, column_number, line = positionToLineColumn(exception.position, exception.input)
+  line_number, column_number, line = positionToLineColumn(
+      exception.position, exception.input)
 
   return errorMessage('Input syntax parsing', exception.formatReason(),
                       line_number=line_number, column_number=column_number, line=line)
@@ -146,13 +153,13 @@ def formatLxmlErrorMessage(exception, text=''):
 
 def formatSemanticTypeErrorMessage(code_text, parameters, position, error, reason):
   # get the line and column numbers
-  line_number, column_number, line = positionToLineColumn(int(position), code_text)
+  line_number, column_number, line = positionToLineColumn(
+      int(position), code_text)
 
-  parameters['errors'].append(error+reason)
+  parameters['errors'].append(error + reason)
 
   return errorMessage(error, reason,
                       line_number=line_number, column_number=column_number, line=line)
-
 
 
 def errorOptionalArgumentTypes(code, parameters, parameter_names, parameter_types):
@@ -160,9 +167,13 @@ def errorOptionalArgumentTypes(code, parameters, parameter_names, parameter_type
 
   for name, types in zip(parameter_names, parameter_types):
     if not parameters['language'][code.tag]['definition']['optionalArguments'][name](types):
-      message += 'The type of the optional parameter "' + name + '" should be "' + parameters['language'][code.tag]['definition']['optionalArguments'][name].__doc__ +'" instead of "' + types +'"\n'
+      message += 'The type of the optional parameter "' + name + '" should be "' + \
+          parameters['language'][code.tag]['definition']['optionalArguments'][name].__doc__ + \
+          '" instead of "' + types + '"\n'
   # show error
-  logger.error(formatSemanticTypeErrorMessage(parameters['text'], parameters, getTextMinimumPositionXML(code), 'Type', message))
+  logger.error(formatSemanticTypeErrorMessage(
+      parameters['text'], parameters, getTextMinimumPositionXML(code), 'Type', message))
+
 
 def errorOptionalArgumentNotDefined(code, parameters, parameter_names):
   # Error! figure out which parameter is not defined
@@ -172,32 +183,42 @@ def errorOptionalArgumentNotDefined(code, parameters, parameter_names):
   for x in set(parameter_names) - set(keys):
     message += 'The optional parameter "' + x + '" is not defined.\n'
 
-  message += 'The list of defined optional parameters is: '+ str(keys)
+  message += 'The list of defined optional parameters is: ' + str(keys)
 
-  logger.error(formatSemanticTypeErrorMessage(parameters['text'], parameters, getTextMinimumPositionXML(code), 'Type', message))
+  logger.error(formatSemanticTypeErrorMessage(
+      parameters['text'], parameters, getTextMinimumPositionXML(code), 'Type', message))
+
 
 def errorArgumentTypes(code, parameters, argument_types):
-  message  = 'Incorrect argument types for function "' + code.tag +'". The expected argument types are:\n   '
-  message += code.tag + '( '+ parameters['language'][code.tag]['definition']['argumentTypes'].__doc__ + ' )\n'
-  message += '\nInstead received:\n   ' + code.tag + '( '+ ','.join(argument_types) + ' )\n'
+  message = 'Incorrect argument types for function "' + \
+      code.tag + '". The expected argument types are:\n   '
+  message += code.tag + \
+      '( ' + parameters['language'][code.tag]['definition']['argumentTypes'].__doc__ + ' )\n'
+  message += '\nInstead received:\n   ' + code.tag + \
+      '( ' + ','.join(argument_types) + ' )\n'
 
-  logger.error(formatSemanticTypeErrorMessage(parameters['text'], parameters, getTextMinimumPositionXML(code), 'Type', message))
+  logger.error(formatSemanticTypeErrorMessage(
+      parameters['text'], parameters, getTextMinimumPositionXML(code), 'Type', message))
 
 
 def errorLanguageDefinition(code, parameters):
-  message  = 'Language element "' + code.tag +'" ill defined. Please check definition.'
+  message = 'Language element "' + code.tag + \
+      '" ill defined. Please check definition.'
 
-  logger.error(formatSemanticTypeErrorMessage(parameters['text'], parameters, getTextMinimumPositionXML(code), 'Type', message))
+  logger.error(formatSemanticTypeErrorMessage(
+      parameters['text'], parameters, getTextMinimumPositionXML(code), 'Type', message))
 
 
 # -------------------------------------------------------------------------------------------------
 #  Decorators for performance and debug
 # -------------------------------------------------------------------------------------------------
 
+
 @decorator
 def log_all_calls(function):
   print 'function name:', function._func.__name__, ' arguments:', function._args
   return function()
+
 
 @decorator
 def name_all_calls(function):
@@ -213,9 +234,33 @@ def time_all_calls(function):
   return result
 
 
+@decorator
+def cache(function):
+  cache_path = '/.rol/cache/'
+
+  # create a name based on the module and function name
+  name = __name__ + '.' + function._func.__name__
+
+  # create a the path name for the file to cache
+  path = os.path.expanduser("~") + cache_path + name + '.data'
+
+  if os.path.isfile(path):
+    # if file exists just load it
+    return dill.load(open(path, "rb"))
+  else:
+    # otherwise run function
+    data = function()
+
+    # save the data in a file
+    createFolder(os.path.expanduser("~") + cache_path)
+    dill.dump(data, open(path, "wb"))  # , protocol=dill.HIGHEST_PROTOCOL)
+    return data
+
+
 # -------------------------------------------------------------------------------------------------
 #  logging utilities
 # -------------------------------------------------------------------------------------------------
+
 
 # Create a logger object.
 logger = logging.getLogger(__name__)
@@ -246,42 +291,46 @@ class color:
 
 def incrementCompilerStep(parameters, name):
   # update the compiler step
-  parameters['debug']['stepCounter'] = parameters['debug']['stepCounter']+1
+  parameters['debug']['stepCounter'] = parameters['debug']['stepCounter'] + 1
 
   # log the current step
-  logger.info('Step ['+str(parameters['debug']['stepCounter'])+"]: " + name)
+  logger.info(
+      'Step [' + str(parameters['debug']['stepCounter']) + "]: " + name)
 
   return parameters
 
-def showDebugInformation(code,parameters):
-    if parameters['debug']['step'] == parameters['debug']['stepCounter']:
+
+def showDebugInformation(code, parameters):
+  if parameters['debug']['step'] == parameters['debug']['stepCounter']:
 
       # show debug information for xml code
-      if parameters['debug']['code']:
-        print(etree.tostring(code,pretty_print=True))
+    if parameters['debug']['code']:
+      print(etree.tostring(code, pretty_print=True))
 
-      # show debug information for parameters
-      if parameters['debug']['parameters']:
-        pprint.pprint(parameters)
+    # show debug information for parameters
+    if parameters['debug']['parameters']:
+      pprint.pprint(parameters)
 
-      # show debug information for specific xml code
-      if parameters['debug']['codePath'] is not '':
-        try:
-          for element in code.xpath(parameters['debug']['codePath']):
-            print(etree.tostring(element,pretty_print=True))
-        except:
-          logger.warning("The path'" + parameters['debug']['codePath'] + "' is not present in the code")
+    # show debug information for specific xml code
+    if parameters['debug']['codePath'] is not '':
+      try:
+        for element in code.xpath(parameters['debug']['codePath']):
+          print(etree.tostring(element, pretty_print=True))
+      except:
+        logger.warning(
+            "The path'" + parameters['debug']['codePath'] + "' is not present in the code")
 
-      # show debug information for specific parameters
-      if parameters['debug']['parametersPath'] is not '':
-        try:
-          for element in paths(parameters,parameters['debug']['parametersPath']):
-            pprint.pprint(element)
-        except:
-          logger.warning("The path'" + parameters['debug']['parametersPath'] + "' is not defined in the internal parameters.")
+    # show debug information for specific parameters
+    if parameters['debug']['parametersPath'] is not '':
+      try:
+        for element in paths(parameters, parameters['debug']['parametersPath']):
+          pprint.pprint(element)
+      except:
+        logger.warning(
+            "The path'" + parameters['debug']['parametersPath'] + "' is not defined in the internal parameters.")
 
-      if parameters['debug']['stop']:
-        sys.exit(0)
+    if parameters['debug']['stop']:
+      sys.exit(0)
 
 
 # -------------------------------------------------------------------------------------------------
@@ -291,22 +340,6 @@ def showDebugInformation(code,parameters):
 
 def importModule(a, b, c):
   return __import__('RoboticsLanguage.' + a + '.' + b, globals(), locals(), ensureList(c))
-
-# @TODO use decorators for caching
-
-
-def cache(name, function, cache_path='/.rol/cache/'):
-  global logger
-  path = os.path.expanduser("~") + cache_path + name + '.data'
-  if os.path.isfile(path):
-    data = dill.load(open(path, "rb"))
-    return data
-  else:
-    logger.debug('Computing and caching ' + name + '...')
-    data = function()
-    createFolder(os.path.expanduser("~") + cache_path)
-    dill.dump(data, open(path, "wb")) #, protocol=dill.HIGHEST_PROTOCOL)
-    return data
 
 
 def removeCache(cache_path='/.rol/cache'):
@@ -328,7 +361,7 @@ def isKeyDefined(key, d):
     return False
 
 
-def isDefined(dictionary,element):
+def isDefined(dictionary, element):
   return len(dpath.util.values(dictionary, element)) > 0
 
 
@@ -462,14 +495,12 @@ def xml(tag, content, position=0):
   return '<' + tag + ' p="' + str(position) + '" >' + text + '</' + tag + '>'
 
 
-
 def xmlAttributes(tag, content, position=0, attributes={}):
   '''creates XML text for entry with attributes'''
   attributes_text = ' '.join(
       [key + '="' + str(value) + '"' for key, value in attributes.iteritems()])
   text = ''.join(content) if isinstance(content, list) else content
   return '<' + tag + ' p="' + str(position) + '" ' + attributes_text + '>' + text + '</' + tag + '>'
-
 
 
 def xmlFunction(parameters, tag, content, position=0):
@@ -484,9 +515,12 @@ def xmlFunction(parameters, tag, content, position=0):
 
 def xmlFunctionDefinition(name, arguments, returns, content, position=0):
 
-  arguments_text = xml('arguments',arguments, position) if isinstance(arguments, str) else ''
-  returns_text = xml('returns',returns, position) if isinstance(returns, str) else ''
-  content_text = xml('content',content, position) if isinstance(content, str) else ''
+  arguments_text = xml('arguments', arguments,
+                       position) if isinstance(arguments, str) else ''
+  returns_text = xml('returns', returns, position) if isinstance(
+      returns, str) else ''
+  content_text = xml('content', content, position) if isinstance(
+      content, str) else ''
 
   return xmlAttributes('functionDefinition', arguments_text + returns_text + content_text, position, attributes={'name': name})
 
@@ -561,6 +595,7 @@ def option(xml, name):
   except:
     return None
 
+
 def optionalArguments(xml):
   return {a.attrib['name']: a.xpath('*')[0] for a in xml.xpath('option')}
 
@@ -573,11 +608,12 @@ def getTextMinimumPositionXML(xml):
   if childrens_minimum == []:
     return minimum
   else:
-    return min(min(childrens_minimum),minimum)
+    return min(min(childrens_minimum), minimum)
 
 # -------------------------------------------------------------------------------------------------
 #  Other utilities
 # -------------------------------------------------------------------------------------------------
+
 
 def todaysDate(format):
   today = datetime.date.today()
@@ -586,6 +622,8 @@ def todaysDate(format):
 # -------------------------------------------------------------------------------------------------
 #  semantic type checker
 # -------------------------------------------------------------------------------------------------
+
+
 def semanticChecking(code, parameters):
 
   # check if should ignore semantic checking
@@ -593,15 +631,16 @@ def semanticChecking(code, parameters):
     return code, parameters
 
   # traverse xml and set all types for all atomic tags
-  [x.set('type',b) for a,b in Types.atoms.iteritems() for x in code.xpath('//'+a)]
+  [x.set('type', b) for a, b in Types.atoms.iteritems()
+   for x in code.xpath('//' + a)]
 
   # check types
-  code, parameters = semanticTypeChecker(code,parameters)
+  code, parameters = semanticTypeChecker(code, parameters)
 
   return code, parameters
 
 
-def semanticTypeChecker(code,parameters):
+def semanticTypeChecker(code, parameters):
 
   # if element is an atom, jut return
   if code.tag in Types.atoms:
@@ -612,11 +651,11 @@ def semanticTypeChecker(code,parameters):
 
     # first recursively traverse all children elements that are not option
     for element in code.xpath('*[not(self::option)]'):
-      element, parameters = semanticTypeChecker(element,parameters)
+      element, parameters = semanticTypeChecker(element, parameters)
 
     # then traverse the optional arguments.
     for element in code.xpath('option/*[not(self::name)]'):
-      element, parameters = semanticTypeChecker(element,parameters)
+      element, parameters = semanticTypeChecker(element, parameters)
 
     # for this element find the parameters and arguments
     parameter_names = code.xpath('option/@name')
@@ -630,10 +669,11 @@ def semanticTypeChecker(code,parameters):
         if all([x in keys[code.tag]['definition']['optionalArguments'].keys() for x in parameter_names]):
 
           # check types for optional arguments
-          if not all(map(lambda x,y: keys[code.tag]['definition']['optionalArguments'][x]([y]) , parameter_names, parameter_types)):
+          if not all(map(lambda x, y: keys[code.tag]['definition']['optionalArguments'][x]([y]), parameter_names, parameter_types)):
             # Error: incorrect types for optional arguments!
             # Error.handler('OptionalArgumentTypes', code, parameters, parameter_names, parameter_types)
-            errorOptionalArgumentTypes(code, parameters, parameter_names, parameter_types)
+            errorOptionalArgumentTypes(
+                code, parameters, parameter_names, parameter_types)
         else:
           # Error: optional argument not defined
           # Error.handler('OptionalArgumentNotDefined', code, parameters, parameter_names)
@@ -643,7 +683,8 @@ def semanticTypeChecker(code,parameters):
       if all(keys[code.tag]['definition']['argumentTypes'](argument_types)):
 
         # compute resulting type
-        code.attrib['type'] = keys[code.tag]['definition']['returnType'](argument_types)
+        code.attrib['type'] = keys[code.tag]['definition']['returnType'](
+            argument_types)
 
       else:
         # Error: mandatory argument missing or incorrect
@@ -667,13 +708,14 @@ def fillDefaultsInOptionalArguments(code, parameters):
     __, parameters = fillDefaultsInOptionalArguments(element, parameters)
 
   # if this tag has optional parameters defined
-  if len(dpath.util.values(parameters['language'][code.tag],'definition/optionalArguments')) > 0:
+  if len(dpath.util.values(parameters['language'][code.tag], 'definition/optionalArguments')) > 0:
 
     # find all optional parameters
     parameter_names = code.xpath('option/@name')
 
     # get the list of missing parameters
-    missing_parameters = list(set(parameters['language'][code.tag]['definition']['optionalArguments'].keys()) - set(parameter_names))
+    missing_parameters = list(set(
+        parameters['language'][code.tag]['definition']['optionalArguments'].keys()) - set(parameter_names))
 
     for parameter in missing_parameters:
 
@@ -686,10 +728,12 @@ def fillDefaultsInOptionalArguments(code, parameters):
       # @WARNING the __doc__ definition of the type functions must be correct. How to deal with non-single types?
       # this architecture should change to be more robust
       # get the type for the optional parameter
-      value_tag = etree.Element(parameters['language'][code.tag]['definition']['optionalArguments'][parameter].__doc__)
+      value_tag = etree.Element(
+          parameters['language'][code.tag]['definition']['optionalArguments'][parameter].__doc__)
 
       # set the default value
-      value_tag.text = str(parameters['language'][code.tag]['definition']['optionalDefaults'][parameter])
+      value_tag.text = str(
+          parameters['language'][code.tag]['definition']['optionalDefaults'][parameter])
 
       # append new tag to the code
       optional_argument_tag.append(value_tag)
@@ -746,8 +790,10 @@ def templateEngine(code, parameters, filepatterns, templates_path, deploy_path,
 
     # rename files and directory names from template
     # @WARNING For paths that contain duplicate strings this might fail
-    new_files = [x.replace(templates_path, deploy_path).replace('.template', '') for x in files_to_process]
-    new_copy_files = [x.replace(templates_path, deploy_path) for x in files_to_copy]
+    new_files = [x.replace(templates_path, deploy_path).replace(
+        '.template', '') for x in files_to_process]
+    new_copy_files = [x.replace(templates_path, deploy_path)
+                      for x in files_to_copy]
 
     # rename files acording to file pattern names
     for key, value in filepatterns.iteritems():
@@ -773,7 +819,8 @@ def templateEngine(code, parameters, filepatterns, templates_path, deploy_path,
         text_body = template_body.render(code=code, parameters=parameters)
       except TemplateError as e:
         # with Error.exception(parameters, filename=files_to_process[i])
-        logErrors(formatJinjaErrorMessage(e, filename=files_to_process[i]), parameters)
+        logErrors(formatJinjaErrorMessage(
+            e, filename=files_to_process[i]), parameters)
         return False
 
       # create paths for the new files if needed
@@ -823,14 +870,16 @@ def serialise(code, parameters, keywords, language, filters=default_template_eng
 
       # render tags according to dictionary
       snippet = template.render(children=map(lambda x: serialise(x, parameters, keywords, language, filters), children_elements),
-                                childrenTags=map(lambda x: x.tag, children_elements),
-                                options = dict(zip(code.xpath('option/@name'),map(lambda x: serialise(x, parameters, keywords, language, filters), code.xpath('option/*')))),
-                                attributes=code.attrib,
-                                parentAttributes=code.getparent().attrib,
-                                parentTag=code.getparent().tag,
-                                text=text(code),
-                                parameters=parameters,
-                                code=code)
+                                childrenTags=map(
+          lambda x: x.tag, children_elements),
+          options=dict(zip(code.xpath('option/@name'), map(lambda x: serialise(x,
+                                                                               parameters, keywords, language, filters), code.xpath('option/*')))),
+          attributes=code.attrib,
+          parentAttributes=code.getparent().attrib,
+          parentTag=code.getparent().tag,
+          text=text(code),
+          parameters=parameters,
+          code=code)
       # save text in attribute
       code.attrib[language] = snippet
 
@@ -840,7 +889,8 @@ def serialise(code, parameters, keywords, language, filters=default_template_eng
 
   except KeyError:
       # get the line and column numbers
-    line_number, column_number, line = positionToLineColumn(int(code.attrib['p']), parameters['text'])
+    line_number, column_number, line = positionToLineColumn(
+        int(code.attrib['p']), parameters['text'])
 
     # create error error_message
     logErrors(errorMessage('Language semantic', 'Keyword \'' + code.tag + '\' not defined',
@@ -853,18 +903,20 @@ def serialise(code, parameters, keywords, language, filters=default_template_eng
 #  Parsing utilities
 # -------------------------------------------------------------------------------------------------
 
-def ExtractLanguageDefinitions(language,type,module):
-  return { key:value[type][module] for key, value in dpath.util.search(language, '/*/' + type + '/' + module + '/*').iteritems()}
+def ExtractLanguageDefinitions(language, type, module):
+  return {key: value[type][module] for key, value in dpath.util.search(language, '/*/' + type + '/' + module + '/*').iteritems()}
 
 
 def CreateBracketGrammar(definitions):
   # extract only bracket operators
-  bracket = dpath.util.search(definitions,'/*/bracket')
+  bracket = dpath.util.search(definitions, '/*/bracket')
 
   text = '\n# Bracket operators\n'
 
   for key, value in bracket.iteritems():
-    text += key + ' = \'' + value['bracket']['open'] + '\' wws ' + value['bracket']['arguments'] + ':a wws \'' + value['bracket']['close'] + '\' -> xml(\'' + key + '\',a,self.input.position)\n'
+    text += key + ' = \'' + value['bracket']['open'] + '\' wws ' + value['bracket']['arguments'] + \
+        ':a wws \'' + value['bracket']['close'] + \
+        '\' -> xml(\'' + key + '\',a,self.input.position)\n'
 
   return text, bracket.keys()
 
@@ -872,15 +924,15 @@ def CreateBracketGrammar(definitions):
 def CreatePreInPostFixGrammar(definitions):
 
   # partition by type of operator
-  infix = dpath.util.search(definitions,'/*/infix')
-  prefix = dpath.util.search(definitions,'/*/prefix')
-  postfix = dpath.util.search(definitions,'/*/postfix')
-  alternatives = dpath.util.search(definitions,'/*/alternatives')
+  infix = dpath.util.search(definitions, '/*/infix')
+  prefix = dpath.util.search(definitions, '/*/prefix')
+  postfix = dpath.util.search(definitions, '/*/postfix')
+  alternatives = dpath.util.search(definitions, '/*/alternatives')
 
   # get the precedence orders
-  orders = list(set(dpath.util.values(definitions,'/*/*/order')))
+  orders = list(set(dpath.util.values(definitions, '/*/*/order')))
   orders.sort()
-  previousOrder = dict(zip(orders+['max'],['min']+orders))
+  previousOrder = dict(zip(orders + ['max'], ['min'] + orders))
 
   text = ''
 
@@ -888,10 +940,13 @@ def CreatePreInPostFixGrammar(definitions):
   text += '\n# function names alternatives\n'
 
   for key, value in alternatives.iteritems():
-    text += key + ' = ( \''+ ' | '.join(value['alternatives']) + '\' | \'' + key + '\' ) -> \'' + key + '\'\n'
+    text += key + \
+        ' = ( \'' + ' | '.join(value['alternatives']) + \
+        '\' | \'' + key + '\' ) -> \'' + key + '\'\n'
 
   if len(alternatives.keys()) > 0:
-    text += 'functionName = ( ' + ' | '.join(alternatives.keys()) + ' | objectName )\n'
+    text += 'functionName = ( ' + \
+        ' | '.join(alternatives.keys()) + ' | objectName )\n'
   else:
     text += 'functionName = objectName\n'
 
@@ -909,10 +964,10 @@ def CreatePreInPostFixGrammar(definitions):
     else:
       text += 'wws '
 
-    if isinstance(value['infix']['key'],list):
-      text += '( \''+ '\' | \''.join(value['infix']['key']) + '\' )'
+    if isinstance(value['infix']['key'], list):
+      text += '( \'' + '\' | \''.join(value['infix']['key']) + '\' )'
     else:
-      text += '\''+ value['infix']['key'] + '\''
+      text += '\'' + value['infix']['key'] + '\''
 
     text += ' wws P' + str(value['infix']['order'])
 
@@ -928,12 +983,13 @@ def CreatePreInPostFixGrammar(definitions):
 
     text += key + ' = '
 
-    if isinstance(value['prefix']['key'],list):
-      text += '( \''+ '\' | \''.join(value['prefix']['key']) + '\' )'
+    if isinstance(value['prefix']['key'], list):
+      text += '( \'' + '\' | \''.join(value['prefix']['key']) + '\' )'
     else:
-      text += '\''+ value['prefix']['key'] + '\''
+      text += '\'' + value['prefix']['key'] + '\''
 
-    text += ' wws P' + str(value['prefix']['order']) + ':a -> xml(\'' + key + '\',a)\n'
+    text += ' wws P' + str(value['prefix']['order']) + \
+        ':a -> xml(\'' + key + '\',a)\n'
 
   # create grammar for postfix operators
   text += '\n# Postfix operators\n'
@@ -942,10 +998,10 @@ def CreatePreInPostFixGrammar(definitions):
 
     text += key + ' = P' + str(value['postfix']['order']) + ':a wws '
 
-    if isinstance(value['postfix']['key'],list):
-      text += '( \''+ '\' | \''.join(value['postfix']['key']) + '\' )'
+    if isinstance(value['postfix']['key'], list):
+      text += '( \'' + '\' | \''.join(value['postfix']['key']) + '\' )'
     else:
-      text += '\''+ value['postfix']['key'] + '\''
+      text += '\'' + value['postfix']['key'] + '\''
 
     text += ' -> xml(\'' + key + '\',a)\n'
 
@@ -954,9 +1010,11 @@ def CreatePreInPostFixGrammar(definitions):
 
   for order in orders:
 
-    keys = dpath.util.search(definitions,'*/*/order', afilter = lambda x: x==order)
+    keys = dpath.util.search(definitions, '*/*/order',
+                             afilter=lambda x: x == order)
 
-    text += 'P' + str(previousOrder[order]) + ' = ( ' + ' | '.join(keys.keys()) + ' | P' + str(order) + ' )\n'
+    text += 'P' + str(previousOrder[order]) + ' = ( ' + \
+        ' | '.join(keys.keys()) + ' | P' + str(order) + ' )\n'
 
   if len(orders) > 0:
     return text, orders[-1]

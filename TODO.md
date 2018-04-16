@@ -11,7 +11,7 @@
 - [x] Caching
   - [x] functionality
   - [x] Refresh cache
-  - [ ] Use decorators
+  - [x] Use decorators
 - [-] Mini languages
   - [x] RoL
   - [ ] RoLXML

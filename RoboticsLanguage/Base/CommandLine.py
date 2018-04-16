@@ -86,7 +86,7 @@ def generateArgparseArguments(parameters, flags):
 
   return command_line_flags, arguments
 
-
+@Utilities.cache
 def prepareCommandLineArguments(parameters):
 
   # remember the available choices for outputs
@@ -237,8 +237,8 @@ def processCommandLineParameters(args, file_formats, parameters):
 def ProcessArguments(command_line_parameters, parameters):
 
   # load cached command line flags or create if necessary
-  flags, arguments, file_package_name, file_formats = Utilities.cache(
-      'command_line_parameters', lambda: prepareCommandLineArguments(parameters))
+  flags, arguments, file_package_name, file_formats = prepareCommandLineArguments(parameters)
+
 
   # run the command line parser
   parser, args = runCommandLineParser(parameters, arguments, flags, file_formats,
