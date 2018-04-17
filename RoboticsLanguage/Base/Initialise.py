@@ -26,20 +26,21 @@ from . import Parameters
 
 
 def prepareParameters():
-  '''Collects parameters, language, messages, and error handling functions from all list_of_modules. This function is cached in `rol`. To refresh the cache run `rol --remove-cache`.'''
+  ''' Collects parameters, language, messages, and error handling functions from all list_of_modules.
+      This function is cached in `rol`. To refresh the cache run `rol --remove-cache`.'''
 
   # read the path
-  language_path = os.path.dirname(__file__) + '/../../'
+  language_path = os.path.dirname(__file__) + '/../../' # @NOTE: Why not pip show RoboticsLanguage | grep Location ?
 
   # define initial classes of parameters
-  manifesto = {'Inputs': {}, 'Outputs': {}, 'Transformers': {}}
-  parameters = {'Inputs': {}, 'Outputs': {}, 'Transformers': {}}
-  language = {}
-  messages = {}
-  command_line_flags = {}
-  error_handling = {}
-  error_exceptions = {}
-  default_output = {}
+  manifesto           = {'Inputs': {}, 'Outputs': {}, 'Transformers': {}}
+  parameters          = {'Inputs': {}, 'Outputs': {}, 'Transformers': {}}
+  language            = {}
+  messages            = {}
+  command_line_flags  = {}
+  error_handling      = {}
+  error_exceptions    = {}
+  default_output      = {}
 
   # load the parameters form all the modules dynamically
   for element in Utilities.findFileName('Manifesto.py', language_path):
@@ -157,11 +158,12 @@ def prepareParameters():
 
 def Initialise(remove_cache):
   '''The main initialisation file of `rol`. Grabs information from all modules to assemble a `parameters` dictionary.'''
+
+  print os.path.dirname(__file__) + '/../../'
   # remove cache if requested
   if remove_cache:
     Utilities.removeCache()
 
   # load cached parameters or create if necessary
   parameters = Utilities.cache('parameters', prepareParameters)
-
   return parameters

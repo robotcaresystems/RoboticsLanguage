@@ -91,9 +91,8 @@ def prepareCommandLineArguments(parameters):
 
   # remember the available choices for outputs
   Parameters.command_line_flags['globals:output']['choices'] = parameters['manifesto']['Outputs'].keys()
-
   # create a subset of all the parameters
-  subset = dict((x, parameters[x]) for x in ['Information', 'Transformers', 'Inputs', 'Outputs', 'globals','debug'])
+  subset = dict((x, parameters[x]) for x in ['Information', 'Transformers', 'Inputs', 'Outputs', 'globals', 'debug'])
 
   # create argparse list parameters
   flags, arguments = generateArgparseArguments(subset, parameters['command_line_flags'])
@@ -239,6 +238,9 @@ def ProcessArguments(command_line_parameters, parameters):
   # load cached command line flags or create if necessary
   flags, arguments, file_package_name, file_formats = Utilities.cache(
       'command_line_parameters', lambda: prepareCommandLineArguments(parameters))
+
+  # @NOTE: 'file_package_name' and 'file_formats' should be one thing right?
+  #         Also why : 'yaml: optional parameter files; \n'? What 's with the '; \n'
 
   # run the command line parser
   parser, args = runCommandLineParser(parameters, arguments, flags, file_formats,
