@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<!--
+ * Node name: {{parameters['node']['name']}}
+ *
+ * Generated on: {{"%d %B, %Y"|todaysDate}}
+ *       Author: {{parameters['Information']['user']['name']}}
+ *      Licence: {{parameters['Information']['software']['license']}}
+ *    Copyright: {{parameters['Information']['software']['copyright']}}
+ *
+ *    THIS FILE WAS AUTOMATICALLY GENERATED USING THE ROBOTICS LANGUAGE
+ -->
+<html>
+
+<head>
+  <meta charset="utf-8" />
+
+  <!-- @NOTE  all of the libraries are being loaded from online repositories. This means the
+              device using this example needs to be online. The libraries can be used offline
+              by passing the path to the local copy of the libraries.
+  -->
+
+  <!-- Ros bridge -->
+  <script type="text/javascript" src="https://static.robotwebtools.org/roslibjs/current/roslib.min.js"></script>
+
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+
+  <!-- semantic UI -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.13/semantic.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.13/semantic.min.css"/>
+
+  <!-- some extra styling to balance the page -->
+  <style type="text/css">
+    #mynetwork {
+      width: 600px;
+      height: 400px;
+      border: 1px solid lightgray;
+    }
+  </style>
+
+  <!-- THIS IS THE JAVASCRIPT PART -->
+
+  <!-- ros interaction  -->
+  <script type="text/javascript" type="text/javascript">
+
+    // Connecting to ROS
+    // -----------------
+    var ros = new ROSLIB.Ros({
+      url: 'ws://localhost:9090' // this is the standard rosbridge port
+    });
+
+    ros.on('connection', function() {
+      console.log('Connected to websocket server.');
+    });
+
+    // Displays a message in case conection failed
+    ros.on('error', function(error) {
+      $('#ros_bridge').transition('show');
+      $('#ros_bridge_header').html('Error connecting to websocket server: ' + error);
+      console.log('Error connecting to websocket server: ', error);
+    });
+
+    // Displays a message when connection ends
+    ros.on('close', function() {
+      $('#ros_bridge').transition('show');
+      $('#ros_bridge_header').html('Connection to websocket server closed!');
+      console.log('Connection to websocket server closed.');
+    });
+
+
+    // // Subscribing and publishing to a topics
+    // // ----------------------
+    //
+    // // a subscriber
+    // var subscriber_echo = new ROSLIB.Topic({
+    //   ros: ros,
+    //   name: '/webguis/example/response',
+    //   messageType: 'std_msgs/String',
+    //   // latch: true
+    // });
+    //
+    // // a publisher
+    // var publisher_echo = new ROSLIB.Topic({
+    //   ros: ros,
+    //   name: '/webguis/example/question',
+    //   messageType: 'std_msgs/String',
+    //   // latch: true
+    // });
+
+
+
+    // // Callback functions for subscribers
+    // // ------------------
+    // subscriber_echo.subscribe(function(message) {
+    //
+    //   // fill in the respose field
+    //   $('#response').html(message.data);
+    //
+    // });
+    //
+    // // Helping functions for publishing
+    // // ------------------
+    // function publishMessage()
+    // {
+    //   // read the value of the input field
+    //   text = $('#echo').val()
+    //
+    //   // create a string ROS message
+    //   var str = new ROSLIB.Message({
+    //     data : text
+    //   });
+    //
+    //   // publish
+    //   publisher_echo.publish(str)
+    // }
+
+  </script>
+</head>
+
+<!-- THIS IS THE HTML PART -->
+
+<body>
+  <div class="ui container">
+  <h1> {{parameters['node']['name']}} </h1>
+
+  <!-- This part is hidden from view unless there is an error connecting to rosbridge.
+      Please do not change this part -->
+  <div class="ui icon error big message hidden" id="ros_bridge">
+    <i class="warning circle icon"></i>
+    <div class="content" >
+      <div class="header" id="ros_bridge_header">
+
+      </div>
+      <p id="ros_bridge_text">
+      Please make sure that you run "<code>roslaunch rosbridge_server rosbridge_websocket.launch</code>" in the terminal. Then refresh this page.</p>
+    </div>
+  </div>
+
+  <!-- Here is the content of the page -->
+
+  hello
+  
+</body>
+
+</html>

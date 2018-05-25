@@ -20,7 +20,16 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
+import os
+import sys
+from RoboticsLanguage.Base import Utilities
 
 def output(code, parameters):
 
-  return 0
+  # save the node name for the templates
+  parameters['node']['name'] = Utilities.option(code.xpath('/node')[0], 'name').text
+
+  # run template engine to generate node code
+  if not Utilities.templateEngine(code, parameters, {'nodename': Utilities.underscore(parameters['node']['name'])}, os.path.dirname(
+          __file__) + '/Templates', parameters['globals']['deploy']):
+    sys.exit(1)
