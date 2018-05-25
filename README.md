@@ -87,57 +87,40 @@ This will create a ROS node in the folder `~/deploy`. If you have installed the 
 rol -p ~/catkin_ws/src/deploy/ RoboticsLanguage/Examples/helloworld.rol -c -l
 ```
 
-## Docker image for users
+## Docker image
 
-You can test the robotics language using a docker environment. First build the docker file
-
-```shell
-docker build --tag roboticslanguage .
-```
-
-Next start the container
+You can test the robotics language using a docker environment. First make sure the Robotics Language is installed
 
 ```shell
-docker run -it --rm --workdir=/root/RoboticsLanguage roboticslanguage
+sudo -H pip install -e .
 ```
 
-Once inside the docker container you can compile the example by sourcing the file `source_in_docker.sh`:
+Next start the docker image
 
 ```shell
-source source_in_docker.sh
+rol_docker
 ```
 
+You can open another shell by repeating the previous command as many times as you want.
 
-you can launch the `hello_world` node by using the RoL:
+Once in the docker, everything is configured. You can compile the example:
+
+```shell
+rol RoboticsLanguage/Examples/helloworld.rol -c
+```
+
+Make sure to source for the first time:
+
+```shell
+source ~/catkin_ws/devel/setup.bash
+```
+
+Now you are ready to launch:
 
 ```shell
 rol RoboticsLanguage/Examples/helloworld.rol -l
 ```
-or by using `roslaunch`
 
-```shell
-roslaunch hello_world hello_world.launch
-```
-
-## Docker image for developers
-
-If you are a developer you can get directly the standard `osrf/ros:kinetic-desktop` and then install manually the robotics language. Run the docker image:
-
-```shell
-docker run -it --rm -v `pwd`:/RoL --workdir=/RoL osrf/ros:kinetic-desktop
-```
-
-Next source the file `source_in_docker_developer.sh`:
-
-```shell
-source source_in_docker_developer.sh
-```
-
-Now you are ready to launch the example:
-
-```shell
-roslaunch hello_world hello_world.launch
-```
 
 
 ## Acknowledgements
