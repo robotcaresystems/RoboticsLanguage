@@ -1,0 +1,3 @@
+#!/bin/bash
+
+rol_docker_start || rol_docker_join

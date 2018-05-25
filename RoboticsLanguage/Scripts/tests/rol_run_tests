@@ -1,0 +1,5 @@
+#!/bin/bash
+
+ROL_PATH=`python -c "import os; import RoboticsLanguage; print os.path.dirname(os.path.abspath(RoboticsLanguage.__file__))"`
+
+python -m unittest discover -s $ROL_PATH/Scripts/tests/ -v
