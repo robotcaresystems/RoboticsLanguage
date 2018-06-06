@@ -138,8 +138,38 @@
 
   <!-- Here is the content of the page -->
 
-  hello
-  
+  {% if parameters|dpath('/Transformers/ROS/topicDefinitions')|length > 0 %}
+  <h1>List of ROS topics</h1>
+
+  <table class="ui celled stripped table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Flow</th>
+        <th>View</th>
+      </tr>
+    </thead>
+    <tbody>
+  {% for topic in parameters|dpath('/Transformers/ROS/topicDefinitions') %}
+      <tr>
+        <td>{{topic['topic_name']}}</td>
+        <td>{{topic['ros_type']}}</td>
+        <td>{{topic['flow']}}</td>
+        <td>
+          <div class="ui toggle checkbox">
+            <input type="checkbox" name="{{topic['topic_name']}}">
+            <label></label>
+          </div>
+        </td>
+      </tr>
+  {% endfor %}
+    </tbody>
+  </table>
+
+  {% endif %}
+
+
 </body>
 
 </html>
