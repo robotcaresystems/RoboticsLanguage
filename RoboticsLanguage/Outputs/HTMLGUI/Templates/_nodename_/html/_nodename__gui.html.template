@@ -29,6 +29,10 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.13/semantic.min.js"></script>
   <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.13/semantic.min.css"/>
 
+  <!-- visJs -->
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.js"></script>
+  <link rel="stylesheet" type="text/css" src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.css" />
+
   <!-- some extra styling to balance the page -->
   <style type="text/css">
     #mynetwork {
@@ -114,6 +118,35 @@
     //   publisher_echo.publish(str)
     // }
 
+
+    // helping functions
+    function checkboxRowShowHide(name)
+    {
+      if($('#checkbox_' + name).is(":checked"))
+      {
+          $('#row_' + name).show();
+      }
+      else
+      {
+        $('#row_' + name).hide();
+      }
+    }
+
+
+
+      <!-- the plots -->
+        var g_voltages = new Dygraph(document.getElementById("div_voltages"), data_voltages, {
+    //      legend: 'always',
+    //      title: 'Voltages',
+    //      ylabel: 'Voltage (V)',
+    //      xlabel: 'Time',
+          drawPoints: false,
+          showRoller: false,
+          //  valueRange: [0, 30],
+          labels: ['Time', 'Voltage battery 1', 'Voltage battery 2', 'Voltage charger']
+        });
+
+
   </script>
 </head>
 
@@ -141,26 +174,64 @@
   {% if parameters|dpath('/Transformers/ROS/topicDefinitions')|length > 0 %}
   <h1>List of ROS topics</h1>
 
-  <table class="ui celled stripped table">
+  <table class="ui celled table">
     <thead>
       <tr>
+        <th></th>
         <th>Name</th>
         <th>Type</th>
         <th>Flow</th>
-        <th>View</th>
       </tr>
     </thead>
     <tbody>
   {% for topic in parameters|dpath('/Transformers/ROS/topicDefinitions') %}
       <tr>
+        <td>
+          <div class="ui checkbox">
+            <input type="checkbox" id="checkbox_{{topic['topic_name']|underscore}}"  onclick="checkboxRowShowHide('{{topic['topic_name']|underscore}}');">
+            <label></label>
+          </div>
+        </td>
         <td>{{topic['topic_name']}}</td>
         <td>{{topic['ros_type']}}</td>
         <td>{{topic['flow']}}</td>
-        <td>
-          <div class="ui toggle checkbox">
-            <input type="checkbox" name="{{topic['topic_name']}}">
-            <label></label>
+      </tr>
+      <tr hidden id="row_{{topic['topic_name']|underscore}}">
+        <td colspan="4">
+
+          {% if topic['ros_type'] == 'std_msgs::String' %}
+
+          <div class="ui tiny message" id="string_{{topic['topic_name']|underscore}}">
+            <p>line 1</p>
+            <p>line 2</p>
+        </div>
+
+          <div class="ui action input">
+            <input type="text" placeholder="publish">
+            <button class="ui button">publish</button>
           </div>
+
+          {% endif %}
+
+          {% if 'std_msgs::Float' in topic['ros_type'] or 'std_msgs::Integer' in topic['ros_type'] %}
+
+          <div class="ui statistic">
+          <div class="value">
+            5,550
+          </div>
+        </div>
+
+        <div id="div_voltages"></div>
+
+          <div class="ui action input">
+            <input type="text" placeholder="publish">
+            <button class="ui button">publish</button>
+          </div>
+
+          {% endif %}
+
+
+
         </td>
       </tr>
   {% endfor %}

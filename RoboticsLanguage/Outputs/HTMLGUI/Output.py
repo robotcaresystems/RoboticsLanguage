@@ -22,9 +22,6 @@
 
 import os
 import sys
-
-sys.platform
-
 import subprocess
 from RoboticsLanguage.Base import Utilities
 
