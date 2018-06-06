@@ -1,0 +1,7 @@
+#!/bin/bash
+
+if [ ! "$(docker ps -q -f name=RoboticsLanguage)" ]; then
+  rol_docker_start
+else
+  rol_docker_join
+fi
