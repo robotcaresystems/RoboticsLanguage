@@ -29,9 +29,9 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.13/semantic.min.js"></script>
   <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.13/semantic.min.css"/>
 
-  <!-- visJs -->
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.js"></script>
-  <link rel="stylesheet" type="text/css" src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.css" />
+  <!-- dygraphs -->
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/dygraph/2.1.0/dygraph.min.js"></script>
+  <link rel="stylesheet" type="text/css" src="https://cdnjs.cloudflare.com/ajax/libs/dygraph/2.1.0/dygraph.min.css" />
 
   <!-- some extra styling to balance the page -->
   <style type="text/css">
@@ -133,9 +133,11 @@
     }
 
 
+$(document).ready(function () {
 
-      <!-- the plots -->
-        var g_voltages = new Dygraph(document.getElementById("div_voltages"), data_voltages, {
+  $("#div_voltages").css({"display":"block"});
+    data_voltages = [[0,0],[1,2],[2,3]]
+    var g_voltages = new Dygraph(document.getElementById("div_voltages"), data_voltages, {
     //      legend: 'always',
     //      title: 'Voltages',
     //      ylabel: 'Voltage (V)',
@@ -143,9 +145,16 @@
           drawPoints: false,
           showRoller: false,
           //  valueRange: [0, 30],
-          labels: ['Time', 'Voltage battery 1', 'Voltage battery 2', 'Voltage charger']
+          labels: ['Time', 'Voltage']
         });
 
+        var x = new Date();
+
+        data_voltages.push([x, 0]);
+        g_voltages.updateOptions({
+          'file': data_voltages
+        });
+})
 
   </script>
 </head>
