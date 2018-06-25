@@ -19,6 +19,9 @@ cd ~/catkin_ws/
 catkin init
 catkin build
 
+# make sure .bashrc loads ros
+echo 'source ~/catkin_ws/devel/setup.bash' >> ~/.bashrc
+
 # set the development path
 mkdir -p ~/.rol
 echo 'globals:

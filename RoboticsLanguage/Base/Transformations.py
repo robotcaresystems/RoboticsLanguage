@@ -23,6 +23,7 @@
 from . import Utilities
 import sys
 
+@Utilities.cache
 def prepareTransformations(parameters):
   # get the list of transformations
   transformations_list = { x:y['order'] for x,y in parameters['manifesto']['Transformers'].iteritems() }
@@ -42,7 +43,7 @@ def Apply(code, parameters):
   code, parameters = Utilities.semanticChecking(code, parameters)
 
   # load the list of transformations by order
-  ordered_transformations_list = Utilities.cache('transformations-language', lambda : prepareTransformations(parameters))
+  ordered_transformations_list = prepareTransformations(parameters)
 
   # load the transform modules
   transform_function_list = [Utilities.importModule('Transformers', t ,'Transform') for t in ordered_transformations_list]

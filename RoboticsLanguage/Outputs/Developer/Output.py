@@ -25,9 +25,9 @@ import sys
 from RoboticsLanguage.Base import Utilities
 import dpath.util
 
-
-# group keyword by package
+@Utilities.cache
 def prepareGroups(parameters):
+    '''group keyword by package'''
     groups = {}
 
     for keyword, value in parameters['language'].iteritems():
@@ -43,7 +43,7 @@ def output(code, parameters):
 
   if parameters['Outputs']['Developer']['create']['reference']:
 
-    groups = Utilities.cache('developers-groups',lambda : prepareGroups(parameters))
+    groups = prepareGroups(parameters)
 
     parameters['memory']['documentation']={'groups': groups }
 

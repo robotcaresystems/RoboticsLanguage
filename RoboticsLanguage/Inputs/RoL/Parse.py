@@ -42,7 +42,7 @@ def nodeParametersToDictionary(xml):
   return {'node': {key: value.text for (key, value) in Utilities.optionalArguments(xml).iteritems()}}
 
 
-
+@Utilities.cache
 def prepareGrammarEngine(parameters):
   '''Build the grammer for the robotics language. Can be cached'''
   # keywords = {}
@@ -154,8 +154,7 @@ def parse(text, parameters):
 
   # @TODO need to reimplement language localisation
   # load cached language and grammar or create from scratch if needed
-  grammar = Utilities.cache('RoL-language-grammar',
-                            lambda: prepareGrammarEngine(parameters))
+  grammar = prepareGrammarEngine(parameters)
 
   # show the grammar if `--debug-rol-grammar` is set in the command line
   if parameters['Inputs']['RoL']['debug']['grammar']:
