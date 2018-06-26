@@ -25,6 +25,7 @@ from iso639 import languages
 
 parameters = {
     'globals': {
+        'version': '0.0.1',
         'output': 'RosCpp',
         'debug': False,
         'compile': False,
@@ -120,6 +121,11 @@ command_line_flags = {
         'longFlag': 'ignore-errors',
         'noArgument': True,
         'description': 'Ignores errors and attempts to generate code. Result may not compile.'
+    },
+    'globals:version': {
+        'longFlag': 'version',
+        'noArgument': True,
+        'description': 'Shows the version of the Robotics Language and exit.'
     },
     'globals:output': {
         'flag': 'o',

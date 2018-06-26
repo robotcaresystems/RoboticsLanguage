@@ -117,6 +117,11 @@ def prepareCommandLineArguments(parameters):
   return flags, arguments, file_package_name, file_formats
 
 
+def checkSpecialCommandLineArguments(command_line_parameters,parameters):
+  if '--version' in command_line_parameters:
+    print 'The Robotics Language Version: ' + parameters['globals']['version']
+    sys.exit(0)
+
 def runCommandLineParser(parameters, arguments, flags, file_formats, file_package_name, command_line_arguments):
     # instantiate the command line parser
   parser = argparse.ArgumentParser(prog='rol', description='Robotics Language compiler',
@@ -239,6 +244,8 @@ def ProcessArguments(command_line_parameters, parameters):
   # load cached command line flags or create if necessary
   flags, arguments, file_package_name, file_formats = prepareCommandLineArguments(parameters)
 
+  # deal with special command line arguments, e.g. '--version'
+  checkSpecialCommandLineArguments(command_line_parameters,parameters)
 
   # run the command line parser
   parser, args = runCommandLineParser(parameters, arguments, flags, file_formats,
