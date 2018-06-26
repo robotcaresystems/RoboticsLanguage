@@ -22,19 +22,19 @@
 
 import os
 import sys
-import errno
 import time
-import datetime
 import dill
+import errno
 import pprint
 import logging
-import coloredlogs
+import datetime
 import dpath.util
+import coloredlogs
 from lxml import etree
 from funcy import decorator
 from shutil import copy, rmtree
-from jinja2 import Environment, FileSystemLoader, Template, TemplateSyntaxError, TemplateAssertionError, TemplateError
 from RoboticsLanguage.Base import Types
+from jinja2 import Environment, FileSystemLoader, Template, TemplateSyntaxError, TemplateAssertionError, TemplateError
 
 # -------------------------------------------------------------------------------------------------
 #  Default encoding is Unicode
@@ -42,6 +42,18 @@ from RoboticsLanguage.Base import Types
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
+
+# -------------------------------------------------------------------------------------------------
+#  Helping functions
+# -------------------------------------------------------------------------------------------------
+
+
+def printCode(code):
+  print etree.tostring(code, pretty_print=True)
+
+
+def printParameters(parameters):
+  pprint.pprint(parameters)
 
 # -------------------------------------------------------------------------------------------------
 #  Error handling
@@ -162,10 +174,10 @@ def formatSemanticTypeErrorMessage(code_text, parameters, position, error, reaso
                       line_number=line_number, column_number=column_number, line=line)
 
 
-def errorOptionalArgumentTypes(code, parameters, parameter_names, parameter_types):
+def errorOptionalArgumentTypes(code, parameters, optional_names, optional_types):
   message = 'Incorrect types for optional parameters. '
 
-  for name, types in zip(parameter_names, parameter_types):
+  for name, types in zip(optional_names, optional_types):
     if not parameters['language'][code.tag]['definition']['optionalArguments'][name](types):
       message += 'The type of the optional parameter "' + name + '" should be "' + \
           parameters['language'][code.tag]['definition']['optionalArguments'][name].__doc__ + \
@@ -175,12 +187,12 @@ def errorOptionalArgumentTypes(code, parameters, parameter_names, parameter_type
       parameters['text'], parameters, getTextMinimumPositionXML(code), 'Type', message))
 
 
-def errorOptionalArgumentNotDefined(code, parameters, parameter_names):
+def errorOptionalArgumentNotDefined(code, parameters, optional_names):
   # Error! figure out which parameter is not defined
   message = ''
   keys = parameters['language'][code.tag]['definition']['optionalArguments'].keys()
 
-  for x in set(parameter_names) - set(keys):
+  for x in set(optional_names) - set(keys):
     message += 'The optional parameter "' + x + '" is not defined.\n'
 
   message += 'The list of defined optional parameters is: ' + str(keys)
@@ -649,42 +661,57 @@ def semanticTypeChecker(code, parameters):
   # if the element is part of the language
   if code.tag in parameters['language']:
 
-    # first recursively traverse all children elements that are not option
-    for element in code.xpath('*[not(self::option)]'):
+    # first recursively traverse all children elements
+    for element in code.getchildren():
       element, parameters = semanticTypeChecker(element, parameters)
 
-    # then traverse the optional arguments.
-    for element in code.xpath('option/*[not(self::name)]'):
-      element, parameters = semanticTypeChecker(element, parameters)
+    if code.tag == 'option':
+      if len(code.getchildren()) > 0:
+        # copy type of the option content to the option tag
+        code.attrib['type'] = code.getchildren()[0].attrib['type']
+      else:
+        # if empty option because none was selected as default, then make type none.
+        code.attrib['type'] = 'none'
+
+      return code, parameters
+
+    # # first recursively traverse all children elements that are not option
+    # for element in code.xpath('*[not(self::option)]'):
+    # # then traverse the optional arguments.
+    # for element in code.xpath('option/*[not(self::name)]'):
+    #   element, parameters = semanticTypeChecker(element, parameters)
+    #
 
     # for this element find the parameters and arguments
-    parameter_names = code.xpath('option/@name')
-    parameter_types = code.xpath('option/@type')
-    argument_types = code.xpath('*/@type')
+    optional_names = code.xpath('option/@name')
+    optional_types = code.xpath('option/@type')
+    argument_types = code.xpath('*[not(self::option)]/@type')
     keys = parameters['language']
 
     # check optional arguments
     try:
-      if 'optionalArguments' in keys[code.tag]['definition']:
-        if all([x in keys[code.tag]['definition']['optionalArguments'].keys() for x in parameter_names]):
+      if 'optional' in keys[code.tag]['definition']:
+
+        # check if optional arguments are defined
+        if all([x in keys[code.tag]['definition']['optional'].keys() for x in optional_names]):
 
           # check types for optional arguments
-          if not all(map(lambda x, y: keys[code.tag]['definition']['optionalArguments'][x]([y]), parameter_names, parameter_types)):
+          if not all(map(lambda x, y: keys[code.tag]['definition']['optional']
+                         [x]['test']([y]), optional_names, optional_types)):
             # Error: incorrect types for optional arguments!
-            # Error.handler('OptionalArgumentTypes', code, parameters, parameter_names, parameter_types)
+            # Error.handler('OptionalArgumentTypes', code, parameters, optional_names, optional_types)
             errorOptionalArgumentTypes(
-                code, parameters, parameter_names, parameter_types)
+                code, parameters, optional_names, optional_types)
         else:
           # Error: optional argument not defined
-          # Error.handler('OptionalArgumentNotDefined', code, parameters, parameter_names)
-          errorOptionalArgumentNotDefined(code, parameters, parameter_names)
+          # Error.handler('OptionalArgumentNotDefined', code, parameters, optional_names)
+          errorOptionalArgumentNotDefined(code, parameters, optional_names)
 
       # check mandatory argument types
-      if all(keys[code.tag]['definition']['argumentTypes'](argument_types)):
+      if keys[code.tag]['definition']['arguments']['test'](argument_types):
 
         # compute resulting type
-        code.attrib['type'] = keys[code.tag]['definition']['returnType'](
-            argument_types)
+        code.attrib['type'] = keys[code.tag]['definition']['returns'](argument_types)
 
       else:
         # Error: mandatory argument missing or incorrect
@@ -708,14 +735,14 @@ def fillDefaultsInOptionalArguments(code, parameters):
     __, parameters = fillDefaultsInOptionalArguments(element, parameters)
 
   # if this tag has optional parameters defined
-  if len(dpath.util.values(parameters['language'][code.tag], 'definition/optionalArguments')) > 0:
+  if len(dpath.util.values(parameters['language'][code.tag], 'definition/optional')) > 0:
 
     # find all optional parameters
-    parameter_names = code.xpath('option/@name')
+    optional_names = code.xpath('option/@name')
 
     # get the list of missing parameters
     missing_parameters = list(set(
-        parameters['language'][code.tag]['definition']['optionalArguments'].keys()) - set(parameter_names))
+        parameters['language'][code.tag]['definition']['optional'].keys()) - set(optional_names))
 
     for parameter in missing_parameters:
 
@@ -725,18 +752,18 @@ def fillDefaultsInOptionalArguments(code, parameters):
       # add the name of the optional parameter
       optional_argument_tag.attrib['name'] = parameter
 
-      # @WARNING the __doc__ definition of the type functions must be correct. How to deal with non-single types?
-      # this architecture should change to be more robust
-      # get the type for the optional parameter
+      # get the tag
       value_tag = etree.Element(
-          parameters['language'][code.tag]['definition']['optionalArguments'][parameter].__doc__)
+          parameters['language'][code.tag]['definition']['optional'][parameter]['tag'])
 
-      # set the default value
-      value_tag.text = str(
-          parameters['language'][code.tag]['definition']['optionalDefaults'][parameter])
+      if parameters['language'][code.tag]['definition']['optional'][parameter]['default'] is not None:
+        # set the default value
+        value_tag.text = str(
+            parameters['language'][code.tag]['definition']['optional'][parameter]['default'])
 
-      # append new tag to the code
-      optional_argument_tag.append(value_tag)
+        # append new tag to the code
+        optional_argument_tag.append(value_tag)
+
       code.append(optional_argument_tag)
 
   # fill in parameters for children

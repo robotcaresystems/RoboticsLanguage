@@ -23,15 +23,17 @@
 from . import Utilities
 import sys
 
+
 @Utilities.cache
 def prepareTransformations(parameters):
   # get the list of transformations
-  transformations_list = { x:y['order'] for x,y in parameters['manifesto']['Transformers'].iteritems() }
+  transformations_list = {x: y['order'] for x, y in parameters['manifesto']['Transformers'].iteritems()}
 
   # sort them according to the desired order
   ordered_transformations_list = sorted(transformations_list, key=transformations_list.__getitem__)
 
   return ordered_transformations_list
+
 
 def Apply(code, parameters):
   """Applies transformations to the XML structure"""
@@ -46,19 +48,20 @@ def Apply(code, parameters):
   ordered_transformations_list = prepareTransformations(parameters)
 
   # load the transform modules
-  transform_function_list = [Utilities.importModule('Transformers', t ,'Transform') for t in ordered_transformations_list]
+  transform_function_list = [Utilities.importModule('Transformers', t, 'Transform')
+                             for t in ordered_transformations_list]
 
   # apply transformations
-  for transform_function, transform_name in zip(transform_function_list,ordered_transformations_list):
+  for transform_function, transform_name in zip(transform_function_list, ordered_transformations_list):
 
     # update the compiler step
     parameters = Utilities.incrementCompilerStep(parameters, 'Transforming ' + transform_name)
 
     # apply transformations
-    code, parameters = transform_function.Transform.transform(code,parameters)
+    code, parameters = transform_function.Transform.transform(code, parameters)
 
     # show debug information
-    Utilities.showDebugInformation(code,parameters)
+    Utilities.showDebugInformation(code, parameters)
 
   # serialize for each output
   for language in Utilities.ensureList(parameters['globals']['output']):
@@ -70,4 +73,6 @@ def Apply(code, parameters):
     Utilities.logging.error("Semantic errors found! Stopping.")
     sys.exit(1)
 
+
+  Utilities.printCode(code)
   return code, parameters

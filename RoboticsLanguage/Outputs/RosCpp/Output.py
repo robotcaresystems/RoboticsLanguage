@@ -29,14 +29,14 @@ import subprocess
 def runPreparations(code, parameters):
 
   # save the node name for the templates
-  parameters['node']['name'] = Utilities.option(code.xpath('/node')[0], 'name').text
+  parameters['node']['name'] = code.xpath('/node/option[@name="name"]/string')[0].text
 
   # find a file system safe name
   node_name_underscore = Utilities.underscore(parameters['node']['name'])
 
   # list of c++ libraries to include based on the existance of specific tags in the code
-  include_libraries = {'Integers':'cstdint',
-                       'Strings':'string'}
+  include_libraries = {'Integers': 'cstdint',
+                       'Strings': 'string'}
 
   # add only the required libraries
   for tag, library in include_libraries.iteritems():

@@ -21,139 +21,138 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-from RoboticsLanguage.Base.Types import singleString, singleReal, singleInteger, singleNatural, manyStrings, manyExpressions, manyCodeBlocks, codeBlock, anything
-from RoboticsLanguage.Base.Types import returnNothing, returnCodeBlock
+from RoboticsLanguage.Base.Types import arguments, optional, returns
 
 language = {
-
-    'Reals': {
-        'definition': {
-            'optionalArguments': {'bits': singleInteger},
-            'optionalDefaults': {'bits': 32},
-            'argumentTypes': anything,
-            'returnType': returnNothing
-        },
-        'output':
-        {
-            'HTMLDocumentation': 'Real',
-            'HTMLGUI': 'Real',
-            'RoL': 'Reals',
-        },
-        'localisation':
-        {
-            'pt': 'real'
-        },
-        'documentation':
-        {
-            'title': 'Real numbers type',
-            'description': 'A type representing real numbers. Assumptions on the number of bits used by the compiler to represent a real number is given as information in the editor.',
-            'usage': 'x in Reals'
-        }
-    },
-
-    'Integers': {
-        'definition': {
-            'optionalArguments': {'bits': singleInteger},
-            'optionalDefaults': {'bits': 32},
-            'argumentTypes': anything,
-            'returnType': returnNothing
-        },
-        'output':
-        {
-            'HTMLDocumentation': 'Integer',
-            'HTMLGUI': 'Integer',
-            'RoL': 'Integers',
-        },
-        'localisation':
-        {
-            'pt': 'inteiro'
-        },
-        'documentation':
-        {
-            'title': 'Integer numbers type',
-            'description': 'A type representing integer numbers. Assumptions on the number of bits used by the compiler to represent an integer number is given as information in the editor.',
-            'usage': 'x in Integers'
-        }
-    },
-
-    'Naturals': {
-        'definition': {
-            'optionalArguments': {'bits': singleNatural},
-            'optionalDefaults': {'bits': 32},
-            'argumentTypes': anything,
-            'returnType': returnNothing
-        },
-        'output':
-        {
-            'HTMLDocumentation': 'Natural',
-            'HTMLGUI': 'Natural',
-            'RoL': 'Naturals',
-        },
-        'localisation':
-        {
-            'pt': 'natural'
-        },
-        'documentation':
-        {
-            'title': 'Natural numbers type',
-            'description': 'A type representing natural numbers. Assumptions on the number of bits used by the compiler to represent an natural number is given as information in the editor.',
-            'usage': 'x in Naturals'
-        }
-    },
-
-    'Strings': {
-        'definition': {
-            'argumentTypes': anything,
-            'returnType': returnNothing
-        },
-        'output':
-        {
-            'HTMLDocumentation': 'String',
-            'HTMLGUI': 'String',
-            'RoL': 'Strings',
-        },
-        'localisation':
-        {
-            'pt': 'texto'
-        },
-        'documentation':
-        {
-        }
-    },
-
-    'Booleans': {
-        'definition': {
-            'argumentTypes': anything,
-            'returnType': returnNothing
-        },
-        'output':
-        {
-            'HTMLDocumentation': 'Boolean',
-            'HTMLGUI': 'Boolean',
-            'RoL': 'Booleans',
-        },
-        'localisation':
-        {
-            'pt': 'boleano'
-        },
-        'documentation':
-        {
-        }
-    },
-
-    'Signals': {
-        'localisation':
-        {
-            'pt': 'sinal'
-        },
-        'documentation':
-        {
-            'title': 'A time or event based signal',
-            'description': 'Defines a signal type.',
-            'usage': 'x in Signals(Reals,rostopic:\'/test/signal\')'
-        }
-    },
-
+    #
+    # 'Reals': {
+    #     'definition': {
+    #         'optionalArguments': {'bits': singleInteger},
+    #         'optionalDefaults': {'bits': 32},
+    #         'argumentTypes': anything,
+    #         'returnType': returnNothing
+    #     },
+    #     'output':
+    #     {
+    #         'HTMLDocumentation': 'Real',
+    #         'HTMLGUI': 'Real',
+    #         'RoL': 'Reals',
+    #     },
+    #     'localisation':
+    #     {
+    #         'pt': 'real'
+    #     },
+    #     'documentation':
+    #     {
+    #         'title': 'Real numbers type',
+    #         'description': 'A type representing real numbers. Assumptions on the number of bits used by the compiler to represent a real number is given as information in the editor.',
+    #         'usage': 'x in Reals'
+    #     }
+    # },
+    #
+    # 'Integers': {
+    #     'definition': {
+    #         'optionalArguments': {'bits': singleInteger},
+    #         'optionalDefaults': {'bits': 32},
+    #         'argumentTypes': anything,
+    #         'returnType': returnNothing
+    #     },
+    #     'output':
+    #     {
+    #         'HTMLDocumentation': 'Integer',
+    #         'HTMLGUI': 'Integer',
+    #         'RoL': 'Integers',
+    #     },
+    #     'localisation':
+    #     {
+    #         'pt': 'inteiro'
+    #     },
+    #     'documentation':
+    #     {
+    #         'title': 'Integer numbers type',
+    #         'description': 'A type representing integer numbers. Assumptions on the number of bits used by the compiler to represent an integer number is given as information in the editor.',
+    #         'usage': 'x in Integers'
+    #     }
+    # },
+    #
+    # 'Naturals': {
+    #     'definition': {
+    #         'optionalArguments': {'bits': singleNatural},
+    #         'optionalDefaults': {'bits': 32},
+    #         'argumentTypes': anything,
+    #         'returnType': returnNothing
+    #     },
+    #     'output':
+    #     {
+    #         'HTMLDocumentation': 'Natural',
+    #         'HTMLGUI': 'Natural',
+    #         'RoL': 'Naturals',
+    #     },
+    #     'localisation':
+    #     {
+    #         'pt': 'natural'
+    #     },
+    #     'documentation':
+    #     {
+    #         'title': 'Natural numbers type',
+    #         'description': 'A type representing natural numbers. Assumptions on the number of bits used by the compiler to represent an natural number is given as information in the editor.',
+    #         'usage': 'x in Naturals'
+    #     }
+    # },
+    #
+    # 'Strings': {
+    #     'definition': {
+    #         'argumentTypes': anything,
+    #         'returnType': returnNothing
+    #     },
+    #     'output':
+    #     {
+    #         'HTMLDocumentation': 'String',
+    #         'HTMLGUI': 'String',
+    #         'RoL': 'Strings',
+    #     },
+    #     'localisation':
+    #     {
+    #         'pt': 'texto'
+    #     },
+    #     'documentation':
+    #     {
+    #     }
+    # },
+    #
+    # 'Booleans': {
+    #     'definition': {
+    #         'argumentTypes': anything,
+    #         'returnType': returnNothing
+    #     },
+    #     'output':
+    #     {
+    #         'HTMLDocumentation': 'Boolean',
+    #         'HTMLGUI': 'Boolean',
+    #         'RoL': 'Booleans',
+    #     },
+    #     'localisation':
+    #     {
+    #         'pt': 'boleano'
+    #     },
+    #     'documentation':
+    #     {
+    #     }
+    # },
+    #
+    # 'Signals': {
+    #     'localisation':
+    #     {
+    #         'pt': 'sinal'
+    #     },
+    #     'documentation':
+    #     {
+    #         'title': 'A time or event based signal',
+    #         'description': 'Defines a signal type.',
+    #         'usage': 'x in Signals(Reals,rostopic:\'/test/signal\')'
+    #     }
+    # },
+    #
     'string': {
         'output':
         {
@@ -169,54 +168,69 @@ language = {
         {
         }
     },
-
-    'integer': {
+    'number': {
         'output':
         {
             'HTMLDocumentation': '{{text}}',
             'HTMLGUI': '{{text}}',
-            'RoL': '{{text}}',
+            'RoL': '"{{text}}"',
         },
         'localisation':
         {
-            'pt': 'inteiro'
+            'pt': 'texto'
         },
         'documentation':
         {
         }
     },
-
-    'natural': {
-        'output':
-        {
-            'HTMLDocumentation': '{{text}}',
-            'HTMLGUI': '{{text}}',
-            'RoL': '{{text}}',
-        },
-        'localisation':
-        {
-            'pt': 'natural'
-        },
-        'documentation':
-        {
-        }
-    },
-
-    'boolean': {
-        'output':
-        {
-            'HTMLDocumentation': '{{text}}',
-            'HTMLGUI': '{{text}}',
-            'RoL': '{{text}}',
-        },
-        'localisation':
-        {
-        },
-        'documentation':
-        {
-        }
-    },
-
+    #
+    # 'integer': {
+    #     'output':
+    #     {
+    #         'HTMLDocumentation': '{{text}}',
+    #         'HTMLGUI': '{{text}}',
+    #         'RoL': '{{text}}',
+    #     },
+    #     'localisation':
+    #     {
+    #         'pt': 'inteiro'
+    #     },
+    #     'documentation':
+    #     {
+    #     }
+    # },
+    #
+    # 'natural': {
+    #     'output':
+    #     {
+    #         'HTMLDocumentation': '{{text}}',
+    #         'HTMLGUI': '{{text}}',
+    #         'RoL': '{{text}}',
+    #     },
+    #     'localisation':
+    #     {
+    #         'pt': 'natural'
+    #     },
+    #     'documentation':
+    #     {
+    #     }
+    # },
+    #
+    # 'boolean': {
+    #     'output':
+    #     {
+    #         'HTMLDocumentation': '{{text}}',
+    #         'HTMLGUI': '{{text}}',
+    #         'RoL': '{{text}}',
+    #     },
+    #     'localisation':
+    #     {
+    #     },
+    #     'documentation':
+    #     {
+    #     }
+    # },
+    #
     'real': {
         'output':
         {
@@ -232,123 +246,127 @@ language = {
         {
         }
     },
-
-    'vector': {
-        'localisation':
-        {
-            'pt': 'vector'
-        },
-        'documentation':
-        {
-        }
-    },
-
-    'set': {
-        'localisation':
-        {
-            'pt': 'conjunto'
-        },
-        'documentation':
-        {
-        }
-    },
-
-    'associativeArray': {
-        'localisation':
-        {
-        },
-        'documentation':
-        {
-            'title': 'Set',
-            'description': 'A set of values',
-            'usage': 'a = { b, c ,d }'
-        }
-    },
-
-    'function': {
-        'definition': {
-            'argumentTypes': anything,
-            'returnType': returnNothing
-        },
-        'documentation':
-        {
-        }
-    },
-
-    'return': {
-        'definition': {
-            'argumentTypes': anything,
-            'returnType': returnNothing
-        },
-        'localisation':
-        {
-        },
-        'documentation':
-        {
-        }
-    },
-
-    'functionDefinition': {
-        'definition': {
-            'argumentTypes': anything,
-            'returnType': returnNothing
-        },
-        'documentation':
-        {
-        }
-    },
-
-    'arguments': {
-        'definition': {
-            'argumentTypes': anything,
-            'returnType': returnNothing
-        },
-        'documentation':
-        {
-        }
-    },
-
-    'content': {
-        'definition': {
-            'argumentTypes': anything,
-            'returnType': returnNothing
-        },
-        'documentation':
-        {
-        }
-    },
-
-    'returns': {
-        'definition': {
-            'argumentTypes': anything,
-            'returnType': returnNothing
-        },
-        'documentation':
-        {
-        }
-    },
-
-    'variable': {
-        'definition': {
-            'argumentTypes': anything,
-            'returnType': returnNothing
-        },
-        'output':
-        {
-            'HTMLDocumentation': '{{attributes["name"]}}',
-            'HTMLGUI': '{{attributes["name"]}}',
-            'RoL': '{{attributes["name"]}}',
-        },
-        'localisation':
-        {
-            'pt': 'variável'
-        },
-        'documentation':
-        {
-        }
-    },
-
+    #
+    # 'vector': {
+    #     'localisation':
+    #     {
+    #         'pt': 'vector'
+    #     },
+    #     'documentation':
+    #     {
+    #     }
+    # },
+    #
+    # 'set': {
+    #     'localisation':
+    #     {
+    #         'pt': 'conjunto'
+    #     },
+    #     'documentation':
+    #     {
+    #     }
+    # },
+    #
+    # 'associativeArray': {
+    #     'localisation':
+    #     {
+    #     },
+    #     'documentation':
+    #     {
+    #         'title': 'Set',
+    #         'description': 'A set of values',
+    #         'usage': 'a = { b, c ,d }'
+    #     }
+    # },
+    #
+    # 'function': {
+    #     'definition': {
+    #         'argumentTypes': anything,
+    #         'returnType': returnNothing
+    #     },
+    #     'documentation':
+    #     {
+    #     }
+    # },
+    #
+    # 'return': {
+    #     'definition': {
+    #         'argumentTypes': anything,
+    #         'returnType': returnNothing
+    #     },
+    #     'localisation':
+    #     {
+    #     },
+    #     'documentation':
+    #     {
+    #     }
+    # },
+    #
+    # 'functionDefinition': {
+    #     'definition': {
+    #         'argumentTypes': anything,
+    #         'returnType': returnNothing
+    #     },
+    #     'documentation':
+    #     {
+    #     }
+    # },
+    #
+    # 'arguments': {
+    #     'definition': {
+    #         'argumentTypes': anything,
+    #         'returnType': returnNothing
+    #     },
+    #     'documentation':
+    #     {
+    #     }
+    # },
+    #
+    # 'content': {
+    #     'definition': {
+    #         'argumentTypes': anything,
+    #         'returnType': returnNothing
+    #     },
+    #     'documentation':
+    #     {
+    #     }
+    # },
+    #
+    # 'returns': {
+    #     'definition': {
+    #         'argumentTypes': anything,
+    #         'returnType': returnNothing
+    #     },
+    #     'documentation':
+    #     {
+    #     }
+    # },
+    #
+    # 'variable': {
+    #     'definition': {
+    #         'argumentTypes': anything,
+    #         'returnType': returnNothing
+    #     },
+    #     'output':
+    #     {
+    #         'HTMLDocumentation': '{{attributes["name"]}}',
+    #         'HTMLGUI': '{{attributes["name"]}}',
+    #         'RoL': '{{attributes["name"]}}',
+    #     },
+    #     'localisation':
+    #     {
+    #         'pt': 'variável'
+    #     },
+    #     'documentation':
+    #     {
+    #     }
+    # },
+    #
     'option': {
+        'definition': {
+            'arguments': arguments('anything'),
+            'returns': returns('same')
+        },
         'localisation':
         {
             'pt': 'parâmetro'
@@ -357,77 +375,89 @@ language = {
         {
         }
     },
-
-    'element': {
-        'definition': {
-            'argumentTypes': anything,
-            'returnType': returnNothing
-        },
-        'localisation':
-        {
-            'pt': 'elemento'
-        },
-        'documentation':
-        {
-            'title': 'Element of a set of type',
-            'description': 'Defines a variable to be an element of a set or a type. If a set is provided, then the variable takes the type of the elements of the set',
-            'usage': 'x in Reals'
-        }
-    },
-
-    'defineFunction': {
-        'definition': {
-            'argumentTypes': anything,
-            'returnType': returnNothing
-        },
-        'localisation':
-        {
-        },
-        'documentation':
-        {
-        }
-    },
-
-    'block': {
-        'definition': {
-            'argumentTypes': anything,
-            'returnType': returnCodeBlock
-        },
-        'localisation':
-        {
-        },
-        'documentation':
-        {
-        }
-    },
+    #
+    # 'element': {
+    #     'definition': {
+    #         'argumentTypes': anything,
+    #         'returnType': returnNothing
+    #     },
+    #     'localisation':
+    #     {
+    #         'pt': 'elemento'
+    #     },
+    #     'documentation':
+    #     {
+    #         'title': 'Element of a set of type',
+    #         'description': 'Defines a variable to be an element of a set or a type. If a set is provided, then the variable takes the type of the elements of the set',
+    #         'usage': 'x in Reals'
+    #     }
+    # },
+    #
+    # 'defineFunction': {
+    #     'definition': {
+    #         'argumentTypes': anything,
+    #         'returnType': returnNothing
+    #     },
+    #     'localisation':
+    #     {
+    #     },
+    #     'documentation':
+    #     {
+    #     }
+    # },
+    #
+    # 'block': {
+    #     'definition': {
+    #         'argumentTypes': anything,
+    #         'returnType': returnCodeBlock
+    #     },
+    #     'localisation':
+    #     {
+    #     },
+    #     'documentation':
+    #     {
+    #     }
+    # },
+    #
+    # 'anything': {
+    #     'definition': {
+    #         'argumentTypes': anything,
+    #         'returnType': returnNothing
+    #     },
+    #     'localisation':
+    #     {
+    #     },
+    #     'documentation':
+    #     {
+    #     }
+    # },
 
     'anything': {
         'definition': {
-            'argumentTypes': anything,
-            'returnType': returnNothing
+            'arguments': arguments('anything'),
+            'returns': returns('none')
         },
-        'localisation':
-        {
+    },
+
+
+    'block': {
+        'definition': {
+            'arguments': arguments('anything'),
+            'returns': returns('block')
         },
-        'documentation':
-        {
-        }
     },
 
     'node': {
         'definition': {
-            'optionalArguments': {'name': singleString,
-                                  'rate': singleReal,
-                                  'initialise': anything,
-                                  'finalise': anything,
-                                  'definitions': anything},
-            'optionalDefaults': {'name': 'unnamed',
-                                 'rate': 1,
-                                 'initialise': '',
-                                 'finalise': '',
-                                 'definitions': ''},
-            'argumentTypes': anything,
-            'returnType': returnNothing
+            'arguments': arguments('anything'),
+            'optional': {
+                'rate': optional('number', 1),
+                'name': optional('string', 'unnamed'),
+                'initialise': optional('anything', None),
+                'finalise': optional('anything', None),
+                'definitions': optional('anything', None),
+            },
+            'returns': returns('node')
         },
         'localisation':
         {
@@ -441,59 +471,58 @@ language = {
             'usage': 'node(\n  name:"hello world",\n  initialise(print("hello world"))\n)'
         }
     },
-
-    'cycle': {
-        'output':
-        {
-            'HTMLDocumentation': '{{children|first}}',
-            'HTMLGUI': '{{children|first}}',
-            'RoL': '{{children|first}}',
-        },
-        'localisation':
-        {
-            'pt': 'repetir'
-        },
-        'documentation':
-        {
-        }
-    },
-
-    'events': {
-        'localisation':
-        {
-            'pt': 'eventos'
-        },
-        'documentation':
-        {
-        }
-    },
-
-    'Event': {
-        'localisation':
-        {
-            'pt': 'eventos'
-        },
-        'documentation':
-        {
-        }
-    },
-
-    'Time': {
-        'localisation':
-        {
-            'pt': 'eventos'
-        },
-        'documentation':
-        {
-        }
-    },
+    #
+    # 'cycle': {
+    #     'output':
+    #     {
+    #         'HTMLDocumentation': '{{children|first}}',
+    #         'HTMLGUI': '{{children|first}}',
+    #         'RoL': '{{children|first}}',
+    #     },
+    #     'localisation':
+    #     {
+    #         'pt': 'repetir'
+    #     },
+    #     'documentation':
+    #     {
+    #     }
+    # },
+    #
+    # 'events': {
+    #     'localisation':
+    #     {
+    #         'pt': 'eventos'
+    #     },
+    #     'documentation':
+    #     {
+    #     }
+    # },
+    #
+    # 'Event': {
+    #     'localisation':
+    #     {
+    #         'pt': 'eventos'
+    #     },
+    #     'documentation':
+    #     {
+    #     }
+    # },
+    #
+    # 'Time': {
+    #     'localisation':
+    #     {
+    #         'pt': 'eventos'
+    #     },
+    #     'documentation':
+    #     {
+    #     }
+    # },
 
     'print': {
         'definition': {
-            'optionalArguments': {'level': singleString},
-            'optionalDefaults': {'level': 'info'},
-            'argumentTypes': manyStrings,
-            'returnType': returnNothing
+            'arguments': arguments('string+'),
+            'optional': {'level': optional('string', 'info')},
+            'returns': returns('none')
         },
         'output':
         {
@@ -512,13 +541,13 @@ language = {
         }
     },
 
-    'if': {
-        'localisation':
-        {
-            'pt': 'se',
-        },
-        'documentation':
-        {
-        }
-    },
+    # 'if': {
+    #     'localisation':
+    #     {
+    #         'pt': 'se',
+    #     },
+    #     'documentation':
+    #     {
+    #     }
+    # },
 }

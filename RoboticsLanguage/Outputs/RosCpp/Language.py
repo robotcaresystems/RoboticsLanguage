@@ -25,6 +25,11 @@ default_output = ''
 
 language = {
 
+  'option': {
+    'output': {'RosCpp':'{{children[0]}}'}
+
+  },
+
     'Reals': {
         'output':
         {
@@ -82,6 +87,13 @@ language = {
     },
 
     'boolean': {
+        'output':
+        {
+            'RosCpp': '{{text}}',
+        },
+    },
+
+    'number': {
         'output':
         {
             'RosCpp': '{{text}}',

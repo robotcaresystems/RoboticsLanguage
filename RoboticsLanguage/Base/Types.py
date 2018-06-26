@@ -19,84 +19,134 @@
 #   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
+from parsley import makeGrammar
+
+
+typeGrammar = """
+divider = (';'){0,1}
+number = ( real | integer | natural )
+string = 'string' divider
+real = 'real' divider
+integer = 'integer' divider
+natural = 'natural' divider
+boolean = 'boolean' divider
+"""
+
+
+def arguments(test, tag='nothing'):
+
+  if test == 'anything':
+    return {'documentation': 'anything', 'test': lambda x: True, 'tag': tag}
+
+  elif test == 'nothing':
+    return {'documentation': '', 'test': lambda x: len(x) == 0, 'tag': tag}
+
+  else:
+    grammar = makeGrammar(typeGrammar + 'result = (' + test + ')', {})
+
+    def f(x):
+      try:
+        grammar(';'.join(x)).result()
+        return True
+      except Exception:
+        return False
+
+    return {'documentation': test, 'test': f, 'tag': tag}
+
+
+def optional(name, value):
+
+  # optional alguments can only have one type.
+  data = arguments(name, tag=name)
+  data['default'] = value
+  return data
+
+
+def returns(name):
+  if name == 'same':
+    return lambda x: x
+  else:
+    return lambda x: name
+
 
 atoms = {
-  'string':'Strings',
-  'boolean':'Booleans',
-  'real':'Reals',
-  'integer':'Integers'
-  }
-
-def manySameNumbers(x):
-  '''number'''
-  return [all(map(lambda y: y in ['Reals', 'Integers'], x))]
-
-def manySameNumbersStrings(x):
-  '''number or string'''
-  return [all(map(lambda y: y in ['Reals', 'Integers'], x)) or all(map(lambda y: y == 'Strings', x))]
-
-def manySameNumbersStringsBooleans(x):
-  '''number or string or boolean'''
-  return [all(map(lambda y: y in ['Reals', 'Integers'], x)) or all(map(lambda y: y == 'Strings', x)) or all(map(lambda y: y == 'Booleans', x))]
-
-def manySameBooleans(x):
-  '''boolean'''
-  return [all(map(lambda y: y == 'Booleans', x))]
-
-def singleString(x):
-  '''string'''
-  return [len(x) == 1 and x[0] == 'Strings']
-
-def singleReal(x):
-  '''real'''
-  return [len(x) == 1 and (x[0] == 'Reals' or x[0] == 'Integers')]
-
-def singleInteger(x):
-  '''integer'''
-  return [len(x) == 1 and (x[0] == 'Integers')]
-
-def singleNatural(x):
-  '''natural'''
-  return [len(x) == 1 and (x[0] == 'Naturals')]
-
-def singleBoolean(x):
-  '''boolean'''
-  return [len(x) == 1 and x[0] == 'Booleans']
-
-def manyStrings(x):
-  '''string , ... , string'''
-  return [ xi == 'Strings' for xi in x ]
-
-def manyExpressions(x):
-  '''expression , ... , expression'''
-  return [True]
-
-def manyCodeBlocks(x):
-  '''block'''
-  return [ xi == 'Block' for xi in x ]
-
-def codeBlock(x):
-  '''block'''
-  return [True]
-
-def anything(x):
-  '''anything'''
-  return [True]
-
-# -----------------------------------------------------------------
-# return functions
-
-def returnNothing(x):
-  '''nothing'''
-  return 'Nothing'
-
-def returnCodeBlock(x):
-  '''code block'''
-  return 'Block'
-
-def returnSameArgumentType(x):
-  return x[0]
-
-def returnBoolean(x):
-  '''boolean'''
-  return 'Booleans'
+    'string': 'string',
+    'boolean': 'boolean',
+    'real': 'real',
+    'integer': 'integer',
+    'number': 'real'
+}
+#
+# def manySameNumbers(x):
+#   '''number'''
+#   return [all(map(lambda y: y in ['Reals', 'Integers'], x))]
+#
+# def manySameNumbersStrings(x):
+#   '''number or string'''
+#   return [all(map(lambda y: y in ['Reals', 'Integers'], x)) or all(map(lambda y: y == 'Strings', x))]
+#
+# def manySameNumbersStringsBooleans(x):
+#   '''number or string or boolean'''
+#   return [all(map(lambda y: y in ['Reals', 'Integers'], x)) or all(map(lambda y: y == 'Strings', x)) or all(map(lambda y: y == 'Booleans', x))]
+#
+# def manySameBooleans(x):
+#   '''boolean'''
+#   return [all(map(lambda y: y == 'Booleans', x))]
+#
+# def singleString(x):
+#   '''string'''
+#   return [len(x) == 1 and x[0] == 'Strings']
+#
+# def singleReal(x):
+#   '''real'''
+#   return [len(x) == 1 and (x[0] == 'Reals' or x[0] == 'Integers')]
+#
+# def singleInteger(x):
+#   '''integer'''
+#   return [len(x) == 1 and (x[0] == 'Integers')]
+#
+# def singleNatural(x):
+#   '''natural'''
+#   return [len(x) == 1 and (x[0] == 'Naturals')]
+#
+# def singleBoolean(x):
+#   '''boolean'''
+#   return [len(x) == 1 and x[0] == 'Booleans']
+#
+# def manyStrings(x):
+#   '''string , ... , string'''
+#   return [ xi == 'Strings' for xi in x ]
+#
+# def manyExpressions(x):
+#   '''expression , ... , expression'''
+#   return [True]
+#
+# def manyCodeBlocks(x):
+#   '''block'''
+#   return [ xi == 'Block' for xi in x ]
+#
+# def codeBlock(x):
+#   '''block'''
+#   return [True]
+#
+# def anything(x):
+#   '''anything'''
+#   return [True]
+#
+# # -----------------------------------------------------------------
+# # return functions
+#
+# def returnNothing(x):
+#   '''nothing'''
+#   return 'Nothing'
+#
+# def returnCodeBlock(x):
+#   '''code block'''
+#   return 'Block'
+#
+# def returnSameArgumentType(x):
+#   return x[0]
+#
+# def returnBoolean(x):
+#   '''boolean'''
+#   return 'Booleans'
