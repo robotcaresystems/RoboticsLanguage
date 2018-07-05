@@ -9,7 +9,7 @@
 #    Copyright: {{parameters['Information']['software']['copyright']}}
 #
 manifesto = {
-  'packageName':'{{parameters['Outputs']['Developer']['create']['input']}}',
-  'packageShortName':'{{parameters['Outputs']['Developer']['create']['input']|camelCase}}',
-  'fileFormat': '{{parameters['Outputs']['Developer']['create']['input']|initials|lower}}',
+  'packageName':'{{parameters['Outputs']['Developer']['create']['transformer']}}',
+  'packageShortName':'{{parameters['Outputs']['Developer']['create']['transformer']|camelCase}}',
+  'order': 100,
   }
