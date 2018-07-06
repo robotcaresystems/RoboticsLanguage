@@ -590,18 +590,21 @@ def attributes(xml):
 
 
 def attribute(xml, name):
-  if isinstance(xml, list):
-    if len(xml) > 0:
-      xml = xml[0]
+  try:
+    if isinstance(xml, list):
+      if len(xml) > 0:
+        xml = xml[0]
+      else:
+        return ''
+    if name in xml.attrib.keys():
+      return xml.attrib[name]
     else:
       return ''
-  if name in xml.attrib.keys():
-    return xml.attrib[name]
-  else:
+  except:
     return ''
 
-
-def option(xml, name):
+def option(xml, name, debug=''):
+  print debug
   try:
     return optionalArguments(xml)[name]
   except:
@@ -609,7 +612,7 @@ def option(xml, name):
 
 
 def optionalArguments(xml):
-  return {a.attrib['name']: a.xpath('*')[0] for a in xml.xpath('option')}
+  return {a.attrib['name']: a for a in xml.xpath('option')}
 
 
 def getTextMinimumPositionXML(xml):

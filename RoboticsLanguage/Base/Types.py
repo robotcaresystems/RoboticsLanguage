@@ -21,20 +21,21 @@
 #   limitations under the License.
 from parsley import makeGrammar
 
+# list of atomic types
+types_list = ['string', 'real', 'integer', 'natural', 'boolean']
 
-typeGrammar = """
+# create a grammar to parse the argument types definition
+type_grammar = ''.join(["{} = '{}' divider\n".format(x, x) for x in types_list])
+
+# add a divider and extra clauses
+type_grammar += """
 divider = (';'){0,1}
 number = ( real | integer | natural )
-string = 'string' divider
-real = 'real' divider
-integer = 'integer' divider
-natural = 'natural' divider
-boolean = 'boolean' divider
 """
 
 
 def arguments(test, tag='nothing'):
-
+  '''Creates a structure that defines the arguments of a function. Used for type checking.'''
   if test == 'anything':
     return {'documentation': 'anything', 'test': lambda x: True, 'tag': tag}
 
@@ -42,7 +43,7 @@ def arguments(test, tag='nothing'):
     return {'documentation': '', 'test': lambda x: len(x) == 0, 'tag': tag}
 
   else:
-    grammar = makeGrammar(typeGrammar + 'result = (' + test + ')', {})
+    grammar = makeGrammar(type_grammar + 'result = (' + test + ')', {})
 
     def f(x):
       try:
@@ -55,6 +56,7 @@ def arguments(test, tag='nothing'):
 
 
 def optional(name, value):
+  '''Creates a structure that defines the optional arguments of a function. Used for type checking.'''
 
   # optional alguments can only have one type.
   data = arguments(name, tag=name)
@@ -63,6 +65,7 @@ def optional(name, value):
 
 
 def returns(name):
+  '''Creates a return type for a function. Used for type checking.'''
   if name == 'same':
     return lambda x: x
   else:

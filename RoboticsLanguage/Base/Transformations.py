@@ -73,6 +73,4 @@ def Apply(code, parameters):
     Utilities.logging.error("Semantic errors found! Stopping.")
     sys.exit(1)
 
-
-  Utilities.printCode(code)
   return code, parameters

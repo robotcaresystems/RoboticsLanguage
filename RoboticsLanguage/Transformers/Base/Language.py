@@ -24,6 +24,150 @@
 from RoboticsLanguage.Base.Types import arguments, optional, returns
 
 language = {
+
+    #######################################################################
+    # Atomic types
+
+    'string': {
+        'localisation':
+        {
+            'pt': 'texto'
+        },
+        'documentation':
+        {
+        }
+    },
+    'number': {
+        'localisation':
+        {
+        },
+        'documentation':
+        {
+        }
+    },
+
+    'integer': {
+        'localisation':
+        {
+            'pt': 'inteiro'
+        },
+        'documentation':
+        {
+        }
+    },
+
+    'natural': {
+        'localisation':
+        {
+            'pt': 'natural'
+        },
+        'documentation':
+        {
+        }
+    },
+
+    'boolean': {
+        'localisation':
+        {
+        },
+        'documentation':
+        {
+        }
+    },
+
+    'real': {
+        'localisation':
+        {
+            'pt': 'real'
+        },
+        'documentation':
+        {
+        }
+    },
+
+    #######################################################################
+    # Language structural elements
+
+    'option': {
+        'definition': {
+            'arguments': arguments('anything'),
+            'returns': returns('same')
+        },
+        'localisation':
+        {
+            'pt': 'parâmetro'
+        },
+        'documentation':
+        {
+        }
+    },
+
+    'anything': {
+        'definition': {
+            'arguments': arguments('anything'),
+            'returns': returns('none')
+        },
+    },
+
+
+    'block': {
+        'definition': {
+            'arguments': arguments('anything'),
+            'returns': returns('block')
+        },
+    },
+
+    #######################################################################
+    # Base functions
+
+
+    'node': {
+        'definition': {
+            'arguments': arguments('anything'),
+            'optional': {
+                'rate': optional('number', 1),
+                'name': optional('string', 'unnamed'),
+                'initialise': optional('anything', None),
+                'finalise': optional('anything', None),
+                'definitions': optional('anything', None),
+            },
+            'returns': returns('node')
+        },
+        'localisation':
+        {
+            'pt': 'nó',
+            'el': 'κόμβος'
+        },
+        'documentation':
+        {
+            'title': 'The main software node',
+            'description': 'This is the main RoL node. Definitions, initialisation, events, etc., are defined here.',
+            'usage': 'node(\n  name:"hello world",\n  initialise(print("hello world"))\n)'
+        }
+    },
+    'print': {
+        'definition': {
+            'arguments': arguments('string+'),
+            'optional': {'level': optional('string', 'info')},
+            'returns': returns('none')
+        },
+        'output':
+        {
+            'HTMLDocumentation': 'print({{children|first}})',
+            'HTMLGUI': '',
+            'RoL': 'print({{children|first}})',
+        },
+        'localisation':
+        {
+            'pt': 'imprimir',
+            'el': 'εκτύπωσε',
+            'nl': 'afdrukken'
+        },
+        'documentation':
+        {
+        }
+    },
+
     #
     # 'Reals': {
     #     'definition': {
@@ -153,99 +297,6 @@ language = {
     #     }
     # },
     #
-    'string': {
-        'output':
-        {
-            'HTMLDocumentation': '{{text}}',
-            'HTMLGUI': '{{text}}',
-            'RoL': '"{{text}}"',
-        },
-        'localisation':
-        {
-            'pt': 'texto'
-        },
-        'documentation':
-        {
-        }
-    },
-    'number': {
-        'output':
-        {
-            'HTMLDocumentation': '{{text}}',
-            'HTMLGUI': '{{text}}',
-            'RoL': '"{{text}}"',
-        },
-        'localisation':
-        {
-            'pt': 'texto'
-        },
-        'documentation':
-        {
-        }
-    },
-    #
-    # 'integer': {
-    #     'output':
-    #     {
-    #         'HTMLDocumentation': '{{text}}',
-    #         'HTMLGUI': '{{text}}',
-    #         'RoL': '{{text}}',
-    #     },
-    #     'localisation':
-    #     {
-    #         'pt': 'inteiro'
-    #     },
-    #     'documentation':
-    #     {
-    #     }
-    # },
-    #
-    # 'natural': {
-    #     'output':
-    #     {
-    #         'HTMLDocumentation': '{{text}}',
-    #         'HTMLGUI': '{{text}}',
-    #         'RoL': '{{text}}',
-    #     },
-    #     'localisation':
-    #     {
-    #         'pt': 'natural'
-    #     },
-    #     'documentation':
-    #     {
-    #     }
-    # },
-    #
-    # 'boolean': {
-    #     'output':
-    #     {
-    #         'HTMLDocumentation': '{{text}}',
-    #         'HTMLGUI': '{{text}}',
-    #         'RoL': '{{text}}',
-    #     },
-    #     'localisation':
-    #     {
-    #     },
-    #     'documentation':
-    #     {
-    #     }
-    # },
-    #
-    'real': {
-        'output':
-        {
-            'HTMLDocumentation': '{{text}}',
-            'HTMLGUI': '{{text}}',
-            'RoL': '{{text}}',
-        },
-        'localisation':
-        {
-            'pt': 'real'
-        },
-        'documentation':
-        {
-        }
-    },
     #
     # 'vector': {
     #     'localisation':
@@ -362,19 +413,6 @@ language = {
     #     }
     # },
     #
-    'option': {
-        'definition': {
-            'arguments': arguments('anything'),
-            'returns': returns('same')
-        },
-        'localisation':
-        {
-            'pt': 'parâmetro'
-        },
-        'documentation':
-        {
-        }
-    },
     #
     # 'element': {
     #     'definition': {
@@ -432,45 +470,7 @@ language = {
     #     }
     # },
 
-    'anything': {
-        'definition': {
-            'arguments': arguments('anything'),
-            'returns': returns('none')
-        },
-    },
 
-
-    'block': {
-        'definition': {
-            'arguments': arguments('anything'),
-            'returns': returns('block')
-        },
-    },
-
-    'node': {
-        'definition': {
-            'arguments': arguments('anything'),
-            'optional': {
-                'rate': optional('number', 1),
-                'name': optional('string', 'unnamed'),
-                'initialise': optional('anything', None),
-                'finalise': optional('anything', None),
-                'definitions': optional('anything', None),
-            },
-            'returns': returns('node')
-        },
-        'localisation':
-        {
-            'pt': 'nó',
-            'el': 'κόμβος'
-        },
-        'documentation':
-        {
-            'title': 'The main software node',
-            'description': 'This is the main RoL node. Definitions, initialisation, events, etc., are defined here.',
-            'usage': 'node(\n  name:"hello world",\n  initialise(print("hello world"))\n)'
-        }
-    },
     #
     # 'cycle': {
     #     'output':
@@ -517,29 +517,6 @@ language = {
     #     {
     #     }
     # },
-
-    'print': {
-        'definition': {
-            'arguments': arguments('string+'),
-            'optional': {'level': optional('string', 'info')},
-            'returns': returns('none')
-        },
-        'output':
-        {
-            'HTMLDocumentation': 'print({{children|first}})',
-            'HTMLGUI': '',
-            'RoL': 'print({{children|first}})',
-        },
-        'localisation':
-        {
-            'pt': 'imprimir',
-            'el': 'εκτύπωσε',
-            'nl': 'afdrukken'
-        },
-        'documentation':
-        {
-        }
-    },
 
     # 'if': {
     #     'localisation':
