@@ -67,11 +67,9 @@ shortComment = ('#'  <(~('\n') anything)+>:c  '\n' -> xml('comment',str(c), self
 # types
 variable = functionName:a -> xmlVariable(a,self.input.position)
 
-type = ( number | string | boolean )
+type = ( real | integer | natural | string | boolean )
 
 string = (('"' | '\''):q <(~exactly(q) anything)*>:xs exactly(q)) -> xml('string',xs, self.input.position)
-
-number = ( real | integer | natural )
 
 boolean = ( 'true' | 'false' ):b -> xml('boolean',b, self.input.position)
 

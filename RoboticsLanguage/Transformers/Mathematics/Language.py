@@ -28,7 +28,7 @@ language = {
     # math
     'times': {
         'definition': {
-            'arguments': arguments('number number+'),
+            'arguments': arguments('real real+'),
             'returns': returns('same')
         },
         'input': {
@@ -50,13 +50,13 @@ language = {
         'documentation':
         {
             'title': 'Number multiplication',
-            'description': 'Normal number, vector, or matrix multiplication. ',
+            'description': 'Normal real, vector, or matrix multiplication. ',
             'usage': 'a = 2*3'
         }
     },
     'divide': {
         'definition': {
-            'arguments': arguments('number number+'),
+            'arguments': arguments('real real+'),
             'returns': returns('same')
         },
         'input': {
@@ -79,7 +79,7 @@ language = {
 
     'plus': {
         'definition': {
-            'arguments': arguments('( number number+ | string sting+)'),
+            'arguments': arguments('( real real+ | string string+)'),
             'returns': returns('same')
         },
         'input': {
@@ -102,7 +102,7 @@ language = {
     },
     'minus': {
         'definition': {
-            'arguments': arguments('number number+'),
+            'arguments': arguments('real real+'),
             'returns': returns('same')
         },
         'input': {
@@ -126,7 +126,7 @@ language = {
 
     'larger': {
         'definition': {
-            'arguments': arguments('number number'),
+            'arguments': arguments('real real'),
             'returns': returns('boolean')
         },
         'input': {
@@ -148,7 +148,7 @@ language = {
     },
     'smaller': {
         'definition': {
-            'arguments': arguments('number number'),
+            'arguments': arguments('real real'),
             'returns': returns('boolean')
         },
         'input': {
@@ -170,7 +170,7 @@ language = {
     },
     'largerEqual': {
         'definition': {
-            'arguments': arguments('number number'),
+            'arguments': arguments('real real'),
             'returns': returns('boolean')
         },
         'input': {
@@ -192,7 +192,7 @@ language = {
     },
     'smallerEqual': {
         'definition': {
-            'arguments': arguments('number number'),
+            'arguments': arguments('real real'),
             'returns': returns('boolean')
         },
         'input': {
@@ -215,7 +215,7 @@ language = {
 
     'equal': {
         'definition': {
-            'arguments': arguments('( number number | string string | boolean boolean )'),
+            'arguments': arguments('( real real | string string | boolean boolean )'),
             'returns': returns('boolean')
         },
         'input': {
@@ -237,7 +237,7 @@ language = {
     },
     'notEqual': {
         'definition': {
-            'arguments': arguments('( number number | string string | boolean boolean )'),
+            'arguments': arguments('( real real | string string | boolean boolean )'),
             'returns': returns('boolean')
         },
         'input': {
@@ -336,7 +336,7 @@ language = {
 
     'negative': {
         'definition': {
-            'arguments': arguments('number'),
+            'arguments': arguments('real'),
             'returns': returns('same')
         },
         'input': {
@@ -357,14 +357,14 @@ language = {
         'documentation':
         {
             'title': 'Number negation',
-            'description': 'Normal number or variable negation. ',
+            'description': 'Normal real or variable negation. ',
             'usage': 'a = -b'
         }
     },
 
     'positive': {
         'definition': {
-            'arguments': arguments('number'),
+            'arguments': arguments('real'),
             'returns': returns('same')
         },
         'input': {

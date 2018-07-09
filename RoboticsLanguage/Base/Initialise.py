@@ -56,7 +56,8 @@ def prepareParameters():
 
         # read manifesto
         manifesto[name_split[1]][name_split[2]] = manifesto_module.manifesto
-      except:
+      except Exception as e:
+        Utilities.logger.debug(e.__repr__())
         pass
 
       # The parameters
@@ -70,7 +71,8 @@ def prepareParameters():
         command_line = parameters_module.command_line_flags
         for key, value in command_line.iteritems():
           command_line_flags[name_split[1] + ':' + name_split[2] + ':' + key] = value
-      except:
+      except Exception as e:
+        Utilities.logger.debug(e.__repr__())
         pass
 
       # The language
@@ -87,7 +89,8 @@ def prepareParameters():
         # read the default output for each language keyword per package
         if name_split[1] == 'Outputs':
           default_output[name_split[2]] = language_module.default_output
-      except:
+      except Exception as e:
+        Utilities.logger.debug(e.__repr__())
         pass
 
       # The messages
@@ -96,7 +99,8 @@ def prepareParameters():
 
         # append messages definitions
         messages = Utilities.mergeDictionaries(messages, messages_module.messages)
-      except:
+      except Exception as e:
+        Utilities.logger.debug(e.__repr__())
         pass
 
       # The error handling functions
@@ -108,7 +112,8 @@ def prepareParameters():
 
         # append error exceptions definitions
         error_exceptions = Utilities.mergeDictionaries(error_exceptions, error_module.error_exception_functions)
-      except:
+      except Exception as e:
+        Utilities.logger.debug(e.__repr__())
         pass
 
   # merge parameters collected from modules with the default system base parameters

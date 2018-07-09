@@ -645,8 +645,8 @@ def semanticChecking(code, parameters):
     return code, parameters
 
   # traverse xml and set all types for all atomic tags
-  [x.set('type', b) for a, b in Types.atoms.iteritems()
-   for x in code.xpath('//' + a)]
+  [x.set('type', type) for type in Types.type_atomic
+   for x in code.xpath('//' + type)]
 
   # check types
   code, parameters = semanticTypeChecker(code, parameters)
@@ -657,7 +657,7 @@ def semanticChecking(code, parameters):
 def semanticTypeChecker(code, parameters):
 
   # if element is an atom, jut return
-  if code.tag in Types.atoms:
+  if code.tag in Types.type_atomic:
     return code, parameters
 
   # if the element is part of the language
