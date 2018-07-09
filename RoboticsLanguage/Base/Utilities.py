@@ -178,9 +178,9 @@ def errorOptionalArgumentTypes(code, parameters, optional_names, optional_types)
   message = 'Incorrect types for optional parameters. '
 
   for name, types in zip(optional_names, optional_types):
-    if not parameters['language'][code.tag]['definition']['optionalArguments'][name](types):
+    if not parameters['language'][code.tag]['definition']['optional'][name]['test'](types):
       message += 'The type of the optional parameter "' + name + '" should be "' + \
-          parameters['language'][code.tag]['definition']['optionalArguments'][name].__doc__ + \
+          parameters['language'][code.tag]['definition']['optional'][name]['documentation'] + \
           '" instead of "' + types + '"\n'
   # show error
   logger.error(formatSemanticTypeErrorMessage(
@@ -190,7 +190,7 @@ def errorOptionalArgumentTypes(code, parameters, optional_names, optional_types)
 def errorOptionalArgumentNotDefined(code, parameters, optional_names):
   # Error! figure out which parameter is not defined
   message = ''
-  keys = parameters['language'][code.tag]['definition']['optionalArguments'].keys()
+  keys = parameters['language'][code.tag]['definition']['optional'].keys()
 
   for x in set(optional_names) - set(keys):
     message += 'The optional parameter "' + x + '" is not defined.\n'
@@ -205,7 +205,7 @@ def errorArgumentTypes(code, parameters, argument_types):
   message = 'Incorrect argument types for function "' + \
       code.tag + '". The expected argument types are:\n   '
   message += code.tag + \
-      '( ' + parameters['language'][code.tag]['definition']['argumentTypes'].__doc__ + ' )\n'
+      '( ' + parameters['language'][code.tag]['definition']['arguments']['documentation'] + ' )\n'
   message += '\nInstead received:\n   ' + code.tag + \
       '( ' + ','.join(argument_types) + ' )\n'
 
@@ -317,17 +317,17 @@ def showDebugInformation(code, parameters):
 
       # show debug information for xml code
     if parameters['debug']['code']:
-      print(etree.tostring(code, pretty_print=True))
+      printCode(code)
 
     # show debug information for parameters
     if parameters['debug']['parameters']:
-      pprint.pprint(parameters)
+      printParameters(parameters)
 
     # show debug information for specific xml code
     if parameters['debug']['codePath'] is not '':
       try:
         for element in code.xpath(parameters['debug']['codePath']):
-          print(etree.tostring(element, pretty_print=True))
+          printCode(element)
       except:
         logger.warning(
             "The path'" + parameters['debug']['codePath'] + "' is not present in the code")
@@ -336,7 +336,7 @@ def showDebugInformation(code, parameters):
     if parameters['debug']['parametersPath'] is not '':
       try:
         for element in paths(parameters, parameters['debug']['parametersPath']):
-          pprint.pprint(element)
+          printParameters(element)
       except:
         logger.warning(
             "The path'" + parameters['debug']['parametersPath'] + "' is not defined in the internal parameters.")
@@ -604,7 +604,6 @@ def attribute(xml, name):
     return ''
 
 def option(xml, name, debug=''):
-  print debug
   try:
     return optionalArguments(xml)[name]
   except:

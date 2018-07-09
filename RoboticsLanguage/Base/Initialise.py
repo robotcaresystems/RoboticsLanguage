@@ -24,7 +24,7 @@ import os
 from . import Utilities
 from . import Parameters
 
-@Utilities.cache
+# @Utilities.cache
 def prepareParameters():
   '''Collects parameters, language, messages, and error handling functions from all list_of_modules. This function is cached in `rol`. To refresh the cache run `rol --remove-cache`.'''
 

@@ -39,7 +39,7 @@ def arguments(test, tag='nothing'):
   if test == 'anything':
     return {'documentation': 'anything', 'test': lambda x: True, 'tag': tag}
 
-  elif test == 'nothing':
+  elif test == 'none':
     return {'documentation': '', 'test': lambda x: len(x) == 0, 'tag': tag}
 
   else:
@@ -67,7 +67,7 @@ def optional(name, value):
 def returns(name):
   '''Creates a return type for a function. Used for type checking.'''
   if name == 'same':
-    return lambda x: x
+    return lambda x: x[0]
   else:
     return lambda x: name
 
@@ -75,6 +75,7 @@ def returns(name):
 atoms = {
     'string': 'string',
     'boolean': 'boolean',
+    'natural': 'natural',
     'real': 'real',
     'integer': 'integer',
     'number': 'real'

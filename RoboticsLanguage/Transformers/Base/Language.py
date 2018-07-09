@@ -86,6 +86,121 @@ language = {
     },
 
     #######################################################################
+    # Sets
+
+
+    'Reals': {
+        'definition': {
+            'arguments': arguments('none'),
+            'optional': {
+                'bits': optional('natural', 32),
+            },
+            'returns': returns('real')
+        },
+        'localisation':
+        {
+            'pt': 'real'
+        },
+        'documentation':
+        {
+            'title': 'Real numbers type',
+            'description': 'A type representing real numbers. Assumptions on the number of bits used by the compiler to represent a real number is given as information in the editor.',
+            'usage': 'x in Reals'
+        }
+    },
+
+    'Integers': {
+        'definition': {
+            'arguments': arguments('none'),
+            'optional': {
+                'bits': optional('natural', 32),
+            },
+            'returns': returns('integer')
+        },
+        'localisation':
+        {
+            'pt': 'inteiro'
+        },
+        'documentation':
+        {
+            'title': 'Integer numbers type',
+            'description': 'A type representing integer numbers. Assumptions on the number of bits used by the compiler to represent an integer number is given as information in the editor.',
+            'usage': 'x in Integers'
+        }
+    },
+
+    'Naturals': {
+        'definition': {
+            'arguments': arguments('none'),
+            'optional': {
+                'bits': optional('natural', 32),
+            },
+            'returns': returns('natural')
+        },
+        'localisation':
+        {
+            'pt': 'natural'
+        },
+        'documentation':
+        {
+            'title': 'Natural numbers type',
+            'description': 'A type representing natural numbers. Assumptions on the number of bits used by the compiler to represent an natural number is given as information in the editor.',
+            'usage': 'x in Naturals'
+        }
+    },
+
+    'Strings': {
+        'definition': {
+            'arguments': arguments('none'),
+            'returns': returns('string')
+        },
+        'localisation':
+        {
+            'pt': 'texto'
+        },
+        'documentation':
+        {
+        }
+    },
+
+    'Booleans': {
+        'definition': {
+            'arguments': arguments('none'),
+            'returns': returns('boolean')
+        },
+        'localisation':
+        {
+            'pt': 'boleano'
+        },
+        'documentation':
+        {
+        }
+    },
+
+    'Signals': {
+        'definition': {
+            'arguments': arguments('real | integer | natural | string | boolean'),
+            'optional': {
+                'onChange': optional('block', ''),
+                'onNew': optional('block', '')
+            },
+            'returns': returns('same')
+        },
+        'localisation':
+        {
+            'pt': 'sinal'
+        },
+        'documentation':
+        {
+            'title': 'A time or event based signal',
+            'description': 'Defines a signal type.',
+            'usage': 'x in Signals(Reals,onNew:print(x))'
+        }
+    },
+
+
+
+    #######################################################################
     # Language structural elements
 
     'option': {
@@ -168,135 +283,43 @@ language = {
         }
     },
 
-    #
-    # 'Reals': {
-    #     'definition': {
-    #         'optionalArguments': {'bits': singleInteger},
-    #         'optionalDefaults': {'bits': 32},
-    #         'argumentTypes': anything,
-    #         'returnType': returnNothing
-    #     },
-    #     'output':
-    #     {
-    #         'HTMLDocumentation': 'Real',
-    #         'HTMLGUI': 'Real',
-    #         'RoL': 'Reals',
-    #     },
-    #     'localisation':
-    #     {
-    #         'pt': 'real'
-    #     },
-    #     'documentation':
-    #     {
-    #         'title': 'Real numbers type',
-    #         'description': 'A type representing real numbers. Assumptions on the number of bits used by the compiler to represent a real number is given as information in the editor.',
-    #         'usage': 'x in Reals'
-    #     }
-    # },
-    #
-    # 'Integers': {
-    #     'definition': {
-    #         'optionalArguments': {'bits': singleInteger},
-    #         'optionalDefaults': {'bits': 32},
-    #         'argumentTypes': anything,
-    #         'returnType': returnNothing
-    #     },
-    #     'output':
-    #     {
-    #         'HTMLDocumentation': 'Integer',
-    #         'HTMLGUI': 'Integer',
-    #         'RoL': 'Integers',
-    #     },
-    #     'localisation':
-    #     {
-    #         'pt': 'inteiro'
-    #     },
-    #     'documentation':
-    #     {
-    #         'title': 'Integer numbers type',
-    #         'description': 'A type representing integer numbers. Assumptions on the number of bits used by the compiler to represent an integer number is given as information in the editor.',
-    #         'usage': 'x in Integers'
-    #     }
-    # },
-    #
-    # 'Naturals': {
-    #     'definition': {
-    #         'optionalArguments': {'bits': singleNatural},
-    #         'optionalDefaults': {'bits': 32},
-    #         'argumentTypes': anything,
-    #         'returnType': returnNothing
-    #     },
-    #     'output':
-    #     {
-    #         'HTMLDocumentation': 'Natural',
-    #         'HTMLGUI': 'Natural',
-    #         'RoL': 'Naturals',
-    #     },
-    #     'localisation':
-    #     {
-    #         'pt': 'natural'
-    #     },
-    #     'documentation':
-    #     {
-    #         'title': 'Natural numbers type',
-    #         'description': 'A type representing natural numbers. Assumptions on the number of bits used by the compiler to represent an natural number is given as information in the editor.',
-    #         'usage': 'x in Naturals'
-    #     }
-    # },
-    #
-    # 'Strings': {
-    #     'definition': {
-    #         'argumentTypes': anything,
-    #         'returnType': returnNothing
-    #     },
-    #     'output':
-    #     {
-    #         'HTMLDocumentation': 'String',
-    #         'HTMLGUI': 'String',
-    #         'RoL': 'Strings',
-    #     },
-    #     'localisation':
-    #     {
-    #         'pt': 'texto'
-    #     },
-    #     'documentation':
-    #     {
-    #     }
-    # },
-    #
-    # 'Booleans': {
-    #     'definition': {
-    #         'argumentTypes': anything,
-    #         'returnType': returnNothing
-    #     },
-    #     'output':
-    #     {
-    #         'HTMLDocumentation': 'Boolean',
-    #         'HTMLGUI': 'Boolean',
-    #         'RoL': 'Booleans',
-    #     },
-    #     'localisation':
-    #     {
-    #         'pt': 'boleano'
-    #     },
-    #     'documentation':
-    #     {
-    #     }
-    # },
-    #
-    # 'Signals': {
-    #     'localisation':
-    #     {
-    #         'pt': 'sinal'
-    #     },
-    #     'documentation':
-    #     {
-    #         'title': 'A time or event based signal',
-    #         'description': 'Defines a signal type.',
-    #         'usage': 'x in Signals(Reals,rostopic:\'/test/signal\')'
-    #     }
-    # },
-    #
+    'element': {
+        'definition': {
+            'arguments': arguments('anything'),
+            'returns': returns('none')
+        },
+        'localisation':
+        {
+            'pt': 'elemento'
+        },
+        'documentation':
+        {
+            'title': 'Element of a set of type',
+            'description': 'Defines a variable to be an element of a set or a type. If a set is provided, then the variable takes the type of the elements of the set',
+            'usage': 'x in Reals'
+        }
+    },
+
+    'variable': {
+        'definition': {
+            'arguments': arguments('anything'),
+            'returns': returns('none')
+        },
+        'output':
+        {
+            'HTMLDocumentation': '{{attributes["name"]}}',
+            'HTMLGUI': '{{attributes["name"]}}',
+            'RoL': '{{attributes["name"]}}',
+        },
+        'localisation':
+        {
+            'pt': 'variável'
+        },
+        'documentation':
+        {
+        }
+    },
+
     #
     # 'vector': {
     #     'localisation':
@@ -393,43 +416,8 @@ language = {
     #     }
     # },
     #
-    # 'variable': {
-    #     'definition': {
-    #         'argumentTypes': anything,
-    #         'returnType': returnNothing
-    #     },
-    #     'output':
-    #     {
-    #         'HTMLDocumentation': '{{attributes["name"]}}',
-    #         'HTMLGUI': '{{attributes["name"]}}',
-    #         'RoL': '{{attributes["name"]}}',
-    #     },
-    #     'localisation':
-    #     {
-    #         'pt': 'variável'
-    #     },
-    #     'documentation':
-    #     {
-    #     }
-    # },
     #
     #
-    # 'element': {
-    #     'definition': {
-    #         'argumentTypes': anything,
-    #         'returnType': returnNothing
-    #     },
-    #     'localisation':
-    #     {
-    #         'pt': 'elemento'
-    #     },
-    #     'documentation':
-    #     {
-    #         'title': 'Element of a set of type',
-    #         'description': 'Defines a variable to be an element of a set or a type. If a set is provided, then the variable takes the type of the elements of the set',
-    #         'usage': 'x in Reals'
-    #     }
-    # },
     #
     # 'defineFunction': {
     #     'definition': {

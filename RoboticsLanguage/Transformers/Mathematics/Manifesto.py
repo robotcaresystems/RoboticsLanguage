@@ -21,7 +21,7 @@
 #   limitations under the License.
 
 manifesto = {
-  'packageName':'Linear Algebra',
-  'packageShortName':'lin',
+  'packageName':'Mathematics',
+  'packageShortName':'math',
   'order':100
   }
