@@ -173,8 +173,8 @@ language = {
         'definition': {
             'arguments': arguments('real | integer | natural | string | boolean'),
             'optional': {
-                'onChange': optional('block', ''),
-                'onNew': optional('block', '')
+                'onChange': optional('anything', ''),
+                'onNew': optional('anything', '')
             },
             'returns': returns('same')
         },

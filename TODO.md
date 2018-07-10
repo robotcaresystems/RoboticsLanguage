@@ -24,8 +24,9 @@
   - [ ] function definition list
 - [ ] semantic checking:
   - [ ] check that function prototypes are correct
+  - [ ] check variables types
   - [x] type checking
-- [ ] RoL language comments implementation
+- [x] RoL language comments implementation
 - [x] fill in the languages using each outputs default language structure
 - [ ] Add support to multiple file extensions per format
 - [ ] Allow for transformers to operate on XML multiple times using different orders
