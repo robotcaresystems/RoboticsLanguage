@@ -639,24 +639,41 @@ def todaysDate(format):
 
 
 def semanticChecking(code, parameters):
+  '''Generic semantic checking function'''
 
   # check if should ignore semantic checking
   if parameters['debug']['ignoreSemanticErrors']:
     return code, parameters
 
+  # check types
+  code, parameters = semanticTypeChecker(code, parameters)
+
+  # check that all variables are initialised
+  code, parameters = semanticDefiniteAssignment(code, parameters)
+
+  return code, parameters
+
+def semanticTypeChecker(code, parameters):
+
   # traverse xml and set all types for all atomic tags
   [x.set('type', type) for type in Types.type_atomic
    for x in code.xpath('//' + type)]
 
-  # check types
-  code, parameters = semanticTypeChecker(code, parameters)
+  # fill in variable types
+
+  # check function types
+
+
+  # check all types recursively
+  code, parameters = semanticRecursiveTypeChecker(code, parameters)
 
   return code, parameters
 
 
-def semanticTypeChecker(code, parameters):
 
-  # if element is an atom, jut return
+def semanticRecursiveTypeChecker(code, parameters):
+
+  # if element is an atom, return
   if code.tag in Types.type_atomic:
     return code, parameters
 
@@ -728,6 +745,11 @@ def semanticTypeChecker(code, parameters):
   else:
     # @TODO type check variables and functions
     return code, parameters
+
+
+def semanticDefiniteAssignment(code, parameters):
+  pass
+
 
 
 def fillDefaultsInOptionalArguments(code, parameters):
