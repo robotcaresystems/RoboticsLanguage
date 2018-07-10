@@ -22,7 +22,7 @@
 import unittest
 from lxml import etree
 from RoboticsLanguage.Base import Transformations
-from RoboticsLanguage.Base.Types import singleString, manyStrings, anything
+from RoboticsLanguage.Base.Types import arguments, optional, returns
 
 
 # =================================================================================================
@@ -64,18 +64,18 @@ class TestBaseTransformations(unittest.TestCase):
             },
             'node': {
                 'definition': {
-                    'optionalArguments': {'name': singleString},
-                    'optionalDefaults': {'name': 'unnamed'},
-                    'argumentTypes': anything,
-                    'returnType': lambda x: 'Nothing'
+                    'arguments': arguments('anything'),
+                    'optional': {
+                        'name': optional('string', 'unnamed'),
+                    },
+                    'returns': returns('node')
                 },
             },
             'print': {
                 'definition': {
-                    'optionalArguments': {'level': singleString},
-                    'optionalDefaults': {'level': 'info'},
-                    'argumentTypes': manyStrings,
-                    'returnType': lambda x: 'block'
+                    'arguments': arguments('string+'),
+                    'optional': {'level': optional('string', 'info')},
+                    'returns': returns('none')
                 },
                 'output':  {
                     'RosCpp': 'ROS_INFO({{children|first}})',
@@ -106,7 +106,7 @@ class TestBaseTransformations(unittest.TestCase):
     xml_code, parameters = Transformations.Apply(xml, parameters)
 
     self.assertEqual(etree.tostring(xml_code),
-                     '<node type="Nothing"><print type="block" RoL="print(&quot;hello&quot;)" RosCpp="ROS_INFO(&quot;hello&quot;)"><string type="Strings" RoL="&quot;hello&quot;" RosCpp="&quot;hello&quot;">hello</string><option name="level"><string type="Strings" RoL="&quot;info&quot;" RosCpp="&quot;info&quot;">info</string></option></print><option name="name" RoL="&quot;&quot;" RosCpp="&quot;&quot;"><string type="Strings" RoL="&quot;unnamed&quot;" RosCpp="&quot;unnamed&quot;">unnamed</string></option></node>')
+                     '<node type="node"><print type="none" RoL="print(&quot;hello&quot;)" RosCpp="ROS_INFO(&quot;hello&quot;)"><string type="string" RoL="&quot;hello&quot;" RosCpp="&quot;hello&quot;">hello</string><option name="level" type="string"><string type="string" RoL="&quot;info&quot;" RosCpp="&quot;info&quot;">info</string></option></print><option name="name" type="string" RoL="&quot;&quot;" RosCpp="&quot;&quot;"><string type="string" RoL="&quot;unnamed&quot;" RosCpp="&quot;unnamed&quot;">unnamed</string></option></node>')
 
 
 if __name__ == '__main__':

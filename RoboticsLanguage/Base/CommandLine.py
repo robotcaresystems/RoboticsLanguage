@@ -20,14 +20,13 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-import argcomplete
-import argparse
 import os
-import yaml
 import sys
-
-from . import Parameters
+import yaml
+import argparse
+import argcomplete
 from . import Utilities
+from . import Parameters
 
 # paths to be searched automatically for parameters
 parameters_home_file = '.rol/parameters.yaml'
@@ -86,6 +85,7 @@ def generateArgparseArguments(parameters, flags):
 
   return command_line_flags, arguments
 
+
 @Utilities.cache
 def prepareCommandLineArguments(parameters):
 
@@ -93,7 +93,7 @@ def prepareCommandLineArguments(parameters):
   Parameters.command_line_flags['globals:output']['choices'] = parameters['manifesto']['Outputs'].keys()
 
   # create a subset of all the parameters
-  subset = dict((x, parameters[x]) for x in ['Information', 'Transformers', 'Inputs', 'Outputs', 'globals','debug'])
+  subset = dict((x, parameters[x]) for x in ['Information', 'Transformers', 'Inputs', 'Outputs', 'globals', 'debug'])
 
   # create argparse list parameters
   flags, arguments = generateArgparseArguments(subset, parameters['command_line_flags'])
@@ -117,13 +117,14 @@ def prepareCommandLineArguments(parameters):
   return flags, arguments, file_package_name, file_formats
 
 
-def checkSpecialCommandLineArguments(command_line_parameters,parameters):
+def checkSpecialCommandLineArguments(command_line_parameters, parameters):
   if '--version' in command_line_parameters:
     print 'The Robotics Language Version: ' + parameters['globals']['version']
     sys.exit(0)
 
+
 def runCommandLineParser(parameters, arguments, flags, file_formats, file_package_name, command_line_arguments):
-    # instantiate the command line parser
+  # instantiate the command line parser
   parser = argparse.ArgumentParser(prog='rol', description='Robotics Language compiler',
                                    formatter_class=argparse.RawTextHelpFormatter)
 
@@ -245,7 +246,7 @@ def ProcessArguments(command_line_parameters, parameters):
   flags, arguments, file_package_name, file_formats = prepareCommandLineArguments(parameters)
 
   # deal with special command line arguments, e.g. '--version'
-  checkSpecialCommandLineArguments(command_line_parameters,parameters)
+  checkSpecialCommandLineArguments(command_line_parameters, parameters)
 
   # run the command line parser
   parser, args = runCommandLineParser(parameters, arguments, flags, file_formats,

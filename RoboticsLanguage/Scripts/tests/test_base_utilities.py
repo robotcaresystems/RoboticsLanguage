@@ -39,31 +39,23 @@ class TestBaseUtilities(unittest.TestCase):
   #  Module utilities
   # -------------------------------------------------------------------------------------------------
   def test_importModule(self):
-    self.assertEqual(Utilities.importModule('Outputs','RosCpp','Manifesto').Manifesto.manifesto['packageShortName'],'roscpp')
+    self.assertEqual(Utilities.importModule('Outputs', 'RosCpp',
+                                            'Manifesto').Manifesto.manifesto['packageShortName'], 'roscpp')
 
-
-
-  def test_cache(self):
-    Utilities.removeCache()
-    self.assertEqual(Utilities.cache('test-cache', cache_some_string), 'hello')
-    self.assertEqual(Utilities.cache('test-cache', cache_some_string), 'hello')
-
-
-
-# -------------------------------------------------------------------------------------------------
-#  Dictionary utilities
-# -------------------------------------------------------------------------------------------------
+  # -------------------------------------------------------------------------------------------------
+  #  Dictionary utilities
+  # -------------------------------------------------------------------------------------------------
 
   def test_isKeyDefined(self):
     self.assertTrue(Utilities.isKeyDefined('test', {'test': 'ok'}))
     self.assertFalse(Utilities.isKeyDefined('ok', {'test': 'ok'}))
 
   def test_isDefined(self):
-    self.assertTrue(Utilities.isDefined({'a': {'b': {'c': 'd'}}},'/a'))
-    self.assertTrue(Utilities.isDefined({'a': {'b': {'c': 'd'}}},'/a/b'))
-    self.assertTrue(Utilities.isDefined({'a': {'b': {'c': 'd'}}},'/a/b/c'))
-    self.assertFalse(Utilities.isDefined({'a': {'b': {'c': 'd'}}},'/a/b/c/d'))
-    self.assertFalse(Utilities.isDefined({'a': {'b': {'c': 'd'}}},'a/z/c'))
+    self.assertTrue(Utilities.isDefined({'a': {'b': {'c': 'd'}}}, '/a'))
+    self.assertTrue(Utilities.isDefined({'a': {'b': {'c': 'd'}}}, '/a/b'))
+    self.assertTrue(Utilities.isDefined({'a': {'b': {'c': 'd'}}}, '/a/b/c'))
+    self.assertFalse(Utilities.isDefined({'a': {'b': {'c': 'd'}}}, '/a/b/c/d'))
+    self.assertFalse(Utilities.isDefined({'a': {'b': {'c': 'd'}}}, 'a/z/c'))
 
   def test_getDictValue(self):
     self.assertEqual(Utilities.getDictValue('a', {'a': {'b': {'c': 'd'}}}), {'b': {'c': 'd'}})
@@ -97,9 +89,9 @@ class TestBaseUtilities(unittest.TestCase):
     self.assertEqual(Utilities.unflatDictionary({'+a+b': 'c'}, s='+'), {'a': {'b': 'c'}})
     self.assertEqual(Utilities.unflatDictionary({'-a-b-c-d': 'e'}), {'a': {'b': {'c': {'d': 'e'}}}})
 
-# -------------------------------------------------------------------------------------------------
-#  String utilities
-# -------------------------------------------------------------------------------------------------
+  # -------------------------------------------------------------------------------------------------
+  #  String utilities
+  # -------------------------------------------------------------------------------------------------
 
   def test_lowerNoSpace(self):
     self.assertEqual(Utilities.lowerNoSpace('Here Is A Phrase'), 'hereisaphrase')
@@ -122,24 +114,24 @@ class TestBaseUtilities(unittest.TestCase):
   def test_camelCase(self):
     self.assertEqual(Utilities.camelCase('/this_test is.OK and RoL'), 'ThisTestIsOKAndRoL')
 
-
-# -------------------------------------------------------------------------------------------------
-#  List utilities
-# -------------------------------------------------------------------------------------------------
+  # -------------------------------------------------------------------------------------------------
+  #  List utilities
+  # -------------------------------------------------------------------------------------------------
 
   def test_ensureList(self):
+
     self.assertEqual(Utilities.ensureList([1, 2, 3]), [1, 2, 3])
 
     self.assertEqual(Utilities.ensureList(1), [1])
 
-# -------------------------------------------------------------------------------------------------
-#  File utilities
-# -------------------------------------------------------------------------------------------------
+  # -------------------------------------------------------------------------------------------------
+  #  File utilities
+  # -------------------------------------------------------------------------------------------------
 
   def test_findFileType(self):
     # create a temporary file to test
     Utilities.createFolder('/tmp/RoL/1')
-    with open('/tmp/RoL/1/test.py','w') as template_file:
+    with open('/tmp/RoL/1/test.py', 'w') as template_file:
       template_file.write('print(\'hello\')')
 
     # check if file is found
@@ -149,7 +141,7 @@ class TestBaseUtilities(unittest.TestCase):
   def test_findFileName(self):
     # create a temporary file to test
     Utilities.createFolder('/tmp/RoL/2')
-    with open('/tmp/RoL/2/test.py','w') as template_file:
+    with open('/tmp/RoL/2/test.py', 'w') as template_file:
       template_file.write('print(\'hello\')')
 
     self.assertEqual([x for x in Utilities.findFileName('test.py', path='/tmp/RoL/2')],
@@ -175,44 +167,43 @@ class TestBaseUtilities(unittest.TestCase):
       else:
         raise Exception
 
-# -------------------------------------------------------------------------------------------------
-#  XML utilities
-# -------------------------------------------------------------------------------------------------
+  # -------------------------------------------------------------------------------------------------
+  #  XML utilities
+  # -------------------------------------------------------------------------------------------------
 
   def test_text(self):
     xml1 = etree.fromstring('<string>some text</string>')
     xml2 = etree.fromstring('<xml><string>some text</string></xml>')
 
-    self.assertEqual(Utilities.text(xml1),'some text')
-    self.assertEqual(Utilities.text(xml2),'')
+    self.assertEqual(Utilities.text(xml1), 'some text')
+    self.assertEqual(Utilities.text(xml2), '')
 
-# -------------------------------------------------------------------------------------------------
-#  template engine
-# -------------------------------------------------------------------------------------------------
+  # -------------------------------------------------------------------------------------------------
+  #  template engine
+  # -------------------------------------------------------------------------------------------------
 
   def test_templateEngine(self):
     # create test folders
     Utilities.createFolder('/tmp/RoL/templates/_foldername_')
     Utilities.createFolder('/tmp/RoL/deploy')
 
-
     # create a temporary file to copy
-    with open('/tmp/RoL/templates/_foldername_/copy.txt','w') as template_file:
+    with open('/tmp/RoL/templates/_foldername_/copy.txt', 'w') as template_file:
       template_file.write('A file to copy')
 
     # create a temporary template
-    with open('/tmp/RoL/templates/_foldername_/_test_.txt.template','w') as template_file:
+    with open('/tmp/RoL/templates/_foldername_/_test_.txt.template', 'w') as template_file:
       template_file.write('A template for a {{code|xpath("/node")|text}}')
 
     # some sample code
     code = etree.fromstring('<node>hello</node>')
     parameters = {}
-    filepatterns = {'foldername':'testfolder', 'test':'hello'}
+    filepatterns = {'foldername': 'testfolder', 'test': 'hello'}
     templates_path = '/tmp/RoL/templates'
     deploy_path = '/tmp/RoL/deploy'
 
     # run template engine
-    Utilities.templateEngine(code,parameters,filepatterns,templates_path,deploy_path)
+    Utilities.templateEngine(code, parameters, filepatterns, templates_path, deploy_path)
 
     # check if files exist:
     result1 = os.path.isfile('/tmp/RoL/deploy/testfolder/hello.txt')
@@ -220,12 +211,12 @@ class TestBaseUtilities(unittest.TestCase):
 
     # check is content of the files is correct
     if result1:
-      with open('/tmp/RoL/deploy/testfolder/hello.txt','r') as template_file:
+      with open('/tmp/RoL/deploy/testfolder/hello.txt', 'r') as template_file:
         text = template_file.read()
         result3 = (text == 'A template for a hello')
 
     if result2:
-      with open('/tmp/RoL/deploy/testfolder/copy.txt','r') as template_file:
+      with open('/tmp/RoL/deploy/testfolder/copy.txt', 'r') as template_file:
         text = template_file.read()
         result4 = (text == 'A file to copy')
 
@@ -233,8 +224,6 @@ class TestBaseUtilities(unittest.TestCase):
     self.assertTrue(result2)
     self.assertTrue(result3)
     self.assertTrue(result4)
-
-
 
   def test_serialise(self):
 
@@ -244,7 +233,7 @@ class TestBaseUtilities(unittest.TestCase):
     # note that the serialise fuction cannot work on the root node, so get one of the children first
     xml = [x for x in root.getchildren()][0]
     # define some sample language
-    keywords = {'xml':{'output': {'cpp':'// {{children|first}}'}}, 'string':{'output': {'cpp':'\"{{text}}\"'}}}
+    keywords = {'xml': {'output': {'cpp': '// {{children|first}}'}}, 'string': {'output': {'cpp': '\"{{text}}\"'}}}
     parameters = {}
     language = 'cpp'
 
@@ -255,8 +244,6 @@ class TestBaseUtilities(unittest.TestCase):
     # # now raise an error because the key is not defined
     # languages = {'xml':{'output': {'cpp':'// {{children|first}}'}}, }
     # self.assertRaises(Utilities.serialise(xml, parameters, keywords, language))
-
-
 
 
 if __name__ == '__main__':

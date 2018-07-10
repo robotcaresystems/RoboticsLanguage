@@ -51,3 +51,6 @@
   - [ ] service
   - [ ] timer
   - [ ] parameters
+- [ ] Docker
+  - [ ] Match .rol files, deploy folder in docker to user definitions
+  - [ ] Register docker image
