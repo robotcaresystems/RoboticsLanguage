@@ -254,7 +254,7 @@ language = {
     },
     'print': {
         'definition': {
-            'arguments': arguments('string+'),
+            'arguments': arguments('(string | real)+'),
             'optional': {'level': optional('string', 'info')},
             'returns': returns('none')
         },
