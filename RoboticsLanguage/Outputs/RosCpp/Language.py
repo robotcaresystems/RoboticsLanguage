@@ -133,7 +133,7 @@ language = {
     'function_definition': {
         'output':
         {
-            'RosCpp': '{% set returns = attribute(xpaths(code,"returns"),"RosCpp") %}{% if returns=="" %}void{% else %}{{returns}}{% endif %} {{attributes["name"]}}({{attribute(xpaths(code,"arguments"),"RosCpp")}})',
+            'RosCpp': '{% set returns = attribute(xpaths(code,"function_returns"),"RosCpp") %}{% if returns=="" %}void{% else %}{{returns}}{% endif %} {{attributes["name"]}}({{attribute(xpaths(code,"function_arguments"),"RosCpp")}})',
         },
     },
 

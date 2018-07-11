@@ -672,8 +672,6 @@ def semanticTypeChecker(code, parameters):
     # apply type checker to definition of variable
     variable_definition, parameters = semanticRecursiveTypeChecker(variable_definition, parameters)
 
-    print variable_definition.attrib['type']
-
     # now look for all the places where this variable used in the code and set its type
     for variable_used in code.xpath('//variable[@name="' + variable_name + '"]'):
       variable_used.attrib['type'] = variable_definition.attrib['type']
@@ -690,8 +688,6 @@ def semanticTypeChecker(code, parameters):
 
     # apply type checker to definition of variable
     variable_definition, parameters = semanticRecursiveTypeChecker(variable_definition, parameters)
-
-    print variable_definition.attrib['type']
 
     # now look for the places whithin the scope where this variable used and set its type
     for variable_used in variable.getparent().xpath('//variable[@name="' + variable_name + '"]'):
