@@ -1,6 +1,7 @@
 
 
-  a -> b
-  b-> c
+  init:a
 
-  c-> RoL<<f(t+z)>>
+  a -(a1)-> b
+  c -(a2)-> a
+  b -(a2)-> c

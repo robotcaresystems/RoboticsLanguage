@@ -28,7 +28,7 @@ from RoboticsLanguage.Base import Utilities
 def output(code, parameters):
 
   # save the node name for the templates
-  parameters['node']['name'] = Utilities.option(code.xpath('/node')[0], 'name').text
+  parameters['node']['name'] = code.xpath('/node/option[@name="name"]/string')[0].text
 
   node_name_underscore = Utilities.underscore(parameters['node']['name'])
 

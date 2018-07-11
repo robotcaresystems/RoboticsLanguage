@@ -9,16 +9,4 @@
 #    Copyright: copyright
 #
 
-language = {
-    'FiniteStateMachine': {},
-    'initial': {},
-    'transitions': {},
-    'transition': {},
-    'label': {},
-    'begin': {},
-    'end': {}
-
-
-
-
-}
+messages = {}

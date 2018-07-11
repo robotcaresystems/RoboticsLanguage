@@ -33,6 +33,13 @@
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/dygraph/2.1.0/dygraph.min.js"></script>
   <link rel="stylesheet" type="text/css" src="https://cdnjs.cloudflare.com/ajax/libs/dygraph/2.1.0/dygraph.min.css" />
 
+
+  {% if parameters['Inputs']['FiniteStateMachine']|length > 0 %}
+  <!-- VisJS for easy diagrams -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.css" />
+  {% endif %}
+
   <!-- some extra styling to balance the page -->
   <style type="text/css">
     #mynetwork {
@@ -248,6 +255,106 @@ $(document).ready(function () {
   </table>
 
   {% endif %}
+
+
+{% if parameters['Inputs']['FiniteStateMachine']|length > 0 %}
+
+
+{% set list_of_states = parameters|dpath('Inputs/FiniteStateMachine/parameters/list_of_states') %}
+{% set transition_labels = parameters|dpath('Inputs/FiniteStateMachine/parameters/transition_labels') %}
+{% set transition_begins = parameters|dpath('Inputs/FiniteStateMachine/parameters/transition_begins') %}
+{% set transition_ends = parameters|dpath('Inputs/FiniteStateMachine/parameters/transition_ends') %}
+{% set init = parameters|dpath('Inputs/FiniteStateMachine/parameters/init') %}
+{% set num_of_transitions = parameters|dpath('Inputs/FiniteStateMachine/parameters/num_of_transitions') %}
+{% set num_of_states = parameters|dpath('Inputs/FiniteStateMachine/parameters/num_of_states') %}
+
+  <h1>Finite State Machine</h1>
+
+  <div id="mynetwork"></div>
+  <div class="ui grid">
+    <div class="six column row">
+      {% for state in list_of_states %}
+        <div class="column"><button class="fluid ui mini toggle button" id="{{state}}" onclick="highlight('{{state}}') ">Highlight {{state}}</button></div>
+      {% endfor %}
+    </div>
+  </div>
+
+
+  <script type="text/javascript">
+    // create an array with nodes
+    var id = 0;
+    var nodes = new vis.DataSet([
+    ]);
+
+    // create an array with edges
+    var edges = new vis.DataSet([
+    ]);
+
+    // create a network
+    var container = document.getElementById('mynetwork');
+
+    // provide the data in the vis format
+    var data = {
+        nodes: nodes,
+        edges: edges
+    };
+    var options = {
+      edges:{
+        arrows: 'to',
+        color:{
+            highlight : 'green',
+                    },
+        font: '12px arial #ff0000',
+        scaling:{
+          label: false,
+        },
+        shadow: true,
+        smooth: true,
+      },
+      layout:{randomSeed:1},
+      nodes:{
+        color: {
+          highlight: {
+            background: '#00ff00'
+            },
+        },
+      },
+    };
+
+    function addState (idNum, labelName)
+    {
+      nodes.add([{id: idNum, label: labelName}]);
+    }
+
+    function addTransition (lbl, src, dst)
+    {
+      edges.add([{from: src, to: dst, label: lbl ,font: {align: 'middle'}}]);
+    }
+    function highlight (id)
+    {
+      network.selectNodes([id], true);
+    }
+
+    var iter = 1;
+    {% for state in list_of_states %}
+      addState ("{{state}}", "{{state}}");
+    {% endfor %}
+
+    {% for elem in range(num_of_transitions) %}
+        addTransition ("{{transition_labels[elem]}}", "{{transition_begins[elem]}}","{{transition_ends[elem]}}")
+    {% endfor %}
+
+    console.log(data);
+
+    var network = new vis.Network(container, data, options);
+    //Set initial state
+    highlight("{{init[0]}}")
+
+
+  </script>
+
+{% endif %}
+
 
 
 </body>
