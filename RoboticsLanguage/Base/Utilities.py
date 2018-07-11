@@ -653,13 +653,31 @@ def semanticChecking(code, parameters):
 
   return code, parameters
 
+
 def semanticTypeChecker(code, parameters):
 
   # traverse xml and set all types for all atomic tags
   [x.set('type', type) for type in Types.type_atomic
    for x in code.xpath('//' + type)]
 
-  # fill in variable types
+  # fill in global scope variable types
+  for variable in code.xpath('/node/option[@name="definitions"]//element'):
+
+    # get the name of the variable
+    variable_name = variable.getchildren()[0].attrib['name']
+
+    # get its definition
+    variable_definition = variable.getchildren()[1]
+
+    # apply type checker to definition of variable
+    variable_definition, parameters = semanticRecursiveTypeChecker(variable_definition, parameters)
+
+    print variable_definition.attrib['type']
+
+    # now look for all the places where this variable used in the code and set its type
+    for variable_used in code.xpath('//variable[@name="' + variable_name + '"]'):
+      variable_used.attrib['type'] = variable_definition.attrib['type']
+
 
   # check function types
 
@@ -673,8 +691,8 @@ def semanticTypeChecker(code, parameters):
 
 def semanticRecursiveTypeChecker(code, parameters):
 
-  # if element is an atom, return
-  if code.tag in Types.type_atomic:
+  # if element already has a type return
+  if 'type' in code.attrib.keys():
     return code, parameters
 
   # if the element is part of the language
@@ -682,7 +700,7 @@ def semanticRecursiveTypeChecker(code, parameters):
 
     # first recursively traverse all children elements
     for element in code.getchildren():
-      element, parameters = semanticTypeChecker(element, parameters)
+      element, parameters = semanticRecursiveTypeChecker(element, parameters)
 
     if code.tag == 'option':
       if len(code.getchildren()) > 0:
@@ -748,7 +766,7 @@ def semanticRecursiveTypeChecker(code, parameters):
 
 
 def semanticDefiniteAssignment(code, parameters):
-  pass
+  return code, parameters
 
 
 
