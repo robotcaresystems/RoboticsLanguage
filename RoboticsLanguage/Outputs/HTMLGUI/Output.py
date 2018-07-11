@@ -20,7 +20,31 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
+import os
+import sys
+import subprocess
+from RoboticsLanguage.Base import Utilities
 
 def output(code, parameters):
 
-  return 0
+  # save the node name for the templates
+  parameters['node']['name'] = Utilities.option(code.xpath('/node')[0], 'name').text
+
+  node_name_underscore = Utilities.underscore(parameters['node']['name'])
+
+  # run template engine to generate node code
+  if not Utilities.templateEngine(code, parameters, {'nodename': node_name_underscore}, os.path.dirname(
+          __file__) + '/Templates', parameters['globals']['deploy']):
+    sys.exit(1)
+
+
+  # if the flag launch is set then launch the node
+  if parameters['globals']['launch']:
+    # open HTML in different platforms
+    if 'darwin' in sys.platform:
+      open = 'open'
+
+    if 'linux' in sys.platform:
+      open = 'xdg-open'
+
+    subprocess.Popen([open, parameters['globals']['deploy'] + node_name_underscore + '/html/' + node_name_underscore + '_gui.html'])

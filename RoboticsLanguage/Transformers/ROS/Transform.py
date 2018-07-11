@@ -127,7 +127,7 @@ def processTopics(code, parameters):
 def transform(code, parameters):
 
   # make sure RosCpp is part of the output
-  if 'RosCpp' in parameters['globals']['output']:
+  if any(x in parameters['globals']['output'] for x in ['RosCpp', 'HTMLGUI']):
 
     # Topics
     code, parameters = processTopics(code, parameters)
