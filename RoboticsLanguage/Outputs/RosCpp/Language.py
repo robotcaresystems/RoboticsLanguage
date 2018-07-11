@@ -25,10 +25,10 @@ default_output = ''
 
 language = {
 
-  'option': {
-    'output': {'RosCpp':'{{children[0]}}'}
+    'option': {
+        'output': {'RosCpp': '{{children[0]}}'}
 
-  },
+    },
 
     'Reals': {
         'output':
@@ -111,7 +111,7 @@ language = {
     'set': {
         'output':
         {
-          'RosCpp':'{% if parentTag=="assign"%}std::tie({{children|join(", ")}}){% else %}set({{children|join(", ")}}){% endif %}'
+            'RosCpp': '{% if parentTag=="assign"%}std::tie({{children|join(", ")}}){% else %}set({{children|join(", ")}}){% endif %}'
         },
     },
 
@@ -126,32 +126,32 @@ language = {
     'return': {
         'output':
         {
-          'RosCpp':'{% if children|length==1 %}return {{children|first}}{% else %}return std::make_tuple({{children|join(", ")}}){% endif %}'
+            'RosCpp': '{% if children|length==1 %}return {{children|first}}{% else %}return std::make_tuple({{children|join(", ")}}){% endif %}'
         },
     },
 
-    'functionDefinition': {
+    'function_definition': {
         'output':
         {
             'RosCpp': '{% set returns = attribute(xpaths(code,"returns"),"RosCpp") %}{% if returns=="" %}void{% else %}{{returns}}{% endif %} {{attributes["name"]}}({{attribute(xpaths(code,"arguments"),"RosCpp")}})',
         },
     },
 
-    'arguments': {
+    'function_arguments': {
         'output':
         {
             'RosCpp': '{{children|join(", ")}}',
         },
     },
 
-    'content': {
+    'function_content': {
         'output':
         {
             'RosCpp': '{{children|join(";\n")}}',
         },
     },
 
-    'returns': {
+    'function_returns': {
         'output':
         {
             'RosCpp': '{% if children|length==0 %}void{% elif children|length==1 %}{{children|first}}{% else %}std::tuple<{{children|join(", ")}}>{% endif %}',
@@ -175,14 +175,14 @@ language = {
     'element': {
         'output':
         {
-          'RosCpp':'{% if children[1]|length > 0 %}{{children[1]}} {{attribute(code.xpath("variable"),"name")}}{% endif %}'
+            'RosCpp': '{% if children[1]|length > 0 %}{{children[1]}} {{attribute(code.xpath("variable"),"name")}}{% endif %}'
         },
     },
 
     'block': {
         'output':
         {
-          'RosCpp':'{{";\n".join(children)}}'
+            'RosCpp': '{{";\n".join(children)}}'
         },
     },
 
@@ -195,10 +195,10 @@ language = {
     },
 
     'if': {
-      'output':
-      {
-        'RosCpp': 'if({{children[0]}})\n{ {{children[1]}}; }\n {% if children|length>2 %}else \n{ {{children[2]}}; }{% endif %}'
-       }
+        'output':
+        {
+            'RosCpp': 'if({{children[0]}})\n{ {{children[1]}}; }\n {% if children|length>2 %}else \n{ {{children[2]}}; }{% endif %}'
+        }
     },
 
     'print': {

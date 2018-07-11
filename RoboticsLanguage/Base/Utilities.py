@@ -527,14 +527,14 @@ def xmlFunction(parameters, tag, content, position=0):
 
 def xmlFunctionDefinition(name, arguments, returns, content, position=0):
 
-  arguments_text = xml('arguments', arguments,
+  arguments_text = xml('function_arguments', arguments,
                        position) if isinstance(arguments, str) else ''
-  returns_text = xml('returns', returns, position) if isinstance(
+  returns_text = xml('function_returns', returns, position) if isinstance(
       returns, str) else ''
-  content_text = xml('content', content, position) if isinstance(
+  content_text = xml('function_content', content, position) if isinstance(
       content, str) else ''
 
-  return xmlAttributes('functionDefinition', arguments_text + returns_text + content_text, position, attributes={'name': name})
+  return xmlAttributes('function_definition', arguments_text + returns_text + content_text, position, attributes={'name': name })
 
 
 def xmlVariable(parameters, name, position=0):
@@ -678,6 +678,25 @@ def semanticTypeChecker(code, parameters):
     for variable_used in code.xpath('//variable[@name="' + variable_name + '"]'):
       variable_used.attrib['type'] = variable_definition.attrib['type']
 
+  # Now repeat the process for local scope. Now the search for the usage of the variable
+  # is limited to the local scope where the variable was defined.
+  for variable in code.xpath('/node/option[@name!="definitions"]//element'):
+
+    # get the name of the variable
+    variable_name = variable.getchildren()[0].attrib['name']
+
+    # get its definition
+    variable_definition = variable.getchildren()[1]
+
+    # apply type checker to definition of variable
+    variable_definition, parameters = semanticRecursiveTypeChecker(variable_definition, parameters)
+
+    print variable_definition.attrib['type']
+
+    # now look for the places whithin the scope where this variable used and set its type
+    for variable_used in variable.getparent().xpath('//variable[@name="' + variable_name + '"]'):
+      variable_used.attrib['type'] = variable_definition.attrib['type']
+
 
   # check function types
 
@@ -767,7 +786,6 @@ def semanticRecursiveTypeChecker(code, parameters):
 
 def semanticDefiniteAssignment(code, parameters):
   return code, parameters
-
 
 
 def fillDefaultsInOptionalArguments(code, parameters):
@@ -923,6 +941,7 @@ def serialise(code, parameters, keywords, language, filters=default_template_eng
   snippet = ''
 
   try:
+
     # load keyword template text
     keyword = keywords[code.tag]['output'][language]
 

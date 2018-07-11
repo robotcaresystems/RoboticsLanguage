@@ -336,7 +336,7 @@ language = {
         }
     },
 
-    'functionDefinition': {
+    'function_definition': {
         'definition': {
             'arguments': arguments("arguments{0,1} returns{0,1} content"),
             'returns': returns('none')
@@ -346,7 +346,7 @@ language = {
         }
     },
 
-    'arguments': {
+    'function_arguments': {
         'definition': {
             'arguments': arguments('anything'),
             'returns': returns('arguments')
@@ -356,7 +356,7 @@ language = {
         }
     },
 
-    'content': {
+    'function_content': {
         'definition': {
             'arguments': arguments('anything'),
             'returns': returns('content')
@@ -366,7 +366,7 @@ language = {
         }
     },
 
-    'returns': {
+    'function_returns': {
         'definition': {
             'arguments': arguments('anything'),
             'returns': returns('returns')
