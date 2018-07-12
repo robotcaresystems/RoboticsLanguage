@@ -695,9 +695,33 @@ def semanticTypeChecker(code, parameters):
 
 
   # check function types
+  for function in code.xpath('//function_definition'):
+    function_name = function.attrib['name']
+
+    # print '----------------------' + function_name + '-------------------'
+    # printCode(function)
+
+    # check the function definition
+
+    # check the arguments
+
+    # check that the function returns the correct types
+
+    # check the usage of the function
+    # for function_use in code.xpath('//function[@name="' + function_name + '"]'):
+      # print '======================--' + function_name + '===========---------'
+      # printCode(function_use)
 
 
-  # check all types recursively
+
+      # check the arguments
+
+      # fill in the return types
+
+
+
+
+  # after the previous steps it is ready to check all the remaining types recursively
   code, parameters = semanticRecursiveTypeChecker(code, parameters)
 
   return code, parameters
