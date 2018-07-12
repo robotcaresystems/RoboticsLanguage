@@ -137,6 +137,31 @@ int main(int argc, char **argv)
   // initialise
   instance.initialise();
 
+  {% if parameters['Inputs']['FiniteStateMachine']|length > 0 %}
+
+
+  {% set list_of_states = parameters|dpath('//Inputs/FiniteStateMachine/parameters/list_of_states') %}
+  {% set transition_labels = parameters|dpath('//Inputs/FiniteStateMachine/parameters/transition_labels') %}
+  {% set transition_begins = parameters|dpath('//Inputs/FiniteStateMachine/parameters/transition_begins') %}
+  {% set transition_ends = parameters|dpath('//Inputs/FiniteStateMachine/parameters/transition_ends') %}
+  {% set init = parameters|dpath('//Inputs/FiniteStateMachine/parameters/init') %}
+  {% set num_of_transitions = parameters|dpath('//Inputs/FiniteStateMachine/parameters/num_of_transitions') %}
+  {% set num_of_states = parameters|dpath('//Inputs/FiniteStateMachine/parameters/num_of_states') %}
+  FiniteStateMachine fsm("{{list_of_states[0]}}");
+  {% endif %}
+    {% for elem in range (1,num_of_states +1) %}
+        fsm.addState("{{elem}}");
+    {% endfor %}
+
+    {% for elem in range(num_of_transitions) %}
+        fsm.addTransition ("{{transition_labels[elem]}}", "{{transition_begins[elem]}}","{{transition_ends[elem]}}");
+    {% endfor %}
+
+
+	fsm.setCurrentState(" {{init[0]}} ");
+
+
+	fsm.printFSM();
   // Spin the node
   instance.spin();
 
