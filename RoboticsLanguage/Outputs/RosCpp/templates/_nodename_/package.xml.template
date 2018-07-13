@@ -1,3 +1,4 @@
+<<<header>>>
 <?xml version="1.0"?>
 <package>
   <name>{{parameters['node']['name']|underscore}}</name>
@@ -7,13 +8,15 @@
   <license>{{parameters['Information']['software']['license']}}</license>
   <url type="website">{{parameters['Information']['software']['url']}}</url>
   <author email="{{parameters['Information']['software']['author']['email']}}">{{parameters['Information']['software']['author']['name']}}</author>
-  
+
   <buildtool_depend>catkin</buildtool_depend>
 
   <build_depend>roscpp</build_depend>
   <build_depend>std_msgs</build_depend>
+  <<<'build_depend'|group>>>
 
   <run_depend>roscpp</run_depend>
   <run_depend>std_msgs</run_depend>
+  <<<'run_depend'|group>>>
 
 </package>

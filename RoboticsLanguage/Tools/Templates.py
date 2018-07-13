@@ -70,10 +70,6 @@ def templateEngine(code, parameters, output,
 
         # apply file template names
         for key, value in file_patterns.iteritems():
-          print file_deploy_path
-          print key
-          print value
-
           file_deploy_path = file_deploy_path.replace('_' + key + '_', value)
 
         # save it
@@ -90,7 +86,7 @@ def templateEngine(code, parameters, output,
 
   # find all the non template files in the transformers template folder
   for transformer in transformers:
-    for root, dirs, files in os.walk(path + 'Transformers/' + transformer + '/Templates'):
+    for root, dirs, files in os.walk(path + 'Transformers/' + transformer + '/Templates/Outputs/' + output):
       for file in files:
         if not file.endswith(".template") and file not in default_ignore_files:
           copy_file_name = os.path.join(root, file)
@@ -125,13 +121,13 @@ def templateEngine(code, parameters, output,
 
     try:
       # start the jinja environment with special delimiters
-      env = Environment(loader=FileSystemLoader('/'), **delimeters)
+      environment = Environment(loader=FileSystemLoader('/'), **delimeters)
 
       # load the group function that places includes on demand
-      env.filters['group'] = files_to_process[file]['group_function']
+      environment.filters['group'] = files_to_process[file]['group_function']
 
       # load the main template file for the output
-      template = env.get_template(files_to_process[file]['full_path'])
+      template = environment.get_template(files_to_process[file]['full_path'])
 
       # render it
       render = template.render(header=files_to_process[file]['header'])
@@ -142,20 +138,27 @@ def templateEngine(code, parameters, output,
         print render
         print '============================================================'
 
+      # create a new environment that includes all the plugin template code
+      preprocessed_environment = Environment(loader=FileSystemLoader('/'))
+
+      # add filters to environment
+      preprocessed_environment.filters.update(filters)
+
       # create a new template that includes all the plugin template code
-      preprocessed_template = Environment(loader=FileSystemLoader('/')).from_string(render)
+      preprocessed_template = preprocessed_environment.from_string(render)
 
       # render the combined template
-      result = preprocessed_template.render(message="hello", number="3")
+      result = preprocessed_template.render(code=code, parameters=parameters)
     except TemplateError as e:
-        # with Error.exception(parameters, filename=files_to_process[i])
-      Utilities.logErrors(Utilities.formatJinjaErrorMessage(
-          e, filename=files_to_process[file]['full_path']), parameters)
+      Utilities.logger.error(e.__repr__())
+      #   # with Error.exception(parameters, filename=files_to_process[i])
+      # Utilities.logErrors(Utilities.formatJinjaErrorMessage(
+      #     e, filename=files_to_process[file]['full_path']), parameters)
       return False
 
     try:
       # create paths for the new files if needed
-      Utilities.createFolderForFile(deploy_path + file)
+      Utilities.createFolderForFile(files_to_process[file]['deploy_path'])
 
       # write files
       new_package_file = open(files_to_process[file]['deploy_path'], 'w')

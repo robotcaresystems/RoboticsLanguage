@@ -43,10 +43,9 @@ def prepareParameters():
 
   # load the parameters form all the modules dynamically
   for element in Utilities.findFileName('Manifesto.py', language_path):
-    module_name = element.replace(language_path, '').replace('/Manifesto.py', '').replace('/', '.')
 
-    # break the module name into pieces
-    name_split = module_name.split('.')
+    name_split = element.split('/')[-4:-1]
+    module_name = '.'.join(name_split)
 
     if len(name_split) == 3 and name_split[1] in ['Inputs', 'Outputs', 'Transformers']:
 
