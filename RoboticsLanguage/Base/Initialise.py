@@ -29,7 +29,7 @@ def prepareParameters():
   '''Collects parameters, language, messages, and error handling functions from all list_of_modules. This function is cached in `rol`. To refresh the cache run `rol --remove-cache`.'''
 
   # read the path
-  language_path = os.path.dirname(__file__) + '/../../'
+  language_path = os.path.abspath(os.path.dirname(__file__) + '/../../') + '/'
 
   # define initial classes of parameters
   manifesto = {'Inputs': {}, 'Outputs': {}, 'Transformers': {}}
@@ -119,6 +119,9 @@ def prepareParameters():
   # merge parameters collected from modules with the default system base parameters
   # At this point the default parameters and the module parameters should be jointly non-identical
   parameters = Utilities.mergeDictionaries(parameters, Parameters.parameters)
+
+  # add some globals information
+  parameters['globals']['RoboticsLanguagePath'] = language_path + 'RoboticsLanguage/'
 
   # add package manifestos
   parameters['manifesto'] = manifesto
