@@ -163,18 +163,24 @@ def templateEngine(code, parameters, output,
       new_package_file.close()
       Utilities.logging.debug('Wrote file ' + files_to_process[file]['deploy_path'] + ' ...')
 
-      # copy support files
-      for i in range(0, len(new_files_to_copy)):
-        # create paths for the new files if needed
-        Utilities.createFolderForFile(new_files_to_copy[i])
-
-        # copy files
-        copy(files_to_copy[i], new_files_to_copy[i])
-        Utilities.logging.debug('Copied file ' + new_files_to_copy[i] + '...')
-
     except OSError as e:
       # with Error.exception(parameters, stop=True)
       Utilities.logErrors(Utilities.formatOSErrorMessage(e), parameters)
       return False
+
+  try:
+    # copy support files
+    for i in range(0, len(new_files_to_copy)):
+      # create paths for the new files if needed
+      Utilities.createFolderForFile(new_files_to_copy[i])
+
+      # copy files
+      copy(files_to_copy[i], new_files_to_copy[i])
+      Utilities.logging.debug('Copied file ' + new_files_to_copy[i] + '...')
+
+  except OSError as e:
+    # with Error.exception(parameters, stop=True)
+    Utilities.logErrors(Utilities.formatOSErrorMessage(e), parameters)
+    return False
 
   return True
