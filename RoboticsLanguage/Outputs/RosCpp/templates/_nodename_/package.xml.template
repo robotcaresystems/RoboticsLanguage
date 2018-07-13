@@ -1,4 +1,4 @@
-<<<header>>>
+<<<header->>>
 <?xml version="1.0"?>
 <package>
   <name>{{parameters['node']['name']|underscore}}</name>
