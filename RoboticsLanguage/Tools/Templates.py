@@ -3,6 +3,8 @@ from shutil import copy
 from RoboticsLanguage.Base import Utilities
 from jinja2 import Environment, FileSystemLoader, TemplateError
 
+default_templates_path = 'Templates'
+
 default_ignore_files = {'.DS_Store'}
 
 default_file_patterns = {}
@@ -44,16 +46,19 @@ def createGroupFunction(text):
 def templateEngine(code, parameters, output,
                    ignore_files=default_ignore_files,
                    file_patterns=default_file_patterns,
-                   filters=default_template_engine_filters):
+                   filters=default_template_engine_filters,
+                   templates_path=default_templates_path,
+                   deploy_path=None):
   '''The template engine combines multiple template files from different modules to generate code.'''
 
   transformers = parameters['Transformers'].keys()
 
-  deploy_path = parameters['globals']['deploy']
+  if deploy_path is None:
+    deploy_path = parameters['globals']['deploy']
 
   path = parameters['globals']['RoboticsLanguagePath']
 
-  templates_path = path + 'Outputs/' + output + '/Templates'
+  templates_path = path + 'Outputs/' + output + '/' + templates_path
   files_to_process = {}
   files_to_copy = []
   new_files_to_copy = []
@@ -65,7 +70,7 @@ def templateEngine(code, parameters, output,
 
         # extracts full and relative paths
         file_full_path = os.path.join(root, file)
-        file_relative_path = file_full_path.replace(templates_path, '').replace('Templates/', '')
+        file_relative_path = file_full_path.replace(templates_path, '')
         file_deploy_path = file_full_path.replace(templates_path, deploy_path).replace('.template', '')
 
         # apply file template names
