@@ -7,7 +7,7 @@ node(
   definitions:block(
     x ∈ Signals(Reals,
       rosTopic:'/test/x',
-      flow:'incoming',
+      rosFlow:'incoming',
       onChange: block(
         print('x has changed')
       ),
@@ -19,7 +19,7 @@ node(
     # An outgoing signal
     y ∈ Signals(Reals,
       rosTopic:'/test/y',
-      flow:'outgoing'
+      rosFlow:'outgoing'
     ),
 
     # flows defaults to bidirectional

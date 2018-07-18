@@ -29,10 +29,22 @@ if __name__ == "__main__":
 
   def compile(path,name,command_line_parameters=[]):
     print('Compiling '+name+'...')
-    if call(['rol', path+name] + command_line_parameters):
-      return sys.exit(1)
+
+    call(['rol', path+name] + command_line_parameters)
+
+    # if call(['rol', path+name] + command_line_parameters):
+    #   return sys.exit(1)
 
   compile(path,'helloworld.rol')
   compile(path,'helloworld.xml')
+
+  compile(path + 'Base/','functions.rol')
+  compile(path + 'Base/','precedence.rol')
+  compile(path + 'Base/','types.rol')
+
+  compile(path + 'ROS/','echo.rol')
+  compile(path + 'ROS/','signals.rol')
+
+
   # compile(path,'dutch.rol',['--language','nl','--remove-cache'])
   # compile(path,'portuguese.rol',['--language','pt','--remove-cache'])
