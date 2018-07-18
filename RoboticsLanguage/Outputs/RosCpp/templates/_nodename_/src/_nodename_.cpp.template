@@ -1,3 +1,4 @@
+<<<header->>>
 /*
  * Node name: {{parameters['node']['name']}}
  *
@@ -21,6 +22,7 @@ namespace {{parameters['node']['name']|underscore}}
   /******************************* constructor *****************************************/
   {{parameters['node']['name']|camelCase}}Class::{{parameters['node']['name']|camelCase}}Class():
     nh_("~")
+    <<<'classInitialisation'|group>>>
   {
   }
 
@@ -28,23 +30,7 @@ namespace {{parameters['node']['name']|underscore}}
   /******************************* initialise ********************************************/
   void {{parameters['node']['name']|camelCase}}Class::initialise()
   {
-    {# ROS TOPICS #################################### #}
-    {% if parameters['Transformers']['ROS']['topicDefinitions']|length > 0 -%}
-    /* ROS topics */
-      {% for topic in parameters['Transformers']['ROS']['topicDefinitions'] -%}
-    /* signal {{topic['variable']}} */
-      {# PUBLISHER #################################### #}
-        {% if topic['flow'] == 'outgoing' or topic['flow'] == 'bidirectional' -%}
-    {{topic['variable']}}_publisher = nh_.advertise<{{topic['ros_type']}}>("{{topic['topic_name']}}",10);
-        {% endif -%}
-
-        {# SUBSCRIBER #################################### #}
-        {% if topic['flow'] == 'incoming' or topic['flow'] == 'bidirectional' -%}
-    {{topic['variable']}}_subscriber = nh_.subscribe("{{topic['topic_name']}}", 10, &{{parameters['node']['name']|camelCase}}Class::signal_{{topic['variable']}}_callback, this);
-        {% endif -%}
-
-      {% endfor %}
-    {% endif -%}
+    <<<'initialise'|group>>>
 
     /* initialisation */
     {{code|xpath('/node')|option('initialise')|attribute('RosCpp')}};
@@ -53,6 +39,8 @@ namespace {{parameters['node']['name']|underscore}}
   /******************************* finalise ********************************************/
   void {{parameters['node']['name']|camelCase}}Class::finalise()
   {
+    <<<'finalise'|group>>>
+
     {{code|xpath('/node')|option('finalise')|attribute('RosCpp')}};
   }
 
@@ -63,63 +51,17 @@ namespace {{parameters['node']['name']|underscore}}
     ros::Rate r({{code|xpath('/node')|option('rate')|attribute('RosCpp')}});
     while(ros::ok())
     {
+      <<<'beforeSpin'|group>>>
+
       ros::spinOnce();
+
+      <<<'afterSpin'|group>>>
+
       r.sleep();
     }
   }
 
-  {# FUNCTIONS #################################### #}
-  {% for function in code|xpaths('/node/option[@name="definitions"]/*/functionDefinition') -%}
-  /******************************* {{function|attribute('name')}} ************************************************/
-  {% set returns = function|xpaths('returns/@RosCpp')|first -%}
-  {% set arguments = (function|xpaths('arguments/element/@RosCpp'))+(function|xpaths('arguments/*/element/@RosCpp')) -%}
-  {% if returns|length==0 %}void{% else %}{{returns}}{% endif %} {{parameters['node']['name']|camelCase}}Class::{{function|attribute('name')}}({% if arguments|length==0 %}void{% else %}{{arguments|join(", ")}}{% endif %})
-  {
-    {{function|xpaths('content/@RosCpp')|first}};
-  }
-  {% endfor -%}
-
-  {# ROS TOPICS #################################### #}
-  {% if parameters['Transformers']['ROS']['topicDefinitions']|length > 0 -%}
-    /* Callbacks for signals */
-    {% for topic in parameters['Transformers']['ROS']['topicDefinitions'] -%}
-    {# CALLBACK #################################### #}
-      {% if topic['flow'] == 'incoming' or topic['flow'] == 'bidirectional' -%}
-      /******************************* signal_{{topic['variable']}}_callback ************************************************/
-     void {{parameters['node']['name']|camelCase}}Class::signal_{{topic['variable']}}_callback(const {{topic['ros_type']}}& message)
-     {
-       {# Get serialised code #}
-       {% set onChange = code|xpath('//Signals[@ROSvariable="' + topic['variable'] + '"]')|option('onChange')|attribute('RosCpp') %}
-       {% set onNew = code|xpath('//Signals[@ROSvariable="' + topic['variable'] + '"]')|option('onNew')|attribute('RosCpp') %}
-
-       {% if onChange|length > 0 -%}
-       /* remember the last value for the topic */
-       {{topic['ros_type']}} previous = {{topic['variable']}};
-       {% endif -%}
-
-       /* Cache a copy of this signal inside the class */
-       {{topic['variable']}} = message;
-
-       {% if onChange|length > 0 -%}
-       if (previous.data != message.data)
-       {
-         /* on change */
-         {{onChange}};
-       }
-       {% endif -%}
-
-       /* on new */
-       {{onNew}};
-
-     };
-      {% endif -%}
-
-
-
-    {% endfor -%}
-  {% endif -%}
-
-
+  <<<'functions'|group>>>
 
 }
 

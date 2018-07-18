@@ -21,7 +21,9 @@
 #   limitations under the License.
 
 from RoboticsLanguage.Base import Utilities
-import os
+from RoboticsLanguage.Tools import Templates
+
+# import os
 import sys
 import subprocess
 
@@ -29,14 +31,14 @@ import subprocess
 def runPreparations(code, parameters):
 
   # save the node name for the templates
-  parameters['node']['name'] = Utilities.option(code.xpath('/node')[0], 'name').text
+  parameters['node']['name'] = code.xpath('/node/option[@name="name"]/string')[0].text
 
   # find a file system safe name
   node_name_underscore = Utilities.underscore(parameters['node']['name'])
 
   # list of c++ libraries to include based on the existance of specific tags in the code
-  include_libraries = {'Integers':'cstdint',
-                       'Strings':'string'}
+  include_libraries = {'Integers': 'cstdint',
+                       'Strings': 'string'}
 
   # add only the required libraries
   for tag, library in include_libraries.iteritems():
@@ -57,9 +59,13 @@ def output(code, parameters):
   code, parameters, node_name_underscore = runPreparations(code, parameters)
 
   # run template engine to generate node code
-  if not Utilities.templateEngine(code, parameters, {'nodename': node_name_underscore}, os.path.dirname(
-          __file__) + '/templates', parameters['globals']['deploy']):
+  if not Templates.templateEngine(code, parameters, 'RosCpp', file_patterns={'nodename': node_name_underscore}):
     sys.exit(1)
+
+  #
+  # if not Utilities.templateEngine(code, parameters, {'nodename': node_name_underscore}, os.path.dirname(
+  #         __file__) + '/templates', parameters['globals']['deploy']):
+  #   sys.exit(1)
 
   # if the flag compile is set then run catkin
   if parameters['globals']['compile']:

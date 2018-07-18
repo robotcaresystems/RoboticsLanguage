@@ -19,37 +19,22 @@
 #   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
-from RoboticsLanguage.Base.Types import singleString, singleReal, manyStrings, manyExpressions, manyCodeBlocks, codeBlock, anything, singleBoolean
-from RoboticsLanguage.Base.Types import returnNothing, returnCodeBlock
+
+from RoboticsLanguage.Base.Types import optional
+
+# from RoboticsLanguage.Base.Types import singleString, singleReal, manyStrings, manyExpressions, manyCodeBlocks, codeBlock, anything, singleBoolean
+# from RoboticsLanguage.Base.Types import returnNothing, returnCodeBlock
 
 
 language = {
 
     'Signals': {
         'definition': {
-            'optionalArguments': {'rosTopic': singleString,
-                                  'flow': singleString,
-                                  'onChange': codeBlock,
-                                  'onNew': codeBlock
-                                  },
-            'optionalDefaults': {'rosTopic': '',
-                                 'flow': 'bidirectional', # @REFACTOR currently defaults to bidirectional. Detect automatically?
-                                  'onChange': '',
-                                  'onNew': ''
-                                 },
-            'argumentTypes': anything,
-            'returnType': returnNothing
+            'optional': {
+                'rosTopic': optional('string', ''),
+                # @REFACTOR currently defaults to bidirectional. Detect automatically?
+                'rosFlow': optional('string', 'bidirectional')
+            },
         },
-        'output':
-        {
-        },
-        'localisation':
-        {
-        },
-        'documentation':
-        {
-        }
     },
-
-
 }

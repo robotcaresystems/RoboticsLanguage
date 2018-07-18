@@ -87,7 +87,7 @@ def processTopics(code, parameters):
 
     # get options
     topic_name = signal.xpath('option[@name="rosTopic"]')[0].getchildren()[0].text
-    flow = signal.xpath('option[@name="flow"]')[0].getchildren()[0].text
+    flow = signal.xpath('option[@name="rosFlow"]')[0].getchildren()[0].text
 
     # Find the type for the topic
     if topic_type.tag in ['Reals', 'Integers', 'Naturals']:

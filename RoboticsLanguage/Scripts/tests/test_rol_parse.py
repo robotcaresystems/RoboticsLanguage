@@ -38,24 +38,26 @@ parameters = Initialise.Initialise(['test'])
 # =================================================================================================
 #  RoL Parse
 # =================================================================================================
+
+
 def removePositionAttributes(xml):
   for element in xml.xpath('//*[@p]'):
-      element.attrib.pop('p')
+    element.attrib.pop('p')
   return xml
 
-def check(self,text,result):
+
+def check(self, text, result):
   global parameters
   code, __ = Parse.parse(text, parameters)
-  self.assertEqual(etree.tostring(removePositionAttributes(code)),result)
+  self.assertEqual(etree.tostring(removePositionAttributes(code)), result)
+
 
 class TestRolParse(unittest.TestCase):
-
 
   # -------------------------------------------------------------------------------------------------
   #  Functional composition
   # -------------------------------------------------------------------------------------------------
   def test_Functional_Composition(self):
-
 
     # test position of tags on text
     text = "node(print('hello'))"
@@ -65,22 +67,21 @@ class TestRolParse(unittest.TestCase):
                      '<node p="20"><print p="19"><string p="18">hello</string></print></node>')
 
     # test basic function composition
-    check(self,"node(print('hello'),print('ok'))",
+    check(self, "node(print('hello'),print('ok'))",
           '<node><print><string>hello</string></print><print><string>ok</string></print></node>')
 
     # test optional parameters
-    check(self,"node(print('hello',test:1))",
-          '<node><print><string>hello</string><option name="test"><integer>1</integer></option></print></node>')
-
-
+    check(self, "node(print('hello',test:1))",
+          '<node><print><string>hello</string><option name="test"><natural>1</natural></option></print></node>')
 
   # -------------------------------------------------------------------------------------------------
   #  Types
   # -------------------------------------------------------------------------------------------------
+
   def test_Types(self):
 
     # test integers
-    check(self,"node(123)",'<node><integer>123</integer></node>')
+    check(self, "node(123)", '<node><natural>123</natural></node>')
 
     # @BUG currently -123 returns: <node><negative><integer>123</integer></negative></node>
     # check(self,"node(-123)",
@@ -88,25 +89,25 @@ class TestRolParse(unittest.TestCase):
 
     # @BUG returns <negative> instead of '-' directly
     # test reals
-    check(self,"node(1.23)",     '<node><real>1.23</real></node>')
-    check(self,"node(1.23e10)",  '<node><real>1.23e10</real></node>')
-    check(self,"node(1.23e-10)", '<node><real>1.23e-10</real></node>')
+    check(self, "node(1.23)",     '<node><real>1.23</real></node>')
+    check(self, "node(1.23e10)",  '<node><real>1.23e10</real></node>')
+    check(self, "node(1.23e-10)", '<node><real>1.23e-10</real></node>')
     # check(self,"node(-1.23)",    '<node><real>-1.23</real></node>')
     # check(self,"node(-1.23e10)", '<node><real>-1.23e10</real></node>')
     # check(self,"node(-1.23e-10)",'<node><real>-1.23e-10</real></node>')
-    check(self,"node(.23)",      '<node><real>.23</real></node>')
-    check(self,"node(.23e10)",   '<node><real>.23e10</real></node>')
-    check(self,"node(.23e-10)",  '<node><real>.23e-10</real></node>')
+    check(self, "node(.23)",      '<node><real>.23</real></node>')
+    check(self, "node(.23e10)",   '<node><real>.23e10</real></node>')
+    check(self, "node(.23e-10)",  '<node><real>.23e-10</real></node>')
     # check(self,"node(-.23)",     '<node><real>-.23</real></node>')
     # check(self,"node(-.23e10)",  '<node><real>-.23e10</real></node>')
     # check(self,"node(-.23e-10)", '<node><real>-.23e-10</real></node>')
 
     # test booleans
-    check(self,"node(true)",'<node><boolean>true</boolean></node>')
-    check(self,"node(false)",'<node><boolean>false</boolean></node>')
+    check(self, "node(true)", '<node><boolean>true</boolean></node>')
+    check(self, "node(false)", '<node><boolean>false</boolean></node>')
 
     # test strings
-    check(self,"node('hello')",'<node><string>hello</string></node>')
+    check(self, "node('hello')", '<node><string>hello</string></node>')
 
   # -------------------------------------------------------------------------------------------------
   #  Infix operators
@@ -114,57 +115,56 @@ class TestRolParse(unittest.TestCase):
   def test_Infix_Operators(self):
 
     # basic
-    check(self,"node(1+2)",
-          '<node><plus><integer>1</integer><integer>2</integer></plus></node>')
+    check(self, "node(1+2)",
+          '<node><plus><natural>1</natural><natural>2</natural></plus></node>')
 
     # precedence order
-    check(self,"node(1+2*3)",
-          '<node><plus><integer>1</integer><times><integer>2</integer><integer>3</integer></times></plus></node>')
+    check(self, "node(1+2*3)",
+          '<node><plus><natural>1</natural><times><natural>2</natural><natural>3</natural></times></plus></node>')
 
     # parenthesis order
-    check(self,"node((1+2)*3)",
-          '<node><times><plus><integer>1</integer><integer>2</integer></plus><integer>3</integer></times></node>')
+    check(self, "node((1+2)*3)",
+          '<node><times><plus><natural>1</natural><natural>2</natural></plus><natural>3</natural></times></node>')
 
     # complex precedence: (1 and ((2 + 3) != 4)) = (5 > (6 * 7))
-    check(self,"node(1 and 2 + 3 != 4 = 5 >= 6 * 7)",
-          '<node><assign><and><integer>1</integer><notEqual><plus><integer>2</integer><integer>3</integer></plus><integer>4</integer></notEqual></and><largerEqual><integer>5</integer><times><integer>6</integer><integer>7</integer></times></largerEqual></assign></node>')
+    check(self, "node(1 and 2 + 3 != 4 = 5 >= 6 * 7)",
+          '<node><assign><and><natural>1</natural><notEqual><plus><natural>2</natural><natural>3</natural></plus><natural>4</natural></notEqual></and><largerEqual><natural>5</natural><times><natural>6</natural><natural>7</natural></times></largerEqual></assign></node>')
 
     # using unicode symbols
-    check(self,"node(1 ∧ 2 + 3 ≠ 4 = 5 ≥ 6 * 7)",
-          '<node><assign><and><integer>1</integer><notEqual><plus><integer>2</integer><integer>3</integer></plus><integer>4</integer></notEqual></and><largerEqual><integer>5</integer><times><integer>6</integer><integer>7</integer></times></largerEqual></assign></node>')
-
+    check(self, "node(1 ∧ 2 + 3 ≠ 4 = 5 ≥ 6 * 7)",
+          '<node><assign><and><natural>1</natural><notEqual><plus><natural>2</natural><natural>3</natural></plus><natural>4</natural></notEqual></and><largerEqual><natural>5</natural><times><natural>6</natural><natural>7</natural></times></largerEqual></assign></node>')
 
   # -------------------------------------------------------------------------------------------------
   #  Prefix operators
   # -------------------------------------------------------------------------------------------------
+
   def test_Prefix_Operators(self):
 
     # negative
-    check(self,"node(-a)",'<node><negative><variable name="a"/></negative></node>')
-
+    check(self, "node(-a)", '<node><negative><variable name="a"/></negative></node>')
 
   # -------------------------------------------------------------------------------------------------
   #  Bracket operators
   # -------------------------------------------------------------------------------------------------
+
   def test_Bracket_Operators(self):
 
-    check(self,"node([1,{2,3}])",
-          '<node><vector><integer>1</integer><set><integer>2</integer><integer>3</integer></set></vector></node>')
+    check(self, "node([1,{2,3}])",
+          '<node><vector><natural>1</natural><set><natural>2</natural><natural>3</natural></set></vector></node>')
 
   # -------------------------------------------------------------------------------------------------
   #  Custom operators
   # -------------------------------------------------------------------------------------------------
   def test_Custom_Operators(self):
-    check(self,"node(define f(x in Reals)->Reals:print(x+1))",
-        '<node><functionDefinition name="f"><arguments><element><variable name="x"/><Reals/></element></arguments><returns><Reals/></returns><content><print><plus><variable name="x"/><integer>1</integer></plus></print></content></functionDefinition></node>')
+    check(self, "node(define f(x in Reals)->Reals:print(x+1))",
+          '<node><function_definition name="f"><function_arguments><element><variable name="x"/><Reals/></element></function_arguments><function_returns><Reals/></function_returns><function_content><print><plus><variable name="x"/><natural>1</natural></plus></print></function_content></function_definition></node>')
 
   # -------------------------------------------------------------------------------------------------
   #  Mini languages
   # -------------------------------------------------------------------------------------------------
   def test_Mini_Languages(self):
-    check(self,"node(RoLXML<{ <print><string>hello</string></print> }>)",
+    check(self, "node(RoLXML<{ <print><string>hello</string></print> }>)",
           '<node><print><string>hello</string></print></node>')
-
 
   # # @TODO re-implement localisation
   # # -------------------------------------------------------------------------------------------------
@@ -177,7 +177,6 @@ class TestRolParse(unittest.TestCase):
   #   code, parameters = Parse.parse(text, parameters)
   #   result = etree.tostring(removePositionAttributes(code))
   #   self.assertEqual(result,'<node><print><string>ol&#225; mundo</string></print></node>')
-
 
 
 if __name__ == '__main__':

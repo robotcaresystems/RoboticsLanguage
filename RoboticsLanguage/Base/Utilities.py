@@ -22,19 +22,19 @@
 
 import os
 import sys
-import errno
 import time
-import datetime
 import dill
+import errno
 import pprint
 import logging
-import coloredlogs
+import datetime
 import dpath.util
+import coloredlogs
 from lxml import etree
 from funcy import decorator
 from shutil import copy, rmtree
-from jinja2 import Environment, FileSystemLoader, Template, TemplateSyntaxError, TemplateAssertionError, TemplateError
 from RoboticsLanguage.Base import Types
+from jinja2 import Environment, FileSystemLoader, Template, TemplateSyntaxError, TemplateAssertionError, TemplateError
 
 # -------------------------------------------------------------------------------------------------
 #  Default encoding is Unicode
@@ -42,6 +42,18 @@ from RoboticsLanguage.Base import Types
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
+
+# -------------------------------------------------------------------------------------------------
+#  Helping functions
+# -------------------------------------------------------------------------------------------------
+
+
+def printCode(code):
+  print etree.tostring(code, pretty_print=True)
+
+
+def printParameters(parameters):
+  pprint.pprint(parameters)
 
 # -------------------------------------------------------------------------------------------------
 #  Error handling
@@ -162,25 +174,25 @@ def formatSemanticTypeErrorMessage(code_text, parameters, position, error, reaso
                       line_number=line_number, column_number=column_number, line=line)
 
 
-def errorOptionalArgumentTypes(code, parameters, parameter_names, parameter_types):
+def errorOptionalArgumentTypes(code, parameters, optional_names, optional_types):
   message = 'Incorrect types for optional parameters. '
 
-  for name, types in zip(parameter_names, parameter_types):
-    if not parameters['language'][code.tag]['definition']['optionalArguments'][name](types):
+  for name, types in zip(optional_names, optional_types):
+    if not parameters['language'][code.tag]['definition']['optional'][name]['test'](types):
       message += 'The type of the optional parameter "' + name + '" should be "' + \
-          parameters['language'][code.tag]['definition']['optionalArguments'][name].__doc__ + \
+          parameters['language'][code.tag]['definition']['optional'][name]['documentation'] + \
           '" instead of "' + types + '"\n'
   # show error
   logger.error(formatSemanticTypeErrorMessage(
       parameters['text'], parameters, getTextMinimumPositionXML(code), 'Type', message))
 
 
-def errorOptionalArgumentNotDefined(code, parameters, parameter_names):
+def errorOptionalArgumentNotDefined(code, parameters, optional_names):
   # Error! figure out which parameter is not defined
   message = ''
-  keys = parameters['language'][code.tag]['definition']['optionalArguments'].keys()
+  keys = parameters['language'][code.tag]['definition']['optional'].keys()
 
-  for x in set(parameter_names) - set(keys):
+  for x in set(optional_names) - set(keys):
     message += 'The optional parameter "' + x + '" is not defined.\n'
 
   message += 'The list of defined optional parameters is: ' + str(keys)
@@ -193,7 +205,7 @@ def errorArgumentTypes(code, parameters, argument_types):
   message = 'Incorrect argument types for function "' + \
       code.tag + '". The expected argument types are:\n   '
   message += code.tag + \
-      '( ' + parameters['language'][code.tag]['definition']['argumentTypes'].__doc__ + ' )\n'
+      '( ' + parameters['language'][code.tag]['definition']['arguments']['documentation'] + ' )\n'
   message += '\nInstead received:\n   ' + code.tag + \
       '( ' + ','.join(argument_types) + ' )\n'
 
@@ -305,17 +317,17 @@ def showDebugInformation(code, parameters):
 
       # show debug information for xml code
     if parameters['debug']['code']:
-      print(etree.tostring(code, pretty_print=True))
+      printCode(code)
 
     # show debug information for parameters
     if parameters['debug']['parameters']:
-      pprint.pprint(parameters)
+      printParameters(parameters)
 
     # show debug information for specific xml code
     if parameters['debug']['codePath'] is not '':
       try:
         for element in code.xpath(parameters['debug']['codePath']):
-          print(etree.tostring(element, pretty_print=True))
+          printCode(element)
       except:
         logger.warning(
             "The path'" + parameters['debug']['codePath'] + "' is not present in the code")
@@ -324,7 +336,7 @@ def showDebugInformation(code, parameters):
     if parameters['debug']['parametersPath'] is not '':
       try:
         for element in paths(parameters, parameters['debug']['parametersPath']):
-          pprint.pprint(element)
+          printParameters(element)
       except:
         logger.warning(
             "The path'" + parameters['debug']['parametersPath'] + "' is not defined in the internal parameters.")
@@ -515,14 +527,14 @@ def xmlFunction(parameters, tag, content, position=0):
 
 def xmlFunctionDefinition(name, arguments, returns, content, position=0):
 
-  arguments_text = xml('arguments', arguments,
+  arguments_text = xml('function_arguments', arguments,
                        position) if isinstance(arguments, str) else ''
-  returns_text = xml('returns', returns, position) if isinstance(
+  returns_text = xml('function_returns', returns, position) if isinstance(
       returns, str) else ''
-  content_text = xml('content', content, position) if isinstance(
+  content_text = xml('function_content', content, position) if isinstance(
       content, str) else ''
 
-  return xmlAttributes('functionDefinition', arguments_text + returns_text + content_text, position, attributes={'name': name})
+  return xmlAttributes('function_definition', arguments_text + returns_text + content_text, position, attributes={'name': name })
 
 
 def xmlVariable(parameters, name, position=0):
@@ -578,18 +590,20 @@ def attributes(xml):
 
 
 def attribute(xml, name):
-  if isinstance(xml, list):
-    if len(xml) > 0:
-      xml = xml[0]
+  try:
+    if isinstance(xml, list):
+      if len(xml) > 0:
+        xml = xml[0]
+      else:
+        return ''
+    if name in xml.attrib.keys():
+      return xml.attrib[name]
     else:
       return ''
-  if name in xml.attrib.keys():
-    return xml.attrib[name]
-  else:
+  except:
     return ''
 
-
-def option(xml, name):
+def option(xml, name, debug=''):
   try:
     return optionalArguments(xml)[name]
   except:
@@ -597,7 +611,7 @@ def option(xml, name):
 
 
 def optionalArguments(xml):
-  return {a.attrib['name']: a.xpath('*')[0] for a in xml.xpath('option')}
+  return {a.attrib['name']: a for a in xml.xpath('option')}
 
 
 def getTextMinimumPositionXML(xml):
@@ -625,66 +639,155 @@ def todaysDate(format):
 
 
 def semanticChecking(code, parameters):
+  '''Generic semantic checking function'''
 
   # check if should ignore semantic checking
   if parameters['debug']['ignoreSemanticErrors']:
     return code, parameters
 
-  # traverse xml and set all types for all atomic tags
-  [x.set('type', b) for a, b in Types.atoms.iteritems()
-   for x in code.xpath('//' + a)]
-
   # check types
   code, parameters = semanticTypeChecker(code, parameters)
+
+  # check that all variables are initialised
+  code, parameters = semanticDefiniteAssignment(code, parameters)
 
   return code, parameters
 
 
 def semanticTypeChecker(code, parameters):
 
-  # if element is an atom, jut return
-  if code.tag in Types.atoms:
+  # traverse xml and set all types for all atomic tags
+  [x.set('type', type) for type in Types.type_atomic
+   for x in code.xpath('//' + type)]
+
+  # fill in global scope variable types
+  for variable in code.xpath('/node/option[@name="definitions"]//element'):
+
+    # get the name of the variable
+    variable_name = variable.getchildren()[0].attrib['name']
+
+    # get its definition
+    variable_definition = variable.getchildren()[1]
+
+    # apply type checker to definition of variable
+    variable_definition, parameters = semanticRecursiveTypeChecker(variable_definition, parameters)
+
+    # now look for all the places where this variable used in the code and set its type
+    for variable_used in code.xpath('//variable[@name="' + variable_name + '"]'):
+      variable_used.attrib['type'] = variable_definition.attrib['type']
+
+  # Now repeat the process for local scope. Now the search for the usage of the variable
+  # is limited to the local scope where the variable was defined.
+  for variable in code.xpath('/node/option[@name!="definitions"]//element'):
+
+    # get the name of the variable
+    variable_name = variable.getchildren()[0].attrib['name']
+
+    # get its definition
+    variable_definition = variable.getchildren()[1]
+
+    # apply type checker to definition of variable
+    variable_definition, parameters = semanticRecursiveTypeChecker(variable_definition, parameters)
+
+    # now look for the places whithin the scope where this variable used and set its type
+    for variable_used in variable.getparent().xpath('//variable[@name="' + variable_name + '"]'):
+      variable_used.attrib['type'] = variable_definition.attrib['type']
+
+
+  # check function types
+  for function in code.xpath('//function_definition'):
+    function_name = function.attrib['name']
+
+    # print '----------------------' + function_name + '-------------------'
+    # printCode(function)
+
+    # check the function definition
+
+    # check the arguments
+
+    # check that the function returns the correct types
+
+    # check the usage of the function
+    # for function_use in code.xpath('//function[@name="' + function_name + '"]'):
+      # print '======================--' + function_name + '===========---------'
+      # printCode(function_use)
+
+
+
+      # check the arguments
+
+      # fill in the return types
+
+
+
+
+  # after the previous steps it is ready to check all the remaining types recursively
+  code, parameters = semanticRecursiveTypeChecker(code, parameters)
+
+  return code, parameters
+
+
+
+def semanticRecursiveTypeChecker(code, parameters):
+
+  # if element already has a type return
+  if 'type' in code.attrib.keys():
     return code, parameters
 
   # if the element is part of the language
   if code.tag in parameters['language']:
 
-    # first recursively traverse all children elements that are not option
-    for element in code.xpath('*[not(self::option)]'):
-      element, parameters = semanticTypeChecker(element, parameters)
+    # first recursively traverse all children elements
+    for element in code.getchildren():
+      element, parameters = semanticRecursiveTypeChecker(element, parameters)
 
-    # then traverse the optional arguments.
-    for element in code.xpath('option/*[not(self::name)]'):
-      element, parameters = semanticTypeChecker(element, parameters)
+    if code.tag == 'option':
+      if len(code.getchildren()) > 0:
+        # copy type of the option content to the option tag
+        code.attrib['type'] = code.getchildren()[0].attrib['type']
+      else:
+        # if empty option because none was selected as default, then make type none.
+        code.attrib['type'] = 'none'
+
+      return code, parameters
+
+    # # first recursively traverse all children elements that are not option
+    # for element in code.xpath('*[not(self::option)]'):
+    # # then traverse the optional arguments.
+    # for element in code.xpath('option/*[not(self::name)]'):
+    #   element, parameters = semanticTypeChecker(element, parameters)
+    #
 
     # for this element find the parameters and arguments
-    parameter_names = code.xpath('option/@name')
-    parameter_types = code.xpath('option/@type')
-    argument_types = code.xpath('*/@type')
+    optional_names = code.xpath('option/@name')
+    optional_types = code.xpath('option/@type')
+    argument_types = code.xpath('*[not(self::option)]/@type')
     keys = parameters['language']
 
     # check optional arguments
     try:
-      if 'optionalArguments' in keys[code.tag]['definition']:
-        if all([x in keys[code.tag]['definition']['optionalArguments'].keys() for x in parameter_names]):
+      if 'optional' in keys[code.tag]['definition']:
+
+        # check if optional arguments are defined
+        if all([x in keys[code.tag]['definition']['optional'].keys() for x in optional_names]):
 
           # check types for optional arguments
-          if not all(map(lambda x, y: keys[code.tag]['definition']['optionalArguments'][x]([y]), parameter_names, parameter_types)):
+          if not all(map(lambda x, y: keys[code.tag]['definition']['optional']
+                         [x]['test']([y]), optional_names, optional_types)):
             # Error: incorrect types for optional arguments!
-            # Error.handler('OptionalArgumentTypes', code, parameters, parameter_names, parameter_types)
+            # Error.handler('OptionalArgumentTypes', code, parameters, optional_names, optional_types)
             errorOptionalArgumentTypes(
-                code, parameters, parameter_names, parameter_types)
+                code, parameters, optional_names, optional_types)
         else:
           # Error: optional argument not defined
-          # Error.handler('OptionalArgumentNotDefined', code, parameters, parameter_names)
-          errorOptionalArgumentNotDefined(code, parameters, parameter_names)
+          # Error.handler('OptionalArgumentNotDefined', code, parameters, optional_names)
+          errorOptionalArgumentNotDefined(code, parameters, optional_names)
 
       # check mandatory argument types
-      if all(keys[code.tag]['definition']['argumentTypes'](argument_types)):
+      if keys[code.tag]['definition']['arguments']['test'](argument_types):
 
         # compute resulting type
-        code.attrib['type'] = keys[code.tag]['definition']['returnType'](
-            argument_types)
+        code.attrib['type'] = keys[code.tag]['definition']['returns'](argument_types)
 
       else:
         # Error: mandatory argument missing or incorrect
@@ -701,6 +804,10 @@ def semanticTypeChecker(code, parameters):
     return code, parameters
 
 
+def semanticDefiniteAssignment(code, parameters):
+  return code, parameters
+
+
 def fillDefaultsInOptionalArguments(code, parameters):
   '''Fill in defaults in optional arguments in case they are not explicitely defined.'''
 
@@ -708,14 +815,14 @@ def fillDefaultsInOptionalArguments(code, parameters):
     __, parameters = fillDefaultsInOptionalArguments(element, parameters)
 
   # if this tag has optional parameters defined
-  if len(dpath.util.values(parameters['language'][code.tag], 'definition/optionalArguments')) > 0:
+  if len(dpath.util.values(parameters['language'][code.tag], 'definition/optional')) > 0:
 
     # find all optional parameters
-    parameter_names = code.xpath('option/@name')
+    optional_names = code.xpath('option/@name')
 
     # get the list of missing parameters
     missing_parameters = list(set(
-        parameters['language'][code.tag]['definition']['optionalArguments'].keys()) - set(parameter_names))
+        parameters['language'][code.tag]['definition']['optional'].keys()) - set(optional_names))
 
     for parameter in missing_parameters:
 
@@ -725,18 +832,18 @@ def fillDefaultsInOptionalArguments(code, parameters):
       # add the name of the optional parameter
       optional_argument_tag.attrib['name'] = parameter
 
-      # @WARNING the __doc__ definition of the type functions must be correct. How to deal with non-single types?
-      # this architecture should change to be more robust
-      # get the type for the optional parameter
+      # get the tag
       value_tag = etree.Element(
-          parameters['language'][code.tag]['definition']['optionalArguments'][parameter].__doc__)
+          parameters['language'][code.tag]['definition']['optional'][parameter]['tag'])
 
-      # set the default value
-      value_tag.text = str(
-          parameters['language'][code.tag]['definition']['optionalDefaults'][parameter])
+      if parameters['language'][code.tag]['definition']['optional'][parameter]['default'] is not None:
+        # set the default value
+        value_tag.text = str(
+            parameters['language'][code.tag]['definition']['optional'][parameter]['default'])
 
-      # append new tag to the code
-      optional_argument_tag.append(value_tag)
+        # append new tag to the code
+        optional_argument_tag.append(value_tag)
+
       code.append(optional_argument_tag)
 
   # fill in parameters for children
@@ -854,6 +961,7 @@ def serialise(code, parameters, keywords, language, filters=default_template_eng
   snippet = ''
 
   try:
+
     # load keyword template text
     keyword = keywords[code.tag]['output'][language]
 

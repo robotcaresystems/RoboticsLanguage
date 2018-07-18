@@ -21,16 +21,15 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-from RoboticsLanguage.Base.Types import manySameNumbersStrings, manySameNumbers, manySameNumbersStringsBooleans, anything, manySameBooleans
-from RoboticsLanguage.Base.Types import returnSameArgumentType, returnNothing, returnBoolean
+from RoboticsLanguage.Base.Types import arguments, optional, returns
 
 language = {
 
     # math
     'times': {
         'definition': {
-            'argumentTypes': manySameNumbers,
-            'returnType': returnSameArgumentType
+            'arguments': arguments('real real+'),
+            'returns': returns('same')
         },
         'input': {
             'RoL': {
@@ -51,14 +50,14 @@ language = {
         'documentation':
         {
             'title': 'Number multiplication',
-            'description': 'Normal number, vector, or matrix multiplication. ',
+            'description': 'Normal real, vector, or matrix multiplication. ',
             'usage': 'a = 2*3'
         }
     },
     'divide': {
         'definition': {
-            'argumentTypes': manySameNumbers,
-            'returnType': returnSameArgumentType
+            'arguments': arguments('real real+'),
+            'returns': returns('same')
         },
         'input': {
             'RoL': {
@@ -80,8 +79,8 @@ language = {
 
     'plus': {
         'definition': {
-            'argumentTypes': manySameNumbersStrings,
-            'returnType': returnSameArgumentType
+            'arguments': arguments('( real real+ | string string+)'),
+            'returns': returns('same')
         },
         'input': {
             'RoL': {
@@ -103,8 +102,8 @@ language = {
     },
     'minus': {
         'definition': {
-            'argumentTypes': manySameNumbers,
-            'returnType': returnSameArgumentType
+            'arguments': arguments('real real+'),
+            'returns': returns('same')
         },
         'input': {
             'RoL': {
@@ -127,8 +126,8 @@ language = {
 
     'larger': {
         'definition': {
-            'argumentTypes': manySameNumbers,
-            'returnType': returnBoolean
+            'arguments': arguments('real real'),
+            'returns': returns('boolean')
         },
         'input': {
             'RoL': {
@@ -149,8 +148,8 @@ language = {
     },
     'smaller': {
         'definition': {
-            'argumentTypes': manySameNumbers,
-            'returnType': returnBoolean
+            'arguments': arguments('real real'),
+            'returns': returns('boolean')
         },
         'input': {
             'RoL': {
@@ -171,8 +170,8 @@ language = {
     },
     'largerEqual': {
         'definition': {
-            'argumentTypes': manySameNumbers,
-            'returnType': returnBoolean
+            'arguments': arguments('real real'),
+            'returns': returns('boolean')
         },
         'input': {
             'RoL': {
@@ -193,8 +192,8 @@ language = {
     },
     'smallerEqual': {
         'definition': {
-            'argumentTypes': manySameNumbers,
-            'returnType': returnBoolean
+            'arguments': arguments('real real'),
+            'returns': returns('boolean')
         },
         'input': {
             'RoL': {
@@ -216,8 +215,8 @@ language = {
 
     'equal': {
         'definition': {
-            'argumentTypes': manySameNumbersStringsBooleans,
-            'returnType': returnBoolean
+            'arguments': arguments('( real real | string string | boolean boolean )'),
+            'returns': returns('boolean')
         },
         'input': {
             'RoL': {
@@ -238,8 +237,8 @@ language = {
     },
     'notEqual': {
         'definition': {
-            'argumentTypes': manySameNumbersStringsBooleans,
-            'returnType': returnBoolean
+            'arguments': arguments('( real real | string string | boolean boolean )'),
+            'returns': returns('boolean')
         },
         'input': {
             'RoL': {
@@ -262,8 +261,8 @@ language = {
 
     'and': {
         'definition': {
-            'argumentTypes': manySameBooleans,
-            'returnType': returnBoolean
+            'arguments': arguments('boolean boolean+'),
+            'returns': returns('boolean')
         },
         'input': {
             'RoL': {
@@ -291,12 +290,12 @@ language = {
     },
     'or': {
         'definition': {
-            'argumentTypes': manySameBooleans,
-            'returnType': returnBoolean
+            'arguments': arguments('boolean boolean+'),
+            'returns': returns('boolean')
         },
         'input': {
             'RoL': {
-                          'infix': {'key': ['or', '∨'],
+                'infix': {'key': ['or', '∨'],
                           'order': 400,
                           'flat': True}
             }
@@ -314,8 +313,8 @@ language = {
     },
     'assign': {
         'definition': {
-            'argumentTypes': anything,
-            'returnType': returnNothing
+            'arguments': arguments('anything'),
+            'returns': returns('none')
         },
         'input': {
             'RoL': {
@@ -337,13 +336,13 @@ language = {
 
     'negative': {
         'definition': {
-            'argumentTypes': anything,
-            'returnType': returnSameArgumentType
+            'arguments': arguments('real'),
+            'returns': returns('same')
         },
         'input': {
             'RoL': {
                 'prefix': {'key': '-',
-                          'order': 1300}
+                           'order': 1300}
             }
         },
         'output': {
@@ -358,20 +357,20 @@ language = {
         'documentation':
         {
             'title': 'Number negation',
-            'description': 'Normal number or variable negation. ',
+            'description': 'Normal real or variable negation. ',
             'usage': 'a = -b'
         }
     },
 
     'positive': {
         'definition': {
-            'argumentTypes': anything,
-            'returnType': returnSameArgumentType
+            'arguments': arguments('real'),
+            'returns': returns('same')
         },
         'input': {
             'RoL': {
                 'prefix': {'key': '+',
-                          'order': 1300}
+                           'order': 1300}
             }
         },
         'output': {
