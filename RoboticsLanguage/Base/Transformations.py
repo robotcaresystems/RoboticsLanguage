@@ -21,6 +21,7 @@
 #   limitations under the License.
 
 from . import Utilities
+from RoboticsLanguage.Tools import Semantic
 import sys
 
 
@@ -42,7 +43,7 @@ def Apply(code, parameters):
   code, parameters = Utilities.fillDefaultsInOptionalArguments(code, parameters)
 
   # first do all semantic checking
-  code, parameters = Utilities.semanticChecking(code, parameters)
+  code, parameters = Semantic.Checker(code, parameters)
 
   # load the list of transformations by order
   ordered_transformations_list = prepareTransformations(parameters)
