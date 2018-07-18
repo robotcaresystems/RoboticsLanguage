@@ -156,6 +156,7 @@ def processFileParameters(args, file_formats):
   rol_files = []
   parameter_files = []
   unknown_files = []
+
   for element in args.filename:
     name, extension = os.path.splitext(os.path.abspath(element.name))
     if extension.lower() in map(lambda x: '.' + x.lower(), file_formats):
