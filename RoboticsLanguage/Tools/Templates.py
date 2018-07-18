@@ -77,6 +77,14 @@ def templateEngine(code, parameters, output,
         for key, value in file_patterns.iteritems():
           file_deploy_path = file_deploy_path.replace('_' + key + '_', value)
 
+        print '----------------------------'
+        print('file: ' + file)
+        print('file_full_path: ' + file_full_path)
+        print('file_relative_path: ' + file_relative_path)
+        print('file_deploy_path: ' + file_deploy_path)
+        print '----------------------------'
+
+
         # save it
         files_to_process[file_relative_path] = {
             'full_path': file_full_path,

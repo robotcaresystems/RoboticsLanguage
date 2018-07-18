@@ -23,25 +23,25 @@
 
 parameters = {
     'create': {
-        'input': '',
-        'transformer': '',
-        'output': '',
+        'Inputs': '',
+        'Transformers': '',
+        'Outputs': '',
         'reference':False
     }
 }
 
 command_line_flags = {
-    'create:input':
+    'create:Inputs':
         {
             'longFlag': 'create-input-template',
             'description': 'Create a template for an Input module'
         },
-    'create:transformer':
+    'create:Transformers':
         {
             'longFlag': 'create-transformer-template',
             'description': 'Create a template for a Transformer module'
         },
-    'create:output':
+    'create:Outputs':
         {
             'longFlag': 'create-output-template',
             'description': 'Create a template for an Output module'
