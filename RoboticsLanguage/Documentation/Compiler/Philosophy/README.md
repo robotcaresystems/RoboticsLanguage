@@ -352,27 +352,23 @@ rol helloworld.rol --debug-code --debug-step 2
 ```
 
 ```xml
-<node p="64" type="Nothing">
-  <option p="26" name="name">
-    <string p="26" type="Strings">hello world</string>
+<node p="64" type="node">
+  <option p="26" name="name" type="string">
+    <string p="26" type="string">hello world</string>
   </option>
-  <option p="63" name="initialise">
-    <print p="62" type="Nothing">
-      <string p="61" type="Strings">hello world!</string>
-      <option name="level">
-        <string type="Strings">info</string>
+  <option p="63" name="initialise" type="none">
+    <print p="62" type="none">
+      <string p="61" type="string">hello world!</string>
+      <option name="level" type="string">
+        <string type="string">info</string>
       </option>
     </print>
   </option>
-  <option name="definitions">
-    <anything type="Nothing"></anything>
+  <option name="definitions" type="none"/>
+  <option name="rate" type="real">
+    <real type="real">1</real>
   </option>
-  <option name="rate">
-    <real type="Reals">1</real>
-  </option>
-  <option name="finalise">
-    <anything type="Nothing"></anything>
-  </option>
+  <option name="finalise" type="none"/>
 </node>
 ```
 
@@ -383,31 +379,27 @@ In between steps 3 to 6 the transformer modules annotate the xml code.
 The final step will run the `serialise` function and annotate the code with snippets of the output text.
 
 ```shell
-rol helloworld.rol --debug-code --debug-step 7
+rol helloworld.rol --debug-code --debug-step 6
 ```
 
 ```xml
-<node p="64" type="Nothing">
-  <option p="26" name="name" RosCpp="">
-    <string p="26" type="Strings" RosCpp="&quot;hello world&quot;">hello world</string>
+<node p="64" type="node">
+  <option p="26" name="name" type="string" RosCpp="&quot;hello world&quot;">
+    <string p="26" type="string" RosCpp="&quot;hello world&quot;">hello world</string>
   </option>
-  <option p="63" name="initialise" RosCpp="">
-    <print p="62" type="Nothing" RosCpp="ROS_INFO_STREAM(&quot;hello world!&quot;)">
-      <string p="61" type="Strings" RosCpp="&quot;hello world!&quot;">hello world!</string>
-      <option name="level" RosCpp="">
-        <string type="Strings" RosCpp="&quot;info&quot;">info</string>
+  <option p="63" name="initialise" type="none" RosCpp="ROS_INFO_STREAM(&quot;hello world!&quot;)">
+    <print p="62" type="none" RosCpp="ROS_INFO_STREAM(&quot;hello world!&quot;)">
+      <string p="61" type="string" RosCpp="&quot;hello world!&quot;">hello world!</string>
+      <option name="level" type="string">
+        <string type="string" RosCpp="&quot;info&quot;">info</string>
       </option>
     </print>
   </option>
-  <option name="definitions" RosCpp="">
-    <anything type="Nothing" RosCpp=""></anything>
+  <option name="definitions" type="none" RosCpp=""/>
+  <option name="rate" type="real" RosCpp="1">
+    <real type="real" RosCpp="1">1</real>
   </option>
-  <option name="rate" RosCpp="">
-    <real type="Reals" RosCpp="1">1</real>
-  </option>
-  <option name="finalise" RosCpp="">
-    <anything type="Nothing" RosCpp=""></anything>
-  </option>
+  <option name="finalise" type="none" RosCpp=""/>
 </node>
 ```
 
@@ -592,6 +584,8 @@ RoboticsLanguage
         │   Parameters.py
         │   Transform.py
         │   README.md
+        └───Templates
+            └───Outputs
 ```
 - `Manifesto.py` contains the base information of the module. The `rol` compiler uses this file to detect and initialise this module. This file is **mandatory**. The content of the manifesto is a dictionary:
 
@@ -610,7 +604,7 @@ RoboticsLanguage
   3. The `order` sets the order in which modules are sequenced in the process.
 
 
-- `Transform.py` is the main tranformation file. It should contain a function
+- `Transform.py` is the main transformation file. It should contain a function
 
   ```coffeescript
   transform(code, parameters) -> (code, parameters)
