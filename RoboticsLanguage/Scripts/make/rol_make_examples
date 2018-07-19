@@ -27,7 +27,7 @@ if __name__ == "__main__":
 
   path = os.path.dirname(os.path.abspath(RoboticsLanguage.__file__))+'/Examples/'
 
-  def compile(path,name,command_line_parameters=[]):
+  def compile(path,name,command_line_parameters=sys.argv[1:]):
     print('Compiling '+name+'...')
 
     call(['rol', path+name] + command_line_parameters)

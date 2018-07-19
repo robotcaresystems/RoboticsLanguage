@@ -1,0 +1,216 @@
+
+{% set libraries %}
+
+<!-- Ros bridge -->
+<script type="text/javascript" src="https://static.robotwebtools.org/roslibjs/current/roslib.min.js"></script>
+
+<!-- dygraphs -->
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/dygraph/2.1.0/dygraph.min.js"></script>
+<link rel="stylesheet" type="text/css" src="https://cdnjs.cloudflare.com/ajax/libs/dygraph/2.1.0/dygraph.min.css" />
+
+{% endset %}
+
+{% set style %}
+
+{% endset %}
+
+{% set javascript %}
+
+
+
+    // Connecting to ROS
+    // -----------------
+    var ros = new ROSLIB.Ros({
+      url: 'ws://localhost:9090' // this is the standard rosbridge port
+    });
+
+    ros.on('connection', function() {
+      console.log('Connected to websocket server.');
+    });
+
+    // Displays a message in case conection failed
+    ros.on('error', function(error) {
+      $('#ros_bridge').transition('show');
+      $('#ros_bridge_header').html('Error connecting to websocket server: ' + error);
+      console.log('Error connecting to websocket server: ', error);
+    });
+
+    // Displays a message when connection ends
+    ros.on('close', function() {
+      $('#ros_bridge').transition('show');
+      $('#ros_bridge_header').html('Connection to websocket server closed!');
+      console.log('Connection to websocket server closed.');
+    });
+
+
+    // // Subscribing and publishing to a topics
+    // // ----------------------
+    //
+    // // a subscriber
+    // var subscriber_echo = new ROSLIB.Topic({
+    //   ros: ros,
+    //   name: '/webguis/example/response',
+    //   messageType: 'std_msgs/String',
+    //   // latch: true
+    // });
+    //
+    // // a publisher
+    // var publisher_echo = new ROSLIB.Topic({
+    //   ros: ros,
+    //   name: '/webguis/example/question',
+    //   messageType: 'std_msgs/String',
+    //   // latch: true
+    // });
+
+
+
+    // // Callback functions for subscribers
+    // // ------------------
+    // subscriber_echo.subscribe(function(message) {
+    //
+    //   // fill in the respose field
+    //   $('#response').html(message.data);
+    //
+    // });
+    //
+    // // Helping functions for publishing
+    // // ------------------
+    // function publishMessage()
+    // {
+    //   // read the value of the input field
+    //   text = $('#echo').val()
+    //
+    //   // create a string ROS message
+    //   var str = new ROSLIB.Message({
+    //     data : text
+    //   });
+    //
+    //   // publish
+    //   publisher_echo.publish(str)
+    // }
+
+
+    // helping functions
+    function checkboxRowShowHide(name)
+    {
+      if($('#checkbox_' + name).is(":checked"))
+      {
+          $('#row_' + name).show();
+      }
+      else
+      {
+        $('#row_' + name).hide();
+      }
+    }
+
+
+$(document).ready(function () {
+
+  $("#div_voltages").css({"display":"block"});
+    data_voltages = [[0,0],[1,2],[2,3]]
+    var g_voltages = new Dygraph(document.getElementById("div_voltages"), data_voltages, {
+    //      legend: 'always',
+    //      title: 'Voltages',
+    //      ylabel: 'Voltage (V)',
+    //      xlabel: 'Time',
+          drawPoints: false,
+          showRoller: false,
+          //  valueRange: [0, 30],
+          labels: ['Time', 'Voltage']
+        });
+
+        var x = new Date();
+
+        data_voltages.push([x, 0]);
+        g_voltages.updateOptions({
+          'file': data_voltages
+        });
+})
+
+{% endset %}
+
+{% set content %}
+
+  <!-- This part is hidden from view unless there is an error connecting to rosbridge.
+      Please do not change this part -->
+  <div class="ui icon error big message hidden" id="ros_bridge">
+    <i class="warning circle icon"></i>
+    <div class="content" >
+      <div class="header" id="ros_bridge_header">
+
+      </div>
+      <p id="ros_bridge_text">
+      Please make sure that you run "<code>roslaunch rosbridge_server rosbridge_websocket.launch</code>" in the terminal. Then refresh this page.</p>
+    </div>
+  </div>
+
+  {% if parameters|dpath('/Transformers/ROS/topicDefinitions')|length > 0 %}
+  <h1>List of ROS topics</h1>
+
+  <table class="ui celled table">
+    <thead>
+      <tr>
+        <th></th>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Flow</th>
+      </tr>
+    </thead>
+    <tbody>
+  {% for topic in parameters|dpath('/Transformers/ROS/topicDefinitions') %}
+      <tr>
+        <td>
+          <div class="ui checkbox">
+            <input type="checkbox" id="checkbox_{{topic['topic_name']|underscore}}"  onclick="checkboxRowShowHide('{{topic['topic_name']|underscore}}');">
+            <label></label>
+          </div>
+        </td>
+        <td>{{topic['topic_name']}}</td>
+        <td>{{topic['ros_type']}}</td>
+        <td>{{topic['flow']}}</td>
+      </tr>
+      <tr hidden id="row_{{topic['topic_name']|underscore}}">
+        <td colspan="4">
+
+          {% if topic['ros_type'] == 'std_msgs::String' %}
+
+          <div class="ui tiny message" id="string_{{topic['topic_name']|underscore}}">
+            <p>line 1</p>
+            <p>line 2</p>
+        </div>
+
+          <div class="ui action input">
+            <input type="text" placeholder="publish">
+            <button class="ui button">publish</button>
+          </div>
+
+          {% endif %}
+
+          {% if 'std_msgs::Float' in topic['ros_type'] or 'std_msgs::Integer' in topic['ros_type'] %}
+
+          <div class="ui statistic">
+          <div class="value">
+            5,550
+          </div>
+        </div>
+
+        <div id="div_voltages"></div>
+
+          <div class="ui action input">
+            <input type="text" placeholder="publish">
+            <button class="ui button">publish</button>
+          </div>
+
+          {% endif %}
+
+
+
+        </td>
+      </tr>
+  {% endfor %}
+    </tbody>
+  </table>
+
+  {% endif %}
+
+{% endset %}
