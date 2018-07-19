@@ -22,15 +22,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.13/semantic.min.js"></script>
   <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.13/semantic.min.css"/>
 
-  <<<'libraries'|group>>>
-
-  <style type="text/css">
-    <<<'style'|group>>>
-  </style>
-
-  <script type="text/javascript" type="text/javascript">
-    <<<'javascript'|group>>>
-  </script>
+  <<<'head'|group>>>
 
 </head>
 
@@ -39,7 +31,7 @@
   <div class="ui container">
   <h1> {{parameters['node']['name']}} </h1>
 
-    <<<'content'|group>>>
+    <<<'body'|group>>>
 
   </div>
 

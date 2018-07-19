@@ -1,5 +1,7 @@
 
-{% set libraries %}
+
+
+{% set head %}
 
 <!-- Ros bridge -->
 <script type="text/javascript" src="https://static.robotwebtools.org/roslibjs/current/roslib.min.js"></script>
@@ -8,15 +10,9 @@
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/dygraph/2.1.0/dygraph.min.js"></script>
 <link rel="stylesheet" type="text/css" src="https://cdnjs.cloudflare.com/ajax/libs/dygraph/2.1.0/dygraph.min.css" />
 
-{% endset %}
-
-{% set style %}
-
-{% endset %}
-
-{% set javascript %}
 
 
+<script type="text/javascript" type="text/javascript">
 
     // Connecting to ROS
     // -----------------
@@ -127,9 +123,12 @@ $(document).ready(function () {
         });
 })
 
+
+</script>
+
 {% endset %}
 
-{% set content %}
+{% set body %}
 
   <!-- This part is hidden from view unless there is an error connecting to rosbridge.
       Please do not change this part -->
