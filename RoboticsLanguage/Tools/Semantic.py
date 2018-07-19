@@ -21,6 +21,7 @@
 #   limitations under the License.
 import sys
 from RoboticsLanguage.Base import Utilities, Types
+from RoboticsLanguage.Tools import Exceptions
 
 
 def Checker(code, parameters):
@@ -88,14 +89,22 @@ def TypeChecker(code, parameters):
     # if the function returns, then ckeck that the type(s) returned in the content
     # matches the definition
     if len(function.xpath('function_returns')) > 0:
+
+      with Exceptions.exception('FunctionDefinition', function, parameters):
+        function_return_type = function.xpath('function_returns')[0].getchildren()[0].attrib['type']
+
       # find the return tag inside the definitions
       return_clauses = function.xpath('function_content//return')
       if len(return_clauses) > 0:
         for return_clause in return_clauses:
-          Utilities.printCode(return_clause)
+          # give error if return type is incorrect in definition
+          if return_clause.attrib['type'] != function_return_type:
+            Exceptions.raiseException('FunctionDefinition', 'ReturnDoesNotMatch', return_clause, parameters)
+      else:
+        Exceptions.raiseException('FunctionDefinition', 'FunctionDoesNotReturn', return_clause, parameters)
 
-    print '----------------------' + function_name + '-------------------'
-    Utilities.printCode(function)
+    # print '----------------------' + function_name + '-------------------'
+    # Utilities.printCode(function)
 
     # check the function definition
     # check the arguments
@@ -104,16 +113,12 @@ def TypeChecker(code, parameters):
     # function_returns = function.xpath('function_returns')[0].getchildren()[0]
     # function_returns, parameters = RecursiveTypeChecker(function_returns, parameters)
 
-
-
-
-
     # check that the function returns the correct types
 
     # check the usage of the function
-    for function_use in code.xpath('//function[@name="' + function_name + '"]'):
-      print '======================--' + function_name + '===========---------'
-      Utilities.printCode(function_use, 'lovelace')
+    # for function_use in code.xpath('//function[@name="' + function_name + '"]'):
+    #   print '======================--' + function_name + '===========---------'
+    #   Utilities.printCode(function_use, 'lovelace')
 
       # check the arguments
 
