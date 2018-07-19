@@ -32,8 +32,10 @@ import dpath.util
 import coloredlogs
 from lxml import etree
 from funcy import decorator
+from pygments import highlight
 from shutil import copy, rmtree
-from RoboticsLanguage.Base import Types
+from pygments.lexers import PythonLexer, XmlLexer
+from pygments.formatters import Terminal256Formatter
 from jinja2 import Environment, FileSystemLoader, Template, TemplateSyntaxError, TemplateAssertionError, TemplateError
 
 # -------------------------------------------------------------------------------------------------
@@ -48,12 +50,15 @@ sys.setdefaultencoding('utf-8')
 # -------------------------------------------------------------------------------------------------
 
 
-def printCode(code):
-  print etree.tostring(code, pretty_print=True)
+def printCode(code, style='monokai'):
+  print highlight(etree.tostring(code, pretty_print=True), XmlLexer(),
+                  Terminal256Formatter(style=Terminal256Formatter(style=style).style))
 
 
-def printParameters(parameters):
-  pprint.pprint(parameters)
+def printParameters(parameters, style='monokai'):
+  print highlight(pprint.pformat(parameters), PythonLexer(),
+                  Terminal256Formatter(style=Terminal256Formatter(style=style).style))
+
 
 # -------------------------------------------------------------------------------------------------
 #  Error handling
@@ -534,7 +539,7 @@ def xmlFunctionDefinition(name, arguments, returns, content, position=0):
   content_text = xml('function_content', content, position) if isinstance(
       content, str) else ''
 
-  return xmlAttributes('function_definition', arguments_text + returns_text + content_text, position, attributes={'name': name })
+  return xmlAttributes('function_definition', arguments_text + returns_text + content_text, position, attributes={'name': name})
 
 
 def xmlVariable(parameters, name, position=0):
@@ -602,6 +607,7 @@ def attribute(xml, name):
       return ''
   except:
     return ''
+
 
 def option(xml, name, debug=''):
   try:

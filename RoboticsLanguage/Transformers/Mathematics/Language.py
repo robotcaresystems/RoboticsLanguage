@@ -313,7 +313,7 @@ language = {
     },
     'assign': {
         'definition': {
-            'arguments': arguments('anything'),
+            'arguments': arguments('(real real | string string)'),
             'returns': returns('none')
         },
         'input': {

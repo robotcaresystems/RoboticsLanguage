@@ -326,7 +326,7 @@ language = {
     'return': {
         'definition': {
             'arguments': arguments('anything'),
-            'returns': returns('none')
+            'returns': returns('same')
         },
         'localisation':
         {
