@@ -141,11 +141,11 @@
         // prepare the data
         now = (Date.now() - initial_time) / 1000;
         sample = [now, message.data];
-        data[{{topic['topic_name']|underscore}}].push(sample);
-        options = {'file': data[{{topic['topic_name']|underscore}}] , 'dateWindow': [now - 15, now]};
+        data['{{topic['topic_name']|underscore}}'].push(sample);
+        options = {'file': data['{{topic['topic_name']|underscore}}'] , 'dateWindow': [now - 15, now]};
 
         // update plot
-        plot[{{topic['topic_name']|underscore}}].updateOptions(options);
+        plot['{{topic['topic_name']|underscore}}'].updateOptions(options);
         {% endif %}
 
         {% if topic['ros_type'] == 'std_msgs::String' %}
