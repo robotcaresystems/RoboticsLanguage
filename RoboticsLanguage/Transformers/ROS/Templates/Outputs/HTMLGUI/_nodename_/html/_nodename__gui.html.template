@@ -144,8 +144,11 @@
         data['{{topic['topic_name']|underscore}}'].push(sample);
         options = {'file': data['{{topic['topic_name']|underscore}}'] , 'dateWindow': [now - 15, now]};
 
+        // update value
+        $('#value_{{topic['topic_name']|underscore}}').html(message.data);
+
         // update plot
-        plot['{{topic['topic_name']|underscore}}'].updateOptions(options);
+        plots['{{topic['topic_name']|underscore}}'].updateOptions(options);
         {% endif %}
 
         {% if topic['ros_type'] == 'std_msgs::String' %}
@@ -188,7 +191,7 @@
     <div class="content hidden" id='{{topic['topic_name']|underscore}}'>
 
       <table class="ui table">
-        <tr><td>Value</td><td><h2 id="value_{{topic['topic_name']|underscore}}">3.4</h2></td></tr>
+        <tr><td>Value</td><td><h2 id="value_{{topic['topic_name']|underscore}}"></h2></td></tr>
         <tr><td>Type</td><td>{{topic['ros_type']}}</td></tr>
         <tr><td>Flow</td><td>{{topic['flow']}}</td></tr>
       </table>
