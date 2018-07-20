@@ -129,7 +129,7 @@
       var topic_{{topic['topic_name']|underscore}} = new ROSLIB.Topic({
         ros: ros,
         name: '{{topic['topic_name']}}',
-        messageType: '{{topic['ros_type']}}',
+        messageType: '{{topic['ros_type']|replace('::','/')}}',
       });
 
       // subscribe function
