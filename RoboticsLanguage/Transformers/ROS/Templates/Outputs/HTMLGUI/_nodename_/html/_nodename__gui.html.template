@@ -37,29 +37,6 @@
       console.log('Connection to websocket server closed.');
     });
 
-    {% for topic in parameters|dpath('/Transformers/ROS/topicDefinitions') %}
-
-    var topic_{{topic['topic_name']|underscore}} = new ROSLIB.Topic({
-      ros: ros,
-      name: '{{topic['topic_name']}}',
-      messageType: '{{topic['ros_type']}}',
-    });
-
-    topic_{{topic['topic_name']|underscore}}.subscribe(function(message) {
-
-      {% if 'std_msgs::Float' in topic['ros_type'] or 'std_msgs::Integer' in topic['ros_type'] %}
-
-      {% endif %}
-
-      {% if topic['ros_type'] == 'std_msgs::String' %}
-
-      {% endif %}
-
-    });
-
-
-
-    {% endfor %}
 
     // // Subscribing and publishing to a topics
     // // ----------------------
@@ -125,6 +102,9 @@
     };
 
     $(function() {
+
+      var initial_time = Date.now();
+
       $('.ui.accordion').accordion({
           onOpen: function () {
             if (plots[this.id] == false)
@@ -140,6 +120,32 @@
             console.log(this.id);
           }
       });
+
+
+      {% for topic in parameters|dpath('/Transformers/ROS/topicDefinitions') %}
+
+      var topic_{{topic['topic_name']|underscore}} = new ROSLIB.Topic({
+        ros: ros,
+        name: '{{topic['topic_name']}}',
+        messageType: '{{topic['ros_type']}}',
+      });
+
+      topic_{{topic['topic_name']|underscore}}.subscribe(function(message) {
+
+        {% if 'std_msgs::Float' in topic['ros_type'] or 'std_msgs::Integer' in topic['ros_type'] %}
+
+        {% endif %}
+
+        {% if topic['ros_type'] == 'std_msgs::String' %}
+
+        {% endif %}
+
+      });
+
+
+
+      {% endfor %}
+
     });
 
 
