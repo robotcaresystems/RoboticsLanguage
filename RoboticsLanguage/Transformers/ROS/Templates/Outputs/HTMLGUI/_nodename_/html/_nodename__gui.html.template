@@ -11,7 +11,6 @@
 <link rel="stylesheet" type="text/css" src="https://cdnjs.cloudflare.com/ajax/libs/dygraph/2.1.0/dygraph.min.css" />
 
 
-
 <script type="text/javascript" type="text/javascript">
 
     // Connecting to ROS
@@ -38,6 +37,29 @@
       console.log('Connection to websocket server closed.');
     });
 
+    {% for topic in parameters|dpath('/Transformers/ROS/topicDefinitions') %}
+
+    var topic_{{topic['topic_name']|underscore}} = new ROSLIB.Topic({
+      ros: ros,
+      name: '{{topic['topic_name']}}',
+      messageType: '{{topic['ros_type']}}',
+    });
+
+    topic_{{topic['topic_name']|underscore}}.subscribe(function(message) {
+
+      {% if 'std_msgs::Float' in topic['ros_type'] or 'std_msgs::Integer' in topic['ros_type'] %}
+
+      {% endif %}
+
+      {% if topic['ros_type'] == 'std_msgs::String' %}
+
+      {% endif %}
+
+    });
+
+
+
+    {% endfor %}
 
     // // Subscribing and publishing to a topics
     // // ----------------------
@@ -86,42 +108,39 @@
     // }
 
 
-    // helping functions
-    function checkboxRowShowHide(name)
-    {
-      if($('#checkbox_' + name).is(":checked"))
-      {
-          $('#row_' + name).show();
-      }
-      else
-      {
-        $('#row_' + name).hide();
-      }
-    }
+    var plots = {
+      {% for topic in parameters|dpath('/Transformers/ROS/topicDefinitions') %}
+        {% if 'std_msgs::Float' in topic['ros_type'] or 'std_msgs::Integer' in topic['ros_type'] %}
+            '{{topic['topic_name']|underscore}}':false,
+        {% endif %}
+      {% endfor %}
+    };
 
+    var data = {
+      {% for topic in parameters|dpath('/Transformers/ROS/topicDefinitions') %}
+        {% if 'std_msgs::Float' in topic['ros_type'] or 'std_msgs::Integer' in topic['ros_type'] %}
+          '{{topic['topic_name']|underscore}}':[[0,1],[1,2],[2,1]],
+        {% endif %}
+      {% endfor %}
+    };
 
-$(document).ready(function () {
+    $(function() {
+      $('.ui.accordion').accordion({
+          onOpen: function () {
+            if (plots[this.id] == false)
+            {
+              console.log('creating plot')
 
-  $("#div_voltages").css({"display":"block"});
-    data_voltages = [[0,0],[1,2],[2,3]]
-    var g_voltages = new Dygraph(document.getElementById("div_voltages"), data_voltages, {
-    //      legend: 'always',
-    //      title: 'Voltages',
-    //      ylabel: 'Voltage (V)',
-    //      xlabel: 'Time',
-          drawPoints: false,
-          showRoller: false,
-          //  valueRange: [0, 30],
-          labels: ['Time', 'Voltage']
-        });
-
-        var x = new Date();
-
-        data_voltages.push([x, 0]);
-        g_voltages.updateOptions({
-          'file': data_voltages
-        });
-})
+              plots[this.id] = new Dygraph(
+                      document.getElementById("plot_" + this.id),
+                      data[this.id], {
+                        labels: ['time', 'X'],
+                      });
+            }
+            console.log(this.id);
+          }
+      });
+    });
 
 
 </script>
@@ -144,39 +163,31 @@ $(document).ready(function () {
   </div>
 
   {% if parameters|dpath('/Transformers/ROS/topicDefinitions')|length > 0 %}
-  <h1>List of ROS topics</h1>
+  <h2>List of ROS topics</h2>
 
-  <table class="ui celled table">
-    <thead>
-      <tr>
-        <th></th>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Flow</th>
-      </tr>
-    </thead>
-    <tbody>
+  <div class="ui styled accordion">
   {% for topic in parameters|dpath('/Transformers/ROS/topicDefinitions') %}
-      <tr>
-        <td>
-          <div class="ui checkbox">
-            <input type="checkbox" id="checkbox_{{topic['topic_name']|underscore}}"  onclick="checkboxRowShowHide('{{topic['topic_name']|underscore}}');">
-            <label></label>
-          </div>
-        </td>
-        <td>{{topic['topic_name']}}</td>
-        <td>{{topic['ros_type']}}</td>
-        <td>{{topic['flow']}}</td>
-      </tr>
-      <tr hidden id="row_{{topic['topic_name']|underscore}}">
-        <td colspan="4">
+
+
+  <div class="title">
+    <i class="dropdown icon"></i> {{topic['topic_name']}}
+  </div>
+  <div class="content hidden" id='{{topic['topic_name']|underscore}}'>
+
+    <table class="ui table">
+      <tr><td>Value</td><td><h2 id="value_{{topic['topic_name']|underscore}}">3.4</h2></td></tr>
+      <tr><td>Type</td><td>{{topic['ros_type']}}</td></tr>
+      <tr><td>Flow</td><td>{{topic['flow']}}</td></tr>
+    </table>
 
           {% if topic['ros_type'] == 'std_msgs::String' %}
 
-          <div class="ui tiny message" id="string_{{topic['topic_name']|underscore}}">
-            <p>line 1</p>
-            <p>line 2</p>
-        </div>
+          <div class="ui form">
+            <div class="field">
+              <label>History</label>
+              <textarea readonly id="string_{{topic['topic_name']|underscore}}"></textarea>
+            </div>
+          </div>
 
           <div class="ui action input">
             <input type="text" placeholder="publish">
@@ -187,28 +198,27 @@ $(document).ready(function () {
 
           {% if 'std_msgs::Float' in topic['ros_type'] or 'std_msgs::Integer' in topic['ros_type'] %}
 
-          <div class="ui statistic">
-          <div class="value">
-            5,550
-          </div>
-        </div>
 
-        <div id="div_voltages"></div>
 
-          <div class="ui action input">
-            <input type="text" placeholder="publish">
-            <button class="ui button">publish</button>
+            <div class="ui segment">
+            <div id="plot_{{topic['topic_name']|underscore}}" ></div>
           </div>
+            <div class="ui action input">
+              <input type="text" placeholder="publish" id="input_{{topic['topic_name']|underscore}}">
+              <button class="ui button" id="button_{{topic['topic_name']|underscore}}">publish</button>
+            </div>
+
+
+
+
 
           {% endif %}
 
+        </div>
 
 
-        </td>
-      </tr>
   {% endfor %}
-    </tbody>
-  </table>
+  </div>
 
   {% endif %}
 
