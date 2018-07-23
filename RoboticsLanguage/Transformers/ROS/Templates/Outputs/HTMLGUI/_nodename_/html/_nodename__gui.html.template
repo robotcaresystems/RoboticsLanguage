@@ -133,7 +133,7 @@
       });
 
       // publish function
-      $('#publish_button_{{topic['topic_name']|underscore}}').onclick(
+      $('#publish_button_{{topic['topic_name']|underscore}}').click(
         function() {
 
           // create a ROS message
