@@ -138,7 +138,11 @@
 
           // create a ROS message
           var message = new ROSLIB.Message({
-            data : $('#input_{{topic['topic_name']|underscore}}').val()
+            {% if 'std_msgs::Float' in topic['ros_type'] or 'std_msgs::Integer' in topic['ros_type'] %}
+              data : parseFloat($('#input_{{topic['topic_name']|underscore}}').val())
+            {% else %}
+              data : $('#input_{{topic['topic_name']|underscore}}').val()
+            {% endif %}
           });
 
           // publish
