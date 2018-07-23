@@ -10,3 +10,5 @@
 #
 
 language = {}
+
+default_output = ''
