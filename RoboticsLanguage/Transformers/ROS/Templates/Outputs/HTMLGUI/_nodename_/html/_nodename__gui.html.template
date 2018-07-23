@@ -13,6 +13,9 @@
 
 <script type="text/javascript" type="text/javascript">
 
+
+    var max_string_length = 10;
+
     // Connecting to ROS
     // -----------------
     var ros = new ROSLIB.Ros({
@@ -170,8 +173,22 @@
         {% endif %}
 
         {% if topic['ros_type'] == 'std_msgs::String' %}
+
+        // trim text if necessary
+        if (message.data.length > max_string_length)
+        {
+          var message = message.data.substring(0, max_string_length) + ' ...';
+        }
+        else
+        {
+          var message = message.data;
+        }
+        // update value
+        $('#value_{{topic['topic_name']|underscore}}').html(message);
+
+
         // string type
-          $('#string_{{topic['topic_name']|underscore}}').html($('#string_{{topic['topic_name']|underscore}}').html() + message.data)
+          $('#string_{{topic['topic_name']|underscore}}').html($('#string_{{topic['topic_name']|underscore}}').html() + '\n' + message.data)
         {% endif %}
 
       });
@@ -208,11 +225,57 @@
     </div>
     <div class="content hidden" id='{{topic['topic_name']|underscore}}'>
 
-      <table class="ui table">
+<div class="ui segment">
+      <div class="ui labeled button" tabindex="0">
+        <div class="ui button">
+          Value
+        </div>
+        <a class="ui basic label" id="value_{{topic['topic_name']|underscore}}">
+        </a>
+      </div>
+
+      <div class="ui labeled button" tabindex="0">
+        <div class="ui button">
+          Type
+        </div>
+        <a class="ui basic label" id="value_{{topic['topic_name']|underscore}}">
+          {{topic['ros_type']}}
+        </a>
+      </div>
+
+      <div class="ui labeled button" tabindex="0">
+        <div class="ui button">
+          Flow
+        </div>
+        <a class="ui basic label" id="value_{{topic['topic_name']|underscore}}">
+          {{topic['flow']}}
+        </a>
+      </div>
+
+</div>
+<!-- <div class="ui small statistics">
+  <div class="statistic">
+    <div class="value" id="value_{{topic['topic_name']|underscore}}">34.5</div>
+    <div class="label">Value</div>
+  </div>
+  <div class="statistic">
+    <div class="text value">{{topic['ros_type']}}</div>
+    <div class="label">Type</div>
+  </div>
+  <div class="statistic">
+    <div class="text value">{{topic['flow']}}
+    </div>
+    <div class="label">Flow</div>
+  </div>
+</div>
+ -->
+
+
+      <!-- <table class="ui table">
         <tr><td>Value</td><td><h2 id="value_{{topic['topic_name']|underscore}}"></h2></td></tr>
         <tr><td>Type</td><td>{{topic['ros_type']}}</td></tr>
         <tr><td>Flow</td><td>{{topic['flow']}}</td></tr>
-      </table>
+      </table> -->
 
       {% if topic['ros_type'] == 'std_msgs::String' %}
         <!-- string topics  -->
