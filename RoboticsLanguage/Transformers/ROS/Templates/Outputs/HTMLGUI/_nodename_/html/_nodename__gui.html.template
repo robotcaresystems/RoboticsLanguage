@@ -132,6 +132,20 @@
         messageType: '{{topic['ros_type']|replace('::','/')}}',
       });
 
+      // publish function
+      $('#publish_button_{{topic['topic_name']|underscore}}').onclick(
+        function() {
+
+          // create a ROS message
+          var message = new ROSLIB.Message({
+            data : $('#input_{{topic['topic_name']|underscore}}').val()
+          });
+
+          // publish
+          topic_{{topic['topic_name']|underscore}}.publish(message)
+        }
+      )
+
       // subscribe function
       topic_{{topic['topic_name']|underscore}}.subscribe(function(message) {
 
@@ -206,8 +220,8 @@
         </div>
 
         <div class="ui action input">
-          <input type="text" placeholder="publish">
-          <button class="ui button">publish</button>
+          <input type="text" placeholder="publish" id="input_{{topic['topic_name']|underscore}}">
+          <button class="ui button" id="publish_button_{{topic['topic_name']|underscore}}">publish</button>
         </div>
       {% endif %}
 
@@ -219,7 +233,7 @@
 
         <div class="ui action input">
           <input type="text" placeholder="publish" id="input_{{topic['topic_name']|underscore}}">
-          <button class="ui button" id="button_{{topic['topic_name']|underscore}}">publish</button>
+          <button class="ui button" id="publish_button_{{topic['topic_name']|underscore}}">publish</button>
         </div>
       {% endif %}
     </div>
