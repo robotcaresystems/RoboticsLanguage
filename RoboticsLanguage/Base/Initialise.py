@@ -24,9 +24,12 @@ import os
 from . import Utilities
 from . import Parameters
 
-# @Utilities.cache
+@Utilities.cache
 def prepareParameters():
-  '''Collects parameters, language, messages, and error handling functions from all list_of_modules. This function is cached in `rol`. To refresh the cache run `rol --remove-cache`.'''
+  '''Collects parameters, language, messages, and error handling functions from all list_of_modules.
+  This function is cached in `rol`. To refresh the cache run `rol --remove-cache`.'''
+
+  print 3
 
   # read the path
   language_path = os.path.abspath(os.path.dirname(__file__) + '/../../') + '/'
@@ -34,12 +37,7 @@ def prepareParameters():
   # define initial classes of parameters
   manifesto = {'Inputs': {}, 'Outputs': {}, 'Transformers': {}}
   parameters = {'Inputs': {}, 'Outputs': {}, 'Transformers': {}}
-  language = {}
-  messages = {}
   command_line_flags = {}
-  error_handling = {}
-  error_exceptions = {}
-  default_output = {}
 
   # load the parameters form all the modules dynamically
   for element in Utilities.findFileName('Manifesto.py', language_path):
@@ -74,47 +72,6 @@ def prepareParameters():
         Utilities.logger.debug(e.__repr__())
         pass
 
-      # The language
-      try:
-        language_module = __import__(module_name + '.Language', globals(), locals(), ['Language'])
-
-        # append to each keyword in the language information from which package it comes from
-        for keyword in language_module.language.keys():
-          language_module.language[keyword]['package'] = name_split[1] + ':' + name_split[2]
-
-        # append language definitions
-        language = Utilities.mergeDictionaries(language, language_module.language)
-
-        # read the default output for each language keyword per package
-        if name_split[1] == 'Outputs':
-          default_output[name_split[2]] = language_module.default_output
-      except Exception as e:
-        Utilities.logger.debug(e.__repr__())
-        pass
-
-      # The messages
-      try:
-        messages_module = __import__(module_name + '.Messages', globals(), locals(), ['Messages'])
-
-        # append messages definitions
-        messages = Utilities.mergeDictionaries(messages, messages_module.messages)
-      except Exception as e:
-        Utilities.logger.debug(e.__repr__())
-        pass
-
-      # The error handling functions
-      try:
-        error_module = __import__(module_name + '.ErrorHandling', globals(), locals(), ['ErrorHandling'])
-
-        # append error handling definitions
-        error_handling = Utilities.mergeDictionaries(error_handling, error_module.error_handling_functions)
-
-        # append error exceptions definitions
-        error_exceptions = Utilities.mergeDictionaries(error_exceptions, error_module.error_exception_functions)
-      except Exception as e:
-        Utilities.logger.debug(e.__repr__())
-        pass
-
   # merge parameters collected from modules with the default system base parameters
   # At this point the default parameters and the module parameters should be jointly non-identical
   parameters = Utilities.mergeDictionaries(parameters, Parameters.parameters)
@@ -125,39 +82,9 @@ def prepareParameters():
   # add package manifestos
   parameters['manifesto'] = manifesto
 
-  # add package language definitions
-  parameters['language'] = language
-
-  # add package messages definitions
-  parameters['messages'] = messages
-
-  # add package error exceptions definitions
-  parameters['errorExceptions'] = error_exceptions
-
-  # add package error handling definitions
-  parameters['errorHandling'] = error_handling
-
   # add command line options
   parameters['command_line_flags'] = Utilities.mergeDictionaries(
       command_line_flags, Parameters.command_line_flags)
-
-  # fill in the languages using each outputs default language structure
-  for keyword, value in parameters['language'].iteritems():
-    # make sure the `output` tag is defined
-    if 'output' in value.keys():
-      # find missing outputs
-      missing = list(set(parameters['Outputs'].keys()) - set(value['output'].keys()))
-    else:
-      # all outputs are missing
-      missing = parameters['Outputs'].keys()
-      parameters['language'][keyword]['output'] = {}
-
-    parameters['language'][keyword]['defaultOutput'] = []
-    for item in missing:
-      # fill in the missing output
-      parameters['language'][keyword]['output'][item] = default_output[item]
-      # log that the default output is being used
-      parameters['language'][keyword]['defaultOutput'].append(item)
 
   return parameters
 
@@ -167,6 +94,8 @@ def Initialise(remove_cache):
   # remove cache if requested
   if remove_cache:
     Utilities.removeCache()
+
+  print 2
 
   # load cached parameters or create if necessary
   parameters = prepareParameters()
