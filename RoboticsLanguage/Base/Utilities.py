@@ -351,8 +351,10 @@ def showDebugInformation(code, parameters):
 
 
 def importModule(a, b, c):
-  return __import__('RoboticsLanguage.' + a + '.' + b, globals(), locals(), ensureList(c))
-
+  try:
+    return __import__('RoboticsLanguage.' + a + '.' + b, globals(), locals(), ensureList(c))
+  except:
+    return __import__('plugins.' + a + '.' + b, globals(), locals(), ensureList(c))
 
 def removeCache(cache_path='/.rol/cache'):
   global logger
@@ -477,10 +479,17 @@ def findFileType(extension='py', path='.'):
 
 
 def findFileName(name, path='.'):
-  for root, dirs, files in os.walk(path):
-    for eachfile in files:
-      if os.path.basename(eachfile) == name:
-        yield root + '/' + eachfile
+  if isinstance(path, list):
+    for entry in path:
+      for root, dirs, files in os.walk(entry):
+        for eachfile in files:
+          if os.path.basename(eachfile) == name:
+            yield root + '/' + eachfile
+  else:
+    for root, dirs, files in os.walk(path):
+      for eachfile in files:
+        if os.path.basename(eachfile) == name:
+          yield root + '/' + eachfile
 
 
 def createFolder(path):

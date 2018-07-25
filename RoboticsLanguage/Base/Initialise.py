@@ -21,6 +21,7 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 import os
+import sys
 from . import Utilities
 from . import Parameters
 
@@ -28,12 +29,24 @@ from . import Parameters
 def prepareParameters():
   '''Collects parameters, language, messages, and error handling functions from all list_of_modules. This function is cached in `rol`. To refresh the cache run `rol --remove-cache`.'''
 
+  # add plugins folder
+  sys.path.append(os.path.expanduser('~') + '/.rol/')
+
   # read the path
   language_path = os.path.abspath(os.path.dirname(__file__) + '/../../') + '/'
 
+  # start by loading default parameters
+  parameters = Parameters.parameters
+
+  # add some globals information
+  parameters['globals']['RoboticsLanguagePath'] = language_path + 'RoboticsLanguage/'
+
   # define initial classes of parameters
   manifesto = {'Inputs': {}, 'Outputs': {}, 'Transformers': {}}
-  parameters = {'Inputs': {}, 'Outputs': {}, 'Transformers': {}}
+  parameters['Inputs'] = {}
+  parameters['Outputs'] = {}
+  parameters['Transformers'] = {}
+
   language = {}
   messages = {}
   command_line_flags = {}
@@ -42,7 +55,7 @@ def prepareParameters():
   default_output = {}
 
   # load the parameters form all the modules dynamically
-  for element in Utilities.findFileName('Manifesto.py', language_path):
+  for element in Utilities.findFileName('Manifesto.py', [language_path, parameters['globals']['plugins']]):
 
     name_split = element.split('/')[-4:-1]
     module_name = '.'.join(name_split)
@@ -115,12 +128,6 @@ def prepareParameters():
         Utilities.logger.debug(e.__repr__())
         pass
 
-  # merge parameters collected from modules with the default system base parameters
-  # At this point the default parameters and the module parameters should be jointly non-identical
-  parameters = Utilities.mergeDictionaries(parameters, Parameters.parameters)
-
-  # add some globals information
-  parameters['globals']['RoboticsLanguagePath'] = language_path + 'RoboticsLanguage/'
 
   # add package manifestos
   parameters['manifesto'] = manifesto
