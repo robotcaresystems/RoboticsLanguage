@@ -30,9 +30,6 @@ def prepareParameters():
   '''Collects parameters, language, messages, and error handling functions from all list_of_modules.
   This function is cached in `rol`. To refresh the cache run `rol --remove-cache`.'''
 
-  # add plugins folder
-  sys.path.append(os.path.expanduser('~') + '/.rol/')
-
   # read the path
   language_path = os.path.abspath(os.path.dirname(__file__) + '/../../') + '/'
 

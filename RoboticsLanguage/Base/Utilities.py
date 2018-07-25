@@ -46,6 +46,9 @@ from jinja2 import Environment, FileSystemLoader, Template, TemplateSyntaxError,
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
+# add plugins folder
+sys.path.append(os.path.expanduser('~') + '/.rol/')
+
 # -------------------------------------------------------------------------------------------------
 #  Helping functions
 # -------------------------------------------------------------------------------------------------
