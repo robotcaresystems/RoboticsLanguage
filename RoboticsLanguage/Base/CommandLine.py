@@ -254,7 +254,7 @@ def postCommandLineParser(parameters):
   default_output = {}
 
   # load the parameters form all the modules dynamically
-  for element in Utilities.findFileName('Manifesto.py', language_path):
+  for element in Utilities.findFileName('Manifesto.py', [language_path, parameters['globals']['plugins']]):
 
     name_split = element.split('/')[-4:-1]
     module_name = '.'.join(name_split)
