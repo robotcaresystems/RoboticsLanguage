@@ -32,6 +32,7 @@ parameters = {
         'launch': False,
         'verbose': 'none',
         'deploy': os.path.expanduser('~') + '/deploy/',
+        'plugins': os.path.expanduser('~') + '/.rol/plugins',
         'removeCache': False,
         'language': 'en',
         'compilerLanguage': 'en'
@@ -187,6 +188,7 @@ command_line_flags = {
 
     'errors': {'suppress': True},
     'debug:stepCounter': {'suppress': True},
+    'global:plugins': {'suppress': True},
     'Information:user:name': {'suppress': True},
     'Information:user:email': {'suppress': True},
     'Information:user:web': {'suppress': True},

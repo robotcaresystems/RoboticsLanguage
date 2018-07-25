@@ -23,6 +23,7 @@
 import os
 import re
 import sys
+import subprocess
 import dpath.util
 from RoboticsLanguage.Base import Utilities
 
@@ -76,8 +77,17 @@ def output(code, parameters):
       # run template engine to generate node code
       if not Utilities.templateEngine(code, parameters,
                                       filepatterns, os.path.dirname(__file__) + '/Templates/' + type,
-                                      parameters['globals']['deploy'] + '/' + type):
+                                      parameters['globals']['plugins'] + '/' + type):
         sys.exit(1)
+
+
+      # make sure the path ~/.rol/plugins containts an __init__.py file
+      try:
+        subprocess.call(['touch', parameters['globals']['plugins']+'/__init__.py'])
+      except:
+        pass
+
+      print('Created ' + type + ' plugin "' + filepatterns['name'] + '" in folder ' + parameters['globals']['plugins'] + '/' + type + '/' + filepatterns['name'])
 
       # create template code elements for transformers
       if type == 'Transformers':
