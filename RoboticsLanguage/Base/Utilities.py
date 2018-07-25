@@ -390,6 +390,7 @@ def getDictValue(key, d):
 
 
 # @REFACTOR remove this function later
+@log_all_calls
 def mergeDictionaries(a, b):
   dpath.util.merge(b, a)
   return b
