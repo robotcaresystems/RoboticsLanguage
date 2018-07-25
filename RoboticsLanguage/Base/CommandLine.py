@@ -125,13 +125,9 @@ def checkSpecialCommandLineArguments(command_line_parameters, parameters):
 
 def runCommandLineParser(parameters, arguments, flags, file_formats, file_package_name, command_line_arguments):
 
-  print 7
-
   # instantiate the command line parser
   parser = argparse.ArgumentParser(prog='rol', description='Robotics Language compiler',
                                    formatter_class=argparse.RawTextHelpFormatter)
-
-  print 8
 
   # divide parameters by groups
   groups = {}
@@ -142,8 +138,6 @@ def runCommandLineParser(parameters, arguments, flags, file_formats, file_packag
   for key in sorted(arguments):
     groups[key.split(':')[0]].add_argument(*flags[key], **arguments[key])
 
-  print 9
-
   # the files to process
   parser.add_argument('filename',
                       metavar='[ ' + ' | '.join(map(lambda x: 'file.' + x, file_formats)) + ' ] [ profile.yaml ... ]',
@@ -152,15 +146,11 @@ def runCommandLineParser(parameters, arguments, flags, file_formats, file_packag
                       # default=sys.stdin,
                       help=';\n'.join(file_package_name))
 
-  print 10
-
   # run the command line parser with autocomplete
   argcomplete.autocomplete(parser)
   args = parser.parse_args(command_line_arguments[1:])
 
-  print 11
   return parser, args
-
 
 
 def processFileParameters(args, file_formats):
@@ -312,10 +302,6 @@ def postCommandLineParser(parameters):
         Utilities.logger.debug(e.__repr__())
         pass
 
-  # merge parameters collected from modules with the default system base parameters
-  # At this point the default parameters and the module parameters should be jointly non-identical
-  parameters = Utilities.mergeDictionaries(parameters, Parameters.parameters)
-
   # add package language definitions
   parameters['language'] = language
 
@@ -348,26 +334,18 @@ def postCommandLineParser(parameters):
 
   return parameters
 
-
+@Utilities.time_all_calls
 def ProcessArguments(command_line_parameters, parameters):
-
-  print 5
 
   # load cached command line flags or create if necessary
   flags, arguments, file_package_name, file_formats = prepareCommandLineArguments(parameters)
 
-  print 6
-
   # deal with special command line arguments, e.g. '--version'
   checkSpecialCommandLineArguments(command_line_parameters, parameters)
-
-  print 7
 
   # run the command line parser
   parser, args = runCommandLineParser(parameters, arguments, flags, file_formats,
                                       file_package_name, command_line_parameters)
-
-
 
   # complete processing, e.g. load languages, etc.
   parameters = postCommandLineParser(parameters)

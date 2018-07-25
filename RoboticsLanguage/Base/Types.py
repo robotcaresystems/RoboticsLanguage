@@ -19,9 +19,9 @@
 #   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
-from parsley import makeGrammar
 import re
-
+from . import Utilities
+from parsley import makeGrammar
 
 # tags that are not type checked
 type_atomic = [
@@ -63,6 +63,7 @@ def makeTypeRelationsGrammar(type_relations):
   return text, keys
 
 
+@Utilities.cache_function
 def arguments(test, tag='nothing', type_relations=type_relations_default):
   """Creates a structure that defines the arguments of a function. Used for type checking.
   For example the operator "plus" has the definitions:
@@ -108,6 +109,7 @@ def arguments(test, tag='nothing', type_relations=type_relations_default):
     return {'documentation': test, 'test': test_function, 'tag': tag}
 
 
+@Utilities.cache_function
 def optional(name, value):
   '''Creates a structure that defines the optional arguments of a function. Used for type checking.'''
 
@@ -117,6 +119,7 @@ def optional(name, value):
   return data
 
 
+@Utilities.cache_function
 def returns(name):
   '''Creates a return type for a function. Used for type checking.'''
   if name == 'same':

@@ -22,6 +22,7 @@
 
 from . import Utilities
 
+@Utilities.time_all_calls
 def Generate(outputs, code, parameters):
   """Generates the outputs"""
 

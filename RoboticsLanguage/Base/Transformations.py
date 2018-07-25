@@ -36,6 +36,7 @@ def prepareTransformations(parameters):
   return ordered_transformations_list
 
 
+@Utilities.time_all_calls
 def Apply(code, parameters):
   """Applies transformations to the XML structure"""
 

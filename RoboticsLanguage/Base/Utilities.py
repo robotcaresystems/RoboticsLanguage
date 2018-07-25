@@ -26,6 +26,7 @@ import time
 import dill
 import errno
 import pprint
+import hashlib
 import logging
 import datetime
 import dpath.util
@@ -246,8 +247,10 @@ def name_all_calls(function):
 @decorator
 def time_all_calls(function):
   start = time.time()
+  sys.stdout.write('<<<')
+  sys.stdout.flush()
   result = function()
-  print 'function name:', function._func.__name__, 'execution time: ', time.time() - start, 'seconds'
+  print 'function name:', function._func.__name__, 'execution time: ', time.time() - start, 'seconds>>>'
   return result
 
 
@@ -272,6 +275,22 @@ def cache(function):
     createFolder(os.path.expanduser("~") + cache_path)
     dill.dump(data, open(path, "wb"))  # , protocol=dill.HIGHEST_PROTOCOL)
     return data
+
+
+global_function_cache = {}
+
+
+def cache_function(function):
+  def wrapper(*arguments, **options):
+    global global_function_cache
+    hash = hashlib.md5(function.__name__ + str(arguments) + str(options)).hexdigest()
+    if hash not in global_function_cache.keys():
+      result = function(*arguments, **options)
+      global_function_cache[hash] = result
+    else:
+      result = global_function_cache[hash]
+    return result
+  return wrapper
 
 
 # -------------------------------------------------------------------------------------------------
@@ -390,7 +409,6 @@ def getDictValue(key, d):
 
 
 # @REFACTOR remove this function later
-@log_all_calls
 def mergeDictionaries(a, b):
   dpath.util.merge(b, a)
   return b

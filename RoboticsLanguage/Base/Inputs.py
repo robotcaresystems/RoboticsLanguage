@@ -22,6 +22,7 @@
 
 from . import Utilities
 
+@Utilities.time_all_calls
 def Parse(file_name, file_type, parameters):
   """Parses the robotics language and converts to XML"""
 
