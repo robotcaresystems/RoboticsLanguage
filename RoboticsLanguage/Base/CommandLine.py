@@ -265,23 +265,8 @@ def postCommandLineParser(parameters):
       # append to each keyword in the language information from which package it comes from
       for keyword in language_module.language.keys():
         language_module.language[keyword]['package'] = name_split[1] + ':' + name_split[2]
-        # print '------------> ' + keyword
 
       # append language definitions
-      # print '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++'
-      # print '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++'
-      # print module_name
-      # print '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++'
-      # print '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++'
-
-      # Utilities.printParameters(language)
-
-      # print '========================================================================++'
-      # print '========================================================================++'
-
-
-      # Utilities.printParameters(language_module.language)
-
       language = Utilities.mergeDictionaries(language, language_module.language)
 
       # read the default output for each language keyword per package
