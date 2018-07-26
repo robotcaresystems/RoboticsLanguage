@@ -25,6 +25,7 @@ import sys
 from . import Utilities
 from . import Parameters
 
+
 @Utilities.cache
 def prepareParameters():
   '''Collects parameters, language, messages, and error handling functions from all list_of_modules.
@@ -47,7 +48,9 @@ def prepareParameters():
 
   command_line_flags = {}
 
-  # load the parameters form all the modules dynamically
+  package_order = {}
+
+  # load the manifesto from all the modules
   for element in Utilities.findFileName('Manifesto.py', [language_path, parameters['globals']['plugins']]):
 
     name_split = element.split('/')[-4:-1]
@@ -61,28 +64,47 @@ def prepareParameters():
 
         # read manifesto
         manifesto[name_split[1]][name_split[2]] = manifesto_module.manifesto
+
+        # get the load order for the packages
+        if 'order' in manifesto_module.manifesto.keys():
+            package_order[module_name] = manifesto_module.manifesto['order']
+        else:
+          # Inputs are loaded first
+          if name_split[1] == 'Inputs':
+            package_order[module_name] = -1
+          # outputs are loaded last
+          elif name_split[1] == 'Outputs':
+            package_order[module_name] = 100000000
+
       except Exception as e:
         Utilities.logger.debug(e.__repr__())
         pass
-
-      # The parameters
-      try:
-        parameters_module = __import__(module_name + '.Parameters', globals(), locals(), ['Parameters'])
-
-        # read parameters
-        parameters[name_split[1]][name_split[2]] = parameters_module.parameters
-
-        # read command_line_flags
-        command_line = parameters_module.command_line_flags
-        for key, value in command_line.iteritems():
-          command_line_flags[name_split[1] + ':' + name_split[2] + ':' + key] = value
-      except Exception as e:
-        Utilities.logger.debug(e.__repr__())
-        pass
-
 
   # add package manifestos
   parameters['manifesto'] = manifesto
+
+  # add the package load order
+  parameters['globals']['load_order'] = sorted(package_order, key=package_order.get, reverse=False)
+
+  # load the parameters form all the modules dynamically
+  for module_name in parameters['globals']['load_order']:
+
+    name_split = module_name.split('.')
+
+    # The parameters
+    try:
+      parameters_module = __import__(module_name + '.Parameters', globals(), locals(), ['Parameters'])
+
+      # read parameters
+      parameters[name_split[1]][name_split[2]] = parameters_module.parameters
+
+      # read command_line_flags
+      command_line = parameters_module.command_line_flags
+      for key, value in command_line.iteritems():
+        command_line_flags[name_split[1] + ':' + name_split[2] + ':' + key] = value
+    except Exception as e:
+      Utilities.logger.debug(e.__repr__())
+      pass
 
   # add command line options
   parameters['command_line_flags'] = Utilities.mergeDictionaries(
@@ -90,7 +112,8 @@ def prepareParameters():
 
   return parameters
 
-@Utilities.time_all_calls
+
+# @Utilities.time_all_calls
 def Initialise(remove_cache):
   '''The main initialisation file of `rol`. Grabs information from all modules to assemble a `parameters` dictionary.'''
   # remove cache if requested

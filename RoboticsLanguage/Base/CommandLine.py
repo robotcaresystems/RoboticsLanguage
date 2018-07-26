@@ -254,53 +254,65 @@ def postCommandLineParser(parameters):
   default_output = {}
 
   # load the parameters form all the modules dynamically
-  for element in Utilities.findFileName('Manifesto.py', [language_path, parameters['globals']['plugins']]):
+  for module_name in parameters['globals']['load_order']:
 
-    name_split = element.split('/')[-4:-1]
-    module_name = '.'.join(name_split)
+    name_split = module_name.split('.')
 
-    if len(name_split) == 3 and name_split[1] in ['Inputs', 'Outputs', 'Transformers']:
+    # The language
+    try:
+      language_module = __import__(module_name + '.Language', globals(), locals(), ['Language'])
 
-      # The language
-      try:
-        language_module = __import__(module_name + '.Language', globals(), locals(), ['Language'])
+      # append to each keyword in the language information from which package it comes from
+      for keyword in language_module.language.keys():
+        language_module.language[keyword]['package'] = name_split[1] + ':' + name_split[2]
+        # print '------------> ' + keyword
 
-        # append to each keyword in the language information from which package it comes from
-        for keyword in language_module.language.keys():
-          language_module.language[keyword]['package'] = name_split[1] + ':' + name_split[2]
+      # append language definitions
+      # print '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++'
+      # print '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++'
+      # print module_name
+      # print '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++'
+      # print '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++'
 
-        # append language definitions
-        language = Utilities.mergeDictionaries(language, language_module.language)
+      # Utilities.printParameters(language)
 
-        # read the default output for each language keyword per package
-        if name_split[1] == 'Outputs':
-          default_output[name_split[2]] = language_module.default_output
-      except Exception as e:
-        Utilities.logger.debug(e.__repr__())
-        pass
+      # print '========================================================================++'
+      # print '========================================================================++'
 
-      # The messages
-      try:
-        messages_module = __import__(module_name + '.Messages', globals(), locals(), ['Messages'])
 
-        # append messages definitions
-        messages = Utilities.mergeDictionaries(messages, messages_module.messages)
-      except Exception as e:
-        Utilities.logger.debug(e.__repr__())
-        pass
+      # Utilities.printParameters(language_module.language)
 
-      # The error handling functions
-      try:
-        error_module = __import__(module_name + '.ErrorHandling', globals(), locals(), ['ErrorHandling'])
+      language = Utilities.mergeDictionaries(language, language_module.language)
 
-        # append error handling definitions
-        error_handling = Utilities.mergeDictionaries(error_handling, error_module.error_handling_functions)
+      # read the default output for each language keyword per package
+      if name_split[1] == 'Outputs':
+        default_output[name_split[2]] = language_module.default_output
+    except Exception as e:
+      Utilities.logger.debug(e.__repr__())
+      pass
 
-        # append error exceptions definitions
-        error_exceptions = Utilities.mergeDictionaries(error_exceptions, error_module.error_exception_functions)
-      except Exception as e:
-        Utilities.logger.debug(e.__repr__())
-        pass
+    # The messages
+    try:
+      messages_module = __import__(module_name + '.Messages', globals(), locals(), ['Messages'])
+
+      # append messages definitions
+      messages = Utilities.mergeDictionaries(messages, messages_module.messages)
+    except Exception as e:
+      Utilities.logger.debug(e.__repr__())
+      pass
+
+    # The error handling functions
+    try:
+      error_module = __import__(module_name + '.ErrorHandling', globals(), locals(), ['ErrorHandling'])
+
+      # append error handling definitions
+      error_handling = Utilities.mergeDictionaries(error_handling, error_module.error_handling_functions)
+
+      # append error exceptions definitions
+      error_exceptions = Utilities.mergeDictionaries(error_exceptions, error_module.error_exception_functions)
+    except Exception as e:
+      Utilities.logger.debug(e.__repr__())
+      pass
 
   # add package language definitions
   parameters['language'] = language
@@ -334,7 +346,8 @@ def postCommandLineParser(parameters):
 
   return parameters
 
-@Utilities.time_all_calls
+
+# @Utilities.time_all_calls
 def ProcessArguments(command_line_parameters, parameters):
 
   # load cached command line flags or create if necessary
