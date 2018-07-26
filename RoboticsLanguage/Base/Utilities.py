@@ -471,7 +471,7 @@ def ensureList(a):
 
 
 def findFileType(extension='py', path='.'):
-  for root, dirs, files in os.walk(path):
+  for root, dirs, files in os.walk(path, followlinks=True):
     for eachfile in files:
       fileName, fileExtension = os.path.splitext(eachfile)
       if fileExtension.lower() == '.' + extension:
@@ -481,12 +481,12 @@ def findFileType(extension='py', path='.'):
 def findFileName(name, path='.'):
   if isinstance(path, list):
     for entry in path:
-      for root, dirs, files in os.walk(entry):
+      for root, dirs, files in os.walk(entry, followlinks=True):
         for eachfile in files:
           if os.path.basename(eachfile) == name:
             yield root + '/' + eachfile
   else:
-    for root, dirs, files in os.walk(path):
+    for root, dirs, files in os.walk(path, followlinks=True):
       for eachfile in files:
         if os.path.basename(eachfile) == name:
           yield root + '/' + eachfile
@@ -897,7 +897,7 @@ def templateEngine(code, parameters, filepatterns, templates_path, deploy_path,
 
   try:
     # find all the template files in the template folder
-    for root, dirs, files in os.walk(templates_path):
+    for root, dirs, files in os.walk(templates_path, followlinks=True):
       for file in files:
         if file.endswith(".template"):
           files_to_process.append(os.path.join(root, file))
