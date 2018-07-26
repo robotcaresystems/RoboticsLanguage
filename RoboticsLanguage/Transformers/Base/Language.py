@@ -389,6 +389,14 @@ language = {
         }
     },
 
+    'if': {
+        'definition': {
+            'arguments': arguments('boolean anything anything'),
+            'returns': returns('none')
+        },
+
+    }
+
 }
 
 #
