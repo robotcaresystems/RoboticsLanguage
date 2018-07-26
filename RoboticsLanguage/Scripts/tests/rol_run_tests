@@ -2,4 +2,10 @@
 
 ROL_PATH=`python -c "import os; import RoboticsLanguage; print os.path.dirname(os.path.abspath(RoboticsLanguage.__file__))"`
 
-python -m unittest discover -s $ROL_PATH/Scripts/tests/ -v
+# python -m unittest discover -s $ROL_PATH/Scripts/tests/ -v
+
+cd $ROL_PATH/Scripts/tests
+python -m unittest -v test_rol_parse
+python -m unittest -v test_base_transformations
+python -m unittest -v test_base_utilities
+python -m unittest -v test_base_commandline
