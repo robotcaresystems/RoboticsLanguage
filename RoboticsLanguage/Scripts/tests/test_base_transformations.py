@@ -21,8 +21,7 @@
 
 import unittest
 from lxml import etree
-from RoboticsLanguage.Base import Transformations
-from RoboticsLanguage.Base.Types import arguments, optional, returns
+from RoboticsLanguage.Base import Transformations, Initialise, CommandLine
 
 
 # =================================================================================================
@@ -35,78 +34,16 @@ class TestBaseTransformations(unittest.TestCase):
 
     xml = etree.fromstring('<node><print><string>hello</string></print></node>')
 
-    parameters = {
-        'text': 'node(print("hello"))',
-        'errors': [],
-        'debug': {'parameters': False,
-                  'stepCounter': 0,
-                  'step': 0,
-                  'ignoreSemanticErrors': False
-                  },
-        'manifesto': {
-                'Transformers': {
-                    'Base': {
-                        'order': 0,
-                        'packageName': 'Base',
-                        'packageShortName': 'base'
-                    }
-                }
-        },
-        'globals': {
-            'output': ['RoL', 'RosCpp']
-        },
-        'language': {
-            'string': {
-                'output': {
-                    'RosCpp': '"{{text}}"',
-                    'RoL': '"{{text}}"',
-                }
-            },
-            'node': {
-                'definition': {
-                    'arguments': arguments('anything'),
-                    'optional': {
-                        'name': optional('string', 'unnamed'),
-                    },
-                    'returns': returns('node')
-                },
-            },
-            'print': {
-                'definition': {
-                    'arguments': arguments('string+'),
-                    'optional': {'level': optional('string', 'info')},
-                    'returns': returns('none')
-                },
-                'output':  {
-                    'RosCpp': 'ROS_INFO({{children|first}})',
-                    'RoL': 'print({{children|first}})',
-                }
-            },
-            'option': {
-                'output': {
-                    'RosCpp': '"{{text}}"',
-                    'RoL': '"{{text}}"',
-                },
-                'documentation':
-                {
-                }
-            },
-            'name': {
-                'output': {
-                    'RosCpp': '"{{text}}"',
-                    'RoL': '"{{text}}"',
-                },
-                'documentation':
-                {
-                }
-            }
-        }
-    }
+    # initialise compiler
+    parameters = Initialise.Initialise(False)
+
+    # load all parameters after the command line parser
+    parameters = CommandLine.postCommandLineParser(parameters)
 
     xml_code, parameters = Transformations.Apply(xml, parameters)
 
     self.assertEqual(etree.tostring(xml_code),
-                     '<node type="node"><print type="none" RoL="print(&quot;hello&quot;)" RosCpp="ROS_INFO(&quot;hello&quot;)"><string type="string" RoL="&quot;hello&quot;" RosCpp="&quot;hello&quot;">hello</string><option name="level" type="string"><string type="string" RoL="&quot;info&quot;" RosCpp="&quot;info&quot;">info</string></option></print><option name="name" type="string" RoL="&quot;&quot;" RosCpp="&quot;&quot;"><string type="string" RoL="&quot;unnamed&quot;" RosCpp="&quot;unnamed&quot;">unnamed</string></option></node>')
+                     '<node type="node"><print type="none" RosCpp="ROS_INFO_STREAM(&quot;hello&quot;)"><string type="string" RosCpp="&quot;hello&quot;">hello</string><option name="level" type="string"><string type="string" RosCpp="&quot;bidirectional&quot;">bidirectional</string></option></print><option name="definitions" type="none" RosCpp=""/><option name="rate" type="real" RosCpp="1"><real type="real" RosCpp="1">1</real></option><option name="initialise" type="none" RosCpp=""/><option name="name" type="string" RosCpp="&quot;bidirectional&quot;"><string type="string" RosCpp="&quot;bidirectional&quot;">bidirectional</string></option><option name="finalise" type="none" RosCpp=""/></node>')
 
 
 if __name__ == '__main__':
