@@ -41,10 +41,41 @@ def Checker(code, parameters):
 
 
 def TypeChecker(code, parameters):
+  '''Generic type checking function'''
+
+  # check atomic types
+  code, parameters = AtomsTypeChecker(code, parameters)
+
+  # check defined types
+  code, parameters = TypesTypeChecker(code, parameters)
+
+  # check variable types
+  code, parameters = VariablesTypeChecker(code, parameters)
+
+  # check function types
+  code, parameters = FunctionsTypeChecker(code, parameters)
+
+  # recursively check the rest of the abstract syntax tree
+  code, parameters = RecursiveTypeChecker(code, parameters)
+
+  return code, parameters
+
+
+def AtomsTypeChecker(code, parameters):
 
   # traverse xml and set all types for all atomic tags
   [x.set('type', type) for type in Types.type_atomic
    for x in code.xpath('//' + type)]
+
+  return code, parameters
+
+
+def TypesTypeChecker(code, parameters):
+
+  return code, parameters
+
+
+def VariablesTypeChecker(code, parameters):
 
   # fill in global scope variable types
   for variable in code.xpath('/node/option[@name="definitions"]//element'):
@@ -79,9 +110,20 @@ def TypeChecker(code, parameters):
     for variable_used in variable.getparent().xpath('//variable[@name="' + variable_name + '"]'):
       variable_used.attrib['type'] = variable_definition.attrib['type']
 
+  return code, parameters
+
+
+def FunctionsTypeChecker(code, parameters):
+
   # check function types
   for function in code.xpath('//function_definition'):
     function_name = function.attrib['name']
+
+    # print '----------------------' + function_name + '-------------------'
+    # Utilities.printCode(function)
+
+
+
 
     # check contents of the function definition
     function, parameters = RecursiveTypeChecker(function, parameters)
@@ -103,19 +145,20 @@ def TypeChecker(code, parameters):
       else:
         Exceptions.raiseException('FunctionDefinition', 'FunctionDoesNotReturn', return_clause, parameters)
 
-    # print '----------------------' + function_name + '-------------------'
-    # Utilities.printCode(function)
 
     # check the function definition
     # check the arguments
 
     # check the types of the return part of the function
-    # function_returns = function.xpath('function_returns')[0].getchildren()[0]
-    # function_returns, parameters = RecursiveTypeChecker(function_returns, parameters)
+    try:
+      function_returns = function.xpath('function_returns')[0].getchildren()[0]
+      function_returns, parameters = RecursiveTypeChecker(function_returns, parameters)
+    except:
+      pass
 
     # check that the function returns the correct types
 
-    # check the usage of the function
+    # # check the usage of the function
     # for function_use in code.xpath('//function[@name="' + function_name + '"]'):
     #   print '======================--' + function_name + '===========---------'
     #   Utilities.printCode(function_use, 'lovelace')
@@ -125,7 +168,7 @@ def TypeChecker(code, parameters):
       # fill in the return types
 
   # after the previous steps it is ready to check all the remaining types recursively
-  code, parameters = RecursiveTypeChecker(code, parameters)
+  # code, parameters = RecursiveTypeChecker(code, parameters)
 
   return code, parameters
 
