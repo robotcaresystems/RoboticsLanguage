@@ -101,10 +101,12 @@ command_line_flags = {
     },
     'debug:parameters': {
         'noArgument': True,
+        'fileNotNeeded': True,
         'description': 'Prints the internal parameters'
     },
     'debug:parametersPath': {
         'longFlag': 'debug-parameters-path',
+        'fileNotNeeded': True,
         'description': 'Prints the internal parameters for a specific path'
     },
     'debug:step': {
@@ -132,6 +134,7 @@ command_line_flags = {
     'globals:version': {
         'longFlag': 'version',
         'noArgument': True,
+        'fileNotNeeded': True,
         'description': 'Shows the version of the Robotics Language and exit.'
     },
     'globals:output': {
@@ -173,6 +176,7 @@ command_line_flags = {
     'globals:removeCache': {
         'longFlag': 'remove-cache',
         'noArgument': True,
+        'fileNotNeeded': True,
         'description': 'Deletes the compiler cache'
     },
     'globals:language': {
