@@ -22,18 +22,23 @@
 
 from . import Utilities
 
+
 def Generate(outputs, code, parameters):
   """Generates the outputs"""
 
   for output in outputs:
-    # update the compiler step
-    parameters = Utilities.incrementCompilerStep(parameters, 'Output ' + output)
 
-    # load the module
-    output_function = Utilities.importModule('Outputs', output ,'Output')
+    # Checks if the plugin can run without code
+    if (code is not None) or (code is None and 'requiresCode' in parameters['manifesto']['Outputs'][output].keys() and not parameters['manifesto']['Outputs'][output]['requiresCode']):
 
-    # apply transformations
-    output_function.Output.output(code,parameters)
+      # update the compiler step
+      parameters = Utilities.incrementCompilerStep(parameters, 'Output ' + output)
 
-    # show debug information
-    Utilities.showDebugInformation(code,parameters)
+      # load the module
+      output_function = Utilities.importModule('Outputs', output, 'Output')
+
+      # apply transformations
+      output_function.Output.output(code, parameters)
+
+      # show debug information
+      Utilities.showDebugInformation(code, parameters)
