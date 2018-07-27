@@ -137,8 +137,11 @@ def runCommandLineParser(parameters, arguments, flags, file_formats, file_packag
   for key in sorted(arguments):
     groups[key.split(':')[0]].add_argument(*flags[key], **arguments[key])
 
-  # get a list of flags where a file is not needed
-  list_of_no_file_needed_flags = reduce(lambda a,b: a+b,[flags[x] for x in dpath.util.search(parameters, 'command_line_flags/*/fileNotNeeded')['command_line_flags'].keys()])
+  try:
+    # get a list of flags where a file is not needed
+    list_of_no_file_needed_flags = reduce(lambda a,b: a+b,[flags[x] for x in dpath.util.search(parameters, 'command_line_flags/*/fileNotNeeded')['command_line_flags'].keys()])
+  except:
+    list_of_no_file_needed_flags = []
 
   # if one of the flags that does not require a file is used than change argparse
   if any([x in list_of_no_file_needed_flags for x in sys.argv]):
