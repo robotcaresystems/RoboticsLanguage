@@ -24,6 +24,7 @@ import os
 import sys
 import yaml
 import argparse
+import dpath.util
 import argcomplete
 from . import Utilities
 from . import Parameters
@@ -116,11 +117,10 @@ def prepareCommandLineArguments(parameters):
 
   return flags, arguments, file_package_name, file_formats
 
-
+# @REFACTOR by https://stackoverflow.com/questions/15405636/pythons-argparse-to-show-programs-version-with-prog-and-version-string-formatt
 def checkSpecialCommandLineArguments(command_line_parameters, parameters):
   if '--version' in command_line_parameters:
     print 'The Robotics Language Version: ' + parameters['globals']['version']
-    sys.exit(0)
 
 
 def runCommandLineParser(parameters, arguments, flags, file_formats, file_package_name, command_line_arguments):
@@ -138,11 +138,25 @@ def runCommandLineParser(parameters, arguments, flags, file_formats, file_packag
   for key in sorted(arguments):
     groups[key.split(':')[0]].add_argument(*flags[key], **arguments[key])
 
+  try:
+    # get a list of flags where a file is not needed
+    list_of_no_file_needed_flags = reduce(lambda a,b: a+b,[flags[x] for x in dpath.util.search(parameters, 'command_line_flags/*/fileNotNeeded')['command_line_flags'].keys()])
+  except:
+    list_of_no_file_needed_flags = []
+
+  # if one of the flags that does not require a file is used than change argparse
+  if any([x in list_of_no_file_needed_flags for x in sys.argv]):
+    nargs = '*'
+    parameters['globals']['fileNeeded'] = False
+  else:
+    nargs = '+'
+    parameters['globals']['fileNeeded'] = True
+
   # the files to process
   parser.add_argument('filename',
                       metavar='[ ' + ' | '.join(map(lambda x: 'file.' + x, file_formats)) + ' ] [ profile.yaml ... ]',
                       type=argparse.FileType('r'),
-                      nargs='+',
+                      nargs=nargs,
                       # default=sys.stdin,
                       help=';\n'.join(file_package_name))
 
@@ -153,7 +167,7 @@ def runCommandLineParser(parameters, arguments, flags, file_formats, file_packag
   return parser, args
 
 
-def processFileParameters(args, file_formats):
+def processFileParameters(args, file_formats, parameters):
   # Check file types
   rol_files = []
   parameter_files = []
@@ -176,7 +190,7 @@ def processFileParameters(args, file_formats):
     Utilities.logger.error('the following files have unknown formal: ' + str(unknown_files))
     sys.exit(1)
 
-  if len(rol_files) == 0:
+  if len(rol_files) == 0 and parameters['globals']['fileNeeded']:
     Utilities.logger.error('no Robotics Language files detected!')
     sys.exit(1)
     # @TODO: implement multiple file support
@@ -219,7 +233,7 @@ def processCommandLineParameters(args, file_formats, parameters):
     Utilities.setLoggerLevel(command_line_parameters['globals']['verbose'])
 
   # check for files parameters
-  rol_files, parameter_files = processFileParameters(args, file_formats)
+  rol_files, parameter_files = processFileParameters(args, file_formats, parameters)
 
   # now concatenate all parameters starting with
   # 1. defaults from RoL and from modules (can be cached)
@@ -240,7 +254,10 @@ def processCommandLineParameters(args, file_formats, parameters):
   # remove filename key
   parameters.pop('filename', None)
 
-  return rol_files[0]['name'], rol_files[0]['type'], Utilities.ensureList(parameters['globals']['output']), parameters
+  if len(rol_files) == 0:
+    return None, None, Utilities.ensureList(parameters['globals']['output']), parameters
+  else:
+    return rol_files[0]['name'], rol_files[0]['type'], Utilities.ensureList(parameters['globals']['output']), parameters
 
 
 def postCommandLineParser(parameters):

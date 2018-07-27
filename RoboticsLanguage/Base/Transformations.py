@@ -40,39 +40,41 @@ def prepareTransformations(parameters):
 def Apply(code, parameters):
   """Applies transformations to the XML structure"""
 
-  # fill in defaults in optional arguments
-  code, parameters = Utilities.fillDefaultsInOptionalArguments(code, parameters)
+  if code is not None:
 
-  # first do all semantic checking
-  code, parameters = Semantic.Checker(code, parameters)
+    # fill in defaults in optional arguments
+    code, parameters = Utilities.fillDefaultsInOptionalArguments(code, parameters)
 
-  # load the list of transformations by order
-  ordered_transformations_list = prepareTransformations(parameters)
+    # first do all semantic checking
+    code, parameters = Semantic.Checker(code, parameters)
 
-  # load the transform modules
-  transform_function_list = [Utilities.importModule('Transformers', t, 'Transform')
-                             for t in ordered_transformations_list]
+    # load the list of transformations by order
+    ordered_transformations_list = prepareTransformations(parameters)
 
-  # apply transformations
-  for transform_function, transform_name in zip(transform_function_list, ordered_transformations_list):
-
-    # update the compiler step
-    parameters = Utilities.incrementCompilerStep(parameters, 'Transforming ' + transform_name)
+    # load the transform modules
+    transform_function_list = [Utilities.importModule('Transformers', t, 'Transform')
+                               for t in ordered_transformations_list]
 
     # apply transformations
-    code, parameters = transform_function.Transform.transform(code, parameters)
+    for transform_function, transform_name in zip(transform_function_list, ordered_transformations_list):
 
-    # show debug information
-    Utilities.showDebugInformation(code, parameters)
+      # update the compiler step
+      parameters = Utilities.incrementCompilerStep(parameters, 'Transforming ' + transform_name)
 
-  # serialize for each output
-  for language in Utilities.ensureList(parameters['globals']['output']):
-    for xml_child in code.getchildren():
-      Utilities.serialise(xml_child, parameters, parameters['language'], language)
+      # apply transformations
+      code, parameters = transform_function.Transform.transform(code, parameters)
 
-  # check if semantic errors have occured
-  if len(parameters['errors']) > 0:
-    Utilities.logging.error("Semantic errors found! Stopping.")
-    sys.exit(1)
+      # show debug information
+      Utilities.showDebugInformation(code, parameters)
+
+    # serialize for each output
+    for language in Utilities.ensureList(parameters['globals']['output']):
+      for xml_child in code.getchildren():
+        Utilities.serialise(xml_child, parameters, parameters['language'], language)
+
+    # check if semantic errors have occured
+    if len(parameters['errors']) > 0:
+      Utilities.logging.error("Semantic errors found! Stopping.")
+      sys.exit(1)
 
   return code, parameters
