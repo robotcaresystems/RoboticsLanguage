@@ -156,8 +156,8 @@ def parse(text, parameters):
   # load cached language and grammar or create from scratch if needed
   grammar = prepareGrammarEngine(parameters)
 
-  # show the grammar if `--debug-rol-grammar` is set in the command line
-  if parameters['Inputs']['RoL']['debug']['grammar']:
+  # show the grammar if `--show-rol-grammar` is set in the command line
+  if parameters['Inputs']['RoL']['developer']['grammar']:
     print(grammar)
 
   # @NOTE could not pickle the language itself to cache. Is there a way to solve this?

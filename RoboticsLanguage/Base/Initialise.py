@@ -84,10 +84,10 @@ def prepareParameters():
   parameters['manifesto'] = manifesto
 
   # add the package load order
-  parameters['globals']['load_order'] = sorted(package_order, key=package_order.get, reverse=False)
+  parameters['globals']['loadOrder'] = sorted(package_order, key=package_order.get, reverse=False)
 
   # load the parameters form all the modules dynamically
-  for module_name in parameters['globals']['load_order']:
+  for module_name in parameters['globals']['loadOrder']:
 
     name_split = module_name.split('.')
 

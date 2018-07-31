@@ -20,9 +20,8 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-from . import Utilities
-from RoboticsLanguage.Tools import Semantic
 import sys
+from . import Utilities
 
 
 @Utilities.cache_in_disk
@@ -36,7 +35,6 @@ def prepareTransformations(parameters):
   return ordered_transformations_list
 
 
-# @Utilities.time_all_calls
 def Apply(code, parameters):
   """Applies transformations to the XML structure"""
 
@@ -58,8 +56,8 @@ def Apply(code, parameters):
       # apply transformations
       code, parameters = transform_function.Transform.transform(code, parameters)
 
-      # show debug information
-      Utilities.showDebugInformation(code, parameters)
+      # show developer information
+      Utilities.showDeveloperInformation(code, parameters)
 
     # serialize for each output
     for language in Utilities.ensureList(parameters['globals']['output']):

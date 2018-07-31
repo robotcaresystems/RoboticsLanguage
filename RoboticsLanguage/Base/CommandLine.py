@@ -94,7 +94,7 @@ def prepareCommandLineArguments(parameters):
   Parameters.command_line_flags['globals:output']['choices'] = parameters['manifesto']['Outputs'].keys()
 
   # create a subset of all the parameters
-  subset = dict((x, parameters[x]) for x in ['Information', 'Transformers', 'Inputs', 'Outputs', 'globals', 'debug'])
+  subset = dict((x, parameters[x]) for x in ['Information', 'Transformers', 'Inputs', 'Outputs', 'globals', 'developer'])
 
   # create argparse list parameters
   flags, arguments = generateArgparseArguments(subset, parameters['command_line_flags'])
@@ -271,7 +271,7 @@ def postCommandLineParser(parameters):
   default_output = {}
 
   # load the parameters form all the modules dynamically
-  for module_name in parameters['globals']['load_order']:
+  for module_name in parameters['globals']['loadOrder']:
 
     name_split = module_name.split('.')
 

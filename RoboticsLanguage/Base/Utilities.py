@@ -334,45 +334,45 @@ class color:
 
 def incrementCompilerStep(parameters, name):
   # update the compiler step
-  parameters['debug']['stepCounter'] = parameters['debug']['stepCounter'] + 1
+  parameters['developer']['stepCounter'] = parameters['developer']['stepCounter'] + 1
 
   # log the current step
   logger.info(
-      'Step [' + str(parameters['debug']['stepCounter']) + "]: " + name)
+      'Step [' + str(parameters['developer']['stepCounter']) + "]: " + name)
 
   return parameters
 
 
-def showDebugInformation(code, parameters):
-  if parameters['debug']['step'] == parameters['debug']['stepCounter']:
+def showDeveloperInformation(code, parameters):
+  if parameters['developer']['step'] == parameters['developer']['stepCounter']:
 
-      # show debug information for xml code
-    if parameters['debug']['code']:
+      # show developer information for xml code
+    if parameters['developer']['code']:
       printCode(code)
 
-    # show debug information for parameters
-    if parameters['debug']['parameters']:
+    # show developer information for parameters
+    if parameters['developer']['parameters']:
       printParameters(parameters)
 
-    # show debug information for specific xml code
-    if parameters['debug']['codePath'] is not '':
+    # show developer information for specific xml code
+    if parameters['developer']['codePath'] is not '':
       try:
-        for element in code.xpath(parameters['debug']['codePath']):
+        for element in code.xpath(parameters['developer']['codePath']):
           printCode(element)
       except:
         logger.warning(
-            "The path'" + parameters['debug']['codePath'] + "' is not present in the code")
+            "The path'" + parameters['developer']['codePath'] + "' is not present in the code")
 
-    # show debug information for specific parameters
-    if parameters['debug']['parametersPath'] is not '':
+    # show developer information for specific parameters
+    if parameters['developer']['parametersPath'] is not '':
       try:
-        for element in paths(parameters, parameters['debug']['parametersPath']):
+        for element in paths(parameters, parameters['developer']['parametersPath']):
           printParameters(element)
       except:
         logger.warning(
-            "The path'" + parameters['debug']['parametersPath'] + "' is not defined in the internal parameters.")
+            "The path'" + parameters['developer']['parametersPath'] + "' is not defined in the internal parameters.")
 
-    if parameters['debug']['stop']:
+    if parameters['developer']['stop']:
       sys.exit(0)
 
 

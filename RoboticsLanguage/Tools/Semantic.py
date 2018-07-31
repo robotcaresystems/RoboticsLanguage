@@ -28,7 +28,7 @@ def Checker(code, parameters):
   '''Generic semantic checking function'''
 
   # check if should ignore semantic checking
-  if parameters['debug']['ignoreSemanticErrors']:
+  if parameters['developer']['ignoreSemanticErrors']:
     return code, parameters
 
   # check types
@@ -115,60 +115,95 @@ def VariablesTypeChecker(code, parameters):
 
 def FunctionsTypeChecker(code, parameters):
 
+  functions = {}
+
   # check function types
   for function in code.xpath('//function_definition'):
     function_name = function.attrib['name']
 
-    # print '----------------------' + function_name + '-------------------'
-    # Utilities.printCode(function)
+    functions[function_name] = {'mandatory': [], 'optional': {}, 'returns': []}
+
+    print '----------------------' + function_name + '-------------------'
+    Utilities.printCode(function)
+
+    # 1. check the inputs/outputs of function
+    print 'Function arguments ============'
+    arguments = function.xpath('function_arguments')
+
+    # for each function argument
+    if len(arguments) > 0:
+      for argument in arguments[0].getchildren():
+        argument, parameters = RecursiveTypeChecker(argument, parameters)
+
+        # mandatory argument
+        if argument.tag == 'element':
+          functions[function_name]['mandatory'].append(argument.xpath('variable')[0].attrib['type'])
+
+        # optional argument
+        if argument.tag == 'assign':
+          functions[function_name]['optional'][argument.xpath('element/variable')[0].attrib['name']] = argument.xpath('element/variable')[0].attrib['type']
+
+    Utilities.printParameters(functions)
 
 
-
-
-    # check contents of the function definition
-    function, parameters = RecursiveTypeChecker(function, parameters)
-
-    # if the function returns, then ckeck that the type(s) returned in the content
-    # matches the definition
-    if len(function.xpath('function_returns')) > 0:
-
-      with Exceptions.exception('FunctionDefinition', function, parameters):
-        function_return_type = function.xpath('function_returns')[0].getchildren()[0].attrib['type']
-
-      # find the return tag inside the definitions
-      return_clauses = function.xpath('function_content//return')
-      if len(return_clauses) > 0:
-        for return_clause in return_clauses:
-          # give error if return type is incorrect in definition
-          if return_clause.attrib['type'] != function_return_type:
-            Exceptions.raiseException('FunctionDefinition', 'ReturnDoesNotMatch', return_clause, parameters)
-      else:
-        Exceptions.raiseException('FunctionDefinition', 'FunctionDoesNotReturn', return_clause, parameters)
-
-
-    # check the function definition
-    # check the arguments
-
-    # check the types of the return part of the function
-    try:
-      function_returns = function.xpath('function_returns')[0].getchildren()[0]
-      function_returns, parameters = RecursiveTypeChecker(function_returns, parameters)
-    except:
-      pass
-
-    # check that the function returns the correct types
-
-    # # check the usage of the function
-    # for function_use in code.xpath('//function[@name="' + function_name + '"]'):
-    #   print '======================--' + function_name + '===========---------'
-    #   Utilities.printCode(function_use, 'lovelace')
-
-      # check the arguments
-
-      # fill in the return types
-
-  # after the previous steps it is ready to check all the remaining types recursively
-  # code, parameters = RecursiveTypeChecker(code, parameters)
+  #
+  #
+  #
+  #   # 2. check usage of function
+  #
+  #   # 3. check return statement in function definition
+  #
+  #   # 4. check contents in function definition
+  #
+  #
+  #
+  #
+  #   # if the function returns, then ckeck that the type(s) returned in the content
+  #   # matches the definition
+  #   if len(function.xpath('function_returns')) > 0:
+  #
+  #     with Exceptions.exception('FunctionDefinition', function, parameters):
+  #       function_return_type = function.xpath('function_returns')[0].getchildren()[0].attrib['type']
+  #
+  #     # find the return tag inside the definitions
+  #     return_clauses = function.xpath('function_content//return')
+  #     if len(return_clauses) > 0:
+  #       for return_clause in return_clauses:
+  #         # give error if return type is incorrect in definition
+  #         if return_clause.attrib['type'] != function_return_type:
+  #           Exceptions.raiseException('FunctionDefinition', 'ReturnDoesNotMatch', return_clause, parameters)
+  #     else:
+  #       Exceptions.raiseException('FunctionDefinition', 'FunctionDoesNotReturn', return_clause, parameters)
+  #
+  #
+  #   # check the function definition
+  #   # check the arguments
+  #
+  #   # check contents of the function definition
+  #   function, parameters = RecursiveTypeChecker(function, parameters)
+  #
+  #
+  #
+  #   # check the types of the return part of the function
+  #   try:
+  #     function_returns = function.xpath('function_returns')[0].getchildren()[0]
+  #     function_returns, parameters = RecursiveTypeChecker(function_returns, parameters)
+  #   except:
+  #     pass
+  #
+  #   # check that the function returns the correct types
+  #
+  #   # # check the usage of the function
+  #   # for function_use in code.xpath('//function[@name="' + function_name + '"]'):
+  #   #   print '======================--' + function_name + '===========---------'
+  #   #   Utilities.printCode(function_use, 'lovelace')
+  #
+  #     # check the arguments
+  #
+  #     # fill in the return types
+  #
+  # # after the previous steps it is ready to check all the remaining types recursively
+  # # code, parameters = RecursiveTypeChecker(code, parameters)
 
   return code, parameters
 

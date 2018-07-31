@@ -48,9 +48,13 @@ def Parse(file_name, file_type, parameters):
         # parse code
         code, parameters = parsing_function.Parse.parse(text, parameters)
 
-        # show debug information
-        Utilities.showDebugInformation(code, parameters)
+        # show developer information
+        Utilities.showDeveloperInformation(code, parameters)
 
         return code, parameters
+
+  else:
+    # show developer information
+    Utilities.showDeveloperInformation(code, parameters)
 
   return None, parameters

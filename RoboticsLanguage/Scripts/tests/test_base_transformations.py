@@ -43,7 +43,7 @@ class TestBaseTransformations(unittest.TestCase):
     xml_code, parameters = Transformations.Apply(xml, parameters)
 
     self.assertEqual(etree.tostring(xml_code),
-                     '<node type="node"><print type="none" RosCpp="ROS_INFO_STREAM(&quot;hello&quot;)"><string type="string" RosCpp="&quot;hello&quot;">hello</string><option name="level" type="string"><string type="string" RosCpp="&quot;bidirectional&quot;">bidirectional</string></option></print><option name="definitions" type="none" RosCpp=""/><option name="rate" type="real" RosCpp="1"><real type="real" RosCpp="1">1</real></option><option name="initialise" type="none" RosCpp=""/><option name="name" type="string" RosCpp="&quot;bidirectional&quot;"><string type="string" RosCpp="&quot;bidirectional&quot;">bidirectional</string></option><option name="finalise" type="none" RosCpp=""/></node>')
+                     '<node type="node"><print type="none" RosCpp="ROS_INFO_STREAM(&quot;hello&quot;)"><string type="string" RosCpp="&quot;hello&quot;">hello</string><option name="level" type="string"><string type="string" RosCpp="&quot;info&quot;">info</string></option></print><option name="definitions" type="none" RosCpp=""/><option name="rate" type="real" RosCpp="1"><real type="real" RosCpp="1">1</real></option><option name="initialise" type="none" RosCpp=""/><option name="name" type="string" RosCpp="&quot;unnamed&quot;"><string type="string" RosCpp="&quot;unnamed&quot;">unnamed</string></option><option name="finalise" type="none" RosCpp=""/></node>')
 
 
 if __name__ == '__main__':
