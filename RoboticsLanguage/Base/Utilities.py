@@ -347,7 +347,7 @@ def showDeveloperInformation(code, parameters):
   if parameters['developer']['step'] == parameters['developer']['stepCounter']:
 
       # show developer information for xml code
-    if parameters['developer']['code']:
+    if parameters['developer']['code'] and code is not None:
       printCode(code)
 
     # show developer information for parameters
@@ -355,7 +355,7 @@ def showDeveloperInformation(code, parameters):
       printParameters(parameters)
 
     # show developer information for specific xml code
-    if parameters['developer']['codePath'] is not '':
+    if parameters['developer']['codePath'] is not '' and code is not None:
       try:
         for element in code.xpath(parameters['developer']['codePath']):
           printCode(element)

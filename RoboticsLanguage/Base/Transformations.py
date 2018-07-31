@@ -50,14 +50,16 @@ def Apply(code, parameters):
     # apply transformations
     for transform_function, transform_name in zip(transform_function_list, ordered_transformations_list):
 
-      # update the compiler step
-      parameters = Utilities.incrementCompilerStep(parameters, 'Transforming ' + transform_name)
+      if transform_name not in parameters['developer']['skip']:
 
-      # apply transformations
-      code, parameters = transform_function.Transform.transform(code, parameters)
+        # update the compiler step
+        parameters = Utilities.incrementCompilerStep(parameters, 'Transforming ' + transform_name)
 
-      # show developer information
-      Utilities.showDeveloperInformation(code, parameters)
+        # apply transformations
+        code, parameters = transform_function.Transform.transform(code, parameters)
+
+        # show developer information
+        Utilities.showDeveloperInformation(code, parameters)
 
     # serialize for each output
     for language in Utilities.ensureList(parameters['globals']['output']):

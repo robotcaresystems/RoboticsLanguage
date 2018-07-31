@@ -51,7 +51,7 @@ parameters = {
         'skip': '',
         'ignoreSemanticErrors': False,
         'ignoreErrors': False,
-        'intermediateTemplates':False
+        'intermediateTemplates': False
     },
 
     'errors': [],
@@ -125,7 +125,6 @@ command_line_flags = {
     'developer:skip': {
         'longFlag': 'skip',
         'description': 'Skip transformer modules',
-        'choices': [],
         'numberArguments': '*'
     },
     'developer:ignoreSemanticErrors': {
