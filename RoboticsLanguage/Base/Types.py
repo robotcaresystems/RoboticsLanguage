@@ -109,13 +109,15 @@ def arguments(test, tag='nothing', type_relations=type_relations_default):
     return {'documentation': test, 'test': test_function, 'tag': tag}
 
 
-@Utilities.cache_function
 def optional(name, value):
   '''Creates a structure that defines the optional arguments of a function. Used for type checking.'''
 
-  # optional alguments can only have one type.
-  data = arguments(name, tag=name)
+  # create new dictionary
+  data = {}
   data['default'] = value
+  # add possible cached elements
+  data.update(arguments(name, tag=name))
+
   return data
 
 

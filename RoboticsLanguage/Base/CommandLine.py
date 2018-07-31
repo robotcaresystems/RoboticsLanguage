@@ -87,7 +87,7 @@ def generateArgparseArguments(parameters, flags):
   return command_line_flags, arguments
 
 
-@Utilities.cache
+@Utilities.cache_in_disk
 def prepareCommandLineArguments(parameters):
 
   # remember the available choices for outputs

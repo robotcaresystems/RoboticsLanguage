@@ -25,7 +25,7 @@ from RoboticsLanguage.Tools import Semantic
 import sys
 
 
-@Utilities.cache
+@Utilities.cache_in_disk
 def prepareTransformations(parameters):
   # get the list of transformations
   transformations_list = {x: y['order'] for x, y in parameters['manifesto']['Transformers'].iteritems()}

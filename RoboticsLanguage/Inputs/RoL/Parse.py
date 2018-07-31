@@ -42,7 +42,7 @@ def nodeParametersToDictionary(xml):
   return {'node': {key: value.text for (key, value) in Utilities.optionalArguments(xml).iteritems()}}
 
 
-@Utilities.cache
+@Utilities.cache_in_disk
 def prepareGrammarEngine(parameters):
   '''Build the grammer for the robotics language. Can be cached'''
   # keywords = {}

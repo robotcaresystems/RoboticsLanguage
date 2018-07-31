@@ -258,14 +258,14 @@ def time_all_calls(function):
 
 
 @decorator
-def cache(function):
+def cache_in_disk(function):
   cache_path = '/.rol/cache/'
 
   # create a name based on the module and function name
   name = __name__ + '.' + function._func.__name__
 
   # create a the path name for the file to cache
-  path = os.path.expanduser("~") + cache_path + name + '.data'
+  path = os.path.expanduser("~") + cache_path + name + '.cache'
 
   if os.path.isfile(path):
     # if file exists just load it
@@ -287,11 +287,15 @@ def cache_function(function):
   def wrapper(*arguments, **options):
     global global_function_cache
     hash = hashlib.md5(function.__name__ + str(arguments) + str(options)).hexdigest()
+    # hash = hash(function.__name__ + str(arguments) + str(options))
+    # print '<<<call: [' + hash + ']' + function.__name__ + str(arguments) + str(options)
     if hash not in global_function_cache.keys():
       result = function(*arguments, **options)
       global_function_cache[hash] = result
+      # print 'cache: + ' + str(hash) + '>>>'
     else:
       result = global_function_cache[hash]
+      # print 'use: - ' + str(hash) + '>>>'
     return result
   return wrapper
 

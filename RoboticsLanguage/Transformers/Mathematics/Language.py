@@ -311,28 +311,6 @@ language = {
             'pt': {'prefix': 'ou', 'infix': ['ou', '∧']}
         },
     },
-    'assign': {
-        'definition': {
-            'arguments': arguments('(real real | string string)'),
-            'returns': returns('none')
-        },
-        'input': {
-            'RoL': {
-                'infix': {'key': '=',
-                          'order': 100}
-            }
-        },
-        'output': {
-            'HTMLDocumentation': 'print({{children|join(" = ")}})',
-            'HTMLGUI': '',
-            'RoL': 'print({{children|join(" = ")}})',
-        },
-        'localisation':
-        {
-            'pt': 'atribuir'
-        },
-
-    },
 
     'negative': {
         'definition': {
