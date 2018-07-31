@@ -42,12 +42,6 @@ def Apply(code, parameters):
 
   if code is not None:
 
-    # fill in defaults in optional arguments
-    code, parameters = Utilities.fillDefaultsInOptionalArguments(code, parameters)
-
-    # first do all semantic checking
-    code, parameters = Semantic.Checker(code, parameters)
-
     # load the list of transformations by order
     ordered_transformations_list = prepareTransformations(parameters)
 

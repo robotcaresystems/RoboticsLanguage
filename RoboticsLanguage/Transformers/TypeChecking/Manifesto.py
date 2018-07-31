@@ -11,5 +11,5 @@
 manifesto = {
   'packageName':'Type Checking',
   'packageShortName':'TypeChecking',
-  'order': 100,
+  'order': 10,
   }

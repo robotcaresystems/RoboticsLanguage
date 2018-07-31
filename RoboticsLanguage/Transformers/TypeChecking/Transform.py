@@ -9,11 +9,12 @@
 #    Copyright: copyright
 #
 
+from RoboticsLanguage.Tools import Semantic
 
-from lxml import etree
-from RoboticsLanguage.Base import Utilities
 
 def transform(code, parameters):
-  Utilities.logging.info("Transforming Type Checking...")
+
+  # do all semantic checking
+  code, parameters = Semantic.Checker(code, parameters)
 
   return code, parameters
