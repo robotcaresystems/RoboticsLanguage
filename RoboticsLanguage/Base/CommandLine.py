@@ -87,14 +87,14 @@ def generateArgparseArguments(parameters, flags):
   return command_line_flags, arguments
 
 
-@Utilities.cache
+@Utilities.cache_in_disk
 def prepareCommandLineArguments(parameters):
 
   # remember the available choices for outputs
   Parameters.command_line_flags['globals:output']['choices'] = parameters['manifesto']['Outputs'].keys()
 
   # create a subset of all the parameters
-  subset = dict((x, parameters[x]) for x in ['Information', 'Transformers', 'Inputs', 'Outputs', 'globals', 'debug'])
+  subset = dict((x, parameters[x]) for x in ['Information', 'Transformers', 'Inputs', 'Outputs', 'globals', 'developer'])
 
   # create argparse list parameters
   flags, arguments = generateArgparseArguments(subset, parameters['command_line_flags'])
@@ -124,6 +124,7 @@ def checkSpecialCommandLineArguments(command_line_parameters, parameters):
 
 
 def runCommandLineParser(parameters, arguments, flags, file_formats, file_package_name, command_line_arguments):
+
   # instantiate the command line parser
   parser = argparse.ArgumentParser(prog='rol', description='Robotics Language compiler',
                                    formatter_class=argparse.RawTextHelpFormatter)
@@ -162,6 +163,7 @@ def runCommandLineParser(parameters, arguments, flags, file_formats, file_packag
   # run the command line parser with autocomplete
   argcomplete.autocomplete(parser)
   args = parser.parse_args(command_line_arguments[1:])
+
   return parser, args
 
 
@@ -258,6 +260,96 @@ def processCommandLineParameters(args, file_formats, parameters):
     return rol_files[0]['name'], rol_files[0]['type'], Utilities.ensureList(parameters['globals']['output']), parameters
 
 
+def postCommandLineParser(parameters):
+  # read the path
+  language_path = os.path.abspath(os.path.dirname(__file__) + '/../../') + '/'
+
+  language = {}
+  messages = {}
+  error_handling = {}
+  error_exceptions = {}
+  default_output = {}
+
+  # load the parameters form all the modules dynamically
+  for module_name in parameters['globals']['loadOrder']:
+
+    name_split = module_name.split('.')
+
+    # The language
+    try:
+      language_module = __import__(module_name + '.Language', globals(), locals(), ['Language'])
+
+      # append to each keyword in the language information from which package it comes from
+      for keyword in language_module.language.keys():
+        language_module.language[keyword]['package'] = name_split[1] + ':' + name_split[2]
+
+      # append language definitions
+      language = Utilities.mergeDictionaries(language, language_module.language)
+
+      # read the default output for each language keyword per package
+      if name_split[1] == 'Outputs':
+        default_output[name_split[2]] = language_module.default_output
+    except Exception as e:
+      Utilities.logger.debug(e.__repr__())
+      pass
+
+    # The messages
+    try:
+      messages_module = __import__(module_name + '.Messages', globals(), locals(), ['Messages'])
+
+      # append messages definitions
+      messages = Utilities.mergeDictionaries(messages, messages_module.messages)
+    except Exception as e:
+      Utilities.logger.debug(e.__repr__())
+      pass
+
+    # The error handling functions
+    try:
+      error_module = __import__(module_name + '.ErrorHandling', globals(), locals(), ['ErrorHandling'])
+
+      # append error handling definitions
+      error_handling = Utilities.mergeDictionaries(error_handling, error_module.error_handling_functions)
+
+      # append error exceptions definitions
+      error_exceptions = Utilities.mergeDictionaries(error_exceptions, error_module.error_exception_functions)
+    except Exception as e:
+      Utilities.logger.debug(e.__repr__())
+      pass
+
+  # add package language definitions
+  parameters['language'] = language
+
+  # add package messages definitions
+  parameters['messages'] = messages
+
+  # add package error exceptions definitions
+  parameters['errorExceptions'] = error_exceptions
+
+  # add package error handling definitions
+  parameters['errorHandling'] = error_handling
+
+  # fill in the languages using each outputs default language structure
+  for keyword, value in parameters['language'].iteritems():
+    # make sure the `output` tag is defined
+    if 'output' in value.keys():
+      # find missing outputs
+      missing = list(set(parameters['Outputs'].keys()) - set(value['output'].keys()))
+    else:
+      # all outputs are missing
+      missing = parameters['Outputs'].keys()
+      parameters['language'][keyword]['output'] = {}
+
+    parameters['language'][keyword]['defaultOutput'] = []
+    for item in missing:
+      # fill in the missing output
+      parameters['language'][keyword]['output'][item] = default_output[item]
+      # log that the default output is being used
+      parameters['language'][keyword]['defaultOutput'].append(item)
+
+  return parameters
+
+
+# @Utilities.time_all_calls
 def ProcessArguments(command_line_parameters, parameters):
 
   # load cached command line flags or create if necessary
@@ -269,6 +361,9 @@ def ProcessArguments(command_line_parameters, parameters):
   # run the command line parser
   parser, args = runCommandLineParser(parameters, arguments, flags, file_formats,
                                       file_package_name, command_line_parameters)
+
+  # complete processing, e.g. load languages, etc.
+  parameters = postCommandLineParser(parameters)
 
   # process the parameters
   file_name, file_type, outputs, parameters = processCommandLineParameters(args, file_formats, parameters)

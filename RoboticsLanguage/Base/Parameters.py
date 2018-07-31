@@ -33,12 +33,14 @@ parameters = {
         'verbose': 'none',
         'deploy': os.path.expanduser('~') + '/deploy/',
         'plugins': os.path.expanduser('~') + '/.rol/plugins',
+        'RoboticsLanguagePath': '',
         'removeCache': False,
         'language': 'en',
-        'compilerLanguage': 'en'
+        'compilerLanguage': 'en',
+        'loadOrder': []
     },
 
-    'debug': {
+    'developer': {
         'code': False,
         'codePath': '',
         'parameters': False,
@@ -46,9 +48,9 @@ parameters = {
         'step': 1,
         'stepCounter': 0,
         'stop': False,
-        'ignoreSemanticErrors': False,
+        'skip': '',
         'ignoreErrors': False,
-        'intermediateTemplates':False
+        'intermediateTemplates': False
     },
 
     'errors': [],
@@ -90,44 +92,52 @@ parameters = {
 }
 
 command_line_flags = {
-    'debug:code': {
+    'developer:code': {
         'noArgument': True,
-        'longFlag': 'debug-code',
+        'longFlag': 'show-code',
         'description': 'Prints the internal XML representation of the code'
     },
-    'debug:codePath': {
-        'longFlag': 'debug-code-path',
+    'developer:codePath': {
+        'longFlag': 'show-code-path',
         'description': 'Prints the internal XML representation of the code for a specific path'
     },
-    'debug:parameters': {
+    'developer:parameters': {
+        'longFlag': 'show-parameters',
         'noArgument': True,
         'fileNotNeeded': True,
         'description': 'Prints the internal parameters'
     },
-    'debug:parametersPath': {
-        'longFlag': 'debug-parameters-path',
+    'developer:parametersPath': {
+        'longFlag': 'show-parameters-path',
         'fileNotNeeded': True,
         'description': 'Prints the internal parameters for a specific path'
     },
-    'debug:step': {
+    'developer:step': {
+        'longFlag': 'show-step',
         'description': 'Prints parameters or code for a specific compiler step'
     },
-    'debug:stop': {
+    'developer:stop': {
+        'longFlag': 'show-stop',
         'noArgument': True,
-        'description': 'Stops the compiler after the step defined by \'--debug-step\''
+        'description': 'Stops the compiler after the step defined by \'--show-step\''
     },
-    'debug:ignoreSemanticErrors': {
+    'developer:skip': {
+        'longFlag': 'skip',
+        'description': 'Skip transformer modules',
+        'numberArguments': '*'
+    },
+    'developer:ignoreSemanticErrors': {
         'longFlag': 'ignore-semantic-errors',
         'noArgument': True,
         'description': 'Ignores the semantic errors and attempts to generate code. Result may not compile.'
     },
-    'debug:ignoreErrors': {
+    'developer:ignoreErrors': {
         'longFlag': 'ignore-errors',
         'noArgument': True,
         'description': 'Ignores errors and attempts to generate code. Result may not compile.'
     },
-    'debug:intermediateTemplates': {
-        'longFlag': 'debug-intermediate-templates',
+    'developer:intermediateTemplates': {
+        'longFlag': 'show-intermediate-templates',
         'noArgument': True,
         'description': 'Show the intermidiate templates created by the template engine'
     },
@@ -191,8 +201,10 @@ command_line_flags = {
     },
 
     'errors': {'suppress': True},
-    'debug:stepCounter': {'suppress': True},
-    'global:plugins': {'suppress': True},
+    'developer:stepCounter': {'suppress': True},
+    'globals:plugins': {'suppress': True},
+    'globals:RoboticsLanguagePath': {'suppress': True},
+    'globals:loadOrder': {'suppress': True},
     'Information:user:name': {'suppress': True},
     'Information:user:email': {'suppress': True},
     'Information:user:web': {'suppress': True},

@@ -138,7 +138,7 @@ def templateEngine(code, parameters, output,
       render = template.render(header=files_to_process[file]['header'])
 
       # debug
-      if parameters['debug']['intermediateTemplates']:
+      if parameters['developer']['intermediateTemplates']:
         print '====== File: ' + file + ' -> ' + files_to_process[file]['deploy_path'] + ' ==========================='
         print render
         print '============================================================'

@@ -40,5 +40,5 @@ def Generate(outputs, code, parameters):
       # apply transformations
       output_function.Output.output(code, parameters)
 
-      # show debug information
-      Utilities.showDebugInformation(code, parameters)
+      # show developer information
+      Utilities.showDeveloperInformation(code, parameters)

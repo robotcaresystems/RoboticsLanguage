@@ -22,14 +22,14 @@
 
 
 parameters = {
-    'debug':
+    'developer':
     {'grammar': False}
 }
 
 command_line_flags = {
-    'debug:grammar': {
+    'developer:grammar': {
         'noArgument': True,
-        'longFlag': 'debug-rol-grammar',
+        'longFlag': 'show-rol-grammar',
         'description': 'Prints the generated grammar for the Robotics Language format'
     }
 }

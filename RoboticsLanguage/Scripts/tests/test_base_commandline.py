@@ -19,10 +19,32 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-import unittest
+import re
 import os
-from RoboticsLanguage.Base import CommandLine, Utilities
+import unittest
+import itertools
+from RoboticsLanguage.Base import CommandLine, Utilities, Initialise
 
+
+def unique_file_name(file):
+  ''' Append a counter to the end of file name if
+  such file allready exist.
+
+  source: https://snipplr.com/view/41834/
+  '''
+  if not os.path.isfile(file):
+    # do nothing if such file doesn exists
+    return file
+  # test if file has extension:
+  if re.match('.+\.[a-zA-Z0-9]+$', os.path.basename(file)):
+    # yes: append counter before file extension.
+    name_func = lambda f, i: re.sub('(\.[a-zA-Z0-9]+)$', '_%i\\1' % i, f)
+  else:
+    # filename has no extension, append counter to the file end
+    name_func = lambda f, i: ''.join([f, '_%i' % i])
+  for new_file_name in (name_func(file, i) for i in itertools.count(1)):
+    if not os.path.exists(new_file_name):
+      return new_file_name
 
 # =================================================================================================
 #  Base CommandLine
@@ -30,21 +52,24 @@ from RoboticsLanguage.Base import CommandLine, Utilities
 
 
 class TestBaseCommandLine(unittest.TestCase):
-  def test_ProcessArguments(self):
+
+  def setUp(self):
+
     Utilities.createFolder('/tmp/RoL/')
     Utilities.createFolder(os.path.expanduser('~') + '/.rol/')
 
     # create a user wide parameter files
-    global_parameters_file = os.path.expanduser('~') + '/.rol/parameters.yaml'
+    self.global_parameters_file = os.path.expanduser('~') + '/.rol/parameters.yaml'
 
-    if os.path.isfile(global_parameters_file):
+    if os.path.isfile(self.global_parameters_file):
       # file exist!!! make a backup
-      global_parameters_file_exists = True
-      os.rename(global_parameters_file,global_parameters_file+'.backup')
+      self.global_parameters_file_exists = True
+      self.backup_file_name = unique_file_name(self.global_parameters_file)
+      os.rename(self.global_parameters_file, self.backup_file_name)
     else:
-      global_parameters_file_exists = False
+      self.global_parameters_file_exists = False
 
-    with open(global_parameters_file, 'w') as parameter_file:
+    with open(self.global_parameters_file, 'w') as parameter_file:
       parameter_file.write('testing:\n  parameterA: 1\n  repeatedParameter: 1')
 
     # create a local parameter file
@@ -63,44 +88,16 @@ class TestBaseCommandLine(unittest.TestCase):
     with open('/tmp/RoL/test.rol', 'w') as template_file:
       template_file.write('print(\'hello\')')
 
+    self.parameters = Initialise.Initialise(True)
+
+  def test_ProcessArguments(self):
+
     # set command line parameters
     command_line_parameters = ['rol', '/tmp/RoL/test.rol',
                                '/tmp/RoL/test1.yaml', '/tmp/RoL/test2.yaml', '-o', 'RoLXML']
 
-    parameters = {
-        'debug': {},
-        'Information': {},
-        'Transformers': {},
-        'Outputs': {},
-        'Inputs': {},
-        'manifesto': {
-            'Inputs': {
-                'RoL': {
-                    'fileFormat': 'rol',
-                    'packageName': 'Robotics Language',
-                    'packageShortName': 'RoL'}},
-            'Transformers': {},
-            'Outputs': {}},
-        'command_line_flags': {
-            'globals:output': {
-                'choices': ['RoLXML'],
-                'description': 'Outputs',
-                'flag': 'o',
-                'longFlag': 'output',
-                'numberArguments': '*'}, },
-        'globals': {
-            'output': ''}}
-
     # run the command line parser
-    filename, filetype, outputs, parameters = CommandLine.ProcessArguments(command_line_parameters, parameters)
-
-    # clean up
-    if global_parameters_file_exists:
-      # delete test file
-      os.remove(global_parameters_file)
-
-      # put back the original file
-      os.rename(global_parameters_file+'.backup',global_parameters_file)
+    filename, filetype, outputs, parameters = CommandLine.ProcessArguments(command_line_parameters, self.parameters)
 
     # check filename
     self.assertEqual(filename, '/tmp/RoL/test.rol')
@@ -117,6 +114,18 @@ class TestBaseCommandLine(unittest.TestCase):
     self.assertEqual(parameters['testing']['parameterC'], 3)
     self.assertEqual(parameters['testing']['parameterD'], 4)
     self.assertEqual(parameters['testing']['repeatedParameter'], 4)
+
+  def tearDown(self):
+    # clean up
+
+    self.parameters.clear()
+
+    if self.global_parameters_file_exists:
+      # delete test file
+      os.remove(self.global_parameters_file)
+
+      # put back the original file
+      os.rename(self.backup_file_name, self.global_parameters_file)
 
 
 if __name__ == '__main__':

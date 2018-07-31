@@ -20,20 +20,18 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
+import sys
 import unittest
 from lxml import etree
 from RoboticsLanguage.Inputs.RoL import Parse
-from RoboticsLanguage.Base import Utilities, Initialise
-
-if __name__ == "__main__":
-
-  # @TODO add inline filter for remove cache
-  # initialise compiler
-  parameters = Initialise.Initialise(sys.argv)
+from RoboticsLanguage.Base import Utilities, Initialise, CommandLine
 
 
-# load RoL parameters
-parameters = Initialise.Initialise(['test'])
+# initialise compiler
+parameters = Initialise.Initialise(False)
+
+# load all parameters after the command line parser
+parameters = CommandLine.postCommandLineParser(parameters)
 
 # =================================================================================================
 #  RoL Parse

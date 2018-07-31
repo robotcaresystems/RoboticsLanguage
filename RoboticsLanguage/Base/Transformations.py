@@ -20,11 +20,11 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-from . import Utilities
 import sys
+from . import Utilities
 
 
-@Utilities.cache
+@Utilities.cache_in_disk
 def prepareTransformations(parameters):
   # get the list of transformations
   transformations_list = {x: y['order'] for x, y in parameters['manifesto']['Transformers'].iteritems()}
@@ -40,12 +40,6 @@ def Apply(code, parameters):
 
   if code is not None:
 
-    # fill in defaults in optional arguments
-    code, parameters = Utilities.fillDefaultsInOptionalArguments(code, parameters)
-
-    # first do all semantic checking
-    code, parameters = Utilities.semanticChecking(code, parameters)
-
     # load the list of transformations by order
     ordered_transformations_list = prepareTransformations(parameters)
 
@@ -56,14 +50,16 @@ def Apply(code, parameters):
     # apply transformations
     for transform_function, transform_name in zip(transform_function_list, ordered_transformations_list):
 
-      # update the compiler step
-      parameters = Utilities.incrementCompilerStep(parameters, 'Transforming ' + transform_name)
+      if transform_name not in parameters['developer']['skip']:
 
-      # apply transformations
-      code, parameters = transform_function.Transform.transform(code, parameters)
+        # update the compiler step
+        parameters = Utilities.incrementCompilerStep(parameters, 'Transforming ' + transform_name)
 
-      # show debug information
-      Utilities.showDebugInformation(code, parameters)
+        # apply transformations
+        code, parameters = transform_function.Transform.transform(code, parameters)
+
+        # show developer information
+        Utilities.showDeveloperInformation(code, parameters)
 
     # serialize for each output
     for language in Utilities.ensureList(parameters['globals']['output']):

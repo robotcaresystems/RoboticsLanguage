@@ -124,7 +124,7 @@ def handler(parameters, key='default', **options):
   Utilities.logErrors(message, key, parameters)
 
   # apply actions
-  if 'action' in options.keys() and not parameters['debug']['ignoreErrors']:
+  if 'action' in options.keys() and not parameters['developer']['ignoreErrors']:
     if options['action'] == 'stop':
       # stop the RoL script
       sys.exit(1)
@@ -163,7 +163,7 @@ def exception(e, parameters, key='default', **options):
     Utilities.logErrors(message, key, parameters, exception=e)
 
     # apply actions
-    if 'action' in options.keys() and not parameters['debug']['ignoreErrors']:
+    if 'action' in options.keys() and not parameters['developer']['ignoreErrors']:
       if options['action'] == 'stop':
         # stop the RoL script
         sys.exit(1)

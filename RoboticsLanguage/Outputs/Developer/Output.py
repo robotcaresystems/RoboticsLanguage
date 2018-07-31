@@ -36,7 +36,7 @@ include_template = """
 """
 
 
-@Utilities.cache
+@Utilities.cache_in_disk
 def prepareGroups(parameters):
   '''group keyword by package'''
   groups = {}

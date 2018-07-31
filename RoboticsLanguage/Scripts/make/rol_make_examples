@@ -19,32 +19,32 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-import os, sys
+import os
+import sys
 import RoboticsLanguage
 from subprocess import call
 
 if __name__ == "__main__":
 
-  path = os.path.dirname(os.path.abspath(RoboticsLanguage.__file__))+'/Examples/'
+  path = os.path.dirname(os.path.abspath(RoboticsLanguage.__file__)) + '/Examples/'
 
-  def compile(path,name,command_line_parameters=sys.argv[1:]):
-    print('Compiling '+name+'...')
+  def compile(path, name, command_line_parameters=sys.argv[1:]):
+    print('Compiling ' + name + '...')
 
-    call(['rol', path+name] + command_line_parameters)
+    call(['rol', path + name] + command_line_parameters)
 
     # if call(['rol', path+name] + command_line_parameters):
     #   return sys.exit(1)
 
-  compile(path,'helloworld.rol')
-  compile(path,'helloworld.xml')
+  compile(path, 'helloworld.rol')
+  compile(path, 'helloworld.xml')
 
-  compile(path + 'Base/','functions.rol')
-  compile(path + 'Base/','precedence.rol')
-  compile(path + 'Base/','types.rol')
+  compile(path + 'Base/', 'functions.rol')
+  compile(path + 'Base/', 'precedence.rol')
+  compile(path + 'Base/', 'types.rol')
 
-  compile(path + 'ROS/','echo.rol')
-  compile(path + 'ROS/','signals.rol')
-
+  compile(path + 'ROS/', 'echo.rol')
+  compile(path + 'ROS/', 'signals.rol')
 
   # compile(path,'dutch.rol',['--language','nl','--remove-cache'])
   # compile(path,'portuguese.rol',['--language','pt','--remove-cache'])

@@ -275,6 +275,30 @@ language = {
         }
     },
 
+
+    'assign': {
+        'definition': {
+            'arguments': arguments('(real real | string string | element real | element string)'),
+            'returns': returns('none')
+        },
+        'input': {
+            'RoL': {
+                'infix': {'key': '=',
+                          'order': 100}
+            }
+        },
+        'output': {
+            'HTMLDocumentation': 'print({{children|join(" = ")}})',
+            'HTMLGUI': '',
+            'RoL': 'print({{children|join(" = ")}})',
+        },
+        'localisation':
+        {
+            'pt': 'atribuir'
+        },
+
+    },
+
     'element': {
         'definition': {
             'arguments': arguments('anything'),
@@ -326,7 +350,7 @@ language = {
     'return': {
         'definition': {
             'arguments': arguments('anything'),
-            'returns': returns('none')
+            'returns': returns('same')
         },
         'localisation':
         {
@@ -388,6 +412,14 @@ language = {
         {
         }
     },
+
+    'if': {
+        'definition': {
+            'arguments': arguments('boolean anything anything'),
+            'returns': returns('none')
+        },
+
+    }
 
 }
 

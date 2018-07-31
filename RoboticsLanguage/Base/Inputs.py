@@ -22,6 +22,7 @@
 
 from . import Utilities
 
+
 def Parse(file_name, file_type, parameters):
   """Parses the robotics language and converts to XML"""
 
@@ -42,14 +43,21 @@ def Parse(file_name, file_type, parameters):
         parameters = Utilities.incrementCompilerStep(parameters, 'Input ' + value['packageShortName'])
 
         # import module
-        parsing_function = Utilities.importModule('Inputs', value['packageShortName'],'Parse')
+        parsing_function = Utilities.importModule('Inputs', value['packageShortName'], 'Parse')
 
         # parse code
         code, parameters = parsing_function.Parse.parse(text, parameters)
 
-        # show debug information
-        Utilities.showDebugInformation(code, parameters)
+        # show developer information
+        Utilities.showDeveloperInformation(code, parameters)
 
         return code, parameters
+
+  else:
+    # since no code is processed, the step is set to 0 so that parmameters can be printed if needed
+    parameters['developer']['step'] = 0
+
+    # show developer information
+    Utilities.showDeveloperInformation(None, parameters)
 
   return None, parameters
