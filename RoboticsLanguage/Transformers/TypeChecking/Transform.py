@@ -14,6 +14,10 @@ from RoboticsLanguage.Tools import Semantic
 
 def transform(code, parameters):
 
+  # check if should ignore semantic checking
+  if parameters['Transformers']['TypeChecking']['ignoreSemanticErrors']:
+    return code, parameters
+
   # do all semantic checking
   code, parameters = Semantic.Checker(code, parameters)
 

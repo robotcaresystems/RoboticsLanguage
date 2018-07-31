@@ -9,6 +9,12 @@
 #    Copyright: copyright
 #
 
-parameters = {}
+parameters = {
+    'ignoreSemanticErrors': True
+}
 
-command_line_flags = {}
+command_line_flags = {
+    'ignoreSemanticErrors': {
+        'longFlag': 'ignore-semantic-errors'
+    }
+}

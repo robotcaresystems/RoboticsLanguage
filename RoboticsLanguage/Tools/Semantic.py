@@ -27,10 +27,6 @@ from RoboticsLanguage.Tools import Exceptions
 def Checker(code, parameters):
   '''Generic semantic checking function'''
 
-  # check if should ignore semantic checking
-  if parameters['developer']['ignoreSemanticErrors']:
-    return code, parameters
-
   # check types
   code, parameters = TypeChecker(code, parameters)
 

@@ -49,7 +49,6 @@ parameters = {
         'stepCounter': 0,
         'stop': False,
         'skip': '',
-        'ignoreSemanticErrors': False,
         'ignoreErrors': False,
         'intermediateTemplates': False
     },
