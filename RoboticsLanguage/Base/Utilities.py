@@ -568,11 +568,11 @@ def xmlFunction(parameters, tag, content, position=0):
 def xmlFunctionDefinition(name, arguments, returns, content, position=0):
 
   arguments_text = xml('function_arguments', arguments,
-                       position) if isinstance(arguments, str) else ''
+                       position) if isinstance(arguments, basestring) else ''
   returns_text = xml('function_returns', returns, position) if isinstance(
-      returns, str) else ''
+      returns, basestring) else ''
   content_text = xml('function_content', content, position) if isinstance(
-      content, str) else ''
+      content, basestring) else ''
 
   return xmlAttributes('function_definition', arguments_text + returns_text + content_text, position, attributes={'name': name})
 
