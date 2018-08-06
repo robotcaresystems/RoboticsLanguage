@@ -27,18 +27,9 @@ from . import Parameters
 
 
 @Utilities.cache_in_disk
-def prepareParameters():
+def prepareParameters(parameters):
   '''Collects parameters, language, messages, and error handling functions from all list_of_modules.
   This function is cached in `rol`. To refresh the cache run `rol --remove-cache`.'''
-
-  # read the path
-  language_path = os.path.abspath(os.path.dirname(__file__) + '/../../') + '/'
-
-  # start by loading default parameters
-  parameters = Parameters.parameters
-
-  # add some globals information
-  parameters['globals']['RoboticsLanguagePath'] = language_path + 'RoboticsLanguage/'
 
   # define initial classes of parameters
   manifesto = {'Inputs': {}, 'Outputs': {}, 'Transformers': {}}
@@ -51,7 +42,7 @@ def prepareParameters():
   package_order = {}
 
   # load the manifesto from all the modules
-  for element in Utilities.findFileName('Manifesto.py', [language_path, parameters['globals']['plugins']]):
+  for element in Utilities.findFileName('Manifesto.py', [parameters['globals']['RoboticsLanguagePath']+'/../', parameters['globals']['plugins']]):
 
     name_split = element.split('/')[-4:-1]
     module_name = '.'.join(name_split)
@@ -64,6 +55,12 @@ def prepareParameters():
 
         # read manifesto
         manifesto[name_split[1]][name_split[2]] = manifesto_module.manifesto
+
+        # add path
+        manifesto[name_split[1]][name_split[2]]['path'] = os.path.realpath(os.path.dirname(element))
+
+        # add type: built-in or plugin
+        manifesto[name_split[1]][name_split[2]]['type'] = name_split[0]
 
         # get the load order for the packages
         if 'order' in manifesto_module.manifesto.keys():
@@ -120,7 +117,13 @@ def Initialise(remove_cache):
   if remove_cache:
     Utilities.removeCache()
 
+  # start by loading default parameters
+  parameters = Parameters.parameters
+
+  # add plugins folder to python path
+  sys.path.append(parameters['globals']['plugins']+'/../')
+
   # load cached parameters or create if necessary
-  parameters = prepareParameters()
+  parameters = prepareParameters(parameters)
 
   return parameters

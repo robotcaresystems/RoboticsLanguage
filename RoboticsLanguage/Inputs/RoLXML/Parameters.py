@@ -1,7 +1,7 @@
 #
 #   This is the Robotics Language compiler
 #
-#   Output.py: Generates HTML documentation
+#   Parameters.py: Definition of the parameters for this package
 #
 #   Created on: June 22, 2017
 #       Author: Gabriel A. D. Lopes
@@ -20,14 +20,7 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-import sys
-from RoboticsLanguage.Tools import Templates
 
+parameters = {}
 
-def output(code, parameters):
-
-  # run template engine to generate code
-  if not Templates.templateEngine(code, parameters):
-    sys.exit(1)
-
-  return 0
+command_line_flags = {}

@@ -40,10 +40,10 @@ def Parse(file_name, file_type, parameters):
       if file_type.lower() == value['fileFormat'].lower():
 
         # update the compiler step
-        parameters = Utilities.incrementCompilerStep(parameters, 'Input ' + value['packageShortName'])
+        parameters = Utilities.incrementCompilerStep(parameters, 'Inputs', value['packageShortName'])
 
         # import module
-        parsing_function = Utilities.importModule('Inputs', value['packageShortName'], 'Parse')
+        parsing_function = Utilities.importModule(value['type'], 'Inputs', value['packageShortName'], 'Parse')
 
         # parse code
         code, parameters = parsing_function.Parse.parse(text, parameters)

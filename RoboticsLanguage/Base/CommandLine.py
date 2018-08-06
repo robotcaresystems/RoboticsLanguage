@@ -261,8 +261,6 @@ def processCommandLineParameters(args, file_formats, parameters):
 
 
 def postCommandLineParser(parameters):
-  # read the path
-  language_path = os.path.abspath(os.path.dirname(__file__) + '/../../') + '/'
 
   language = {}
   messages = {}
@@ -271,6 +269,8 @@ def postCommandLineParser(parameters):
   default_output = {}
 
   # load the parameters form all the modules dynamically
+  # When this function is executed the plugins folder has already
+  # been added to the path
   for module_name in parameters['globals']['loadOrder']:
 
     name_split = module_name.split('.')

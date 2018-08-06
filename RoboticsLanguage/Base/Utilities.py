@@ -46,8 +46,6 @@ from jinja2 import Environment, FileSystemLoader, Template, TemplateSyntaxError,
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
-# add plugins folder
-sys.path.append(os.path.expanduser('~') + '/.rol/')
 
 # -------------------------------------------------------------------------------------------------
 #  Helping functions
@@ -332,13 +330,15 @@ class color:
   END = '\033[0m'
 
 
-def incrementCompilerStep(parameters, name):
+def incrementCompilerStep(parameters, group, name):
   # update the compiler step
   parameters['developer']['stepCounter'] = parameters['developer']['stepCounter'] + 1
+  parameters['developer']['stepGroup'] = group
+  parameters['developer']['stepName'] = name
 
   # log the current step
   logger.info(
-      'Step [' + str(parameters['developer']['stepCounter']) + "]: " + name)
+      'Step [' + str(parameters['developer']['stepCounter']) + "]: " + group + " - " + name)
 
   return parameters
 
@@ -381,11 +381,9 @@ def showDeveloperInformation(code, parameters):
 # -------------------------------------------------------------------------------------------------
 
 
-def importModule(a, b, c):
-  try:
-    return __import__('RoboticsLanguage.' + a + '.' + b, globals(), locals(), ensureList(c))
-  except:
-    return __import__('plugins.' + a + '.' + b, globals(), locals(), ensureList(c))
+def importModule(z, a, b, c):
+  return __import__(z + '.' + a + '.' + b, globals(), locals(), ensureList(c))
+
 
 def removeCache(cache_path='/.rol/cache'):
   global logger
@@ -451,6 +449,14 @@ def paths(dictionary, dictionary_path):
 # -------------------------------------------------------------------------------------------------
 #  String utilities
 # -------------------------------------------------------------------------------------------------
+
+
+def replaceLast(string, source, destination):
+  return source.join(string.split(source)[0:-1])+destination+string.split(source)[-1]
+
+
+def replaceFirst(string, source, destination):
+  return string.replace(source, destination, 1)
 
 
 def lowerNoSpace(s):
