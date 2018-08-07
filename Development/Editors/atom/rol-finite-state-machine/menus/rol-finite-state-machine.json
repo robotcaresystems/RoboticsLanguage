@@ -1,0 +1,26 @@
+{
+  "context-menu": {
+    "atom-text-editor": [
+      {
+        "label": "Insert finite state machine",
+        "command": "rol-finite-state-machine:insert"
+      }
+    ]
+  },
+  "menu": [
+    {
+      "label": "Packages",
+      "submenu": [
+        {
+          "label": "Robotics Language finite state machine",
+          "submenu": [
+            {
+              "label": "Insert",
+              "command": "rol-finite-state-machine:insert"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
