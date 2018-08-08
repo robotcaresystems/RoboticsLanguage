@@ -25,7 +25,7 @@ from iso639 import languages
 
 parameters = {
     'globals': {
-        'version': '0.0.1',
+        'version': '',
         'output': 'RosCpp',
         'debug': False,
         'compile': False,
@@ -81,7 +81,7 @@ parameters = {
         'software':
         {
             'name': 'name',
-            'version': '1.0.0',
+            'version': '0.0.0',
             'description': 'description',
             'maintainer': {'name': 'name', 'email': 'email@email.edu'},
             'author': {'name': 'name', 'email': 'email@email.edu'},
