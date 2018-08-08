@@ -1,7 +1,10 @@
 <html>
 <body>
-<h1>
-  Node: {{parameters['node']['name']}}
+  <h1>Information</h1>
+   Generated on: {{"%d %B, %Y"|todaysDate}} <br>
+         Author: {{parameters['Information']['user']['name']}} <br>
+        Licence: {{parameters['Information']['software']['license']}} <br>
+      Copyright: {{parameters['Information']['software']['copyright']}}
 </h1>
 </body>
 </html>

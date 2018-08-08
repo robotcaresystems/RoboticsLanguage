@@ -59,7 +59,7 @@ def output(code, parameters):
   code, parameters, node_name_underscore = runPreparations(code, parameters)
 
   # run template engine to generate node code
-  if not Templates.templateEngine(code, parameters, 'RosCpp', file_patterns={'nodename': node_name_underscore}):
+  if not Templates.templateEngine(code, parameters, file_patterns={'nodename': node_name_underscore}):
     sys.exit(1)
 
   #

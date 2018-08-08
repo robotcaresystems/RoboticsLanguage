@@ -35,7 +35,7 @@ def output(code, parameters):
   node_name_underscore = Utilities.underscore(parameters['node']['name'])
 
   # run template engine to generate node code
-  if not Templates.templateEngine(code, parameters, 'HTMLGUI', file_patterns={'nodename': node_name_underscore}):
+  if not Templates.templateEngine(code, parameters, file_patterns={'nodename': node_name_underscore}):
     sys.exit(1)
 
   # if the flag launch is set then launch the node

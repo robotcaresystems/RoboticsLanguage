@@ -1,4 +1,5 @@
 import os
+import inspect
 from shutil import copy
 from RoboticsLanguage.Base import Utilities
 from jinja2 import Environment, FileSystemLoader, TemplateError
@@ -43,7 +44,7 @@ def createGroupFunction(text):
   return lambda x: '\n'.join([z.format(x) for z in text])
 
 
-def templateEngine(code, parameters, output,
+def templateEngine(code, parameters, output=None,
                    ignore_files=default_ignore_files,
                    file_patterns=default_file_patterns,
                    filters=default_template_engine_filters,
@@ -51,14 +52,23 @@ def templateEngine(code, parameters, output,
                    deploy_path=None):
   '''The template engine combines multiple template files from different modules to generate code.'''
 
-  transformers = parameters['Transformers'].keys()
+  if output is None:
+    output = parameters['developer']['stepName']
 
   if deploy_path is None:
     deploy_path = parameters['globals']['deploy']
 
-  path = parameters['globals']['RoboticsLanguagePath']
+  if not os.path.isdir(templates_path):
+    templates_path = '/'.join([parameters['globals']['RoboticsLanguagePath'],
+                               parameters['developer']['stepGroup'],
+                               parameters['developer']['stepName'],
+                               templates_path])
+    # @TODO give warning
+    # if not os.path.isdir(templates_path):
+    #   Tools.Exceptions(...)
 
-  templates_path = path + 'Outputs/' + output + '/' + templates_path
+  transformers = parameters['Transformers'].keys()
+
   files_to_process = {}
   files_to_copy = []
   new_files_to_copy = []
@@ -70,8 +80,8 @@ def templateEngine(code, parameters, output,
 
         # extracts full and relative paths
         file_full_path = os.path.join(root, file)
-        file_relative_path = file_full_path.replace(templates_path, '')
-        file_deploy_path = file_full_path.replace(templates_path, deploy_path).replace('.template', '')
+        file_relative_path = Utilities.replaceFirst(file_full_path, templates_path, '')
+        file_deploy_path = Utilities.replaceLast(Utilities.replaceFirst(file_full_path, templates_path, deploy_path), '.template', '')
 
         # apply file template names
         for key, value in file_patterns.iteritems():
@@ -87,17 +97,24 @@ def templateEngine(code, parameters, output,
         if file not in default_ignore_files:
           copy_file_name = os.path.join(root, file)
           files_to_copy.append(copy_file_name)
-          new_files_to_copy.append(copy_file_name.replace(templates_path, deploy_path))
+          new_files_to_copy.append(Utilities.replaceFirst(copy_file_name, templates_path, deploy_path))
 
   # find all the non template files in the transformers template folder
-  for transformer in transformers:
-    for root, dirs, files in os.walk(path + 'Transformers/' + transformer + '/Templates/Outputs/' + output):
-      for file in files:
-        if not file.endswith(".template") and file not in default_ignore_files:
-          copy_file_name = os.path.join(root, file)
-          files_to_copy.append(copy_file_name)
-          new_files_to_copy.append(copy_file_name.replace(path + 'Transformers/' +
-                                                          transformer + '/Templates/Outputs/' + output, deploy_path))
+  for element in parameters['globals']['loadOrder']:
+    if '.Transformers.' in element:
+      if 'RoboticsLanguage.' in element:
+        path = parameters['globals']['RoboticsLanguagePath']
+      else:
+        path = parameters['globals']['plugins']
+
+      transformer_path = path + '/' + '/'.join(element.split('.')[1:]) + '/Templates/Outputs/' + output
+
+      for root, dirs, files in os.walk(transformer_path):
+        for file in files:
+          if not file.endswith(".template") and file not in default_ignore_files:
+            copy_file_name = os.path.join(root, file)
+            files_to_copy.append(copy_file_name)
+            new_files_to_copy.append(Utilities.replaceFirst(copy_file_name, transformer_path, deploy_path))
 
   # rename files acording to file pattern names
   for key, value in file_patterns.iteritems():
@@ -107,7 +124,7 @@ def templateEngine(code, parameters, output,
   # search for the same file in transformers plugins to include as plugins
   for file in files_to_process.keys():
     for module in transformers:
-      if os.path.isfile(path + 'Transformers/' + module + '/Templates/Outputs/' + output + file):
+      if os.path.isfile(path + 'Transformers/' + module + '/Templates/Outputs/' + output + '/' + file):
         # save the include name
         files_to_process[file]['includes'].append(module)
 
