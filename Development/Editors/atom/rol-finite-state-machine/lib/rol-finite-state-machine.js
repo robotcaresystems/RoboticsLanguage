@@ -22,8 +22,10 @@ module.exports = {
     // ad a callback that is executed when a file is opened
     this.subscriptions.add(atom.workspace.observeTextEditors(editor => {
 
+      console.log('trying to match...')
+
       // search for the FiniteStateMachine tag
-      editor.scan(new RegExp('FiniteStateMachine<{', 'g'), iterator => {
+      editor.scan(new RegExp('FiniteStateMachine[\s|\n]*<{(.*|\n)*?}>', 'g'), iterator => {
 
         console.log('Match! ' + iterator.match);
         console.log(iterator)
