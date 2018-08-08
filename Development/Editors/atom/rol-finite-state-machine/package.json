@@ -5,15 +5,13 @@
   "description": "Robotics Language finite state machines",
   "keywords": [ "rol", "Robotics Language", "Finite State Machines"
   ],
-  "activationCommands": {
-    "atom-workspace": "rol-finite-state-machine:insert"
-  },
   "repository": "https://github.com/atom/rol-finite-state-machine",
   "license": "MIT",
   "engines": {
     "atom": ">=1.0.0 <2.0.0"
   },
   "dependencies": {
-    "vis": "4.21.0"
+    "vis": ">=4.21.0",
+    "semantic-ui": ">=2.3.3"
   }
 }
