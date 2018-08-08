@@ -1,0 +1,26 @@
+node(
+  name:"example types",
+
+  definitions:block(
+
+    # The type is defined as a real number that translates to a rostype of Float32 by default
+    x ∈ Signals(Reals,
+      rosTopic:'/test/x',
+      rosFlow:'incoming'),
+
+    # The type is an explicit ROS type
+    y ∈ Signals(
+      rosType:'std_msgs/Float32',
+      rosTopic:'/test/x',
+      rosFlow:'incoming')
+      ),
+
+  initialise:block(
+
+    # x can be used directly as a real number
+    x = 4,
+
+    # y has to be used as a rosType
+    y['data'] = 4
+  )
+)
