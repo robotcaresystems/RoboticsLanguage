@@ -59,11 +59,6 @@ def Apply(code, parameters):
         # show developer information
         Utilities.showDeveloperInformation(code, parameters)
 
-    # serialize for each output
-    for language in Utilities.ensureList(parameters['globals']['output']):
-      for xml_child in code.getchildren():
-        Utilities.serialise(xml_child, parameters, parameters['language'], language)
-
     # check if semantic errors have occured
     if len(parameters['errors']) > 0:
       Utilities.logging.error("Semantic errors found! Stopping.")
