@@ -11,8 +11,15 @@ node(
     # The type is an explicit ROS type
     y ∈ Signals(
       rosType:'std_msgs/Float32',
-      rosTopic:'/test/x',
+      rosTopic:'/test/y',
       rosFlow:'incoming')
+      ,
+
+    # The type is an explicit ROS type
+    z ∈ Signals(
+      rosType:'geometry_msgs/Pose',
+      rosTopic:'/test/z',
+      rosFlow:'incoming'
       ),
 
   initialise:block(
@@ -21,6 +28,11 @@ node(
     x = 4,
 
     # y has to be used as a rosType
-    y['data'] = 4
+    y['data'] = 4,
+    y.data = 5,
+
+    # z can be accessed as a class
+    z.Point.x = 5
   )
+)
 )
