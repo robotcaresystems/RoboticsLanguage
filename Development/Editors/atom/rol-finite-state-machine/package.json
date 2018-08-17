@@ -3,7 +3,10 @@
   "main": "./lib/rol-finite-state-machine",
   "version": "0.0.0",
   "description": "Robotics Language finite state machines",
-  "keywords": [ "rol", "Robotics Language", "Finite State Machines"
+  "keywords": [
+    "rol",
+    "Robotics Language",
+    "Finite State Machines"
   ],
   "repository": "https://github.com/atom/rol-finite-state-machine",
   "license": "MIT",
@@ -11,6 +14,7 @@
     "atom": ">=1.0.0 <2.0.0"
   },
   "dependencies": {
+    "dialogs": "^1.1.20",
     "vis": ">=4.21.0"
-    }
+  }
 }
