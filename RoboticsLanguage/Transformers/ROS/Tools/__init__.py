@@ -1,7 +1,7 @@
 #
 #   This is the Robotics Language compiler
 #
-#   Language.py: Parses the Robotics Language
+#   __init__.py: Initialisation of the package
 #
 #   Created on: June 22, 2017
 #       Author: Gabriel A. D. Lopes
@@ -19,15 +19,3 @@
 #   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
-
-from Tools import Topics
-
-def transform(code, parameters):
-
-  # make sure RosCpp is part of the output
-  if any(x in parameters['globals']['output'] for x in ['RosCpp', 'HTMLGUI']):
-
-    # Topics
-    code, parameters = Topics.processTopics(code, parameters)
-
-  return code, parameters
