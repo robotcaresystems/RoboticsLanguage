@@ -59,10 +59,12 @@ def templateEngine(code, parameters, output=None,
     deploy_path = parameters['globals']['deploy']
 
   if not os.path.isdir(templates_path):
-    templates_path = '/'.join([parameters['globals']['RoboticsLanguagePath'],
-                               parameters['developer']['stepGroup'],
-                               parameters['developer']['stepName'],
-                               templates_path])
+    templates_path = parameters['manifesto'][parameters['developer']['stepGroup']][parameters['developer']['stepName']]['path'] + '/' + templates_path
+
+    # templates_path = '/'.join([parameters['globals']['RoboticsLanguagePath'],
+    #                            parameters['developer']['stepGroup'],
+    #                            parameters['developer']['stepName'],
+    #                            templates_path])
     # @TODO give warning
     # if not os.path.isdir(templates_path):
     #   Tools.Exceptions(...)
