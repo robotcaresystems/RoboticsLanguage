@@ -117,6 +117,7 @@ def prepareCommandLineArguments(parameters):
 
   return flags, arguments, file_package_name, file_formats
 
+
 def checkSpecialCommandLineArguments(command_line_parameters, parameters):
   if '--version' in command_line_parameters:
     import pkg_resources

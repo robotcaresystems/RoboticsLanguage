@@ -135,7 +135,7 @@ class TestBaseUtilities(unittest.TestCase):
       template_file.write('print(\'hello\')')
 
     # check if file is found
-    self.assertEqual([x for x in Utilities.findFileType(path='/tmp/RoL/1')],
+    self.assertEqual([x for x in Utilities.findFileType(path='/tmp/RoL/1', followlinks=False)],
                      ['/tmp/RoL/1/test.py'])
 
   def test_findFileName(self):
@@ -144,7 +144,7 @@ class TestBaseUtilities(unittest.TestCase):
     with open('/tmp/RoL/2/test.py', 'w') as template_file:
       template_file.write('print(\'hello\')')
 
-    self.assertEqual([x for x in Utilities.findFileName('test.py', path='/tmp/RoL/2')],
+    self.assertEqual([x for x in Utilities.findFileName('test.py', path='/tmp/RoL/2', followlinks=False)],
                      ['/tmp/RoL/2/test.py'])
 
   def test_createFolder(self):

@@ -1,7 +1,7 @@
 #
 #   This is the Robotics Language compiler
 #
-#   Language.py: Parses the Robotics Language
+#   __init__.py: Initialisation of the package
 #
 #   Created on: June 22, 2017
 #       Author: Gabriel A. D. Lopes
@@ -19,23 +19,3 @@
 #   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
-
-from RoboticsLanguage.Base.Types import optional
-
-# from RoboticsLanguage.Base.Types import singleString, singleReal, manyStrings, manyExpressions, manyCodeBlocks, codeBlock, anything, singleBoolean
-# from RoboticsLanguage.Base.Types import returnNothing, returnCodeBlock
-
-
-language = {
-
-    'Signals': {
-        'definition': {
-            'optional': {
-                'rosTopic': optional('string', ''),
-                'rosType': optional('string', ''),
-                # @REFACTOR currently defaults to bidirectional. Detect automatically?
-                'rosFlow': optional('string', 'bidirectional')
-            },
-        },
-    },
-}

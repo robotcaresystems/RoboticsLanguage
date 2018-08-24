@@ -419,7 +419,38 @@ language = {
             'returns': returns('none')
         },
 
-    }
+    },
+
+    'part': {
+        'definition': {
+            'arguments': arguments('anything'),
+            'returns': returns('none')
+        },
+        'documentation':
+        {
+        }
+    },
+
+    'index': {
+        'definition': {
+            'arguments': arguments('anything'),
+            'returns': returns('none')
+        },
+        'documentation':
+        {
+        }
+    },
+
+    'domain': {
+        'definition': {
+            'arguments': arguments('anything'),
+            'returns': returns('none')
+        },
+        'documentation':
+        {
+        }
+    },
+
 
 }
 
