@@ -506,22 +506,21 @@ def ensureList(a):
 #  File utilities
 # -------------------------------------------------------------------------------------------------
 
-def findFileType(extension='py', path='.'):
+def findFileType(extension='py', path='.', followlinks=True):
   for entry in ensureList(path):
-    for root, dirs, files in os.walk(entry, followlinks=True):
+    for root, dirs, files in os.walk(entry, followlinks=followlinks):
       for eachfile in files:
         fileName, fileExtension = os.path.splitext(eachfile)
         if fileExtension.lower() == '.' + extension:
           yield root + '/' + eachfile
 
 
-def findFileName(name, path='.'):
+def findFileName(name, path='.', followlinks=True):
   for entry in ensureList(path):
-    for entry in path:
-      for root, dirs, files in os.walk(entry, followlinks=True):
-        for eachfile in files:
-          if os.path.basename(eachfile) == name:
-            yield root + '/' + eachfile
+    for root, dirs, files in os.walk(entry, followlinks=followlinks):
+      for eachfile in files:
+        if os.path.basename(eachfile) == name:
+          yield root + '/' + eachfile
 
 
 def createFolder(path):
