@@ -27,7 +27,6 @@ language = {
 
     'option': {
         'output': {'RosCpp': '{{children[0]}}'}
-
     },
 
     'Reals': {
@@ -205,6 +204,27 @@ language = {
         'output':
         {
             'RosCpp': 'ROS_INFO_STREAM({{children|join(" << ")}})',
+        },
+    },
+
+    'part': {
+        'output':
+        {
+            'RosCpp': '{{children[0]}}[{{children[1]}}]',
+        },
+    },
+
+    'index': {
+        'output':
+        {
+            'RosCpp': '{{children[0]}}',
+        },
+    },
+
+    'domain': {
+        'output':
+        {
+            'RosCpp': '{{children|join(".")}}',
         },
     },
 

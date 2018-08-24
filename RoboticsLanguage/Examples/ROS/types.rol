@@ -20,19 +20,22 @@ node(
       rosType:'geometry_msgs/Pose',
       rosTopic:'/test/z',
       rosFlow:'incoming'
-      ),
+      )#,
 
+    # w ∈ Signals(Reals)
+
+    ),
   initialise:block(
 
     # x can be used directly as a real number
     x = 4,
+    #w = 1,
 
     # y has to be used as a rosType
-    y['data'] = 4,
+    #y['data'] = 4,
     y.data = 5,
 
     # z can be accessed as a class
-    z.Point.x = 5
+    z.position.x = 5
   )
-)
 )

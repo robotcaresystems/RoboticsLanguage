@@ -51,6 +51,7 @@ cpp_type_mapping = {
 }
 
 
+from RoboticsLanguage.Base import Utilities
 
 def processTopics(code, parameters):
   '''Processes all the ROS topics in the RoL code'''
@@ -61,66 +62,77 @@ def processTopics(code, parameters):
   # find all the signals in definitions
   for signal in code.xpath('/node/option[@name="definitions"]/*//element/Signals'):
 
-    # get the parent element to extract the variable name
-    variable = signal.getparent().xpath('variable/@name')[0]
+    # filter for signals that have a rostopic definition
+    if signal.xpath('option[@name="rosTopic"]/string')[0].text != '':
 
-    # Save the variable name on the `Signals` tag. Helps simplifying code
-    signal.attrib['ROSvariable'] = variable
+      # get the parent element to extract the variable name
+      variable = signal.getparent().xpath('variable/@name')[0]
 
-    # look for assignments for this variable
-    assignments = code.xpath('//assign/variable[1][@name="' + variable + '"]')
+      # get options
+      topic_name = signal.xpath('option[@name="rosTopic"]')[0].getchildren()[0].text
+      flow = signal.xpath('option[@name="rosFlow"]')[0].getchildren()[0].text
 
-    if len(assignments) > 0:
-      # Tell every assignment with this variable in the left side to use to data domain
-      for element in assignments:
-        element.getparent().attrib['assignDomain'] = '.data'
+      # Save the variable name on the `Signals` tag. Helps simplifying code
+      signal.attrib['ROSvariable'] = variable
 
-    # look for usages of this variable
-    usages = code.xpath('//variable[@name="' + variable + '"]')
+      # check if signal is using a default type instead of a ros type
+      if signal.xpath('option[@name="rosType"]/string')[0].text == '':
 
-    # for those that are not assignments use the data domain
-    if len(usages) > 0:
-      for use in usages:
-        if 'assignFunction' not in use.getparent().attrib.keys() and use.getparent().tag != 'element':
-          use.attrib['returnDomain'] = '.data'
+        # look for assignments for this variable
+        assignments = code.xpath('//assign/variable[1][@name="' + variable + '"]')
 
-    # get the type of the signal
-    topic_type = signal.getchildren()[0]
+        if len(assignments) > 0:
+          # Tell every assignment with this variable in the left side to use to data domain
+          for element in assignments:
+            element.getparent().attrib['assignDomain'] = '.data'
 
-    # get options
-    topic_name = signal.xpath('option[@name="rosTopic"]')[0].getchildren()[0].text
-    flow = signal.xpath('option[@name="rosFlow"]')[0].getchildren()[0].text
+        # look for usages of this variable
+        usages = code.xpath('//variable[@name="' + variable + '"]')
 
-    # Find the type for the topic
-    if topic_type.tag in ['Reals', 'Integers', 'Naturals']:
+        # for those that are not assignments and are not part of a domain class use the '.data' domain
+        if len(usages) > 0:
+          for use in usages:
+            if use.getparent().tag != 'domain':
+              if 'assignFunction' not in use.getparent().attrib.keys() and use.getparent().tag != 'element':
+                use.attrib['returnDomain'] = '.data'
 
-      # default value for bits
-      bits = '32'
+        # get the type of the signal
+        topic_type = signal.getchildren()[0]
 
-      # try to get the specified bits parameter
-      for option in topic_type.xpath('option'):
-        if option.attrib['name'] is 'bits':
-          bits = option.getchildren()[0].attrib['RosCpp']
 
-      ros_type = 'std_msgs::' + ros_type_mapping[topic_type.tag + bits]
-      cpp_type = cpp_type_mapping[topic_type.tag + bits]
+        # Find the type for the topic
+        if topic_type.tag in ['Reals', 'Integers', 'Naturals']:
 
-    elif topic_type.tag in ['Booleans', 'Strings']:
-      ros_type = 'std_msgs::' + ros_type_mapping[topic_type.tag]
-      cpp_type = cpp_type_mapping[topic_type.tag]
+          # default value for bits
+          bits = '32'
 
-    else:
-      # @REFACTOR just a placeholder for now
-      ros_type = 'std_msgs::Empty'
-      cpp_type = 'int'
+          # try to get the specified bits parameter
+          for option in topic_type.xpath('option'):
+            if option.attrib['name'] is 'bits':
+              bits = option.getchildren()[0].attrib['RosCpp']
 
-    # add header file for msg
-    parameters['Outputs']['RosCpp']['globalIncludes'].add(ros_type.replace('::','/') + '.h')
+          ros_type = 'std_msgs::' + ros_type_mapping[topic_type.tag + bits]
+          cpp_type = cpp_type_mapping[topic_type.tag + bits]
 
-    # save the topic definitions
-    parameters['Transformers']['ROS']['topicDefinitions'].append({'variable': variable,
-                                                                  'ros_type': ros_type,
-                                                                  'cpp_type': cpp_type,
-                                                                  'topic_name': topic_name,
-                                                                  'flow': flow})
+        elif topic_type.tag in ['Booleans', 'Strings']:
+          ros_type = 'std_msgs::' + ros_type_mapping[topic_type.tag]
+          cpp_type = cpp_type_mapping[topic_type.tag]
+
+        else:
+          # @REFACTOR just a placeholder for now
+          ros_type = 'std_msgs::Empty'
+          cpp_type = 'int'
+      else:
+        ros_type = signal.xpath('option[@name="rosType"]/string')[0].text.replace('/','::')
+        cpp_type = ros_type
+
+      # add header file for msg
+      parameters['Outputs']['RosCpp']['globalIncludes'].add(ros_type.replace('::','/') + '.h')
+
+      # save the topic definitions
+      parameters['Transformers']['ROS']['topicDefinitions'].append({'variable': variable,
+                                                                    'ros_type': ros_type,
+                                                                    'cpp_type': cpp_type,
+                                                                    'topic_name': topic_name,
+                                                                    'flow': flow})
   return code, parameters
