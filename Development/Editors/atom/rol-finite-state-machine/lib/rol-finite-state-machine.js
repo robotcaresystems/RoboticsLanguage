@@ -139,6 +139,7 @@ module.exports = {
 
         };
         network = new vis.Network(container, data, options);
+        network.setSize(300,300);
 
         network.on('select', function(params) {
           if (params.nodes == 0) {
