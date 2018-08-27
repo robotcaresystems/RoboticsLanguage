@@ -1,135 +1,198 @@
 
 {% set includes %}
 class FiniteStateMachine {
+
+private:
+  // A machine is a dictionary of states, each having a set of transitions.
+  // { state: { transition -> state, ... } }
+  // For example:
+  // States: 'idle', 'running'
+  // Transitions: 'start', 'stop'
+  // Representation:
+  // { 'idle': { 'start' -> 'running'}, 'running' : { 'stop' -> 'start'} }
+	std::map<std::string, std::map<std::string, std::string> > machine;
+
+  // list of functions that are executed on entry, exit, or inside the state
+	std::map<std::string, std::function<void()> > init_function, exit_function, inside_function;
+
+  // The current state
+	std::string current_state;
+
 public:
 	FiniteStateMachine()
 		{
-				std::cout<< "Creating FSM" << std::endl;
-				this->addState("a");
-				currentState = machine.begin()->first;;
+      // always start uninitialised
+      current_state = "";
 		};
-	FiniteStateMachine(std::string name)
-	{
-		std::cout<< "Creating FSM with name: " << name << std::endl;
-		this->addState(name);
-		currentState = machine.begin()->first;;
-	};
 
 	~FiniteStateMachine(){};
 
-	void addState(std::string name) {
-		std::cout << "Adding state " << name << " with empty transition"
-				<< std::endl;
+	bool addState(std::string name) {
+    try
+    {
+      // explicitely create transition structure
+  		std::map<std::string, std::string> transition;
 
-		std::map<std::string, std::string> transition;
+      // add new state to machine
+  		machine.insert(std::pair<std::string, std::map<std::string, std::string> >(name, transition));
 
-		machine.insert(
-				std::pair<std::string, std::map<std::string, std::string> >(
-						name, transition));
-	}
-	void addTransition(std::string arc, std::string begin, std::string end) {
-		try {
-			machine[begin].insert(
-					std::pair<std::string, std::string>(arc, end));
-			std::cout << "Added transition " << arc << " with begin " << begin
-					<< " and end " << end << std::endl;
-		} catch (std::exception & e) {
-			std::cout << "Failed to insert Transition" << std::endl;
+      return true;
+    }
+    catch (std::exception & e)
+    {
+      return false;
 		}
 	}
 
-	void fire(std::string trans) {
-		std::map<std::string, std::string> transition;
-		std::map<std::string, std::function<void()> >::iterator initIter,
-				exitIter;
+	bool addTransition(std::string arc, std::string begin, std::string end) {
+		try
+    {
+      // check if end state exists
+      if (machine.find(end) != machine.end())
+      {
+        // add transition
+        machine[begin].insert(std::pair<std::string, std::string>(arc, end));
 
-		//Trying to run Init function
-		transition = machine[currentState];
-		std::map<std::string, std::string>::iterator iter = transition.find(
-				trans);
+        return true;
+      }
+      else
+      {
+        return false;
+      }
+		}
+    catch (std::exception & e)
+    {
+      return false;
+		}
+	}
 
-		if (iter != transition.end()) {
-			std::cout << "Transition " << trans << " from current state: "
-					<< currentState << " to " << machine[currentState].find(trans)->second << std::endl;
-			//Try to run exit function of previous
-			exitIter = exitState.find(currentState);
-			if (exitIter != exitState.end()) {
-				std::cout << "Executing exit function of " << currentState << std::endl;
-				(exitIter->second)();
+  bool setInitialState(std::string state)
+  {
+    if (current_state == "")
+    {
+      current_state = state;
+
+      return true;
+    }
+    else
+    {
+      return false;
+    }
+  }
+
+  bool fire(std::string transition)
+  {
+    // find the transition
+    auto current_transition = machine[current_state].find(transition);
+
+    // if defined for the current state
+    if (current_transition != machine[current_state].end())
+    {
+      // first run the exit function
+      auto current_exit = exit_function.find(current_state);
+      if (current_exit != exit_function.end()) {
+				(current_exit->second)();
 			}
 
-			currentState = iter->second;
-			initIter = initState.find(currentState);
-			if (initIter != initState.end()) {
-				std::cout << "Executing init of "
-						<< currentState << std::endl;
-				(initIter->second)();
+      // change state
+      current_state = current_transition->second;
+
+      // finally run the init function
+      auto current_init = init_function.find(current_state);
+      if (current_init != init_function.end()) {
+				(current_init->second)();
 			}
-			this->printCurrentState();
 
-		} else {
-			std::cout << "Invalid transition..."
-					<< std::endl;
+      return true;
+    }
 
-		}
+    return false;
+  }
 
+
+
+	bool addInitFunction(std::string state, void (*function)())
+  {
+    try
+		{
+			init_function.insert(std::pair<std::string, std::function<void()> >(state,(*function)));
+
+      return true;
+    }
+    catch (std::exception & e)
+    {
+      return false;
+    }
 	}
 
-	void addInitState(std::string state, void (*func)()) {
-		if (*func != NULL) {
-			std::cout << "Adding init state function to " << state << std::endl;
-			initState.insert(
-					std::pair<std::string, std::function<void()> >(state,
-							(*func)));
-		} else {
-			std::cout << "No function passed.. item not added..." << std::endl;
-		}
-	}
-	void addExitState(std::string state, void (*func)()) {
-		if (*func != NULL) {
-			std::cout << "Adding exit state function to " << state << std::endl;
-			exitState.insert(
-					std::pair<std::string, std::function<void()> >(state,
-							(*func)));
-		} else {
-			std::cout << "No function passed.. item not added..." << std::endl;
-		}
+
+  bool addExitFunction(std::string state, void (*function)())
+  {
+    try
+		{
+			exit_function.insert(std::pair<std::string, std::function<void()> >(state,(*function)));
+
+      return true;
+    }
+    catch (std::exception & e)
+    {
+      return false;
+    }
 	}
 
-	void printCurrentState() {
-		std::cout << "Current state: " << currentState << std::endl;
+  bool addInsideFunction(std::string state, void (*function)())
+  {
+    try
+		{
+			inside_function.insert(std::pair<std::string, std::function<void()> >(state,(*function)));
+
+      return true;
+    }
+    catch (std::exception & e)
+    {
+      return false;
+    }
 	}
 
-	void setCurrentState(std::string state)
+
+	std::string currentState()
 	{
-		currentState = state;
+		return current_state;
 	}
-	void printFSM() {
+
+
+  void runInsideFunction()
+  {
+    auto current_inside = inside_function.find(current_state);
+    if (current_inside != inside_function.end()) {
+      (current_inside->second)();
+    }
+  }
+
+	void print() {
 		std::cout << "\n\n\nCurrent State Machine: " << std::endl;
-		for (auto it = machine.begin(); it != machine.end(); it++) {
-			std::cout << "State: " << it->first << std::endl;
-			std::map<std::string, std::string>::iterator transIter =
-					it->second.begin();
-			std::cout << "Transitions" << std::endl;
-			for (; transIter != it->second.end(); transIter++) {
-				std::cout << transIter->first << " to " << transIter->second
-						<< std::endl;
+
+		for (auto state_iterator = machine.begin(); state_iterator != machine.end(); state_iterator++)
+    {
+			std::cout << "State: " << state_iterator->first << std::endl;
+
+      std::cout << "Transitions:" << std::endl;
+
+      for (auto transition_iterator = state_iterator->second.begin();
+           transition_iterator != state_iterator->second.end(); transition_iterator++)
+      {
+				std::cout << "   " << transition_iterator->first << " : " << state_iterator->first
+            << " -> " << transition_iterator->second << std::endl;
 			}
 			std::cout << std::endl;
 		}
-
 	}
-
-
-private:
-	std::map<std::string, std::map<std::string, std::string> > machine; //A transition has a number and a destination state
-	std::map<std::string, std::function<void()> > initState, exitState;
-	std::string currentState;
-
 };
 
 {% endset %}
 
 {% set definitions %}
+
+FiniteStateMachine machine;
 
 {% endset %}
