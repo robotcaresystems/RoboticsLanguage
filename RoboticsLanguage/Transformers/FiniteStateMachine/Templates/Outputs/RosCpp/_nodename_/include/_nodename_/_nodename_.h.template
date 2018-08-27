@@ -193,6 +193,8 @@ public:
 
 {% set definitions %}
 
-FiniteStateMachine machine;
+{% for machine in code|xpaths('//fsm:machine', {'fsm':'fsm'}) %}
+  FiniteStateMachine {{machine|xpath('fsm:name/text()', {'fsm':'fsm'})}};
+{% endfor %}
 
 {% endset %}

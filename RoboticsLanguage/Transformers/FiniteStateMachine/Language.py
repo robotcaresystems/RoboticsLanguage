@@ -9,4 +9,13 @@
 #    Copyright: copyright
 #
 
-language = {}
+language = {
+    '{fsm}machine': {},
+    '{fsm}name': {},
+    '{fsm}initial': {},
+    '{fsm}transitions': {},
+    '{fsm}transition': {},
+    '{fsm}label': {},
+    '{fsm}begin': {},
+    '{fsm}end': {}
+}

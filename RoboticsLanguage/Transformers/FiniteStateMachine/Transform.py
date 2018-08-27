@@ -14,29 +14,29 @@ from lxml import etree
 from RoboticsLanguage.Base import Utilities
 
 def transform(code, parameters):
-  Utilities.logging.info("Transforming FiniteStateMachine...")
 
+  n = {'fsm': 'fsm'}
 
-  # add parameters
-  list_of_states = list(set(code.xpath("//FiniteStateMachine/transitions/transition/begin/text()") +
-                            code.xpath("//FiniteStateMachine/transitions/transition/end/text()")))
-  transition_labels = code.xpath("//FiniteStateMachine/transitions/transition/label/text()")
-  transition_begins = code.xpath("//FiniteStateMachine/transitions/transition/begin/text()")
-  transition_ends = code.xpath("//FiniteStateMachine/transitions/transition/end/text()")
-  init = code.xpath("//FiniteStateMachine/initial/text()")
-  num_of_transitions = int(code.xpath("count(//FiniteStateMachine/transitions/transition)"))
-  num_of_states = int(len(list_of_states))
+  # add a list of states
+  parameters['Inputs']['FiniteStateMachine']['states'] ={}
 
-  parameters['Inputs']['FiniteStateMachine']['parameters'] = {
-      'list_of_states': list_of_states,
-      'transition_labels': transition_labels,
-      'transition_begins': transition_begins,
-      'transition_ends': transition_ends,
-      'init': init,
-      'num_of_transitions': num_of_transitions,
-      'num_of_states': num_of_states,
-  }
+  # look for all state machines
+  for machine in code.xpath('//fsm:machine', namespaces=n):
 
+    states = set()
+    # get name of machine
+    name = machine.xpath('fsm:name/text()', namespaces=n)[0]
 
+    # add initial states
+    states.add(machine.xpath('fsm:initial/text()', namespaces=n)[0])
+
+    # add states found in every transition
+    transitions = machine.xpath('fsm:transitions', namespaces=n)[0]
+    for transition in transitions.xpath('fsm:transition', namespaces=n):
+      states.add(transition.xpath('fsm:begin/text()', namespaces=n)[0])
+      states.add(transition.xpath('fsm:end/text()', namespaces=n)[0])
+
+    # save the set of states for each machine
+    parameters['Inputs']['FiniteStateMachine']['states'][name] = states
 
   return code, parameters

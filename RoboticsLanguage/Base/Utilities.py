@@ -602,16 +602,16 @@ def xmlMiniLanguage(parameters, key, text, position):
 #  XML utilities used in code generators
 # -------------------------------------------------------------------------------------------------
 
-def xpath(xml, path):
-  result = xml.xpath(path)
+def xpath(xml, path, namespaces={}):
+  result = xml.xpath(path, namespaces=namespaces)
   if isinstance(result, list):
     return result[0]
   else:
     return result
 
 
-def xpaths(xml, path):
-  return xml.xpath(path)
+def xpaths(xml, path, namespaces={}):
+  return xml.xpath(path, namespaces=namespaces)
 
 
 def text(xml):
@@ -677,47 +677,48 @@ def todaysDate(format):
 
 def fillDefaultsInOptionalArguments(code, parameters):
   '''Fill in defaults in optional arguments in case they are not explicitely defined.'''
+  try:
+    for element in code.xpath('*[not(self::option)]'):
+      __, parameters = fillDefaultsInOptionalArguments(element, parameters)
 
-  for element in code.xpath('*[not(self::option)]'):
-    __, parameters = fillDefaultsInOptionalArguments(element, parameters)
+    # if this tag has optional parameters defined
+    if len(dpath.util.values(parameters['language'][code.tag], 'definition/optional')) > 0:
 
-  # if this tag has optional parameters defined
-  if len(dpath.util.values(parameters['language'][code.tag], 'definition/optional')) > 0:
+      # find all optional parameters
+      optional_names = code.xpath('option/@name')
 
-    # find all optional parameters
-    optional_names = code.xpath('option/@name')
+      # get the list of missing parameters
+      missing_parameters = list(set(
+          parameters['language'][code.tag]['definition']['optional'].keys()) - set(optional_names))
 
-    # get the list of missing parameters
-    missing_parameters = list(set(
-        parameters['language'][code.tag]['definition']['optional'].keys()) - set(optional_names))
+      for parameter in missing_parameters:
 
-    for parameter in missing_parameters:
+        # create XML structure
+        optional_argument_tag = etree.Element('option')
 
-      # create XML structure
-      optional_argument_tag = etree.Element('option')
+        # add the name of the optional parameter
+        optional_argument_tag.attrib['name'] = parameter
 
-      # add the name of the optional parameter
-      optional_argument_tag.attrib['name'] = parameter
+        # get the tag
+        value_tag = etree.Element(
+            parameters['language'][code.tag]['definition']['optional'][parameter]['tag'])
 
-      # get the tag
-      value_tag = etree.Element(
-          parameters['language'][code.tag]['definition']['optional'][parameter]['tag'])
+        if parameters['language'][code.tag]['definition']['optional'][parameter]['default'] is not None:
+          # set the default value
+          value_tag.text = str(
+              parameters['language'][code.tag]['definition']['optional'][parameter]['default'])
 
-      if parameters['language'][code.tag]['definition']['optional'][parameter]['default'] is not None:
-        # set the default value
-        value_tag.text = str(
-            parameters['language'][code.tag]['definition']['optional'][parameter]['default'])
+          # append new tag to the code
+          optional_argument_tag.append(value_tag)
 
-        # append new tag to the code
-        optional_argument_tag.append(value_tag)
+        code.append(optional_argument_tag)
 
-      code.append(optional_argument_tag)
-
-  # fill in parameters for children
-  for element in code.xpath('option'):
-    for child in element.getchildren():
-      __, parameters = fillDefaultsInOptionalArguments(child, parameters)
-
+    # fill in parameters for children
+    for element in code.xpath('option'):
+      for child in element.getchildren():
+        __, parameters = fillDefaultsInOptionalArguments(child, parameters)
+  except:
+    pass
   return code, parameters
 
 
@@ -863,7 +864,7 @@ def serialise(code, parameters, keywords, language, filters=default_template_eng
       logErrors(formatJinjaErrorMessage(e), parameters)
 
   except KeyError:
-      # get the line and column numbers
+    # get the line and column numbers
     line_number, column_number, line = positionToLineColumn(
         int(code.attrib['p']), parameters['text'])
 

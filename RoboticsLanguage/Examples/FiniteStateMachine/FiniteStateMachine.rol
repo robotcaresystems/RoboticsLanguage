@@ -4,12 +4,50 @@ node(
 
     FiniteStateMachine<{
 
-        init:a
+        name:machine
+        init:idle
 
-        a -(a1)-> b
-        c -(a2)-> a
-        b -(a2)-> c
-        b -(a3)-> c -(a3)-> c
+        idle -(start)-> running
+
+        running -(stop)-> idle
+
+        running -(error)-> fault
+
+        fault-(reset)-> idle
+
+        idle -(error)-> fault
+
+
+    }>,
+
+
+    FiniteStateMachine<{
+
+        name:test
+        init:idle
+
+        idle -(start)-> running
+
+        running -(stop)-> idle
+
+
 
     }>
+
+     ,
+
+     initialise: block
+     (
+       print(machine.currentState()),
+
+       machine.fire('start'),
+       print(machine.currentState()),
+
+       machine.fire('error'),
+       print(machine.currentState()),
+
+       machine.fire('reset'),
+       print(machine.currentState())
+
+     )
 )

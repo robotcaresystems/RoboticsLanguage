@@ -13,25 +13,25 @@ from parsley import makeGrammar
 from RoboticsLanguage.Base import Utilities
 
 grammar_definition = """
-
 var = <letter letterOrDigit*>
 word = <letter+>
+
+name = 'name' ws ':' ws word:n -> xml('name',n)
 
 initialisation = 'init' ws ':' ws word:state -> xml('initial',state)
 
 transitions = ( ws transition:fsm -> fsm[0])*
 
-transition = word:begin ws '-' ws '(' ws var:label ws ')' ws '->' ws  ( ws transition:t -> xml('transition', xml('label',label)[0]+ xml('begin',begin)[0]+  xml('end',str(t[1][0]))[0] , rest = begin , text = t[0])
-                                | ws word:end -> xml('transition', xml('label',label)[0] + xml('begin',begin)[0] +  xml('end',end)[0] , rest=begin )
+transition = word:begin ws '-' ws '(' ws var:label ws ')' ws '->' ws  ( ws transition:t -> xml('transition', xml('label',label)[0] + xml('begin',begin)[0] + xml('end',str(t[1][0]))[0] , rest = begin, text = t[0])
+                                | ws word:end -> xml('transition', xml('label',label)[0] + xml('begin',begin)[0] + xml('end',end)[0], rest = begin)
                                 )
 
-result = ws initialisation:a ws transitions:t ws -> a + xml('transitions', ''.join(t))
-
+result = ws name:a ws initialisation:b ws transitions:t ws -> a + b + xml('transitions', ''.join(t))
 """
 
 
 def xml(tag, content, rest='', text=''):
-  return '<' + tag + '>' + content + '</' + tag + '>' + text, rest
+  return '<fsm:' + tag + '>' + content + '</fsm:' + tag + '>' + text, rest
 
 
 def parse(text, parameters):
@@ -44,6 +44,6 @@ def parse(text, parameters):
   result = grammar(text).result()
 
   # convert to XML object
-  code = etree.fromstring('<FiniteStateMachine>' + ''.join(result) + '</FiniteStateMachine>')
+  code = etree.fromstring('<fsm:machine xmlns:fsm="fsm">' + ''.join(result) + '</fsm:machine>')
 
   return code, parameters
