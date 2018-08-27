@@ -20,7 +20,12 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
+from RoboticsLanguage.Base import Utilities
+
 
 def transform(code, parameters):
+
+  # fill in defaults in optional arguments
+  code, parameters = Utilities.fillDefaultsInOptionalArguments(code, parameters)
 
   return code, parameters

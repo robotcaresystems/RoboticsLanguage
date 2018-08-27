@@ -64,17 +64,17 @@ All parameters can be assigned to command line flags that are loaded when the co
 
 ### Viewing parameters in the command line
 
-Parameters can be printed in the terminal using the flag `--debug-parameters`:
+Parameters can be printed in the terminal using the flag `--show-parameters`:
 
 ```shell
-rol helloworld.rol --debug-parameters
+rol helloworld.rol --show-parameters
 ```
 
 
-The previous command will probably show too much information. To print only a subset of the parameters the flag `--debug-parameters-path 'path'` can be used. For example, to see only the `globals` section, one can type:
+The previous command will probably show too much information. To print only a subset of the parameters the flag `--show-parameters-path 'path'` can be used. For example, to see only the `globals` section, one can type:
 
 ```shell
-rol helloworld.rol --debug-parameters-path 'globals'
+rol helloworld.rol --show-parameters-path 'globals'
 ```
 
 which returns:
@@ -82,7 +82,7 @@ which returns:
 ```python
 {'compile': False,
  'compilerLanguage': 'en',
- 'debug': False,
+ 'developer': False,
  'deploy': '/home/<user>/deploy',
  'language': 'en',
  'launch': False,
@@ -113,10 +113,10 @@ globals:
 For more information on creating custom messages for the command line see the section on [Command line options](#command-line-options).
 
 
-Note that the flag `--debug-parameters-path` uses the [dpath](https://github.com/akesterson/dpath-python) library. Please read the [dpath documentation]([dpath](https://github.com/akesterson/dpath-python)) for the available search options. For example, to get all the values for the key `name` in the `Information` domain one can write:
+Note that the flag `--show-parameters-path` uses the [dpath](https://github.com/akesterson/dpath-python) library. Please read the [dpath documentation]([dpath](https://github.com/akesterson/dpath-python)) for the available search options. For example, to get all the values for the key `name` in the `Information` domain one can write:
 
 ```shell
- rol helloworld.rol --debug-parameters-path 'Information/*/name'
+ rol helloworld.rol --show-parameters-path 'Information/*/name'
  ```
 
  ### Compiler steps
@@ -128,18 +128,18 @@ The compiler follows a number of steps, represented by each individual plug-in (
  rol helloworld.rol -v debug
  ```
 
- As the compiler progresses the parameters might be updated by each plug-in. You can use the flag `--debug-step` to show the state of the parameters for a particular step:
+ As the compiler progresses the parameters might be updated by each plug-in. You can use the flag `--show-step` to show the state of the parameters for a particular step:
 
  ```shell
- rol helloworld.rol --debug-parameters-path 'Transformers' --debug-step 7
+ rol helloworld.rol --show-parameters-path 'Transformers' --show-step 7
  ```
 
-If the flag `--debug-step` is not specified, then by default the step is 1.
+If the flag `--show-step` is not specified, then by default the step is 1.
 
-If you are developing a new plug-in it may happen that the full process from parsing to code generation will not work. You can interrupt the compiler at a particular step by using the flag `--debug-stop` in combination with `--debug-step`:
+If you are developing a new plug-in it may happen that the full process from parsing to code generation will not work. You can interrupt the compiler at a particular step by using the flag `--show-stop` in combination with `--show-step`:
 
  ```shell
- rol helloworld.rol --debug-parameters-path 'Transformers' --debug-step 2 --debug-stop
+ rol helloworld.rol --show-parameters-path 'Transformers' --show-step 2 --show-stop
  ```
 
 ### Using and loading extra parameters
@@ -262,7 +262,7 @@ parameters = { 'strict':False,
 are included in the general parameters using the domain name `Outputs/RosCpp`:
 
 ```shell
-rol helloworld.rol --debug-parameters-path 'Outputs/RosCpp'
+rol helloworld.rol --show-parameters-path 'Outputs/RosCpp'
 ```
 
 ```python
@@ -275,7 +275,7 @@ The parameters dictionary is organised according to the following list:
 
 - `globals` These are the main generic parameters for the compiler. These include elements such as compiler language, list of outputs, verbosity, debugging, etc. The globals are defined in the file  [`RoboticsLanguage/Base/Parameters.py`](../../../Base/Parameters.py).
 
-- `debug` Options for printing code and parameters, stoping compiler, etc. Definition in file [`RoboticsLanguage/Base/Parameters.py`](../../../Base/Parameters.py).
+- `developer` Options for printing code and parameters, stoping compiler, etc. Definition in file [`RoboticsLanguage/Base/Parameters.py`](../../../Base/Parameters.py).
 
 - `Information` Personal and company information that is embedded in the code generated. These parameters are usually stored in the files `~/.rol/parameters.yaml` and local `rol.parameters.yaml`. See [`RoboticsLanguage/Base/Parameters.py`](../../../Base/Parameters.py) for defaults.
 
@@ -299,33 +299,33 @@ Code is represented internally by an xml object. The xml tree structure evolves 
 
 ### Viewing the code in the command line
 
-Just as in the case of the parameters, the internal xml code can also be printed to the terminal using the flag `--debug-code`:
+Just as in the case of the parameters, the internal xml code can also be printed to the terminal using the flag `--show-code`:
 
 ```shell
-rol helloworld.rol --debug-code
+rol helloworld.rol --show-code
 ```
 
-To print only a subset of the code the flag `--debug-code-path 'path'` can be used. For example, to see only all the string tags one can type:
+To print only a subset of the code the flag `--show-code-path 'path'` can be used. For example, to see only all the string tags one can type:
 
 ```shell
-rol helloworld.rol --debug-code-path '//string'
+rol helloworld.rol --show-code-path '//string'
 ```
 
-The flag `--debug-code-path` uses the [lxml](http://lxml.de) implementation of [XPath](https://en.wikipedia.org/wiki/XPath). As such, complex queries can performed. For example, to find all the function options called `initialise` one can use:
+The flag `--show-code-path` uses the [lxml](http://lxml.de) implementation of [XPath](https://en.wikipedia.org/wiki/XPath). As such, complex queries can performed. For example, to find all the function options called `initialise` one can use:
 
 ```shell
-rol helloworld.rol --debug-code-path '//option[@name="initialise"]'
+rol helloworld.rol --show-code-path '//option[@name="initialise"]'
 ```
 
 ### Code's tree evolution
 
-Each module can add annotations (or in special cases tree modifications) to the code. Using the flag `--debug-step` each phase of the evolution can be printed in the command line. It can be combined with `--debug-stop`, as in the case for the parameters.
+Each module can add annotations (or in special cases tree modifications) to the code. Using the flag `--show-step` each phase of the evolution can be printed in the command line. It can be combined with `--show-stop`, as in the case for the parameters.
 
 The first step is usually the direct output of the parser:
 
 
 ```shell
-rol helloworld.rol --debug-code --debug-step 1
+rol helloworld.rol --show-code --show-step 1
 ```
 
 ```xml
@@ -348,31 +348,27 @@ The 2nd step is usually the output of the RoL preprocessor. It does semantic che
 
 
 ```shell
-rol helloworld.rol --debug-code --debug-step 2
+rol helloworld.rol --show-code --show-step 2
 ```
 
 ```xml
-<node p="64" type="Nothing">
-  <option p="26" name="name">
-    <string p="26" type="Strings">hello world</string>
+<node p="64" type="node">
+  <option p="26" name="name" type="string">
+    <string p="26" type="string">hello world</string>
   </option>
-  <option p="63" name="initialise">
-    <print p="62" type="Nothing">
-      <string p="61" type="Strings">hello world!</string>
-      <option name="level">
-        <string type="Strings">info</string>
+  <option p="63" name="initialise" type="none">
+    <print p="62" type="none">
+      <string p="61" type="string">hello world!</string>
+      <option name="level" type="string">
+        <string type="string">info</string>
       </option>
     </print>
   </option>
-  <option name="definitions">
-    <anything type="Nothing"></anything>
+  <option name="definitions" type="none"/>
+  <option name="rate" type="real">
+    <real type="real">1</real>
   </option>
-  <option name="rate">
-    <real type="Reals">1</real>
-  </option>
-  <option name="finalise">
-    <anything type="Nothing"></anything>
-  </option>
+  <option name="finalise" type="none"/>
 </node>
 ```
 
@@ -383,31 +379,27 @@ In between steps 3 to 6 the transformer modules annotate the xml code.
 The final step will run the `serialise` function and annotate the code with snippets of the output text.
 
 ```shell
-rol helloworld.rol --debug-code --debug-step 7
+rol helloworld.rol --show-code --show-step 6
 ```
 
 ```xml
-<node p="64" type="Nothing">
-  <option p="26" name="name" RosCpp="">
-    <string p="26" type="Strings" RosCpp="&quot;hello world&quot;">hello world</string>
+<node p="64" type="node">
+  <option p="26" name="name" type="string" RosCpp="&quot;hello world&quot;">
+    <string p="26" type="string" RosCpp="&quot;hello world&quot;">hello world</string>
   </option>
-  <option p="63" name="initialise" RosCpp="">
-    <print p="62" type="Nothing" RosCpp="ROS_INFO_STREAM(&quot;hello world!&quot;)">
-      <string p="61" type="Strings" RosCpp="&quot;hello world!&quot;">hello world!</string>
-      <option name="level" RosCpp="">
-        <string type="Strings" RosCpp="&quot;info&quot;">info</string>
+  <option p="63" name="initialise" type="none" RosCpp="ROS_INFO_STREAM(&quot;hello world!&quot;)">
+    <print p="62" type="none" RosCpp="ROS_INFO_STREAM(&quot;hello world!&quot;)">
+      <string p="61" type="string" RosCpp="&quot;hello world!&quot;">hello world!</string>
+      <option name="level" type="string">
+        <string type="string" RosCpp="&quot;info&quot;">info</string>
       </option>
     </print>
   </option>
-  <option name="definitions" RosCpp="">
-    <anything type="Nothing" RosCpp=""></anything>
+  <option name="definitions" type="none" RosCpp=""/>
+  <option name="rate" type="real" RosCpp="1">
+    <real type="real" RosCpp="1">1</real>
   </option>
-  <option name="rate" RosCpp="">
-    <real type="Reals" RosCpp="1">1</real>
-  </option>
-  <option name="finalise" RosCpp="">
-    <anything type="Nothing" RosCpp=""></anything>
-  </option>
+  <option name="finalise" type="none" RosCpp=""/>
 </node>
 ```
 
@@ -592,6 +584,8 @@ RoboticsLanguage
         │   Parameters.py
         │   Transform.py
         │   README.md
+        └───Templates
+            └───Outputs
 ```
 - `Manifesto.py` contains the base information of the module. The `rol` compiler uses this file to detect and initialise this module. This file is **mandatory**. The content of the manifesto is a dictionary:
 
@@ -610,7 +604,7 @@ RoboticsLanguage
   3. The `order` sets the order in which modules are sequenced in the process.
 
 
-- `Transform.py` is the main tranformation file. It should contain a function
+- `Transform.py` is the main transformation file. It should contain a function
 
   ```coffeescript
   transform(code, parameters) -> (code, parameters)

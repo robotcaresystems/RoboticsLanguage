@@ -19,9 +19,11 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-import unittest
+import re
 import os
-from RoboticsLanguage.Base import CommandLine, Utilities
+import fso
+import unittest
+from RoboticsLanguage.Base import CommandLine, Utilities, Initialise
 
 
 # =================================================================================================
@@ -30,93 +32,78 @@ from RoboticsLanguage.Base import CommandLine, Utilities
 
 
 class TestBaseCommandLine(unittest.TestCase):
+
   def test_ProcessArguments(self):
-    Utilities.createFolder('/tmp/RoL/')
-    Utilities.createFolder(os.path.expanduser('~') + '/.rol/')
 
-    # create a user wide parameter files
-    global_parameters_file = os.path.expanduser('~') + '/.rol/parameters.yaml'
+    with fso.push() as overlay:
 
-    if os.path.isfile(global_parameters_file):
-      # file exist!!! make a backup
-      global_parameters_file_exists = True
-      os.rename(global_parameters_file,global_parameters_file+'.backup')
-    else:
-      global_parameters_file_exists = False
+      Utilities.createFolder('/tmp/RoL/')
+      Utilities.createFolder(os.path.expanduser('~') + '/.rol/')
 
-    with open(global_parameters_file, 'w') as parameter_file:
-      parameter_file.write('testing:\n  parameterA: 1\n  repeatedParameter: 1')
+      # create a user wide parameter files
+      global_parameters_file = os.path.expanduser('~') + '/.rol/parameters.yaml'
 
-    # create a local parameter file
-    with open('/tmp/RoL/.rol.parameters.yaml', 'w') as parameter_file:
-      parameter_file.write('testing:\n  parameterB: 2\n  repeatedParameter: 2')
+      with open(global_parameters_file, 'w') as parameter_file:
+        parameter_file.write('testing:\n  parameterA: 1\n  repeatedParameter: 1')
 
-    # create extra parameter file 1
-    with open('/tmp/RoL/test1.yaml', 'w') as parameter_file:
-      parameter_file.write('testing:\n  parameterC: 3\n  repeatedParameter: 3')
+      # create a local parameter file
+      with open('/tmp/RoL/.rol.parameters.yaml', 'w') as parameter_file:
+        parameter_file.write('testing:\n  parameterB: 2\n  repeatedParameter: 2')
 
-    # create extra parameter file 2
-    with open('/tmp/RoL/test2.yaml', 'w') as parameter_file:
-      parameter_file.write('testing:\n  parameterD: 4\n  repeatedParameter: 4')
+      # create extra parameter file 1
+      with open('/tmp/RoL/test1.yaml', 'w') as parameter_file:
+        parameter_file.write('testing:\n  parameterC: 3\n  repeatedParameter: 3')
 
-    # create RoL file
-    with open('/tmp/RoL/test.rol', 'w') as template_file:
-      template_file.write('print(\'hello\')')
+      # create extra parameter file 2
+      with open('/tmp/RoL/test2.yaml', 'w') as parameter_file:
+        parameter_file.write('testing:\n  parameterD: 4\n  repeatedParameter: 4')
 
-    # set command line parameters
-    command_line_parameters = ['rol', '/tmp/RoL/test.rol',
-                               '/tmp/RoL/test1.yaml', '/tmp/RoL/test2.yaml', '-o', 'RoLXML']
+      # create RoL file
+      with open('/tmp/RoL/test.rol', 'w') as template_file:
+        template_file.write('print(\'hello\')')
 
-    parameters = {
-        'debug': {},
-        'Information': {},
-        'Transformers': {},
-        'Outputs': {},
-        'Inputs': {},
-        'manifesto': {
-            'Inputs': {
-                'RoL': {
-                    'fileFormat': 'rol',
-                    'packageName': 'Robotics Language',
-                    'packageShortName': 'RoL'}},
-            'Transformers': {},
-            'Outputs': {}},
-        'command_line_flags': {
-            'globals:output': {
-                'choices': ['RoLXML'],
-                'description': 'Outputs',
-                'flag': 'o',
-                'longFlag': 'output',
-                'numberArguments': '*'}, },
-        'globals': {
-            'output': ''}}
+      parameters = Initialise.Initialise(True)
 
-    # run the command line parser
-    filename, filetype, outputs, parameters = CommandLine.ProcessArguments(command_line_parameters, parameters)
+      # set command line parameters
+      command_line_parameters = ['rol', '/tmp/RoL/test.rol',
+                                 '/tmp/RoL/test1.yaml', '/tmp/RoL/test2.yaml', '-o', 'RoLXML']
 
-    # clean up
-    if global_parameters_file_exists:
-      # delete test file
-      os.remove(global_parameters_file)
+      # load cached command line flags or create if necessary
+      flags, arguments, file_package_name, file_formats = CommandLine.prepareCommandLineArguments(parameters)
 
-      # put back the original file
-      os.rename(global_parameters_file+'.backup',global_parameters_file)
+      # deal with special command line arguments, e.g. '--version'
+      CommandLine.checkSpecialCommandLineArguments(command_line_parameters, parameters)
 
-    # check filename
-    self.assertEqual(filename, '/tmp/RoL/test.rol')
+      # run the command line parser
+      parser, args = CommandLine.runCommandLineParser(parameters, arguments, flags, file_formats,
+                                          file_package_name, command_line_parameters)
 
-    # check filetype
-    self.assertEqual(filetype, 'rol')
+      # complete processing, e.g. load languages, etc.
+      parameters = CommandLine.postCommandLineParser(parameters)
 
-    # check list of outputs
-    self.assertEqual(outputs, ['RoLXML'])
+      # the fso library does not implement the 'name' element of the file object
+      args.filename[0].name = '/tmp/RoL/test.rol'
+      args.filename[1].name = '/tmp/RoL/test1.yaml'
+      args.filename[2].name = '/tmp/RoL/test2.yaml'
 
-    # check parameters
-    self.assertEqual(parameters['testing']['parameterA'], 1)
-    self.assertEqual(parameters['testing']['parameterB'], 2)
-    self.assertEqual(parameters['testing']['parameterC'], 3)
-    self.assertEqual(parameters['testing']['parameterD'], 4)
-    self.assertEqual(parameters['testing']['repeatedParameter'], 4)
+      # process the parameters
+      filename, filetype, outputs, parameters = CommandLine.processCommandLineParameters(args, file_formats, parameters)
+
+      # check filename
+      self.assertEqual(filename, '/tmp/RoL/test.rol')
+
+      # check filetype
+      self.assertEqual(filetype, 'rol')
+
+      # check list of outputs
+      self.assertEqual(outputs, ['RoLXML'])
+
+      # check parameters
+      self.assertEqual(parameters['testing']['parameterA'], 1)
+      self.assertEqual(parameters['testing']['parameterB'], 2)
+      self.assertEqual(parameters['testing']['parameterC'], 3)
+      self.assertEqual(parameters['testing']['parameterD'], 4)
+      self.assertEqual(parameters['testing']['repeatedParameter'], 4)
 
 
 if __name__ == '__main__':

@@ -24,7 +24,7 @@
   - [ ] function definition list
 - [ ] semantic checking:
   - [ ] check that function prototypes are correct
-  - [ ] check variables types
+  - [x] check variables types
   - [x] type checking
 - [x] RoL language comments implementation
 - [x] fill in the languages using each outputs default language structure

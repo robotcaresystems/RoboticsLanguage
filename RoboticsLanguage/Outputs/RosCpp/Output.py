@@ -21,7 +21,9 @@
 #   limitations under the License.
 
 from RoboticsLanguage.Base import Utilities
-import os
+from RoboticsLanguage.Tools import Templates
+
+# import os
 import sys
 import subprocess
 
@@ -57,9 +59,13 @@ def output(code, parameters):
   code, parameters, node_name_underscore = runPreparations(code, parameters)
 
   # run template engine to generate node code
-  if not Utilities.templateEngine(code, parameters, {'nodename': node_name_underscore}, os.path.dirname(
-          __file__) + '/templates', parameters['globals']['deploy']):
+  if not Templates.templateEngine(code, parameters, file_patterns={'nodename': node_name_underscore}):
     sys.exit(1)
+
+  #
+  # if not Utilities.templateEngine(code, parameters, {'nodename': node_name_underscore}, os.path.dirname(
+  #         __file__) + '/templates', parameters['globals']['deploy']):
+  #   sys.exit(1)
 
   # if the flag compile is set then run catkin
   if parameters['globals']['compile']:

@@ -25,28 +25,34 @@ from iso639 import languages
 
 parameters = {
     'globals': {
-        'version': '0.0.1',
+        'version': '',
         'output': 'RosCpp',
         'debug': False,
         'compile': False,
         'launch': False,
         'verbose': 'none',
         'deploy': os.path.expanduser('~') + '/deploy/',
+        'plugins': os.path.expanduser('~') + '/.rol/plugins/',
+        'RoboticsLanguagePath': os.path.abspath(os.path.dirname(__file__) + '/../') + '/',
         'removeCache': False,
         'language': 'en',
-        'compilerLanguage': 'en'
+        'compilerLanguage': 'en',
+        'loadOrder': []
     },
 
-    'debug': {
+    'developer': {
         'code': False,
         'codePath': '',
         'parameters': False,
         'parametersPath': '',
         'step': 1,
         'stepCounter': 0,
+        'stepGroup': '',
+        'stepName': '',
         'stop': False,
-        'ignoreSemanticErrors': False,
-        'ignoreErrors': False
+        'skip': '',
+        'ignoreErrors': False,
+        'intermediateTemplates': False
     },
 
     'errors': [],
@@ -75,7 +81,7 @@ parameters = {
         'software':
         {
             'name': 'name',
-            'version': '1.0.0',
+            'version': '0.0.0',
             'description': 'description',
             'maintainer': {'name': 'name', 'email': 'email@email.edu'},
             'author': {'name': 'name', 'email': 'email@email.edu'},
@@ -88,43 +94,59 @@ parameters = {
 }
 
 command_line_flags = {
-    'debug:code': {
+    'developer:code': {
         'noArgument': True,
-        'longFlag': 'debug-code',
+        'longFlag': 'show-code',
         'description': 'Prints the internal XML representation of the code'
     },
-    'debug:codePath': {
-        'longFlag': 'debug-code-path',
+    'developer:codePath': {
+        'longFlag': 'show-code-path',
         'description': 'Prints the internal XML representation of the code for a specific path'
     },
-    'debug:parameters': {
+    'developer:parameters': {
+        'longFlag': 'show-parameters',
         'noArgument': True,
+        'fileNotNeeded': True,
         'description': 'Prints the internal parameters'
     },
-    'debug:parametersPath': {
-        'longFlag': 'debug-parameters-path',
+    'developer:parametersPath': {
+        'longFlag': 'show-parameters-path',
+        'fileNotNeeded': True,
         'description': 'Prints the internal parameters for a specific path'
     },
-    'debug:step': {
+    'developer:step': {
+        'longFlag': 'show-step',
         'description': 'Prints parameters or code for a specific compiler step'
     },
-    'debug:stop': {
+    'developer:stop': {
+        'longFlag': 'show-stop',
         'noArgument': True,
-        'description': 'Stops the compiler after the step defined by \'--debug-step\''
+        'description': 'Stops the compiler after the step defined by \'--show-step\''
     },
-    'debug:ignoreSemanticErrors': {
+    'developer:skip': {
+        'longFlag': 'skip',
+        'description': 'Skip transformer modules',
+        'numberArguments': '*'
+    },
+    'developer:ignoreSemanticErrors': {
         'longFlag': 'ignore-semantic-errors',
         'noArgument': True,
         'description': 'Ignores the semantic errors and attempts to generate code. Result may not compile.'
     },
-    'debug:ignoreErrors': {
+    'developer:ignoreErrors': {
         'longFlag': 'ignore-errors',
         'noArgument': True,
         'description': 'Ignores errors and attempts to generate code. Result may not compile.'
     },
+    'developer:intermediateTemplates': {
+        'longFlag': 'show-intermediate-templates',
+        'noArgument': True,
+        'description': 'Show the intermidiate templates created by the template engine'
+    },
     'globals:version': {
         'longFlag': 'version',
         'noArgument': True,
+        'fileNotNeeded': True,
         'description': 'Shows the version of the Robotics Language and exit.'
     },
     'globals:output': {
@@ -166,6 +188,7 @@ command_line_flags = {
     'globals:removeCache': {
         'longFlag': 'remove-cache',
         'noArgument': True,
+        'fileNotNeeded': True,
         'description': 'Deletes the compiler cache'
     },
     'globals:language': {
@@ -180,7 +203,12 @@ command_line_flags = {
     },
 
     'errors': {'suppress': True},
-    'debug:stepCounter': {'suppress': True},
+    'developer:stepCounter': {'suppress': True},
+    'developer:stepGroup': {'suppress': True},
+    'developer:stepName': {'suppress': True},
+    'globals:plugins': {'suppress': True},
+    'globals:RoboticsLanguagePath': {'suppress': True},
+    'globals:loadOrder': {'suppress': True},
     'Information:user:name': {'suppress': True},
     'Information:user:email': {'suppress': True},
     'Information:user:web': {'suppress': True},

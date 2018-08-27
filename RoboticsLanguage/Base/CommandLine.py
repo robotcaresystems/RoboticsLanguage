@@ -24,6 +24,7 @@ import os
 import sys
 import yaml
 import argparse
+import dpath.util
 import argcomplete
 from . import Utilities
 from . import Parameters
@@ -86,14 +87,14 @@ def generateArgparseArguments(parameters, flags):
   return command_line_flags, arguments
 
 
-@Utilities.cache
+@Utilities.cache_in_disk
 def prepareCommandLineArguments(parameters):
 
   # remember the available choices for outputs
   Parameters.command_line_flags['globals:output']['choices'] = parameters['manifesto']['Outputs'].keys()
 
   # create a subset of all the parameters
-  subset = dict((x, parameters[x]) for x in ['Information', 'Transformers', 'Inputs', 'Outputs', 'globals', 'debug'])
+  subset = dict((x, parameters[x]) for x in ['Information', 'Transformers', 'Inputs', 'Outputs', 'globals', 'developer'])
 
   # create argparse list parameters
   flags, arguments = generateArgparseArguments(subset, parameters['command_line_flags'])
@@ -119,11 +120,12 @@ def prepareCommandLineArguments(parameters):
 
 def checkSpecialCommandLineArguments(command_line_parameters, parameters):
   if '--version' in command_line_parameters:
-    print 'The Robotics Language Version: ' + parameters['globals']['version']
-    sys.exit(0)
+    import pkg_resources
+    print 'The Robotics Language version: ' + pkg_resources.get_distribution('RoboticsLanguage').version
 
 
 def runCommandLineParser(parameters, arguments, flags, file_formats, file_package_name, command_line_arguments):
+
   # instantiate the command line parser
   parser = argparse.ArgumentParser(prog='rol', description='Robotics Language compiler',
                                    formatter_class=argparse.RawTextHelpFormatter)
@@ -137,25 +139,41 @@ def runCommandLineParser(parameters, arguments, flags, file_formats, file_packag
   for key in sorted(arguments):
     groups[key.split(':')[0]].add_argument(*flags[key], **arguments[key])
 
+  try:
+    # get a list of flags where a file is not needed
+    list_of_no_file_needed_flags = reduce(lambda a,b: a+b,[flags[x] for x in dpath.util.search(parameters, 'command_line_flags/*/fileNotNeeded')['command_line_flags'].keys()])
+  except:
+    list_of_no_file_needed_flags = []
+
+  # if one of the flags that does not require a file is used than change argparse
+  if any([x in list_of_no_file_needed_flags for x in sys.argv]):
+    nargs = '*'
+    parameters['globals']['fileNeeded'] = False
+  else:
+    nargs = '+'
+    parameters['globals']['fileNeeded'] = True
+
   # the files to process
   parser.add_argument('filename',
                       metavar='[ ' + ' | '.join(map(lambda x: 'file.' + x, file_formats)) + ' ] [ profile.yaml ... ]',
                       type=argparse.FileType('r'),
-                      nargs='+',
+                      nargs=nargs,
                       # default=sys.stdin,
                       help=';\n'.join(file_package_name))
 
   # run the command line parser with autocomplete
   argcomplete.autocomplete(parser)
   args = parser.parse_args(command_line_arguments[1:])
+
   return parser, args
 
 
-def processFileParameters(args, file_formats):
+def processFileParameters(args, file_formats, parameters):
   # Check file types
   rol_files = []
   parameter_files = []
   unknown_files = []
+
   for element in args.filename:
     name, extension = os.path.splitext(os.path.abspath(element.name))
     if extension.lower() in map(lambda x: '.' + x.lower(), file_formats):
@@ -173,7 +191,7 @@ def processFileParameters(args, file_formats):
     Utilities.logger.error('the following files have unknown formal: ' + str(unknown_files))
     sys.exit(1)
 
-  if len(rol_files) == 0:
+  if len(rol_files) == 0 and parameters['globals']['fileNeeded']:
     Utilities.logger.error('no Robotics Language files detected!')
     sys.exit(1)
     # @TODO: implement multiple file support
@@ -216,7 +234,7 @@ def processCommandLineParameters(args, file_formats, parameters):
     Utilities.setLoggerLevel(command_line_parameters['globals']['verbose'])
 
   # check for files parameters
-  rol_files, parameter_files = processFileParameters(args, file_formats)
+  rol_files, parameter_files = processFileParameters(args, file_formats, parameters)
 
   # now concatenate all parameters starting with
   # 1. defaults from RoL and from modules (can be cached)
@@ -237,9 +255,102 @@ def processCommandLineParameters(args, file_formats, parameters):
   # remove filename key
   parameters.pop('filename', None)
 
-  return rol_files[0]['name'], rol_files[0]['type'], Utilities.ensureList(parameters['globals']['output']), parameters
+  if len(rol_files) == 0:
+    return None, None, Utilities.ensureList(parameters['globals']['output']), parameters
+  else:
+    return rol_files[0]['name'], rol_files[0]['type'], Utilities.ensureList(parameters['globals']['output']), parameters
 
 
+def postCommandLineParser(parameters):
+
+  language = {}
+  messages = {}
+  error_handling = {}
+  error_exceptions = {}
+  default_output = {}
+
+  # load the parameters form all the modules dynamically
+  # When this function is executed the plugins folder has already
+  # been added to the path
+  for module_name in parameters['globals']['loadOrder']:
+
+    name_split = module_name.split('.')
+
+    # The language
+    try:
+      language_module = __import__(module_name + '.Language', globals(), locals(), ['Language'])
+
+      # append to each keyword in the language information from which package it comes from
+      for keyword in language_module.language.keys():
+        language_module.language[keyword]['package'] = name_split[1] + ':' + name_split[2]
+
+      # append language definitions
+      language = Utilities.mergeDictionaries(language, language_module.language)
+
+      # read the default output for each language keyword per package
+      if name_split[1] == 'Outputs':
+        default_output[name_split[2]] = language_module.default_output
+    except Exception as e:
+      Utilities.logger.debug(e.__repr__())
+      pass
+
+    # The messages
+    try:
+      messages_module = __import__(module_name + '.Messages', globals(), locals(), ['Messages'])
+
+      # append messages definitions
+      messages = Utilities.mergeDictionaries(messages, messages_module.messages)
+    except Exception as e:
+      Utilities.logger.debug(e.__repr__())
+      pass
+
+    # The error handling functions
+    try:
+      error_module = __import__(module_name + '.ErrorHandling', globals(), locals(), ['ErrorHandling'])
+
+      # append error handling definitions
+      error_handling = Utilities.mergeDictionaries(error_handling, error_module.error_handling_functions)
+
+      # append error exceptions definitions
+      error_exceptions = Utilities.mergeDictionaries(error_exceptions, error_module.error_exception_functions)
+    except Exception as e:
+      Utilities.logger.debug(e.__repr__())
+      pass
+
+  # add package language definitions
+  parameters['language'] = language
+
+  # add package messages definitions
+  parameters['messages'] = messages
+
+  # add package error exceptions definitions
+  parameters['errorExceptions'] = error_exceptions
+
+  # add package error handling definitions
+  parameters['errorHandling'] = error_handling
+
+  # fill in the languages using each outputs default language structure
+  for keyword, value in parameters['language'].iteritems():
+    # make sure the `output` tag is defined
+    if 'output' in value.keys():
+      # find missing outputs
+      missing = list(set(parameters['Outputs'].keys()) - set(value['output'].keys()))
+    else:
+      # all outputs are missing
+      missing = parameters['Outputs'].keys()
+      parameters['language'][keyword]['output'] = {}
+
+    parameters['language'][keyword]['defaultOutput'] = []
+    for item in missing:
+      # fill in the missing output
+      parameters['language'][keyword]['output'][item] = default_output[item]
+      # log that the default output is being used
+      parameters['language'][keyword]['defaultOutput'].append(item)
+
+  return parameters
+
+
+# @Utilities.time_all_calls
 def ProcessArguments(command_line_parameters, parameters):
 
   # load cached command line flags or create if necessary
@@ -251,6 +362,9 @@ def ProcessArguments(command_line_parameters, parameters):
   # run the command line parser
   parser, args = runCommandLineParser(parameters, arguments, flags, file_formats,
                                       file_package_name, command_line_parameters)
+
+  # complete processing, e.g. load languages, etc.
+  parameters = postCommandLineParser(parameters)
 
   # process the parameters
   file_name, file_type, outputs, parameters = processCommandLineParameters(args, file_formats, parameters)

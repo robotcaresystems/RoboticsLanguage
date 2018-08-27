@@ -26,14 +26,17 @@ import time
 import dill
 import errno
 import pprint
+import hashlib
 import logging
 import datetime
 import dpath.util
 import coloredlogs
 from lxml import etree
 from funcy import decorator
+from pygments import highlight
 from shutil import copy, rmtree
-from RoboticsLanguage.Base import Types
+from pygments.lexers import PythonLexer, XmlLexer
+from pygments.formatters import Terminal256Formatter
 from jinja2 import Environment, FileSystemLoader, Template, TemplateSyntaxError, TemplateAssertionError, TemplateError
 
 # -------------------------------------------------------------------------------------------------
@@ -43,17 +46,21 @@ from jinja2 import Environment, FileSystemLoader, Template, TemplateSyntaxError,
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
+
 # -------------------------------------------------------------------------------------------------
 #  Helping functions
 # -------------------------------------------------------------------------------------------------
 
 
-def printCode(code):
-  print etree.tostring(code, pretty_print=True)
+def printCode(code, style='monokai'):
+  print highlight(etree.tostring(code, pretty_print=True), XmlLexer(),
+                  Terminal256Formatter(style=Terminal256Formatter(style=style).style))
 
 
-def printParameters(parameters):
-  pprint.pprint(parameters)
+def printParameters(parameters, style='monokai'):
+  print highlight(pprint.pformat(parameters), PythonLexer(),
+                  Terminal256Formatter(style=Terminal256Formatter(style=style).style))
+
 
 # -------------------------------------------------------------------------------------------------
 #  Error handling
@@ -241,20 +248,22 @@ def name_all_calls(function):
 @decorator
 def time_all_calls(function):
   start = time.time()
+  sys.stdout.write('<<<')
+  sys.stdout.flush()
   result = function()
-  print 'function name:', function._func.__name__, 'execution time: ', time.time() - start, 'seconds'
+  print 'function name:', function._func.__name__, 'execution time: ', time.time() - start, 'seconds>>>'
   return result
 
 
 @decorator
-def cache(function):
+def cache_in_disk(function):
   cache_path = '/.rol/cache/'
 
   # create a name based on the module and function name
   name = __name__ + '.' + function._func.__name__
 
   # create a the path name for the file to cache
-  path = os.path.expanduser("~") + cache_path + name + '.data'
+  path = os.path.expanduser("~") + cache_path + name + '.cache'
 
   if os.path.isfile(path):
     # if file exists just load it
@@ -267,6 +276,26 @@ def cache(function):
     createFolder(os.path.expanduser("~") + cache_path)
     dill.dump(data, open(path, "wb"))  # , protocol=dill.HIGHEST_PROTOCOL)
     return data
+
+
+global_function_cache = {}
+
+
+def cache_function(function):
+  def wrapper(*arguments, **options):
+    global global_function_cache
+    hash = hashlib.md5(function.__name__ + str(arguments) + str(options)).hexdigest()
+    # hash = hash(function.__name__ + str(arguments) + str(options))
+    # print '<<<call: [' + hash + ']' + function.__name__ + str(arguments) + str(options)
+    if hash not in global_function_cache.keys():
+      result = function(*arguments, **options)
+      global_function_cache[hash] = result
+      # print 'cache: + ' + str(hash) + '>>>'
+    else:
+      result = global_function_cache[hash]
+      # print 'use: - ' + str(hash) + '>>>'
+    return result
+  return wrapper
 
 
 # -------------------------------------------------------------------------------------------------
@@ -301,47 +330,49 @@ class color:
   END = '\033[0m'
 
 
-def incrementCompilerStep(parameters, name):
+def incrementCompilerStep(parameters, group, name):
   # update the compiler step
-  parameters['debug']['stepCounter'] = parameters['debug']['stepCounter'] + 1
+  parameters['developer']['stepCounter'] = parameters['developer']['stepCounter'] + 1
+  parameters['developer']['stepGroup'] = group
+  parameters['developer']['stepName'] = name
 
   # log the current step
   logger.info(
-      'Step [' + str(parameters['debug']['stepCounter']) + "]: " + name)
+      'Step [' + str(parameters['developer']['stepCounter']) + "]: " + group + " - " + name)
 
   return parameters
 
 
-def showDebugInformation(code, parameters):
-  if parameters['debug']['step'] == parameters['debug']['stepCounter']:
+def showDeveloperInformation(code, parameters):
+  if parameters['developer']['step'] == parameters['developer']['stepCounter']:
 
-      # show debug information for xml code
-    if parameters['debug']['code']:
+      # show developer information for xml code
+    if parameters['developer']['code'] and code is not None:
       printCode(code)
 
-    # show debug information for parameters
-    if parameters['debug']['parameters']:
+    # show developer information for parameters
+    if parameters['developer']['parameters']:
       printParameters(parameters)
 
-    # show debug information for specific xml code
-    if parameters['debug']['codePath'] is not '':
+    # show developer information for specific xml code
+    if parameters['developer']['codePath'] is not '' and code is not None:
       try:
-        for element in code.xpath(parameters['debug']['codePath']):
+        for element in code.xpath(parameters['developer']['codePath']):
           printCode(element)
       except:
         logger.warning(
-            "The path'" + parameters['debug']['codePath'] + "' is not present in the code")
+            "The path'" + parameters['developer']['codePath'] + "' is not present in the code")
 
-    # show debug information for specific parameters
-    if parameters['debug']['parametersPath'] is not '':
+    # show developer information for specific parameters
+    if parameters['developer']['parametersPath'] is not '':
       try:
-        for element in paths(parameters, parameters['debug']['parametersPath']):
+        for element in paths(parameters, parameters['developer']['parametersPath']):
           printParameters(element)
       except:
         logger.warning(
-            "The path'" + parameters['debug']['parametersPath'] + "' is not defined in the internal parameters.")
+            "The path'" + parameters['developer']['parametersPath'] + "' is not defined in the internal parameters.")
 
-    if parameters['debug']['stop']:
+    if parameters['developer']['stop']:
       sys.exit(0)
 
 
@@ -350,8 +381,8 @@ def showDebugInformation(code, parameters):
 # -------------------------------------------------------------------------------------------------
 
 
-def importModule(a, b, c):
-  return __import__('RoboticsLanguage.' + a + '.' + b, globals(), locals(), ensureList(c))
+def importModule(z, a, b, c):
+  return __import__(z + '.' + a + '.' + b, globals(), locals(), ensureList(c))
 
 
 def removeCache(cache_path='/.rol/cache'):
@@ -420,6 +451,14 @@ def paths(dictionary, dictionary_path):
 # -------------------------------------------------------------------------------------------------
 
 
+def replaceLast(string, source, destination):
+  return source.join(string.split(source)[0:-1])+destination+string.split(source)[-1]
+
+
+def replaceFirst(string, source, destination):
+  return string.replace(source, destination, 1)
+
+
 def lowerNoSpace(s):
   return s.replace(' ', '').lower()
 
@@ -467,20 +506,21 @@ def ensureList(a):
 #  File utilities
 # -------------------------------------------------------------------------------------------------
 
+def findFileType(extension='py', path='.', followlinks=True):
+  for entry in ensureList(path):
+    for root, dirs, files in os.walk(entry, followlinks=followlinks):
+      for eachfile in files:
+        fileName, fileExtension = os.path.splitext(eachfile)
+        if fileExtension.lower() == '.' + extension:
+          yield root + '/' + eachfile
 
-def findFileType(extension='py', path='.'):
-  for root, dirs, files in os.walk(path):
-    for eachfile in files:
-      fileName, fileExtension = os.path.splitext(eachfile)
-      if fileExtension.lower() == '.' + extension:
-        yield root + '/' + eachfile
 
-
-def findFileName(name, path='.'):
-  for root, dirs, files in os.walk(path):
-    for eachfile in files:
-      if os.path.basename(eachfile) == name:
-        yield root + '/' + eachfile
+def findFileName(name, path='.', followlinks=True):
+  for entry in ensureList(path):
+    for root, dirs, files in os.walk(entry, followlinks=followlinks):
+      for eachfile in files:
+        if os.path.basename(eachfile) == name:
+          yield root + '/' + eachfile
 
 
 def createFolder(path):
@@ -528,13 +568,13 @@ def xmlFunction(parameters, tag, content, position=0):
 def xmlFunctionDefinition(name, arguments, returns, content, position=0):
 
   arguments_text = xml('function_arguments', arguments,
-                       position) if isinstance(arguments, str) else ''
+                       position) if isinstance(arguments, basestring) else ''
   returns_text = xml('function_returns', returns, position) if isinstance(
-      returns, str) else ''
+      returns, basestring) else ''
   content_text = xml('function_content', content, position) if isinstance(
-      content, str) else ''
+      content, basestring) else ''
 
-  return xmlAttributes('function_definition', arguments_text + returns_text + content_text, position, attributes={'name': name })
+  return xmlAttributes('function_definition', arguments_text + returns_text + content_text, position, attributes={'name': name})
 
 
 def xmlVariable(parameters, name, position=0):
@@ -550,7 +590,7 @@ def xmlVariable(parameters, name, position=0):
 def xmlMiniLanguage(parameters, key, text, position):
   '''Calls a different parser to process inline mini languages'''
   try:
-    code, parameters = importModule(
+    code, parameters = importModule(parameters['manifesto']['Inputs'][key]['type'],
         'Inputs', key, 'Parse').Parse.parse(text, parameters)
     result = etree.tostring(code)
     return result
@@ -603,6 +643,7 @@ def attribute(xml, name):
   except:
     return ''
 
+
 def option(xml, name, debug=''):
   try:
     return optionalArguments(xml)[name]
@@ -632,156 +673,6 @@ def getTextMinimumPositionXML(xml):
 def todaysDate(format):
   today = datetime.date.today()
   return today.strftime(format)
-
-# -------------------------------------------------------------------------------------------------
-#  semantic type checker
-# -------------------------------------------------------------------------------------------------
-
-
-def semanticChecking(code, parameters):
-  '''Generic semantic checking function'''
-
-  # check if should ignore semantic checking
-  if parameters['debug']['ignoreSemanticErrors']:
-    return code, parameters
-
-  # check types
-  code, parameters = semanticTypeChecker(code, parameters)
-
-  # check that all variables are initialised
-  code, parameters = semanticDefiniteAssignment(code, parameters)
-
-  return code, parameters
-
-
-def semanticTypeChecker(code, parameters):
-
-  # traverse xml and set all types for all atomic tags
-  [x.set('type', type) for type in Types.type_atomic
-   for x in code.xpath('//' + type)]
-
-  # fill in global scope variable types
-  for variable in code.xpath('/node/option[@name="definitions"]//element'):
-
-    # get the name of the variable
-    variable_name = variable.getchildren()[0].attrib['name']
-
-    # get its definition
-    variable_definition = variable.getchildren()[1]
-
-    # apply type checker to definition of variable
-    variable_definition, parameters = semanticRecursiveTypeChecker(variable_definition, parameters)
-
-    # now look for all the places where this variable used in the code and set its type
-    for variable_used in code.xpath('//variable[@name="' + variable_name + '"]'):
-      variable_used.attrib['type'] = variable_definition.attrib['type']
-
-  # Now repeat the process for local scope. Now the search for the usage of the variable
-  # is limited to the local scope where the variable was defined.
-  for variable in code.xpath('/node/option[@name!="definitions"]//element'):
-
-    # get the name of the variable
-    variable_name = variable.getchildren()[0].attrib['name']
-
-    # get its definition
-    variable_definition = variable.getchildren()[1]
-
-    # apply type checker to definition of variable
-    variable_definition, parameters = semanticRecursiveTypeChecker(variable_definition, parameters)
-
-    # now look for the places whithin the scope where this variable used and set its type
-    for variable_used in variable.getparent().xpath('//variable[@name="' + variable_name + '"]'):
-      variable_used.attrib['type'] = variable_definition.attrib['type']
-
-
-  # check function types
-
-
-  # check all types recursively
-  code, parameters = semanticRecursiveTypeChecker(code, parameters)
-
-  return code, parameters
-
-
-
-def semanticRecursiveTypeChecker(code, parameters):
-
-  # if element already has a type return
-  if 'type' in code.attrib.keys():
-    return code, parameters
-
-  # if the element is part of the language
-  if code.tag in parameters['language']:
-
-    # first recursively traverse all children elements
-    for element in code.getchildren():
-      element, parameters = semanticRecursiveTypeChecker(element, parameters)
-
-    if code.tag == 'option':
-      if len(code.getchildren()) > 0:
-        # copy type of the option content to the option tag
-        code.attrib['type'] = code.getchildren()[0].attrib['type']
-      else:
-        # if empty option because none was selected as default, then make type none.
-        code.attrib['type'] = 'none'
-
-      return code, parameters
-
-    # # first recursively traverse all children elements that are not option
-    # for element in code.xpath('*[not(self::option)]'):
-    # # then traverse the optional arguments.
-    # for element in code.xpath('option/*[not(self::name)]'):
-    #   element, parameters = semanticTypeChecker(element, parameters)
-    #
-
-    # for this element find the parameters and arguments
-    optional_names = code.xpath('option/@name')
-    optional_types = code.xpath('option/@type')
-    argument_types = code.xpath('*[not(self::option)]/@type')
-    keys = parameters['language']
-
-    # check optional arguments
-    try:
-      if 'optional' in keys[code.tag]['definition']:
-
-        # check if optional arguments are defined
-        if all([x in keys[code.tag]['definition']['optional'].keys() for x in optional_names]):
-
-          # check types for optional arguments
-          if not all(map(lambda x, y: keys[code.tag]['definition']['optional']
-                         [x]['test']([y]), optional_names, optional_types)):
-            # Error: incorrect types for optional arguments!
-            # Error.handler('OptionalArgumentTypes', code, parameters, optional_names, optional_types)
-            errorOptionalArgumentTypes(
-                code, parameters, optional_names, optional_types)
-        else:
-          # Error: optional argument not defined
-          # Error.handler('OptionalArgumentNotDefined', code, parameters, optional_names)
-          errorOptionalArgumentNotDefined(code, parameters, optional_names)
-
-      # check mandatory argument types
-      if keys[code.tag]['definition']['arguments']['test'](argument_types):
-
-        # compute resulting type
-        code.attrib['type'] = keys[code.tag]['definition']['returns'](argument_types)
-
-      else:
-        # Error: mandatory argument missing or incorrect
-        # Error.handler('ArgumentTypes',code, parameters, argument_types)
-        errorArgumentTypes(code, parameters, argument_types)
-    except:
-      # with Error.exception(parameters,code, stop=True, message='LanguageDefinition')
-      errorLanguageDefinition(code, parameters)
-      sys.exit(1)
-
-    return code, parameters
-  else:
-    # @TODO type check variables and functions
-    return code, parameters
-
-
-def semanticDefiniteAssignment(code, parameters):
-  return code, parameters
 
 
 def fillDefaultsInOptionalArguments(code, parameters):
@@ -864,7 +755,7 @@ def templateEngine(code, parameters, filepatterns, templates_path, deploy_path,
 
   try:
     # find all the template files in the template folder
-    for root, dirs, files in os.walk(templates_path):
+    for root, dirs, files in os.walk(templates_path, followlinks=True):
       for file in files:
         if file.endswith(".template"):
           files_to_process.append(os.path.join(root, file))

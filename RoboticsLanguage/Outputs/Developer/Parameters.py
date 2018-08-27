@@ -23,34 +23,38 @@
 
 parameters = {
     'create': {
-        'input': '',
-        'transformer': '',
-        'output': '',
-        'reference':False
+        'Inputs': '',
+        'Transformers': '',
+        'Outputs': '',
+        'reference': False
     }
 }
 
 command_line_flags = {
-    'create:input':
+    'create:Inputs':
         {
             'longFlag': 'create-input-template',
-            'description': 'Create a template for an Input module'
+            'description': 'Create a template for an Input module',
+            'fileNotNeeded': True
         },
-    'create:transformer':
+    'create:Transformers':
         {
             'longFlag': 'create-transformer-template',
-            'description': 'Create a template for a Transformer module'
+            'description': 'Create a template for a Transformer module',
+            'fileNotNeeded': True
         },
-    'create:output':
+    'create:Outputs':
         {
             'longFlag': 'create-output-template',
-            'description': 'Create a template for an Output module'
+            'description': 'Create a template for an Output module',
+            'fileNotNeeded': True
         },
     'create:reference':
         {
             'longFlag': 'create-reference-documentation',
-            'noArgument': True,
-            'description': 'Creates the Reference Documentation for the Robotics Language'
+            'description': 'Creates the Reference Documentation for the Robotics Language',
+            'fileNotNeeded': True,
+            'noArgument': True
         }
 
 

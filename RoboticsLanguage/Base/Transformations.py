@@ -20,57 +20,48 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-from . import Utilities
 import sys
+from . import Utilities
 
 
-@Utilities.cache
+@Utilities.cache_in_disk
 def prepareTransformations(parameters):
-  # get the list of transformations
-  transformations_list = {x: y['order'] for x, y in parameters['manifesto']['Transformers'].iteritems()}
 
-  # sort them according to the desired order
-  ordered_transformations_list = sorted(transformations_list, key=transformations_list.__getitem__)
+  transformers = parameters['manifesto']['Transformers']
 
-  return ordered_transformations_list
+  return [{'data': transformers[x], 'name': x} for x in sorted(transformers, key=lambda k: transformers[k]['order'])]
 
 
 def Apply(code, parameters):
   """Applies transformations to the XML structure"""
 
-  # fill in defaults in optional arguments
-  code, parameters = Utilities.fillDefaultsInOptionalArguments(code, parameters)
+  if code is not None:
 
-  # first do all semantic checking
-  code, parameters = Utilities.semanticChecking(code, parameters)
+    # load the list of transformations by order
+    ordered_transformations_list = prepareTransformations(parameters)
 
-  # load the list of transformations by order
-  ordered_transformations_list = prepareTransformations(parameters)
-
-  # load the transform modules
-  transform_function_list = [Utilities.importModule('Transformers', t, 'Transform')
-                             for t in ordered_transformations_list]
-
-  # apply transformations
-  for transform_function, transform_name in zip(transform_function_list, ordered_transformations_list):
-
-    # update the compiler step
-    parameters = Utilities.incrementCompilerStep(parameters, 'Transforming ' + transform_name)
+    # load the transform modules
+    transform_function_list = [Utilities.importModule(t['data']['type'],
+                                                      'Transformers', t['name'], 'Transform')
+                               for t in ordered_transformations_list]
 
     # apply transformations
-    code, parameters = transform_function.Transform.transform(code, parameters)
+    for transform_function, transform_name in zip(transform_function_list, [x['name'] for x in ordered_transformations_list]):
 
-    # show debug information
-    Utilities.showDebugInformation(code, parameters)
+      if transform_name not in parameters['developer']['skip']:
 
-  # serialize for each output
-  for language in Utilities.ensureList(parameters['globals']['output']):
-    for xml_child in code.getchildren():
-      Utilities.serialise(xml_child, parameters, parameters['language'], language)
+        # update the compiler step
+        parameters = Utilities.incrementCompilerStep(parameters, 'Transformers', transform_name)
 
-  # check if semantic errors have occured
-  if len(parameters['errors']) > 0:
-    Utilities.logging.error("Semantic errors found! Stopping.")
-    sys.exit(1)
+        # apply transformations
+        code, parameters = transform_function.Transform.transform(code, parameters)
+
+        # show developer information
+        Utilities.showDeveloperInformation(code, parameters)
+
+    # check if semantic errors have occured
+    if len(parameters['errors']) > 0:
+      Utilities.logging.error("Semantic errors found! Stopping.")
+      sys.exit(1)
 
   return code, parameters
