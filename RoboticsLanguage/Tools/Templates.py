@@ -143,71 +143,77 @@ def templateEngine(code, parameters, output=None,
   # all the data is now ready, time to apply templates
   for file in files_to_process.keys():
 
-    try:
-      # start the jinja environment with special delimiters
-      environment = Environment(loader=FileSystemLoader('/'), **delimeters)
+    if os.path.realpath(files_to_process[file]['full_path']) not in parameters['globals']['skipTemplateFiles']:
 
-      # load the group function that places includes on demand
-      environment.filters['group'] = files_to_process[file]['group_function']
+      try:
+        # start the jinja environment with special delimiters
+        environment = Environment(loader=FileSystemLoader('/'), **delimeters)
 
-      # load the main template file for the output
-      template = environment.get_template(files_to_process[file]['full_path'])
+        # load the group function that places includes on demand
+        environment.filters['group'] = files_to_process[file]['group_function']
 
-      # render it
-      render = template.render(header=files_to_process[file]['header'])
+        # load the main template file for the output
+        template = environment.get_template(files_to_process[file]['full_path'])
 
-      # debug
-      if parameters['developer']['intermediateTemplates']:
-        print '====== File: ' + file + ' -> ' + files_to_process[file]['deploy_path'] + ' ==========================='
-        print render
-        print '============================================================'
+        # render it
+        render = template.render(header=files_to_process[file]['header'])
 
-      # create a new environment that includes all the plugin template code
-      preprocessed_environment = Environment(loader=FileSystemLoader('/'))
+        # debug
+        if parameters['developer']['intermediateTemplates']:
+          print '====== File: ' + file + ' -> ' + files_to_process[file]['deploy_path'] + ' ==========================='
+          print render
+          print '============================================================'
 
-      # add filters to environment
-      preprocessed_environment.filters.update(filters)
+        # create a new environment that includes all the plugin template code
+        preprocessed_environment = Environment(loader=FileSystemLoader('/'))
 
-      # create a new template that includes all the plugin template code
-      preprocessed_template = preprocessed_environment.from_string(render)
+        # add filters to environment
+        preprocessed_environment.filters.update(filters)
 
-      # render the combined template
-      result = preprocessed_template.render(code=code, parameters=parameters)
-    except TemplateError as e:
-      Utilities.logger.error(e.__repr__())
-      #   # with Error.exception(parameters, filename=files_to_process[i])
-      # Utilities.logErrors(Utilities.formatJinjaErrorMessage(
-      #     e, filename=files_to_process[file]['full_path']), parameters)
-      return False
+        # create a new template that includes all the plugin template code
+        preprocessed_template = preprocessed_environment.from_string(render)
 
-    try:
-      # create paths for the new files if needed
-      Utilities.createFolderForFile(files_to_process[file]['deploy_path'])
+        # render the combined template
+        result = preprocessed_template.render(code=code, parameters=parameters)
+      except TemplateError as e:
+        Utilities.logger.error(e.__repr__())
+        #   # with Error.exception(parameters, filename=files_to_process[i])
+        # Utilities.logErrors(Utilities.formatJinjaErrorMessage(
+        #     e, filename=files_to_process[file]['full_path']), parameters)
+        return False
 
-      # write files
-      new_package_file = open(files_to_process[file]['deploy_path'], 'w')
-      new_package_file.write(result)
-      new_package_file.close()
-      Utilities.logging.debug('Wrote file ' + files_to_process[file]['deploy_path'] + ' ...')
+      try:
+        # create paths for the new files if needed
+        Utilities.createFolderForFile(files_to_process[file]['deploy_path'])
 
-    except OSError as e:
-      # with Error.exception(parameters, stop=True)
-      Utilities.logErrors(Utilities.formatOSErrorMessage(e), parameters)
-      return False
+        # write files
+        new_package_file = open(files_to_process[file]['deploy_path'], 'w')
+        new_package_file.write(result)
+        new_package_file.close()
+        Utilities.logging.debug('Wrote file ' + files_to_process[file]['deploy_path'] + ' ...')
 
-  try:
+      except OSError as e:
+        # with Error.exception(parameters, stop=True)
+        Utilities.logErrors(Utilities.formatOSErrorMessage(e), parameters)
+        return False
+
     # copy support files
-    for i in range(0, len(new_files_to_copy)):
-      # create paths for the new files if needed
-      Utilities.createFolderForFile(new_files_to_copy[i])
+  for i in range(0, len(new_files_to_copy)):
 
-      # copy files
-      copy(files_to_copy[i], new_files_to_copy[i])
-      Utilities.logging.debug('Copied file ' + new_files_to_copy[i] + '...')
+    if os.path.realpath(files_to_copy[i]) not in parameters['globals']['skipCopyFiles']:
 
-  except OSError as e:
-    # with Error.exception(parameters, stop=True)
-    Utilities.logErrors(Utilities.formatOSErrorMessage(e), parameters)
-    return False
+      try:
+
+        # create paths for the new files if needed
+        Utilities.createFolderForFile(new_files_to_copy[i])
+
+        # copy files
+        copy(files_to_copy[i], new_files_to_copy[i])
+        Utilities.logging.debug('Copied file ' + new_files_to_copy[i] + '...')
+
+      except OSError as e:
+        # with Error.exception(parameters, stop=True)
+        Utilities.logErrors(Utilities.formatOSErrorMessage(e), parameters)
+        return False
 
   return True

@@ -9,34 +9,17 @@
 #    Copyright: copyright
 #
 
-
+import os
 from lxml import etree
 from RoboticsLanguage.Base import Utilities
 
 def transform(code, parameters):
 
-  n = {'fsm': 'fsm'}
+  # this is the absolute path to the extra header file needed for finite state machines
+  header_file = Utilities.myPluginPath(parameters) + '/Templates/Outputs/RosCpp/_nodename_/include/_nodename_/FiniteStateMachine.h'
 
-  # add a list of states
-  parameters['Inputs']['FiniteStateMachine']['states'] ={}
-
-  # look for all state machines
-  for machine in code.xpath('//fsm:machine', namespaces=n):
-
-    states = set()
-    # get name of machine
-    name = machine.xpath('fsm:name/text()', namespaces=n)[0]
-
-    # add initial states
-    states.add(machine.xpath('fsm:initial/text()', namespaces=n)[0])
-
-    # add states found in every transition
-    transitions = machine.xpath('fsm:transitions', namespaces=n)[0]
-    for transition in transitions.xpath('fsm:transition', namespaces=n):
-      states.add(transition.xpath('fsm:begin/text()', namespaces=n)[0])
-      states.add(transition.xpath('fsm:end/text()', namespaces=n)[0])
-
-    # save the set of states for each machine
-    parameters['Inputs']['FiniteStateMachine']['states'][name] = states
+  # skip header file if no state machines are defined
+  if len(code.xpath('//fsm:machine', namespaces={'fsm': 'fsm'})) == 0:
+    parameters['globals']['skipCopyFiles'].append(header_file)
 
   return code, parameters

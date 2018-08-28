@@ -1,5 +1,5 @@
 node(
-  name:"FiniteStateMachine",
+  name:"FSM Example",
   definitions:
 
     FiniteStateMachine<{
@@ -38,6 +38,10 @@ node(
 
      initialise: block
      (
+
+       machine.show(),
+       test.show(),
+
        print(machine.currentState()),
 
        machine.fire('start'),

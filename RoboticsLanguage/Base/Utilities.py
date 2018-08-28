@@ -393,6 +393,9 @@ def removeCache(cache_path='/.rol/cache'):
     rmtree(path)
 
 
+def myPluginPath(parameters):
+  return parameters['manifesto'][parameters['developer']['stepGroup']][parameters['developer']['stepName']]['path']
+
 # -------------------------------------------------------------------------------------------------
 #  Dictionary utilities
 # -------------------------------------------------------------------------------------------------

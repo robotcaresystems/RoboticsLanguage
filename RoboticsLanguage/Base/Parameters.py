@@ -37,7 +37,9 @@ parameters = {
         'removeCache': False,
         'language': 'en',
         'compilerLanguage': 'en',
-        'loadOrder': []
+        'loadOrder': [],
+        'skipCopyFiles': [],
+        'skipTemplateFiles': []
     },
 
     'developer': {
@@ -209,6 +211,8 @@ command_line_flags = {
     'globals:plugins': {'suppress': True},
     'globals:RoboticsLanguagePath': {'suppress': True},
     'globals:loadOrder': {'suppress': True},
+    'globals:skipCopyFiles': {'suppress': True},
+    'globals:skipTemplateFiles': {'suppress': True},
     'Information:user:name': {'suppress': True},
     'Information:user:email': {'suppress': True},
     'Information:user:web': {'suppress': True},

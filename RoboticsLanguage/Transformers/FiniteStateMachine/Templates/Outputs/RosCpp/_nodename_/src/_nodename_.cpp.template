@@ -5,17 +5,11 @@
 
 {% set initialise %}
 
-
 {% for machine in code|xpaths('//fsm:machine', {'fsm':'fsm'}) -%}
   {% set machine_name = machine|xpath('fsm:name/text()', {'fsm':'fsm'})-%}
 
     //////////////////////////////////////////////////////////
     // Definitions for Finite State Machine "{{machine_name}}"
-
-    // States
-  {% for state in parameters['Inputs']['FiniteStateMachine']['states'][machine_name] -%}
-    {{machine_name}}.addState("{{state}}");
-  {% endfor -%}
 
     // Transitions
   {% set transitions = machine|xpath('fsm:transitions', {'fsm':'fsm'}) -%}
@@ -26,7 +20,6 @@
     // Initial state
     {{machine_name}}.setInitialState("{{machine|xpath('fsm:initial/text()', {'fsm':'fsm'})}}");
 {% endfor -%}
-
 
 {% endset %}
 
