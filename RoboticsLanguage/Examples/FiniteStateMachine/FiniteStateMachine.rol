@@ -7,40 +7,19 @@ node(
         name:machine
         init:idle
 
-        idle -(start)-> running
+        (idle) -start-> (running) -stop-> (idle)
 
-        running -(stop)-> idle
+        (running) -error-> (fault) -reset-> (idle)
 
-        running -(error)-> fault
-
-        fault-(reset)-> idle
-
-        idle -(error)-> fault
-
+        (idle) -error-> (fault)
 
     }>,
 
-
-    FiniteStateMachine<{
-
-        name:test
-        init:idle
-
-        idle -(start)-> running
-
-        running -(stop)-> idle
-
-
-
-    }>
-
-     ,
 
      initialise: block
      (
 
        machine.show(),
-       test.show(),
 
        print(machine.currentState()),
 
