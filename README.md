@@ -125,10 +125,24 @@ rol RoboticsLanguage/Examples/helloworld.rol -l
 
 ## Acknowledgements
 
-The Robotics Language is developed by Robot Care Systems B.V. (http://www.robotcaresystems.com) with the support of the **ROSIN project** (http://rosin-project.eu) and the **European Commission**. We kindly thank their support.
+The Robotics Language is developed by Robot Care Systems B.V. (http://www.robotcaresystems.com)
 
-This project has received funding from the European Union’s Horizon 2020 research and innovation programme under grant agreement No. 732287
+***
+<!--
+    ROSIN acknowledgement from the ROSIN press kit
+    @ https://github.com/rosin-project/press_kit
+-->
 
-<image src="http://rosin-project.eu/wp-content/uploads/2017/03/Logo_ROSIN_CMYK-Website.png" />
-<br><br>
-<image src="https://europa.eu/european-union/sites/europaeu/files/docs/body/flag_yellow_low.jpg" width=200/>
+<a href="http://rosin-project.eu">
+  <img src="http://rosin-project.eu/wp-content/uploads/rosin_ack_logo_wide.png"
+       alt="rosin_logo" height="60" >
+</a>
+
+Supported by ROSIN - ROS-Industrial Quality-Assured Robot Software Components.  
+More information: <a href="http://rosin-project.eu">rosin-project.eu</a>
+
+<img src="http://rosin-project.eu/wp-content/uploads/rosin_eu_flag.jpg"
+     alt="eu_flag" height="45" align="left" >  
+
+This project has received funding from the European Union’s Horizon 2020  
+research and innovation programme under grant agreement no. 732287.
