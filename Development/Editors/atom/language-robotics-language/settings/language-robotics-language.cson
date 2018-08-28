@@ -3,4 +3,4 @@
 
 '.source.robotics-language':
   'editor':
-    'commentStart': '@@ '
+    'commentStart': '# '
