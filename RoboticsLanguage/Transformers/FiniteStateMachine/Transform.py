@@ -9,9 +9,8 @@
 #    Copyright: copyright
 #
 
-import os
-from lxml import etree
 from RoboticsLanguage.Base import Utilities
+
 
 def transform(code, parameters):
 

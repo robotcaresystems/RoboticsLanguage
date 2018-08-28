@@ -400,6 +400,7 @@ def myPluginPath(parameters):
 #  Dictionary utilities
 # -------------------------------------------------------------------------------------------------
 
+
 def isKeyDefined(key, d):
   if isinstance(d, dict):
     return key in d.keys()
