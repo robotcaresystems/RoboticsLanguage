@@ -54,3 +54,5 @@
 - [ ] Docker
   - [ ] Match .rol files, deploy folder in docker to user definitions
   - [ ] Register docker image
+- [ ] Plugin
+  - [-] Finite state machines
