@@ -846,7 +846,10 @@ def serialise(code, parameters, keywords, language, filters=default_template_eng
         template.globals[key] = value
 
       # get all children that are not 'option'
-      children_elements = code.xpath('*[not(self::option)]')
+      # children_elements = code.xpath('*[not(self::option)]')
+
+      # get all children
+      children_elements = code.getchildren()
 
       # render tags according to dictionary
       snippet = template.render(children=map(lambda x: serialise(x, parameters, keywords, language, filters), children_elements),
