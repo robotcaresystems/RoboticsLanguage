@@ -39,7 +39,7 @@
   - [ ] Base.Outputs
   - [x] Inputs.RoL.Parse
 - [x] use xpath, dpath, remove deprecated code
-- [ ] allow working without input files (for generating development modules, etc)
+- [x] allow working without input files (for generating development modules, etc)
 - [-] Error handling
   - [x] jinja
   - [x] parsley
