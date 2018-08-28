@@ -17,7 +17,7 @@ word = <letter letterOrDigit*>
 
 name = 'name' ws ':' ws word:n -> xml('name',n)
 
-initialisation = 'init' ws ':' ws word:state -> xml('initial',state)
+initialisation = 'initial' ws ':' ws word:state -> xml('initial',state)
 
 transitions = ( ws transition:fsm -> fsm[0])*
 

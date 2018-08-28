@@ -1,36 +1,25 @@
+# A finite state machine
 node(
-  name:"FSM Example",
-  definitions:
+  name:'example state machine',
 
+  definitions: block(
+
+    # a mini-language: code is defined within `<{ }>`
     FiniteStateMachine<{
 
         name:machine
-        init:idle
+        initial:idle
 
         (idle) -start-> (running) -stop-> (idle)
-
         (running) -error-> (fault) -reset-> (idle)
 
-        (idle) -error-> (fault)
+      }>,
 
-    }>,
+    # the start signal
+    start ∈ Signals(Empty, rosTopic:'/start', onNew: machine.fire('start')),
 
+    # the stop signal
+    stop ∈ Signals(Empty, rosTopic:'/stop', onNew: machine.fire('stop'))
 
-     initialise: block
-     (
-
-       machine.show(),
-
-       print(machine.currentState()),
-
-       machine.fire('start'),
-       print(machine.currentState()),
-
-       machine.fire('error'),
-       print(machine.currentState()),
-
-       machine.fire('reset'),
-       print(machine.currentState())
-
-     )
+  )
 )
