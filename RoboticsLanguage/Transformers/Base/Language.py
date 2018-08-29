@@ -347,6 +347,18 @@ language = {
         }
     },
 
+
+    'function_pointer': {
+        'definition': {
+            'arguments': arguments('anything'),
+            'returns': returns('function')
+        },
+        'documentation':
+        {
+        }
+    },
+
+
     'return': {
         'definition': {
             'arguments': arguments('anything'),
@@ -419,7 +431,38 @@ language = {
             'returns': returns('none')
         },
 
-    }
+    },
+
+    'part': {
+        'definition': {
+            'arguments': arguments('anything'),
+            'returns': returns('none')
+        },
+        'documentation':
+        {
+        }
+    },
+
+    'index': {
+        'definition': {
+            'arguments': arguments('anything'),
+            'returns': returns('none')
+        },
+        'documentation':
+        {
+        }
+    },
+
+    'domain': {
+        'definition': {
+            'arguments': arguments('anything'),
+            'returns': returns('none')
+        },
+        'documentation':
+        {
+        }
+    },
+
 
 }
 

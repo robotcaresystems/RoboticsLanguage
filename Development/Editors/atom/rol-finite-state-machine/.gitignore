@@ -2,3 +2,4 @@
 npm-debug.log
 node_modules
 node_modules_bak
+package-lock.json

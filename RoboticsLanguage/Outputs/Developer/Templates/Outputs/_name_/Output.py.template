@@ -10,10 +10,15 @@
 #
 
 
-from lxml import etree
+import sys
 from RoboticsLanguage.Base import Utilities
+from RoboticsLanguage.Tools import Templates
 
 def output(code, parameters):
   Utilities.logging.info("Output {{parameters['Outputs']['Developer']['create']['Outputs']}}...")
+
+  # run template engine to generate code
+  if not Templates.templateEngine(code, parameters):
+    sys.exit(1)
 
   return 0

@@ -1,5 +1,5 @@
-<<<header->>>
 <?xml version="1.0"?>
+<<<header->>>
 <package>
   <name>{{parameters['node']['name']|underscore}}</name>
   <version>{{parameters['Information']['software']['version']}}</version>

@@ -65,7 +65,7 @@ def output(code, parameters):
                                     parameters['globals']['deploy']):
       sys.exit(1)
 
-  path = parameters['globals']['RoboticsLanguagePath']
+  paths = [parameters['globals']['RoboticsLanguagePath'], parameters['globals']['plugins']]
 
   outputs = parameters['Outputs'].keys()
 
@@ -87,34 +87,37 @@ def output(code, parameters):
       except:
         pass
 
-      print('Created ' + type + ' plugin "' + filepatterns['name'] + '" in folder ' + parameters['globals']['plugins'] + '/' + type + '/' + filepatterns['name'])
 
       # create template code elements for transformers
       if type == 'Transformers':
         for output in outputs:
 
           # traverse all the output template folders
-          for root, dirs, files in os.walk(path + '/Outputs/' + output + '/Templates'):
-            for file in files:
-              if file not in ignored_files:
-                with open(os.path.join(root, file), 'r') as input_file:
-                  text = input_file.read()
+          for path in paths:
+            for root, dirs, files in os.walk(path + '/Outputs/' + output + '/Templates'):
+              for file in files:
+                if file not in ignored_files:
+                  with open(os.path.join(root, file), 'r') as input_file:
+                    text = input_file.read()
 
-                  # look for include tags in the templates, e.g. "<<<'initialise'|group>>>"
-                  result = re.findall('<<<\'([^\']*)[^>>>]*>>>', text)
-                  if len(result) > 0:
+                    # look for include tags in the templates, e.g. "<<<'initialise'|group>>>"
+                    result = re.findall('<<<\'([^\']*)[^>>>]*>>>', text)
+                    if len(result) > 0:
 
-                    # create an copy of the file with includes,
-                    # e.g. "{% set initialise %} {% endset %}"
-                    file_name = parameters['globals']['deploy'] + '/' + type + '/' + filepatterns['name'] + '/' + os.path.join(
-                        root, file).replace(path + '/Outputs/' + output + '/Templates', 'Templates/Outputs/' + output)
-                    # create folder if needed for new file
-                    Utilities.createFolderForFile(file_name)
+                      # create an copy of the file with includes,
+                      # e.g. "{% set initialise %} {% endset %}"
+                      file_name = parameters['globals']['plugins'] + '/' + type + '/' + filepatterns['name'] + '/' + os.path.join(
+                          root, file).replace(path + '/Outputs/' + output + '/Templates', 'Templates/Outputs/' + output)
+                      # create folder if needed for new file
+                      Utilities.createFolderForFile(file_name)
 
-                    # save the new template file
-                    with open(file_name, 'w') as output_file:
-                      for element in result:
-                        output_file.write(include_template.format(element))
-                      Utilities.logger.debug('Wrote file ' + file_name)
+                      # save the new template file
+                      with open(file_name, 'w') as output_file:
+                        for element in result:
+                          output_file.write(include_template.format(element))
+                        Utilities.logger.debug('Wrote file ' + file_name)
+
+      print('Created ' + type + ' plugin "' + filepatterns['name'] + '" in folder ' + parameters['globals']['plugins'] + '/' + type + '/' + filepatterns['name'])
+
 
   return 0

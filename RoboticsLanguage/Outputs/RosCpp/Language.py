@@ -27,7 +27,6 @@ language = {
 
     'option': {
         'output': {'RosCpp': '{{children[0]}}'}
-
     },
 
     'Reals': {
@@ -123,6 +122,15 @@ language = {
         },
     },
 
+    'function_pointer': {
+        'output':
+        {
+            'RosCpp': 'std::bind(&{{camelCase(xpath(code,\'/node/option[@name="name"]/string/text()\'))}}Class::{{attributes["name"]}}, this)',
+            # 'RosCpp': '&(this->{{attributes["name"]}})',
+        },
+    },
+
+
     'return': {
         'output':
         {
@@ -205,6 +213,27 @@ language = {
         'output':
         {
             'RosCpp': 'ROS_INFO_STREAM({{children|join(" << ")}})',
+        },
+    },
+
+    'part': {
+        'output':
+        {
+            'RosCpp': '{{children[0]}}[{{children[1]}}]',
+        },
+    },
+
+    'index': {
+        'output':
+        {
+            'RosCpp': '{{children[0]}}',
+        },
+    },
+
+    'domain': {
+        'output':
+        {
+            'RosCpp': '{{children|join(".")}}',
         },
     },
 

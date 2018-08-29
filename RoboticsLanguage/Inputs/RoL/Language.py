@@ -101,4 +101,13 @@ language = {
             }
         },
     },
+    'domain': {
+        'input': {
+            'RoL': {
+                'infix': {'key': '.',
+                          'order': 1400,
+                          'flat': True}
+            }
+        },
+    },
 }

@@ -117,10 +117,11 @@ def prepareCommandLineArguments(parameters):
 
   return flags, arguments, file_package_name, file_formats
 
-# @REFACTOR by https://stackoverflow.com/questions/15405636/pythons-argparse-to-show-programs-version-with-prog-and-version-string-formatt
+
 def checkSpecialCommandLineArguments(command_line_parameters, parameters):
   if '--version' in command_line_parameters:
-    print 'The Robotics Language Version: ' + parameters['globals']['version']
+    import pkg_resources
+    print 'The Robotics Language version: ' + pkg_resources.get_distribution('RoboticsLanguage').version
 
 
 def runCommandLineParser(parameters, arguments, flags, file_formats, file_package_name, command_line_arguments):
@@ -261,8 +262,6 @@ def processCommandLineParameters(args, file_formats, parameters):
 
 
 def postCommandLineParser(parameters):
-  # read the path
-  language_path = os.path.abspath(os.path.dirname(__file__) + '/../../') + '/'
 
   language = {}
   messages = {}
@@ -271,6 +270,8 @@ def postCommandLineParser(parameters):
   default_output = {}
 
   # load the parameters form all the modules dynamically
+  # When this function is executed the plugins folder has already
+  # been added to the path
   for module_name in parameters['globals']['loadOrder']:
 
     name_split = module_name.split('.')

@@ -25,19 +25,21 @@ from iso639 import languages
 
 parameters = {
     'globals': {
-        'version': '0.0.1',
+        'version': '',
         'output': 'RosCpp',
         'debug': False,
         'compile': False,
         'launch': False,
         'verbose': 'none',
         'deploy': os.path.expanduser('~') + '/deploy/',
-        'plugins': os.path.expanduser('~') + '/.rol/plugins',
-        'RoboticsLanguagePath': '',
+        'plugins': os.path.expanduser('~') + '/.rol/plugins/',
+        'RoboticsLanguagePath': os.path.abspath(os.path.dirname(__file__) + '/../') + '/',
         'removeCache': False,
         'language': 'en',
         'compilerLanguage': 'en',
-        'loadOrder': []
+        'loadOrder': [],
+        'skipCopyFiles': [],
+        'skipTemplateFiles': []
     },
 
     'developer': {
@@ -47,10 +49,19 @@ parameters = {
         'parametersPath': '',
         'step': 1,
         'stepCounter': 0,
+        'stepGroup': '',
+        'stepName': '',
         'stop': False,
         'skip': '',
         'ignoreErrors': False,
         'intermediateTemplates': False
+    },
+
+    'symbols':
+    {
+      'functions':[],
+      'variables':[],
+      'types':[]
     },
 
     'errors': [],
@@ -79,7 +90,7 @@ parameters = {
         'software':
         {
             'name': 'name',
-            'version': '1.0.0',
+            'version': '0.0.0',
             'description': 'description',
             'maintainer': {'name': 'name', 'email': 'email@email.edu'},
             'author': {'name': 'name', 'email': 'email@email.edu'},
@@ -202,9 +213,16 @@ command_line_flags = {
 
     'errors': {'suppress': True},
     'developer:stepCounter': {'suppress': True},
+    'developer:stepGroup': {'suppress': True},
+    'developer:stepName': {'suppress': True},
     'globals:plugins': {'suppress': True},
     'globals:RoboticsLanguagePath': {'suppress': True},
     'globals:loadOrder': {'suppress': True},
+    'globals:skipCopyFiles': {'suppress': True},
+    'globals:skipTemplateFiles': {'suppress': True},
+    'symbols:functions': {'suppress': True},
+    'symbols:variables': {'suppress': True},
+    'symbols:types': {'suppress': True},
     'Information:user:name': {'suppress': True},
     'Information:user:email': {'suppress': True},
     'Information:user:web': {'suppress': True},

@@ -43,7 +43,7 @@ def createGroupFunction(text):
   return lambda x: '\n'.join([z.format(x) for z in text])
 
 
-def templateEngine(code, parameters, output,
+def templateEngine(code, parameters, output=None,
                    ignore_files=default_ignore_files,
                    file_patterns=default_file_patterns,
                    filters=default_template_engine_filters,
@@ -51,14 +51,25 @@ def templateEngine(code, parameters, output,
                    deploy_path=None):
   '''The template engine combines multiple template files from different modules to generate code.'''
 
-  transformers = parameters['Transformers'].keys()
+  if output is None:
+    output = parameters['developer']['stepName']
 
   if deploy_path is None:
     deploy_path = parameters['globals']['deploy']
 
-  path = parameters['globals']['RoboticsLanguagePath']
+  if not os.path.isdir(templates_path):
+    templates_path = parameters['manifesto'][parameters['developer']['stepGroup']][parameters['developer']['stepName']]['path'] + '/' + templates_path
 
-  templates_path = path + 'Outputs/' + output + '/' + templates_path
+    # templates_path = '/'.join([parameters['globals']['RoboticsLanguagePath'],
+    #                            parameters['developer']['stepGroup'],
+    #                            parameters['developer']['stepName'],
+    #                            templates_path])
+    # @TODO give warning
+    # if not os.path.isdir(templates_path):
+    #   Tools.Exceptions(...)
+
+  transformers = parameters['Transformers'].keys()
+
   files_to_process = {}
   files_to_copy = []
   new_files_to_copy = []
@@ -70,8 +81,8 @@ def templateEngine(code, parameters, output,
 
         # extracts full and relative paths
         file_full_path = os.path.join(root, file)
-        file_relative_path = file_full_path.replace(templates_path, '')
-        file_deploy_path = file_full_path.replace(templates_path, deploy_path).replace('.template', '')
+        file_relative_path = Utilities.replaceFirst(file_full_path, templates_path, '')
+        file_deploy_path = Utilities.replaceLast(Utilities.replaceFirst(file_full_path, templates_path, deploy_path), '.template', '')
 
         # apply file template names
         for key, value in file_patterns.iteritems():
@@ -87,17 +98,24 @@ def templateEngine(code, parameters, output,
         if file not in default_ignore_files:
           copy_file_name = os.path.join(root, file)
           files_to_copy.append(copy_file_name)
-          new_files_to_copy.append(copy_file_name.replace(templates_path, deploy_path))
+          new_files_to_copy.append(Utilities.replaceFirst(copy_file_name, templates_path, deploy_path))
 
   # find all the non template files in the transformers template folder
-  for transformer in transformers:
-    for root, dirs, files in os.walk(path + 'Transformers/' + transformer + '/Templates/Outputs/' + output):
-      for file in files:
-        if not file.endswith(".template") and file not in default_ignore_files:
-          copy_file_name = os.path.join(root, file)
-          files_to_copy.append(copy_file_name)
-          new_files_to_copy.append(copy_file_name.replace(path + 'Transformers/' +
-                                                          transformer + '/Templates/Outputs/' + output, deploy_path))
+  for element in parameters['globals']['loadOrder']:
+    if '.Transformers.' in element:
+      if 'RoboticsLanguage.' in element:
+        path = parameters['globals']['RoboticsLanguagePath']
+      else:
+        path = parameters['globals']['plugins']
+
+      transformer_path = path + '/' + '/'.join(element.split('.')[1:]) + '/Templates/Outputs/' + output
+
+      for root, dirs, files in os.walk(transformer_path):
+        for file in files:
+          if not file.endswith(".template") and file not in default_ignore_files:
+            copy_file_name = os.path.join(root, file)
+            files_to_copy.append(copy_file_name)
+            new_files_to_copy.append(Utilities.replaceFirst(copy_file_name, transformer_path, deploy_path))
 
   # rename files acording to file pattern names
   for key, value in file_patterns.iteritems():
@@ -107,7 +125,7 @@ def templateEngine(code, parameters, output,
   # search for the same file in transformers plugins to include as plugins
   for file in files_to_process.keys():
     for module in transformers:
-      if os.path.isfile(path + 'Transformers/' + module + '/Templates/Outputs/' + output + file):
+      if os.path.isfile(path + 'Transformers/' + module + '/Templates/Outputs/' + output + '/' + file):
         # save the include name
         files_to_process[file]['includes'].append(module)
 
@@ -124,71 +142,77 @@ def templateEngine(code, parameters, output,
   # all the data is now ready, time to apply templates
   for file in files_to_process.keys():
 
-    try:
-      # start the jinja environment with special delimiters
-      environment = Environment(loader=FileSystemLoader('/'), **delimeters)
+    if os.path.realpath(files_to_process[file]['full_path']) not in parameters['globals']['skipTemplateFiles']:
 
-      # load the group function that places includes on demand
-      environment.filters['group'] = files_to_process[file]['group_function']
+      try:
+        # start the jinja environment with special delimiters
+        environment = Environment(loader=FileSystemLoader('/'), **delimeters)
 
-      # load the main template file for the output
-      template = environment.get_template(files_to_process[file]['full_path'])
+        # load the group function that places includes on demand
+        environment.filters['group'] = files_to_process[file]['group_function']
 
-      # render it
-      render = template.render(header=files_to_process[file]['header'])
+        # load the main template file for the output
+        template = environment.get_template(files_to_process[file]['full_path'])
 
-      # debug
-      if parameters['developer']['intermediateTemplates']:
-        print '====== File: ' + file + ' -> ' + files_to_process[file]['deploy_path'] + ' ==========================='
-        print render
-        print '============================================================'
+        # render it
+        render = template.render(header=files_to_process[file]['header'])
 
-      # create a new environment that includes all the plugin template code
-      preprocessed_environment = Environment(loader=FileSystemLoader('/'))
+        # debug
+        if parameters['developer']['intermediateTemplates']:
+          print '====== File: ' + file + ' -> ' + files_to_process[file]['deploy_path'] + ' ==========================='
+          print render
+          print '============================================================'
 
-      # add filters to environment
-      preprocessed_environment.filters.update(filters)
+        # create a new environment that includes all the plugin template code
+        preprocessed_environment = Environment(loader=FileSystemLoader('/'))
 
-      # create a new template that includes all the plugin template code
-      preprocessed_template = preprocessed_environment.from_string(render)
+        # add filters to environment
+        preprocessed_environment.filters.update(filters)
 
-      # render the combined template
-      result = preprocessed_template.render(code=code, parameters=parameters)
-    except TemplateError as e:
-      Utilities.logger.error(e.__repr__())
-      #   # with Error.exception(parameters, filename=files_to_process[i])
-      # Utilities.logErrors(Utilities.formatJinjaErrorMessage(
-      #     e, filename=files_to_process[file]['full_path']), parameters)
-      return False
+        # create a new template that includes all the plugin template code
+        preprocessed_template = preprocessed_environment.from_string(render)
 
-    try:
-      # create paths for the new files if needed
-      Utilities.createFolderForFile(files_to_process[file]['deploy_path'])
+        # render the combined template
+        result = preprocessed_template.render(code=code, parameters=parameters)
+      except TemplateError as e:
+        Utilities.logger.error(e.__repr__())
+        #   # with Error.exception(parameters, filename=files_to_process[i])
+        # Utilities.logErrors(Utilities.formatJinjaErrorMessage(
+        #     e, filename=files_to_process[file]['full_path']), parameters)
+        return False
 
-      # write files
-      new_package_file = open(files_to_process[file]['deploy_path'], 'w')
-      new_package_file.write(result)
-      new_package_file.close()
-      Utilities.logging.debug('Wrote file ' + files_to_process[file]['deploy_path'] + ' ...')
+      try:
+        # create paths for the new files if needed
+        Utilities.createFolderForFile(files_to_process[file]['deploy_path'])
 
-    except OSError as e:
-      # with Error.exception(parameters, stop=True)
-      Utilities.logErrors(Utilities.formatOSErrorMessage(e), parameters)
-      return False
+        # write files
+        new_package_file = open(files_to_process[file]['deploy_path'], 'w')
+        new_package_file.write(result)
+        new_package_file.close()
+        Utilities.logging.debug('Wrote file ' + files_to_process[file]['deploy_path'] + ' ...')
 
-  try:
+      except OSError as e:
+        # with Error.exception(parameters, stop=True)
+        Utilities.logErrors(Utilities.formatOSErrorMessage(e), parameters)
+        return False
+
     # copy support files
-    for i in range(0, len(new_files_to_copy)):
-      # create paths for the new files if needed
-      Utilities.createFolderForFile(new_files_to_copy[i])
+  for i in range(0, len(new_files_to_copy)):
 
-      # copy files
-      copy(files_to_copy[i], new_files_to_copy[i])
-      Utilities.logging.debug('Copied file ' + new_files_to_copy[i] + '...')
+    if os.path.realpath(files_to_copy[i]) not in parameters['globals']['skipCopyFiles']:
 
-  except OSError as e:
-    # with Error.exception(parameters, stop=True)
-    Utilities.logErrors(Utilities.formatOSErrorMessage(e), parameters)
-    return False
+      try:
+
+        # create paths for the new files if needed
+        Utilities.createFolderForFile(new_files_to_copy[i])
+
+        # copy files
+        copy(files_to_copy[i], new_files_to_copy[i])
+        Utilities.logging.debug('Copied file ' + new_files_to_copy[i] + '...')
+
+      except OSError as e:
+        # with Error.exception(parameters, stop=True)
+        Utilities.logErrors(Utilities.formatOSErrorMessage(e), parameters)
+        return False
 
   return True
