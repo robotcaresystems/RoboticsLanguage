@@ -1,7 +1,7 @@
 
 {% set head %}
 
-{% if parameters['Inputs']['FiniteStateMachine']|length > 0 %}
+{% if code|xpaths('//fsm:machine', {'fsm':'fsm'})|length > 0 %}
 <!-- VisJS for easy diagrams -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.css" />
@@ -12,19 +12,100 @@
 {% set body %}
 
 
-{% if parameters['Inputs']['FiniteStateMachine']|length > 0 %}
-
-
-{% set list_of_states = parameters|dpath('Inputs/FiniteStateMachine/parameters/list_of_states') %}
-{% set transition_labels = parameters|dpath('Inputs/FiniteStateMachine/parameters/transition_labels') %}
-{% set transition_begins = parameters|dpath('Inputs/FiniteStateMachine/parameters/transition_begins') %}
-{% set transition_ends = parameters|dpath('Inputs/FiniteStateMachine/parameters/transition_ends') %}
-{% set init = parameters|dpath('Inputs/FiniteStateMachine/parameters/init') %}
-{% set num_of_transitions = parameters|dpath('Inputs/FiniteStateMachine/parameters/num_of_transitions') %}
-{% set num_of_states = parameters|dpath('Inputs/FiniteStateMachine/parameters/num_of_states') %}
+{% if code|xpaths('//fsm:machine', {'fsm':'fsm'})|length > 0 %}
 
   <h1>Finite State Machine</h1>
 
+
+    <div class="ui styled accordion">
+
+
+  {% for machine in code|xpaths('//fsm:machine', {'fsm':'fsm'}) -%}
+
+  {# get the list of states from the code #}
+  {% set machine_name = machine|xpath('fsm:name/text()', {'fsm':'fsm'})-%}
+  {% set initial_state = machine|xpath('fsm:initial/text()', {'fsm':'fsm'}) -%}
+  {% set begin_states = machine|xpaths('fsm:transitions/fsm:transition/fsm:begin/text()', {'fsm':'fsm'}) -%}
+  {% set end_states = machine|xpaths('fsm:transitions/fsm:transition/fsm:end/text()', {'fsm':'fsm'}) -%}
+  {% set states = ([initial_state] + begin_states + end_states)|unique|list %}
+  {% set index_states = {} %}
+  {% for state in states %}
+    {% set x = index_states.__setitem__(state, loop.index) %}
+  {% endfor %}
+
+
+  <div class="title">
+    <i class="dropdown icon"></i> {{machine_name}}
+  </div>
+  <div class="content hidden">
+    <div id="fsm_{{machine_name}}"></div>
+  </div>
+
+    <style type="text/css">
+        #fsm_{{machine_name}} {
+          width: 600px;
+          height: 400px;
+        }
+      </style>
+
+    <script type="text/javascript">
+      // create an array with nodes
+      var nodes_{{machine_name}} = new vis.DataSet([
+
+      {% for state in states %}
+        {id: {{loop.index}}, label: '{{state}}', color: {background:'white', border:'black'}},
+      {% endfor %}
+
+      ]);
+
+      // create an array with edges
+      var edges_{{machine_name}} = new vis.DataSet([
+
+        {% set transitions = machine|xpath('fsm:transitions', {'fsm':'fsm'}) -%}
+        {% for transition in transitions|xpaths('fsm:transition', {'fsm':'fsm'}) -%}
+        {from: {{index_states[transition|xpath('fsm:begin/text()', {'fsm':'fsm'})]}},
+         to: {{index_states[transition|xpath('fsm:end/text()', {'fsm':'fsm'})]}},
+         label: "{{transition|xpath('fsm:label/text()', {'fsm':'fsm'})}}",
+         arrows:'to',
+         color:'#FFFFFF'
+        },
+        {% endfor -%}
+
+
+      ]);
+
+      // create a network
+      var container_{{machine_name}} = document.getElementById('fsm_{{machine_name}}');
+      var data_{{machine_name}} = {
+        nodes: nodes_{{machine_name}},
+        edges: edges_{{machine_name}}
+      };
+      var options_{{machine_name}} = {};
+      var network_{{machine_name}} = new vis.Network(container_{{machine_name}}, data_{{machine_name}}, options_{{machine_name}});
+      network_{{machine_name}}.setSize(300,300);
+      network_{{machine_name}}.moveTo({position: {x: 300, y: 300}});
+    </script>
+
+
+{#      // Transitions
+    {% set transitions = machine|xpath('fsm:transitions', {'fsm':'fsm'}) -%}
+    {% for transition in transitions|xpaths('fsm:transition', {'fsm':'fsm'}) -%}
+      {{machine_name}}.addTransition("{{transition|xpath('fsm:label/text()', {'fsm':'fsm'})}}","{{transition|xpath('fsm:begin/text()', {'fsm':'fsm'})}}","{{transition|xpath('fsm:end/text()', {'fsm':'fsm'})}}");
+    {% endfor -%}
+
+      // Initial state
+      {{machine_name}}.setInitialState("{{machine|xpath('fsm:initial/text()', {'fsm':'fsm'})}}");
+#}
+  {% endfor -%}
+
+
+
+
+
+
+
+
+{#
   <div id="mynetwork"></div>
   <div class="ui grid">
     <div class="six column row">
@@ -107,7 +188,7 @@
 
 
   </script>
-
+#}
 {% endif %}
 
 {% endset %}
