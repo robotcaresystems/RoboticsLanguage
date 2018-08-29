@@ -1,7 +1,7 @@
 #
 #   This is the Robotics Language compiler
 #
-#   Parameters.py: Definition of the parameters for this package
+#   ErrorHandling.py: Definition of the parameters for this package
 #
 #   Created on: 11 July, 2018
 #       Author: Gabriel A. D. Lopes
@@ -20,6 +20,6 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-parameters = {}
+error_exception_functions = {}
 
-command_line_flags = {}
+error_handling_functions = {}

@@ -393,9 +393,13 @@ def removeCache(cache_path='/.rol/cache'):
     rmtree(path)
 
 
+def myPluginPath(parameters):
+  return parameters['manifesto'][parameters['developer']['stepGroup']][parameters['developer']['stepName']]['path']
+
 # -------------------------------------------------------------------------------------------------
 #  Dictionary utilities
 # -------------------------------------------------------------------------------------------------
+
 
 def isKeyDefined(key, d):
   if isinstance(d, dict):
@@ -565,7 +569,9 @@ def xmlFunction(parameters, tag, content, position=0):
     return xmlAttributes('function', content, position, attributes={'name': tag})
 
 
-def xmlFunctionDefinition(name, arguments, returns, content, position=0):
+def xmlFunctionDefinition(parameters, name, arguments, returns, content, position=0):
+
+  parameters['symbols']['functions'].append(name)
 
   arguments_text = xml('function_arguments', arguments,
                        position) if isinstance(arguments, basestring) else ''
@@ -584,7 +590,13 @@ def xmlVariable(parameters, name, position=0):
     return xmlFunction(parameters, name, '', position)
   else:
     # its not part of the language
-    return xmlAttributes('variable', '', position, attributes={'name': name})
+    if name in parameters['symbols']['functions']:
+      # could point to a function
+      return xmlAttributes('function_pointer', '', position, attributes={'name': name})
+    else:
+      # or point to a variable
+      parameters['symbols']['variables'].append(name)
+      return xmlAttributes('variable', '', position, attributes={'name': name})
 
 
 def xmlMiniLanguage(parameters, key, text, position):
@@ -602,16 +614,16 @@ def xmlMiniLanguage(parameters, key, text, position):
 #  XML utilities used in code generators
 # -------------------------------------------------------------------------------------------------
 
-def xpath(xml, path):
-  result = xml.xpath(path)
+def xpath(xml, path, namespaces={}):
+  result = xml.xpath(path, namespaces=namespaces)
   if isinstance(result, list):
     return result[0]
   else:
     return result
 
 
-def xpaths(xml, path):
-  return xml.xpath(path)
+def xpaths(xml, path, namespaces={}):
+  return xml.xpath(path, namespaces=namespaces)
 
 
 def text(xml):
@@ -677,47 +689,48 @@ def todaysDate(format):
 
 def fillDefaultsInOptionalArguments(code, parameters):
   '''Fill in defaults in optional arguments in case they are not explicitely defined.'''
+  try:
+    for element in code.xpath('*[not(self::option)]'):
+      __, parameters = fillDefaultsInOptionalArguments(element, parameters)
 
-  for element in code.xpath('*[not(self::option)]'):
-    __, parameters = fillDefaultsInOptionalArguments(element, parameters)
+    # if this tag has optional parameters defined
+    if len(dpath.util.values(parameters['language'][code.tag], 'definition/optional')) > 0:
 
-  # if this tag has optional parameters defined
-  if len(dpath.util.values(parameters['language'][code.tag], 'definition/optional')) > 0:
+      # find all optional parameters
+      optional_names = code.xpath('option/@name')
 
-    # find all optional parameters
-    optional_names = code.xpath('option/@name')
+      # get the list of missing parameters
+      missing_parameters = list(set(
+          parameters['language'][code.tag]['definition']['optional'].keys()) - set(optional_names))
 
-    # get the list of missing parameters
-    missing_parameters = list(set(
-        parameters['language'][code.tag]['definition']['optional'].keys()) - set(optional_names))
+      for parameter in missing_parameters:
 
-    for parameter in missing_parameters:
+        # create XML structure
+        optional_argument_tag = etree.Element('option')
 
-      # create XML structure
-      optional_argument_tag = etree.Element('option')
+        # add the name of the optional parameter
+        optional_argument_tag.attrib['name'] = parameter
 
-      # add the name of the optional parameter
-      optional_argument_tag.attrib['name'] = parameter
+        # get the tag
+        value_tag = etree.Element(
+            parameters['language'][code.tag]['definition']['optional'][parameter]['tag'])
 
-      # get the tag
-      value_tag = etree.Element(
-          parameters['language'][code.tag]['definition']['optional'][parameter]['tag'])
+        if parameters['language'][code.tag]['definition']['optional'][parameter]['default'] is not None:
+          # set the default value
+          value_tag.text = str(
+              parameters['language'][code.tag]['definition']['optional'][parameter]['default'])
 
-      if parameters['language'][code.tag]['definition']['optional'][parameter]['default'] is not None:
-        # set the default value
-        value_tag.text = str(
-            parameters['language'][code.tag]['definition']['optional'][parameter]['default'])
+          # append new tag to the code
+          optional_argument_tag.append(value_tag)
 
-        # append new tag to the code
-        optional_argument_tag.append(value_tag)
+        code.append(optional_argument_tag)
 
-      code.append(optional_argument_tag)
-
-  # fill in parameters for children
-  for element in code.xpath('option'):
-    for child in element.getchildren():
-      __, parameters = fillDefaultsInOptionalArguments(child, parameters)
-
+    # fill in parameters for children
+    for element in code.xpath('option'):
+      for child in element.getchildren():
+        __, parameters = fillDefaultsInOptionalArguments(child, parameters)
+  except:
+    pass
   return code, parameters
 
 
@@ -843,12 +856,15 @@ def serialise(code, parameters, keywords, language, filters=default_template_eng
       # get all children that are not 'option'
       children_elements = code.xpath('*[not(self::option)]')
 
+      # get all children
+      # children_elements = code.getchildren()
+
       # render tags according to dictionary
       snippet = template.render(children=map(lambda x: serialise(x, parameters, keywords, language, filters), children_elements),
                                 childrenTags=map(
           lambda x: x.tag, children_elements),
           options=dict(zip(code.xpath('option/@name'), map(lambda x: serialise(x,
-                                                                               parameters, keywords, language, filters), code.xpath('option/*')))),
+                                                                               parameters, keywords, language, filters), code.xpath('option')))),
           attributes=code.attrib,
           parentAttributes=code.getparent().attrib,
           parentTag=code.getparent().tag,
@@ -863,11 +879,11 @@ def serialise(code, parameters, keywords, language, filters=default_template_eng
       logErrors(formatJinjaErrorMessage(e), parameters)
 
   except KeyError:
-      # get the line and column numbers
+    # get the line and column numbers
     line_number, column_number, line = positionToLineColumn(
         int(code.attrib['p']), parameters['text'])
 
-    # create error error_message
+    # create error message
     logErrors(errorMessage('Language semantic', 'Keyword \'' + code.tag + '\' not defined',
                            line_number=line_number, column_number=column_number, line=line), parameters)
 

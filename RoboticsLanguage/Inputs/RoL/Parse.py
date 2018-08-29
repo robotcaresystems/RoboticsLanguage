@@ -164,7 +164,7 @@ def parse(text, parameters):
   # create the grammar
   language = parsley.makeGrammar(grammar, {'xml': Utilities.xml,
                                            'xmlAttributes': Utilities.xmlAttributes,
-                                           'xmlFunctionDefinition': Utilities.xmlFunctionDefinition,
+                                           'xmlFunctionDefinition': lambda x, y, z, w, k: Utilities.xmlFunctionDefinition(parameters, x, y, z, w, k),
                                            'xmlVariable': lambda x, y: Utilities.xmlVariable(parameters, x, y),
                                            'xmlFunction': lambda x, y, z: Utilities.xmlFunction(parameters, x, y, z),
                                            'xmlMiniLanguage': lambda x, y, z: Utilities.xmlMiniLanguage(parameters, x, y, z)})

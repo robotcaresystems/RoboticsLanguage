@@ -3,7 +3,7 @@
 #
 #   Manifesto.py: Definition of the parameters for this package
 #
-#   Created on: June 22, 2017
+#   Created on: 11 July, 2018
 #       Author: Gabriel A. D. Lopes
 #      Licence: Apache 2.0
 #    Copyright: 2014-2017 Robot Care Systems BV, The Hague, The Netherlands. All rights reserved.
@@ -21,7 +21,7 @@
 #   limitations under the License.
 
 manifesto = {
-  'packageName':'Finite State Machine',
-  'packageShortName':'FiniteStateMachine',
-  'fileFormat': 'fsm',
-  }
+    'packageName': 'Finite State Machine',
+    'packageShortName': 'FiniteStateMachine',
+    'fileFormat': 'fsm',
+}

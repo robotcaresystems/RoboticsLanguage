@@ -3,7 +3,7 @@
 #
 #   Parameters.py: Definition of the parameters for this package
 #
-#   Created on: June 22, 2017
+#   Created on: 11 July, 2018
 #       Author: Gabriel A. D. Lopes
 #      Licence: Apache 2.0
 #    Copyright: 2014-2017 Robot Care Systems BV, The Hague, The Netherlands. All rights reserved.
@@ -19,57 +19,42 @@
 #   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
+
 from lxml import etree
+from parsley import makeGrammar
 from RoboticsLanguage.Base import Utilities
-import parsley
 
-# creates XML text for entry. This is used inside the grammar
-def xml(tag, content, position):
-  return '<' + tag + ' p="' + str(position) + '">' + content + '</' + tag + '>'
+grammar_definition = """
+word = <letter letterOrDigit*>
+
+name = 'name' ws ':' ws word:n -> xml('name',n)
+
+initialisation = 'initial' ws ':' ws word:state -> xml('initial',state)
+
+transitions = ( ws transition:fsm -> fsm[0])*
+
+transition = '(' ws word:begin ws ')' ws '-' ws word:label ws '->' ws ( transition:t -> xml('transition', xml('label', label)[0] + xml('begin',begin)[0] + xml('end',str(t[1]))[0] , rest = begin, text = t[0])
+                                | '(' ws word:end ws ')' -> xml('transition', xml('label',label)[0] + xml('begin',begin)[0] + xml('end',end)[0], rest = begin)
+                                )
+
+result = ws name:a ws initialisation:b ws transitions:t ws -> a + b + xml('transitions', ''.join(t))
+"""
 
 
-
-def miniLanguage(key, text, position, parameters):
-  try:
-    code, parameters = Utilities.importModule('Inputs', key, 'Parse').Parse.parse(text, parameters)
-    result = etree.tostring(code)
-    return result
-  except:
-    Utilities.logging.error("Failed to parse mini-language "+key)
+def xml(tag, content, rest='', text=''):
+  return '<fsm:' + tag + '>' + content + '</fsm:' + tag + '>' + text, rest
 
 
-
-# the main parsing function
 def parse(text, parameters):
   Utilities.logging.info("Parsing FiniteStateMachine language...")
 
-  # definition of the grammar according to Parsley
-  # http://parsley.readthedocs.io/en/latest/tutorial.html
-  grammar = r"""
-# the language is collection of transitions separated by white space
-main = ( ws transition:fsm ws -> fsm)*
+  # make the grammar
+  grammar = makeGrammar(grammar_definition, {'xml': xml})
 
-# a transition are two words separared by an arrow ->. Return an XML string
-transition = ws word:b ws '->' ws word:e -> xml('transition',xml('begin',b,self.input.position)+xml('end',e,self.input.position),self.input.position)
+  # parse the text
+  result = grammar(text).result()
 
-# a word is a collection of letters
-word = ( language | letters )
+  # convert to XML object
+  code = etree.fromstring('<fsm:machine xmlns:fsm="fsm">' + ''.join(result) + '</fsm:machine>')
 
-language = letters:n ws '<<' code:l '>>' ws  -> miniLanguage(n, l, self.input.position)
-
-code = <(~('>>') anything)+>
-
-letters = <letter+>
-"""
-
-  # create the language object
-  language = parsley.makeGrammar(grammar, {'xml': xml,
-                                           'miniLanguage': lambda x,y,z : miniLanguage(x, y, z, parameters) })
-
-  # parse the text using the grammar
-  parsed_xml_text = '<FiniteStateMachine>'+''.join(language(text).main())+'</FiniteStateMachine>'
-
-  # Convert xml string to xml object
-  parsed_xml = etree.fromstring(parsed_xml_text)
-
-  return parsed_xml, parameters
+  return code, parameters

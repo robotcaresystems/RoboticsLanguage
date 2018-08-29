@@ -20,6 +20,16 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-parameters = {}
+from RoboticsLanguage.Base import Utilities
 
-command_line_flags = {}
+
+def transform(code, parameters):
+
+  # this is the absolute path to the extra header file needed for finite state machines
+  header_file = Utilities.myPluginPath(parameters) + '/Templates/Outputs/RosCpp/_nodename_/include/_nodename_/FiniteStateMachine.h'
+
+  # skip header file if no state machines are defined
+  if len(code.xpath('//fsm:machine', namespaces={'fsm': 'fsm'})) == 0:
+    parameters['globals']['skipCopyFiles'].append(header_file)
+
+  return code, parameters

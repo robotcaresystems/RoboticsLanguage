@@ -20,6 +20,13 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-parameters = {}
-
-command_line_flags = {}
+language = {
+    '{fsm}machine': {},
+    '{fsm}name': {},
+    '{fsm}initial': {},
+    '{fsm}transitions': {},
+    '{fsm}transition': {},
+    '{fsm}label': {},
+    '{fsm}begin': {},
+    '{fsm}end': {}
+}

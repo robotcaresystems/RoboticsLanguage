@@ -122,6 +122,15 @@ language = {
         },
     },
 
+    'function_pointer': {
+        'output':
+        {
+            'RosCpp': 'std::bind(&{{camelCase(xpath(code,\'/node/option[@name="name"]/string/text()\'))}}Class::{{attributes["name"]}}, this)',
+            # 'RosCpp': '&(this->{{attributes["name"]}})',
+        },
+    },
+
+
     'return': {
         'output':
         {
