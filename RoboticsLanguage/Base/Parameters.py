@@ -57,6 +57,13 @@ parameters = {
         'intermediateTemplates': False
     },
 
+    'symbols':
+    {
+      'functions':[],
+      'variables':[],
+      'types':[]
+    },
+
     'errors': [],
 
     'Information':
@@ -213,6 +220,9 @@ command_line_flags = {
     'globals:loadOrder': {'suppress': True},
     'globals:skipCopyFiles': {'suppress': True},
     'globals:skipTemplateFiles': {'suppress': True},
+    'symbols:functions': {'suppress': True},
+    'symbols:variables': {'suppress': True},
+    'symbols:types': {'suppress': True},
     'Information:user:name': {'suppress': True},
     'Information:user:email': {'suppress': True},
     'Information:user:web': {'suppress': True},

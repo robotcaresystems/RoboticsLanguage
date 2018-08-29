@@ -19,6 +19,7 @@
 
     // Initial state
     {{machine_name}}.setInitialState("{{machine|xpath('fsm:initial/text()', {'fsm':'fsm'})}}");
+
 {% endfor -%}
 
 {% endset %}

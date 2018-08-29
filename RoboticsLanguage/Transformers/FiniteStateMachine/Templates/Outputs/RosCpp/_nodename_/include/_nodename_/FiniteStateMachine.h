@@ -14,20 +14,39 @@ private:
   // { 'idle': { 'start' -> 'running'}, 'running' : { 'stop' -> 'start'} }
 	std::map<std::string, std::map<std::string, std::string> > machine;
 
-  // list of functions that are executed on entry, exit, or inside the state
-	std::map<std::string, std::function<void()> > init_function, exit_function, inside_function;
+  // list of function types: init, exit, inside, global
+	std::map<std::string, std::map<std::string, std::function<void()> > > functions;
 
   // The current state
 	std::string current_state;
+
+  // last transition
+	std::string last_transition;
+
 
   // the name of the state machine
   std::string name;
 
   // check if state exists
-  bool state_exists_(std::string state)
+  bool state_exists_(std::string state_)
   {
-    return (machine.find(state) != machine.end());
+    return (machine.find(state_) != machine.end());
   }
+
+  bool function_exists_(std::string type_, std::string state_)
+  {
+    auto function_type = functions.find(type_);
+    if (function_type == functions.end())
+    {
+      return false;
+    }
+    else
+    {
+      return ((function_type->second).find(state_) != (function_type->second).end());
+    }
+  }
+
+
 
 public:
 	FiniteStateMachine(std::string name_ = "")
@@ -35,6 +54,16 @@ public:
       // always start uninitialised
       current_state = "";
       name = name_;
+
+      // create structures for functions
+      std::map<std::string, std::function<void()> > init_type, exit_type, inside_type, global_type;
+
+      // add to main structures
+      functions.insert(std::pair<std::string, std::map<std::string, std::function<void()> > >("init", init_type));
+      functions.insert(std::pair<std::string, std::map<std::string, std::function<void()> > >("exit", exit_type));
+      functions.insert(std::pair<std::string, std::map<std::string, std::function<void()> > >("inside", inside_type));
+      functions.insert(std::pair<std::string, std::map<std::string, std::function<void()> > >("global", global_type));
+
 		};
 
 	~FiniteStateMachine(){};
@@ -90,11 +119,11 @@ public:
 		}
 	}
 
-  bool setInitialState(std::string state)
+  bool setInitialState(std::string state_)
   {
     if (current_state == "")
     {
-      current_state = state;
+      current_state = state_;
 
       return true;
     }
@@ -113,19 +142,16 @@ public:
     if (current_transition != machine[current_state].end())
     {
       // first run the exit function
-      auto current_exit = exit_function.find(current_state);
-      if (current_exit != exit_function.end()) {
-				(current_exit->second)();
-			}
+      runExitFunction();
 
       // change state
       current_state = current_transition->second;
 
+      // remember last transition
+      last_transition = transition;
+
       // finally run the init function
-      auto current_init = init_function.find(current_state);
-      if (current_init != init_function.end()) {
-				(current_init->second)();
-			}
+      runInitFunction();
 
       return true;
     }
@@ -134,12 +160,12 @@ public:
   }
 
 
-
-	bool addInitFunction(std::string state, void (*function)())
+  bool addFunction(std::function<void()> function_, std::string type_, std::string state_)
   {
     try
-		{
-			init_function.insert(std::pair<std::string, std::function<void()> >(state,(*function)));
+    {
+      // insert function
+      functions[type_].insert(std::pair<std::string, std::function<void()> >(state_, function_));
 
       return true;
     }
@@ -147,49 +173,92 @@ public:
     {
       return false;
     }
-	}
+  }
 
 
-  bool addExitFunction(std::string state, void (*function)())
+  bool addInitFunction(std::function<void()> function_)
   {
-    try
-		{
-			exit_function.insert(std::pair<std::string, std::function<void()> >(state,(*function)));
+    return addFunction(function_, "global", "init");
+  }
 
-      return true;
-    }
-    catch (std::exception & e)
-    {
-      return false;
-    }
-	}
-
-  bool addInsideFunction(std::string state, void (*function)())
+  bool addInitFunction(std::function<void()> function_, std::string state_)
   {
-    try
-		{
-			inside_function.insert(std::pair<std::string, std::function<void()> >(state,(*function)));
+    return addFunction(function_, "init", state_);
+  }
 
-      return true;
-    }
-    catch (std::exception & e)
-    {
-      return false;
-    }
-	}
+  bool addExitFunction(std::function<void()> function_)
+  {
+    return addFunction(function_, "global", "exit");
+  }
+
+  bool addExitFunction(std::function<void()> function_, std::string state_)
+  {
+    return addFunction(function_, "exit", state_);
+  }
+
+  bool addInsideFunction(std::function<void()> function_)
+  {
+    return addFunction(function_, "global", "inside");
+  }
+
+  bool addInsideFunction(std::function<void()> function_, std::string state_)
+  {
+    return addFunction(function_, "inside", state_);
+  }
 
 
-	std::string currentState()
+
+	std::string state()
 	{
 		return current_state;
 	}
 
+  std::string lastTransition()
+	{
+		return last_transition;
+	}
+
+
+private:
+
+  void runInitFunction()
+  {
+    if (function_exists_("global","init"))
+    {
+      functions["global"]["init"]();
+    }
+
+    if (function_exists_("init",current_state))
+    {
+      functions["init"][current_state]();
+    }
+  }
+
+  void runExitFunction()
+  {
+    if (function_exists_("global","exit"))
+    {
+      functions["global"]["exit"]();
+    }
+
+    if (function_exists_("exit",current_state))
+    {
+      functions["exit"][current_state]();
+    }
+  }
+
+public:
 
   void runInsideFunction()
   {
-    auto current_inside = inside_function.find(current_state);
-    if (current_inside != inside_function.end()) {
-      (current_inside->second)();
+    if (function_exists_("global","inside"))
+    {
+      functions["global"]["inside"]();
+    }
+
+    if (function_exists_("inside",current_state))
+    {
+      functions["inside"][current_state]();
     }
   }
 

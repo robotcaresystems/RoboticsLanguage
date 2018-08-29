@@ -347,6 +347,18 @@ language = {
         }
     },
 
+
+    'function_pointer': {
+        'definition': {
+            'arguments': arguments('anything'),
+            'returns': returns('function')
+        },
+        'documentation':
+        {
+        }
+    },
+
+
     'return': {
         'definition': {
             'arguments': arguments('anything'),

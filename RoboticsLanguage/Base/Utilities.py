@@ -569,7 +569,9 @@ def xmlFunction(parameters, tag, content, position=0):
     return xmlAttributes('function', content, position, attributes={'name': tag})
 
 
-def xmlFunctionDefinition(name, arguments, returns, content, position=0):
+def xmlFunctionDefinition(parameters, name, arguments, returns, content, position=0):
+
+  parameters['symbols']['functions'].append(name)
 
   arguments_text = xml('function_arguments', arguments,
                        position) if isinstance(arguments, basestring) else ''
@@ -588,7 +590,13 @@ def xmlVariable(parameters, name, position=0):
     return xmlFunction(parameters, name, '', position)
   else:
     # its not part of the language
-    return xmlAttributes('variable', '', position, attributes={'name': name})
+    if name in parameters['symbols']['functions']:
+      # could point to a function
+      return xmlAttributes('function_pointer', '', position, attributes={'name': name})
+    else:
+      # or point to a variable
+      parameters['symbols']['variables'].append(name)
+      return xmlAttributes('variable', '', position, attributes={'name': name})
 
 
 def xmlMiniLanguage(parameters, key, text, position):
@@ -846,17 +854,17 @@ def serialise(code, parameters, keywords, language, filters=default_template_eng
         template.globals[key] = value
 
       # get all children that are not 'option'
-      # children_elements = code.xpath('*[not(self::option)]')
+      children_elements = code.xpath('*[not(self::option)]')
 
       # get all children
-      children_elements = code.getchildren()
+      # children_elements = code.getchildren()
 
       # render tags according to dictionary
       snippet = template.render(children=map(lambda x: serialise(x, parameters, keywords, language, filters), children_elements),
                                 childrenTags=map(
           lambda x: x.tag, children_elements),
           options=dict(zip(code.xpath('option/@name'), map(lambda x: serialise(x,
-                                                                               parameters, keywords, language, filters), code.xpath('option/*')))),
+                                                                               parameters, keywords, language, filters), code.xpath('option')))),
           attributes=code.attrib,
           parentAttributes=code.getparent().attrib,
           parentTag=code.getparent().tag,
@@ -875,7 +883,7 @@ def serialise(code, parameters, keywords, language, filters=default_template_eng
     line_number, column_number, line = positionToLineColumn(
         int(code.attrib['p']), parameters['text'])
 
-    # create error error_message
+    # create error message
     logErrors(errorMessage('Language semantic', 'Keyword \'' + code.tag + '\' not defined',
                            line_number=line_number, column_number=column_number, line=line), parameters)
 
