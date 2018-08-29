@@ -21,7 +21,7 @@
 #   limitations under the License.
 
 manifesto = {
-    'packageName': 'FiniteStateMachine',
+    'packageName': 'Finite State Machine',
     'packageShortName': 'FiniteStateMachine',
     'fileFormat': 'fsm',
 }

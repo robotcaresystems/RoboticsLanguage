@@ -1,1 +1,1 @@
-# Module FiniteStateMachines
+# Module Finite State Machines
