@@ -5,6 +5,50 @@
 <!-- VisJS for easy diagrams -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.css" />
+
+
+<script type="text/javascript">
+
+{% for machine in code|xpaths('//fsm:machine', {'fsm':'fsm'}) %}
+  {% set machine_name = machine|xpath('fsm:name/text()', {'fsm':'fsm'}) %}
+
+ // connect to topics
+var fsm_{{machine_name}}_publisher = new ROSLIB.Topic({
+  ros: ros,
+  name: '/finite_state_machine/{{parameters['node']['name']|underscore}}/{{machine_name}}/fire',
+  messageType: 'std_msgs/String',
+});
+
+var fsm_{{machine_name}}_subscriber = new ROSLIB.Topic({
+  ros: ros,
+  name: '/finite_state_machine/{{parameters['node']['name']|underscore}}/{{machine_name}}/state',
+  messageType: 'std_msgs/String',
+});
+
+// subscribe function
+fsm_{{machine_name}}_subscriber.subscribe(function(message) {
+
+  for (i = 1; i <= nodes_{{machine_name}}.length; i++)
+  {
+    if (nodes_{{machine_name}}._data[i]["label"] == message.data)
+    {
+      nodes_{{machine_name}}.update([{id:i, color:{background:'#00ff00'}}]);
+    }
+    else
+    {
+      nodes_{{machine_name}}.update([{id:i, color:{background:'#ffffff'}}]);
+    }
+  }
+});
+
+{% endfor %}
+
+</script>
+
+
+
+
+
 {% endif %}
 
 {% endset %}
@@ -38,6 +82,11 @@
     <i class="dropdown icon"></i> {{machine_name}}
   </div>
   <div class="content hidden">
+    <div class="ui checkbox">
+      <input type="checkbox" id="fire_checkbox_{{machine_name}}">
+      <label>Fire transition on click</label>
+    </div>
+
     <div id="fsm_{{machine_name}}"></div>
   </div>
 
@@ -53,7 +102,7 @@
       var nodes_{{machine_name}} = new vis.DataSet([
 
       {% for state in states %}
-        {id: {{loop.index}}, label: '{{state}}', color: {background:'white', border:'black'}},
+        {id: {{loop.index}}, label: '{{state}}', color: {background:'white', border:'black',highlight:{background:'white',border:'black'},hover:{background:'white',border:'blue'}}},
       {% endfor %}
 
       ]);
@@ -84,111 +133,24 @@
       var network_{{machine_name}} = new vis.Network(container_{{machine_name}}, data_{{machine_name}}, options_{{machine_name}});
       network_{{machine_name}}.setSize(300,300);
       network_{{machine_name}}.moveTo({position: {x: 300, y: 300}});
+      network_{{machine_name}}.fit();
+
+      network_{{machine_name}}.on("click", function (params)
+      {
+        if ($("#fire_checkbox_{{machine_name}}").is(':checked') && params.edges.length == 1)
+        {
+            // create a ROS message
+            var message = new ROSLIB.Message({data : network_{{machine_name}}.body.data.edges._data[params.edges[0]]["label"]});
+
+            // publish
+            fsm_{{machine_name}}_publisher.publish(message)
+        }
+      });
+
     </script>
 
-
-{#      // Transitions
-    {% set transitions = machine|xpath('fsm:transitions', {'fsm':'fsm'}) -%}
-    {% for transition in transitions|xpaths('fsm:transition', {'fsm':'fsm'}) -%}
-      {{machine_name}}.addTransition("{{transition|xpath('fsm:label/text()', {'fsm':'fsm'})}}","{{transition|xpath('fsm:begin/text()', {'fsm':'fsm'})}}","{{transition|xpath('fsm:end/text()', {'fsm':'fsm'})}}");
-    {% endfor -%}
-
-      // Initial state
-      {{machine_name}}.setInitialState("{{machine|xpath('fsm:initial/text()', {'fsm':'fsm'})}}");
-#}
   {% endfor -%}
 
-
-
-
-
-
-
-
-{#
-  <div id="mynetwork"></div>
-  <div class="ui grid">
-    <div class="six column row">
-      {% for state in list_of_states %}
-        <div class="column"><button class="fluid ui mini toggle button" id="{{state}}" onclick="highlight('{{state}}') ">Highlight {{state}}</button></div>
-      {% endfor %}
-    </div>
-  </div>
-
-
-  <script type="text/javascript">
-    // create an array with nodes
-    var id = 0;
-    var nodes = new vis.DataSet([
-    ]);
-
-    // create an array with edges
-    var edges = new vis.DataSet([
-    ]);
-
-    // create a network
-    var container = document.getElementById('mynetwork');
-
-    // provide the data in the vis format
-    var data = {
-        nodes: nodes,
-        edges: edges
-    };
-    var options = {
-      edges:{
-        arrows: 'to',
-        color:{
-            highlight : 'green',
-                    },
-        font: '12px arial #ff0000',
-        scaling:{
-          label: false,
-        },
-        shadow: true,
-        smooth: true,
-      },
-      layout:{randomSeed:1},
-      nodes:{
-        color: {
-          highlight: {
-            background: '#00ff00'
-            },
-        },
-      },
-    };
-
-    function addState (idNum, labelName)
-    {
-      nodes.add([{id: idNum, label: labelName}]);
-    }
-
-    function addTransition (lbl, src, dst)
-    {
-      edges.add([{from: src, to: dst, label: lbl ,font: {align: 'middle'}}]);
-    }
-    function highlight (id)
-    {
-      network.selectNodes([id], true);
-    }
-
-    var iter = 1;
-    {% for state in list_of_states %}
-      addState ("{{state}}", "{{state}}");
-    {% endfor %}
-
-    {% for elem in range(num_of_transitions) %}
-        addTransition ("{{transition_labels[elem]}}", "{{transition_begins[elem]}}","{{transition_ends[elem]}}")
-    {% endfor %}
-
-    console.log(data);
-
-    var network = new vis.Network(container, data, options);
-    //Set initial state
-    highlight("{{init[0]}}")
-
-
-  </script>
-#}
 {% endif %}
 
 {% endset %}
