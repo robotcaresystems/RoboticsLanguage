@@ -28,7 +28,7 @@ var fsm_{{machine_name}}_subscriber = new ROSLIB.Topic({
 // subscribe function
 fsm_{{machine_name}}_subscriber.subscribe(function(message) {
 
-  for (i = 1; i <= nodes_{{machine_name}}.length; i++)
+  for (i = 1; i < nodes_{{machine_name}}.length; i++)
   {
     if (nodes_{{machine_name}}._data[i]["label"] == message.data)
     {
@@ -100,7 +100,7 @@ fsm_{{machine_name}}_subscriber.subscribe(function(message) {
     <script type="text/javascript">
       // create an array with nodes
       var nodes_{{machine_name}} = new vis.DataSet([
-
+        {id:0, shape:'dot', color: {background:'black', border:'black'}, size:2},
       {% for state in states %}
         {id: {{loop.index}}, label: '{{state}}', color: {background:'white', border:'black',highlight:{background:'white',border:'black'},hover:{background:'white',border:'blue'}}},
       {% endfor %}
@@ -109,18 +109,21 @@ fsm_{{machine_name}}_subscriber.subscribe(function(message) {
 
       // create an array with edges
       var edges_{{machine_name}} = new vis.DataSet([
-
         {% set transitions = machine|xpath('fsm:transitions', {'fsm':'fsm'}) -%}
         {% for transition in transitions|xpaths('fsm:transition', {'fsm':'fsm'}) -%}
         {from: {{index_states[transition|xpath('fsm:begin/text()', {'fsm':'fsm'})]}},
          to: {{index_states[transition|xpath('fsm:end/text()', {'fsm':'fsm'})]}},
          label: "{{transition|xpath('fsm:label/text()', {'fsm':'fsm'})}}",
          arrows:'to',
-         color:'#FFFFFF'
+         color:'black'
         },
         {% endfor -%}
-
-
+        // last edge is for the initial state
+        {% for state in states %}
+          {% if state == machine|xpath('fsm:initial/text()', {'fsm':'fsm'}) %}
+          {from:0, to:{{loop.index}}, color:'black', arrows:'to'}
+          {% endif %}
+        {% endfor %}
       ]);
 
       // create a network
