@@ -1,7 +1,7 @@
 #
 #   This is the Robotics Language compiler
 #
-#   Manifesto.py: Definition of the parameters for this package
+#   ErrorHandling.py: Definition of the parameters for this package
 #
 #   Created on: June 22, 2017
 #       Author: Gabriel A. D. Lopes
@@ -20,8 +20,7 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-manifesto = {
-  'packageName':'Temporal Logic',
-  'packageShortName':'TemporalLogic',
-  'order': 100,
-  }
+
+error_exception_functions = {}
+
+error_handling_functions = {}
