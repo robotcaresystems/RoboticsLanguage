@@ -32,11 +32,11 @@ fsm_{{machine_name}}_subscriber.subscribe(function(message) {
   {
     if (nodes_{{machine_name}}._data[i]["label"] == message.data)
     {
-      nodes_{{machine_name}}.update([{id:i, color:{background:'#00ff00'}}]);
+      nodes_{{machine_name}}.update([{id:i, color:{background:'#00ff00', highlight:{background:'#00ff00',border:'black'}}}]);
     }
     else
     {
-      nodes_{{machine_name}}.update([{id:i, color:{background:'#ffffff'}}]);
+      nodes_{{machine_name}}.update([{id:i, color:{background:'white', highlight:{background:'white',border:'black'}}}]);
     }
   }
 });
@@ -140,7 +140,7 @@ fsm_{{machine_name}}_subscriber.subscribe(function(message) {
 
       network_{{machine_name}}.on("click", function (params)
       {
-        if ($("#fire_checkbox_{{machine_name}}").is(':checked') && params.edges.length == 1)
+        if ($("#fire_checkbox_{{machine_name}}").is(':checked') && params.edges.length == 1 && params.nodes.length == 0)
         {
             // create a ROS message
             var message = new ROSLIB.Message({data : network_{{machine_name}}.body.data.edges._data[params.edges[0]]["label"]});
