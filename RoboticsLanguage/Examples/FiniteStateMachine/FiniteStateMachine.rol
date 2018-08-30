@@ -10,10 +10,12 @@ node(
         name:machine
         initial:idle
 
-        (idle) -start-> (running) -stop-> (idle)
-        (running) -error-> (fault) -reset-> (idle)
+
+        (running) -error-> (fault) -reset-> (idle) -start-> (running) -stop-> (idle) -calibration-> (calibrate) -reset-> (idle)
+
 
       }>,
+
 
       define entering():
         print('Transition: ', machine.lastTransition(), ', Entering: ', machine.state()),

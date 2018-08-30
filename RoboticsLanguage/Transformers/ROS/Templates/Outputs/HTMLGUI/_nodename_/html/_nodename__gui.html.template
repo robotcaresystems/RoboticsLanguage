@@ -41,53 +41,6 @@
     });
 
 
-    // // Subscribing and publishing to a topics
-    // // ----------------------
-    //
-    // // a subscriber
-    // var subscriber_echo = new ROSLIB.Topic({
-    //   ros: ros,
-    //   name: '/webguis/example/response',
-    //   messageType: 'std_msgs/String',
-    //   // latch: true
-    // });
-    //
-    // // a publisher
-    // var publisher_echo = new ROSLIB.Topic({
-    //   ros: ros,
-    //   name: '/webguis/example/question',
-    //   messageType: 'std_msgs/String',
-    //   // latch: true
-    // });
-
-
-
-    // // Callback functions for subscribers
-    // // ------------------
-    // subscriber_echo.subscribe(function(message) {
-    //
-    //   // fill in the respose field
-    //   $('#response').html(message.data);
-    //
-    // });
-    //
-    // // Helping functions for publishing
-    // // ------------------
-    // function publishMessage()
-    // {
-    //   // read the value of the input field
-    //   text = $('#echo').val()
-    //
-    //   // create a string ROS message
-    //   var str = new ROSLIB.Message({
-    //     data : text
-    //   });
-    //
-    //   // publish
-    //   publisher_echo.publish(str)
-    // }
-
-
     // dictionary of plots for numeric type signals
     var plots = {
       {% for topic in parameters|dpath('/Transformers/ROS/topicDefinitions') %}
@@ -174,6 +127,9 @@
 
         {% if topic['ros_type'] == 'std_msgs::String' %}
 
+        // string type
+        $('#string_{{topic['topic_name']|underscore}}').html($('#string_{{topic['topic_name']|underscore}}').html() + '\n' + message.data)
+
         // trim text if necessary
         if (message.data.length > max_string_length)
         {
@@ -187,8 +143,6 @@
         $('#value_{{topic['topic_name']|underscore}}').html(message);
 
 
-        // string type
-          $('#string_{{topic['topic_name']|underscore}}').html($('#string_{{topic['topic_name']|underscore}}').html() + '\n' + message.data)
         {% endif %}
 
       });
@@ -253,29 +207,6 @@
       </div>
 
 </div>
-<!-- <div class="ui small statistics">
-  <div class="statistic">
-    <div class="value" id="value_{{topic['topic_name']|underscore}}">34.5</div>
-    <div class="label">Value</div>
-  </div>
-  <div class="statistic">
-    <div class="text value">{{topic['ros_type']}}</div>
-    <div class="label">Type</div>
-  </div>
-  <div class="statistic">
-    <div class="text value">{{topic['flow']}}
-    </div>
-    <div class="label">Flow</div>
-  </div>
-</div>
- -->
-
-
-      <!-- <table class="ui table">
-        <tr><td>Value</td><td><h2 id="value_{{topic['topic_name']|underscore}}"></h2></td></tr>
-        <tr><td>Type</td><td>{{topic['ros_type']}}</td></tr>
-        <tr><td>Flow</td><td>{{topic['flow']}}</td></tr>
-      </table> -->
 
       {% if topic['ros_type'] == 'std_msgs::String' %}
         <!-- string topics  -->
