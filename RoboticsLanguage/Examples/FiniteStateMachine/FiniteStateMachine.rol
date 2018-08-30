@@ -11,20 +11,11 @@ node(
         initial:idle
 
 
-        (running) -error-> (fault) -reset-> (idle) -start-> (running) -stop-> (idle)
+        (running) -error-> (fault) -reset-> (idle) -start-> (running) -stop-> (idle) -calibration-> (calibrate) -reset-> (idle)
+
 
       }>,
 
-
-      FiniteStateMachine<{
-
-          name:test
-          initial:A
-
-
-          (A) -a1-> (B) -a2-> (A)
-
-        }>,
 
       define entering():
         print('Transition: ', machine.lastTransition(), ', Entering: ', machine.state()),
@@ -32,21 +23,15 @@ node(
       define exiting():
         print('Leaving: ', machine.state() ),
 
-        define insideIdle():
-          print('yeah'),
-
 
     # a fire signal
-    fire ∈ Signals(Strings, rosTopic:'/fire', onNew: machine.fire(fire)),
-
-    yeah ∈ Signals(Reals, rosTopic:'/yeah', onNew: print(yeah))
+    fire ∈ Signals(Strings, rosTopic:'/fire', onNew: machine.fire(fire))
 
   ),
 
   initialise: block(
 
     machine.addInitFunction(entering),
-    machine.addInitFunction(insideIdle,'idle'),
     machine.addExitFunction(exiting)
 
     )
