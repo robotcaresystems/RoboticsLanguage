@@ -912,6 +912,19 @@ def CreateBracketGrammar(definitions):
   return text, bracket.keys()
 
 
+def CreateGenericGrammar(definitions):
+  # extract only generic operators
+  generic = dpath.util.search(definitions, '/*/generic')
+
+  text = '\n# Generic operators\n'
+
+  for key, value in generic.iteritems():
+    text += key + 'Generic = \'' + ''.join([ x + '\' wws values:'+chr(97+y)+' wws \'' for x, y in zip(value['generic'], range(len(value['generic'])))][:-1]) + value['generic'][-1] + '\' -> xml(\'' + key + '\',' + '+'.join([chr(97+x) for x in range(len(value['generic'])-1)]) + ',self.input.position)\n'
+
+  return text, [x + 'Generic' for x in generic.keys()]
+
+
+
 def CreatePreInPostFixGrammar(definitions):
 
   # partition by type of operator

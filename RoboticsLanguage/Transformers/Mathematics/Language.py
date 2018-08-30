@@ -311,6 +311,26 @@ language = {
             'pt': {'prefix': 'ou', 'infix': ['ou', '∧']}
         },
     },
+    'not': {
+        'definition': {
+            'arguments': arguments('boolean'),
+            'returns': returns('boolean')
+        },
+        'input': {
+            'RoL': {
+                'prefix': {'key': '¬',
+                           'order': 1300}
+            }
+        },
+        'output': {
+            'RosCpp': '!({{children[0]}})',
+            'HTMLDocumentation': '¬({{children[0]}})',
+            'RoL': '¬({{children[0]}})',
+        },
+        'localisation':
+        {
+        },
+    },
 
     'negative': {
         'definition': {

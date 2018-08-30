@@ -1,0 +1,33 @@
+node(
+  name:'example temporal logic',
+
+  definitions: block(
+    # the input signal
+    echo_in ∈ Signals(Strings, rosTopic:'/echo/in'),
+
+    # the echo signal
+    echo_out ∈ Signals(Strings, rosTopic:'/echo/out')
+  ),
+
+  events: block(
+    if( □[0,1](¬◇[0,1](◇[0,1](echo_in == 'hello'))),
+        print('always hello for 1 second')
+      )
+    ,
+
+
+    if(◇[0,1](echo_in == 'hello'),
+      print('eventually hello for 1 second')
+      )
+    ,
+
+    if(eventually(0,1,echo_in == 'hello'),
+      print('eventually hello for 1 second')
+      )
+    ,
+
+    if(◇(echo_in == 'stop'),
+      print('stopping')
+      )
+    )
+)
