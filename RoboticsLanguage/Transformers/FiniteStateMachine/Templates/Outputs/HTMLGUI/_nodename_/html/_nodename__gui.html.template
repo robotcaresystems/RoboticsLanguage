@@ -92,7 +92,7 @@ fsm_{{machine_name}}_subscriber.subscribe(function(message) {
 
     <style type="text/css">
         #fsm_{{machine_name}} {
-          width: 600px;
+          width: 550px;
           height: 400px;
         }
       </style>
@@ -134,8 +134,8 @@ fsm_{{machine_name}}_subscriber.subscribe(function(message) {
       };
       var options_{{machine_name}} = {};
       var network_{{machine_name}} = new vis.Network(container_{{machine_name}}, data_{{machine_name}}, options_{{machine_name}});
-      network_{{machine_name}}.setSize(300,300);
-      network_{{machine_name}}.moveTo({position: {x: 300, y: 300}});
+      network_{{machine_name}}.setSize(550,400);
+      network_{{machine_name}}.moveTo({position: {x: 550, y: 400}});
       network_{{machine_name}}.fit();
 
       network_{{machine_name}}.on("click", function (params)
