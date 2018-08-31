@@ -41,7 +41,7 @@ language = {
 
         'output':
         {
-          'RoL': '{% if children|length == 1 %}◇({{children[0]}}){% else %}◇[{{children[0]}},{{children[1]}}]({{children[2]}}){% endif %}'
+            'RoL': '{% if children|length == 1 %}◇({{children[0]}}){% else %}◇[{{children[0]}},{{children[1]}}]({{children[2]}}){% endif %}'
         },
         'localisation':
         {
@@ -64,7 +64,7 @@ language = {
         },
         'output':
         {
-          'RoL': '{% if children|length == 1 %}□({{children[0]}}){% else %}□[{{children[0]}},{{children[1]}}]({{children[2]}}){% endif %}'
+            'RoL': '{% if children|length == 1 %}□({{children[0]}}){% else %}□[{{children[0]}},{{children[1]}}]({{children[2]}}){% endif %}'
         },
         'localisation':
         {

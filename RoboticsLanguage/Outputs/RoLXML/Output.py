@@ -20,8 +20,8 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-from lxml import etree
 import copy
+from lxml import etree
 from RoboticsLanguage.Base import Utilities
 
 

@@ -20,7 +20,19 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
+import copy
+from RoboticsLanguage.Base import Utilities
 
 def transform(code, parameters):
+
+
+  for eventually_code in code.xpath('//always|//eventually'):
+
+    # xml_copy = copy.deepcopy(eventually_code)
+
+    Utilities.serialise(eventually_code,parameters,parameters['language'],'RoL')
+
+    print eventually_code.attrib['RoL']
+
 
   return code, parameters
