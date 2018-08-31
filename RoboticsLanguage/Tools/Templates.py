@@ -70,6 +70,8 @@ def templateEngine(code, parameters, output=None,
 
   transformers = parameters['Transformers'].keys()
 
+  print list(sorted(parameters['manifesto']['Transformers'].iteritems(), key=lambda (k,v): (v['order'],k)))
+
   files_to_process = {}
   files_to_copy = []
   new_files_to_copy = []

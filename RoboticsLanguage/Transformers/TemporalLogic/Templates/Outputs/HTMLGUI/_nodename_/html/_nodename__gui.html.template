@@ -5,4 +5,17 @@
 
 {% set body %}
 
+<h1>Temporal logic</h1>
+
+  <div class="ui styled accordion">
+  {% for logic in parameters['Transformers']['TemporalLogic']['properties'] -%}
+    <div class="title">
+      <i class="dropdown icon"></i> {{logic['text']}}
+    </div>
+    <div class="content hidden">
+      <div id="logic_{{logic['id']}}"></div>
+    </div>
+  {% endfor -%}
+  </div>
+
 {% endset %}
