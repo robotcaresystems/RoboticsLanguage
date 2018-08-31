@@ -36,9 +36,15 @@ def output(code, parameters):
   # make a copy of the xml tree
   xml_copy = copy.deepcopy(code)
 
-  # delete all atributes
+  # delete all atributes except for 'name'
   for element in xml_copy.iter():
+    name = ''
+    if 'name' in element.attrib.keys():
+      name = element.attrib['name']
+
     element.attrib.clear()
+    if name != '':
+      element.attrib['name'] = name
 
   # save the tree into a file
   with open(parameters['globals']['deploy'] + '/' + node_name_underscore + '.xml', 'w') as xml_file:
