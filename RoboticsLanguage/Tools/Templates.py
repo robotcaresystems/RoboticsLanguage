@@ -68,9 +68,7 @@ def templateEngine(code, parameters, output=None,
     # if not os.path.isdir(templates_path):
     #   Tools.Exceptions(...)
 
-  transformers = parameters['Transformers'].keys()
-
-  print list(sorted(parameters['manifesto']['Transformers'].iteritems(), key=lambda (k,v): (v['order'],k)))
+  transformers = [x.split('.')[-1] for x in filter(lambda x: 'Transformers' in x, parameters['globals']['loadOrder'])]
 
   files_to_process = {}
   files_to_copy = []
