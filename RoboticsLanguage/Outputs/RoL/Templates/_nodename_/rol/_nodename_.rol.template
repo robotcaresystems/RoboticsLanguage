@@ -1,7 +1,3 @@
 node(
-  {% for element in code|xpaths('/node/*') -%}
-    {% if element|attribute('RoL') != "" -%}
-{{element|attribute('RoL')}},
-    {% endif -%}
-  {% endfor -%}
+{{code|xpaths('/node/*')|map("attribute","RoL")|reject("equalto","")|list|join(',')}}
 )
