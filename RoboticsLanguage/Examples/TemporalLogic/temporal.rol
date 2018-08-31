@@ -10,7 +10,7 @@ node(
   ),
 
   events: block(
-    if( □[0,1](¬◇[0,1](◇[0,1](echo_in == 'hello'))),
+    if( □[0,1](¬◇[a+b,1](◇[0,1](echo_in == 'hello'))),
         print('always hello for 1 second')
       )
     ,

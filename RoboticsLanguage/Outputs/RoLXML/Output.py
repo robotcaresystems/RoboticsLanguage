@@ -24,9 +24,13 @@ from lxml import etree
 import copy
 from RoboticsLanguage.Base import Utilities
 
+
 def output(code, parameters):
 
-  # get node name
+  # save the node name for the templates
+  parameters['node']['name'] = code.xpath('/node/option[@name="name"]/string')[0].text
+
+  # find a file system safe name
   node_name_underscore = Utilities.underscore(parameters['node']['name'])
 
   # make a copy of the xml tree
@@ -38,7 +42,7 @@ def output(code, parameters):
 
   # save the tree into a file
   with open(parameters['globals']['deploy'] + '/' + node_name_underscore + '.xml', 'w') as xml_file:
-    xml_file.write('<?xml version="1.0"?>\n' + etree.tostring(xml_copy, pretty_print = True))
+    xml_file.write('<?xml version="1.0"?>\n' + etree.tostring(xml_copy, pretty_print=True))
 
     Utilities.logging.debug('Wrote file '+parameters['globals']['deploy'] + '/' + node_name_underscore + '.xml...')
 

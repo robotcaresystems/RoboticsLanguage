@@ -869,6 +869,7 @@ def serialise(code, parameters, keywords, language, filters=default_template_eng
           parentAttributes=code.getparent().attrib,
           parentTag=code.getparent().tag,
           text=text(code),
+          tag=code.tag,
           parameters=parameters,
           code=code)
       # save text in attribute
