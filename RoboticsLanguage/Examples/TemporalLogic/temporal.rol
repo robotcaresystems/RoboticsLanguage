@@ -2,32 +2,21 @@ node(
   name:'example temporal logic',
 
   definitions: block(
-    # the input signal
-    echo_in ∈ Signals(Strings, rosTopic:'/echo/in'),
+    # a signal
+    x ∈ Signals(Reals, rosTopic:'/temporal_logic/x'),
 
-    # the echo signal
-    echo_out ∈ Signals(Strings, rosTopic:'/echo/out')
+    y ∈ Signals(Reals, rosTopic:'/temporal_logic/y')
+
   ),
 
   events: block(
-    if( □[0,1](¬◇[a+b,1](◇[0,1](echo_in == 'hello'))),
-        print('always hello for 1 second')
+    if( □[0,1](¬◇[0,2](◇[0,1](x > 0))),
+        print('x positive')
       )
     ,
 
-
-    if(◇[0,1](echo_in == 'hello'),
-      print('eventually hello for 1 second')
-      )
-    ,
-
-    if(eventually(0,1,echo_in == 'hello'),
-      print('eventually hello for 1 second')
-      )
-    ,
-
-    if(◇(echo_in == 'stop'),
-      print('stopping')
+    if(◇(x == 0),
+      print('x = 0')
       )
     )
 )

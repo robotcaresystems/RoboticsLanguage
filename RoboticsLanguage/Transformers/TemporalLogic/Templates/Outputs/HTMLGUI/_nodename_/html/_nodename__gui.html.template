@@ -1,5 +1,98 @@
 
-{% set head %}
+{% set beforeLoad %}
+
+  var temporal_logic_max_samples = 1000;
+
+  temporal_logic_plots = {
+  {% for logic in parameters['Transformers']['TemporalLogic']['properties'] -%}
+      '{{logic['id']}}':false,
+  {% endfor -%}
+  };
+
+  temporal_logic_plot_data = {
+  {% for logic in parameters['Transformers']['TemporalLogic']['properties'] -%}
+      '{{logic['id']}}':{'expression':[], 'outcome':[], 'min': 0 , 'max': 0},
+  {% endfor -%}
+  };
+
+  function UpdateTemporalLogicPlot(id, expression, outcome, min, max)
+  {
+    console.log('id: ' + id);
+    console.log('expression: ' + expression);
+    console.log('outcome: ' + outcome);
+    console.log('min: ' + min);
+    console.log('max: ' + max);
+
+    now = (Date.now() - temporal_logic_initial_time) / 1000;
+
+    temporal_logic_plot_data[id]['expression'].insert([now, expression]);
+    temporal_logic_plot_data[id]['outcome'].insert([now, outcome]);
+
+    if (temporal_logic_plot_data[id]['expression'].length > temporal_logic_max_samples)
+    {
+      temporal_logic_plot_data[id]['expression'].pop();
+      temporal_logic_plot_data[id]['outcome'].pop();
+    };
+
+    temporal_logic_plot_data[id]['min'] = min;
+    temporal_logic_plot_data[id]['max'] = max;
+
+  };
+
+
+{% endset %}
+
+{% set afterLoad %}
+
+    var highlight_start = -1;
+    var highlight_end = 0;
+    var temporal_logic_initial_time = Date.now();
+
+
+    // activate the accordion list
+    $('#temporal_logic_accordion').accordion({
+        onOpen: function () {
+          this_id = this.id.substr(15) // length("temporal_logic_")
+          if (temporal_logic_plots[this_id] == false)
+          {
+            // create plot the first time the accordion is open
+            temporal_logic_plots[this_id] = new Dygraph(
+                    document.getElementById("temporal_logic_plot_" + this_id),
+                    temporal_logic_plot_data[this_id]['expression'], {
+                      labels: ['time', this_id],
+                      underlayCallback: function(canvas, area, g) {
+                        var bottom_left = g.toDomCoords(highlight_start, -20);
+                        var top_right = g.toDomCoords(highlight_end, +20);
+
+                        var left = bottom_left[0];
+                        var right = top_right[0];
+
+                        canvas.fillStyle = "rgba(255, 255, 102, 1.0)";
+                        canvas.fillRect(left, area.y, right - left, area.h);
+                      }
+
+                    });
+          }
+        }
+    });
+
+
+  {% for logic in parameters['Transformers']['TemporalLogic']['properties'] -%}
+    // connect to topics
+    var temporal_logic_{{logic['id']}} = new ROSLIB.Topic({
+      ros: ros,
+      name: 'temporal_logic/{{parameters['node']['name']|underscore}}/{{logic['id']}}',
+      messageType: 'std_msgs/Float32MultiArray',
+    });
+
+    // subscribe functions
+    temporal_logic_{{logic['id']}}.subscribe(function(message) {
+      UpdateTemporalLogicPlot({{logic['id']}}, message.data[0], message.data[1], message.data[2], message.data[3]);
+    });
+
+
+  {% endfor -%}
+
 
 {% endset %}
 
@@ -7,15 +100,17 @@
 
 <h1>Temporal logic</h1>
 
-  <div class="ui styled accordion">
+  <div class="ui styled accordion" id="temporal_logic_accordion">
   {% for logic in parameters['Transformers']['TemporalLogic']['properties'] -%}
     <div class="title">
       <i class="dropdown icon"></i> {{logic['text']}}
     </div>
-    <div class="content hidden">
-      <div id="logic_{{logic['id']}}"></div>
+    <div class="content hidden" id="temporal_logic_{{logic['id']}}">
+      <div id="temporal_logic_plot_{{logic['id']}}"></div>
     </div>
   {% endfor -%}
   </div>
+
+
 
 {% endset %}

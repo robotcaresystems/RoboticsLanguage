@@ -24,32 +24,36 @@ import copy
 from lxml import etree
 from RoboticsLanguage.Base import Utilities
 
+
 def transform(code, parameters):
 
   logic_properties = []
   counter = 0
 
-  for logic_code in code.xpath('//always|//eventually'):
-    properties = {}
+  if len(code.xpath('//always|//eventually')) > 0:
 
-    # create a unique id
-    counter = counter + 1
-    properties['id'] = counter
-    logic_code.attrib['TemporalLogicId'] = str(counter)
+    for logic_code in code.xpath('//always|//eventually'):
+      properties = {}
 
-    # create text element for the GUI
-    if 'HTMLGUI' in parameters['globals']['output']:
-      # make a copy of the code to not polute it with extra attributes
-      xml_copy = copy.deepcopy(logic_code)
-      root = etree.Element("root")
-      root.append(xml_copy)
-      # use the RoL serialiser to create the text tag
-      Utilities.serialise(root.getchildren()[0],parameters,parameters['language'],'RoL')
-      properties['text'] = root.getchildren()[0].attrib['RoL']
+      # create a unique id
+      counter = counter + 1
+      properties['id'] = counter
+      logic_code.attrib['TemporalLogicId'] = str(counter)
 
-    logic_properties.append(properties)
+      # create text element for the GUI
+      if 'HTMLGUI' in parameters['globals']['output']:
+
+        # make a copy of the code to not polute it with extra attributes
+        xml_copy = copy.deepcopy(logic_code)
+        root = etree.Element("root")
+        root.append(xml_copy)
+
+        # use the RoL serialiser to create the text tag
+        Utilities.serialise(root.getchildren()[0], parameters, parameters['language'], 'RoL')
+        properties['text'] = root.getchildren()[0].attrib['RoL']
+
+      logic_properties.append(properties)
 
   parameters['Transformers']['TemporalLogic']['properties'] = logic_properties
-
 
   return code, parameters
