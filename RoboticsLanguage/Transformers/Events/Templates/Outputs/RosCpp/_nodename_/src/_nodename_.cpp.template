@@ -28,6 +28,20 @@
         {{event|attribute('RosCpp')}};
     }
     {% endif %}
+
+    {% if event|attribute('eventClass') == "if" %}
+    void {{parameters['node']['name']|camelCase}}Class::eventFunction_{{event|attribute('eventId')}} ()
+    {
+        if({{event|children|first|attribute('RosCpp')}})
+        {
+          eventFunction_{{event|attribute('eventTrue')}}();
+        }
+        else
+        {
+          eventFunction_{{event|attribute('eventFalse')}}();
+        }
+    }
+    {% endif %}
   {% endfor %}
 
 {% endset %}

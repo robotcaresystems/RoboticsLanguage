@@ -1,11 +1,11 @@
 node(
   name:"example events",
 
-
   definitions: block(
-    state ∈ Signals(Strings, rostopic:'/test/state'),
-    x ∈ Signals(Reals, rostopic:'/test/x'),
-    y ∈ Signals(Reals, rostopic:'/test/y'),
+
+    state ∈ Signals(Strings, rosTopic:'/test/state'),
+    x ∈ Signals(Reals, rosTopic:'/test/x'),
+    y ∈ Signals(Reals, rosTopic:'/test/y'),
     z ∈ Reals
   ),
 

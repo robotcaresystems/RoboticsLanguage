@@ -614,6 +614,14 @@ def xmlMiniLanguage(parameters, key, text, position):
 #  XML utilities used in code generators
 # -------------------------------------------------------------------------------------------------
 
+def children(xml):
+  return xml.getchildren()
+
+
+def parent(xml):
+  return xml.getparent()
+
+
 def xpath(xml, path, namespaces={}):
   result = xml.xpath(path, namespaces=namespaces)
   if isinstance(result, list):

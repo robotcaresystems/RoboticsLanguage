@@ -4,5 +4,11 @@
 {% endset %}
 
 {% set definitions %}
+  {% for event in code|xpaths('//*[@eventId]') %}
+    void eventFunction_{{event|attribute('eventId')}} ();
+  {% endfor %}
+
+    void eventFunction_{{code|xpaths('//*[@eventId]')|length + 1}} (){};
+
 
 {% endset %}
