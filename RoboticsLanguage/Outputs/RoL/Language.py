@@ -22,12 +22,12 @@
 #   limitations under the License.
 
 
-default_output = '\n{{" " * attributes["depth"]|int}}{{tag}}{% if children|length > 0 or options|length > 0 %}(\n{{children|reject("equalto","")|join(\',\')}}{% if options|length > 0 %},{{options.values()|reject("equalto","")|join(", ")}}{% endif %}){% endif %}'
+default_output = '{% if parameters["Outputs"]["RoL"]["indentation"] %}\n{{" " * attributes["depth"]|int}}{% endif %}{{tag}}{% if children|length > 0 or options|length > 0 %}({% if parameters["Outputs"]["RoL"]["indentation"] %}\n{% endif %}{{children|reject("equalto","")|join(\',\')}}{% if options|length > 0 %},{{options.values()|reject("equalto","")|join(", ")}}{% endif %}){% endif %}'
 
 language = {
     'option': {
         'output': {
-            'RoL': '{% if children|length > 0 and children[0]!="" %}\n{{" " * attributes["depth"]|int}}{{attributes["name"]}}:{{children[0]}}{% endif %}'
+            'RoL': '{% if children|length > 0 and children[0]!="" %}{% if parameters["Outputs"]["RoL"]["indentation"] %}\n{{" " * attributes["depth"]|int}}{% endif %}{{attributes["name"]}}:{{children[0]}}{% endif %}'
         },
     },
     'variable': {

@@ -237,6 +237,7 @@ language = {
                 'initialise': optional('anything', None),
                 'finalise': optional('anything', None),
                 'definitions': optional('anything', None),
+                'events': optional('anything', None),
             },
             'returns': returns('node')
         },

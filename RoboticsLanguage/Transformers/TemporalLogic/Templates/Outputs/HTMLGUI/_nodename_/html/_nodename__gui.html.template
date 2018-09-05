@@ -45,7 +45,10 @@
   {
     if (temporal_logic_update)
     {
-      console.log('update...');
+
+
+
+
       setTimeout(UpdateTemporalLogicPlots, temporal_logic_draw_rate);
     }
   }

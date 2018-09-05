@@ -146,7 +146,7 @@ def templateEngine(code, parameters, output=None,
 
       try:
         # start the jinja environment with special delimiters
-        environment = Environment(loader=FileSystemLoader('/'), **delimeters)
+        environment = Environment(loader=FileSystemLoader('/'), trim_blocks=True, lstrip_blocks=True, **delimeters)
 
         # load the group function that places includes on demand
         environment.filters['group'] = files_to_process[file]['group_function']
@@ -164,7 +164,7 @@ def templateEngine(code, parameters, output=None,
           print '============================================================'
 
         # create a new environment that includes all the plugin template code
-        preprocessed_environment = Environment(loader=FileSystemLoader('/'))
+        preprocessed_environment = Environment(loader=FileSystemLoader('/'), trim_blocks=True, lstrip_blocks=True)
 
         # add filters to environment
         preprocessed_environment.filters.update(filters)

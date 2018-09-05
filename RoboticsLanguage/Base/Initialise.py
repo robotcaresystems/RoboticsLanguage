@@ -25,6 +25,7 @@ import sys
 from . import Utilities
 from . import Parameters
 
+sys.setrecursionlimit(99999)
 
 @Utilities.cache_in_disk
 def prepareParameters(parameters):

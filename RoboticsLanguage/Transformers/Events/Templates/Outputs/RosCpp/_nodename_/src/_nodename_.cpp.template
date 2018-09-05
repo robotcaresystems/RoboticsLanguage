@@ -1,0 +1,33 @@
+
+{% set classInitialisation %}
+
+{% endset %}
+
+{% set initialise %}
+
+{% endset %}
+
+{% set finalise %}
+
+{% endset %}
+
+{% set beforeSpin %}
+
+{% endset %}
+
+{% set afterSpin %}
+
+{% endset %}
+
+{% set functions %}
+
+  {% for event in code|xpaths('//*[@eventId]') %}
+    {% if event|attribute('eventClass') == "computation" %}
+    void {{parameters['node']['name']|camelCase}}Class::eventFunction_{{event|attribute('eventId')}} ()
+    {
+        {{event|attribute('RosCpp')}};
+    }
+    {% endif %}
+  {% endfor %}
+
+{% endset %}

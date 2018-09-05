@@ -1,0 +1,19 @@
+node(
+  name:"example events",
+
+
+  definitions: block(
+    state ∈ Signals(Strings, rostopic:'/test/state'),
+    x ∈ Signals(Reals, rostopic:'/test/x'),
+    y ∈ Signals(Reals, rostopic:'/test/y'),
+    z ∈ Reals
+  ),
+
+  events:
+    block(
+      if(state == "idle",
+        z = x),
+      if(state == "sleep",
+        z = y)
+      )
+)
