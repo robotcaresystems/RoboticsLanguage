@@ -8,5 +8,15 @@
 #      Licence: license
 #    Copyright: copyright
 #
+from RoboticsLanguage.Base.Types import optional
 
-language = {}
+
+language = {
+    'node': {
+        'definition': {
+            'optional': {
+                'events': optional('anything', None)
+            },
+        },
+    }
+}

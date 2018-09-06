@@ -1,14 +1,15 @@
 
 {% set includes %}
-
+#include <vector>
+#include <functional>
 {% endset %}
 
 {% set definitions %}
   {% for event in code|xpaths('//*[@eventId]') %}
     void eventFunction_{{event|attribute('eventId')}} ();
   {% endfor %}
-
     void eventFunction_{{code|xpaths('//*[@eventId]')|length + 1}} (){};
 
+    std::vector<std::function<void()>> events_list;
 
 {% endset %}
