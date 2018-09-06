@@ -22,10 +22,20 @@
 #   limitations under the License.
 import os
 import sys
+import signal
 from . import Utilities
 from . import Parameters
 
 sys.setrecursionlimit(99999)
+
+
+def exit_gracefully(*arguments):
+  sys.exit(1)
+
+
+signal.signal(signal.SIGINT, exit_gracefully)
+signal.signal(signal.SIGTERM, exit_gracefully)
+
 
 @Utilities.cache_in_disk
 def prepareParameters(parameters):

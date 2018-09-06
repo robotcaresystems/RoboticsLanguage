@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 #   This is the Robotics Language compiler
 #
@@ -9,11 +8,3 @@
 #      Licence: license
 #    Copyright: copyright
 #
-
-
-from RoboticsLanguage.Base import Utilities
-
-
-def transform(code, parameters):
-
-  return code, parameters

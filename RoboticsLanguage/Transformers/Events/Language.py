@@ -18,5 +18,9 @@ language = {
                 'events': optional('anything', None)
             },
         },
+    },
+    'when': {
+        'definition': {
+        }
     }
 }

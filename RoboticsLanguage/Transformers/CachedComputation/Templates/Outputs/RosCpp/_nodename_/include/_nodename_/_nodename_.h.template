@@ -1,0 +1,15 @@
+
+{% set includes %}
+#include <vector>
+#include <functional>
+{% endset %}
+
+{% set definitions %}
+  {% for cache in code|xpaths('//*[@cacheId]') %}
+    void cacheFunction_{{cache|attribute('cacheId')}} ();
+  {% endfor %}
+    void cacheFunction_{{code|xpaths('//*[@cacheId]')|length + 1}} (){};
+
+    std::vector<std::function<void()>> caches_list;
+
+{% endset %}

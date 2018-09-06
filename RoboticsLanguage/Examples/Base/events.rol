@@ -9,11 +9,22 @@ node(
     z ∈ Reals
   ),
 
-  events:
-    block(
-      if(state == "idle",
-        z = x),
-      if(state == "sleep",
-        z = y)
-      )
+  events: [
+    when(state == 'idle',
+      when( x > 1,
+        y = x),
+      when( x < 1,
+        y = -x),
+      z = y
+    ),
+
+    when(state == 'stop',
+      when( x > 1,
+        y = x+1),
+      when( x < 1,
+        y = 1-x),
+      z = y+1
+    )
+
+  ]
 )

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 #   This is the Robotics Language compiler
 #
@@ -10,10 +9,13 @@
 #    Copyright: copyright
 #
 
+parameters = {
+    'printGraphviz': False
+}
 
-from RoboticsLanguage.Base import Utilities
-
-
-def transform(code, parameters):
-
-  return code, parameters
+command_line_flags = {
+    'printGraphviz': {
+        'longFlag': 'show-cached-computation-graphviz',
+        'noArgument': True
+    }
+}

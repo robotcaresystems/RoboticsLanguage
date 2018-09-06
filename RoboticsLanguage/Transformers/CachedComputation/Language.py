@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 #   This is the Robotics Language compiler
 #
@@ -9,11 +8,15 @@
 #      Licence: license
 #    Copyright: copyright
 #
+from RoboticsLanguage.Base.Types import optional
 
 
-from RoboticsLanguage.Base import Utilities
-
-
-def transform(code, parameters):
-
-  return code, parameters
+language = {
+    'node': {
+        'definition': {
+            'optional': {
+                'cachedComputation': optional('anything', None)
+            },
+        },
+    }
+}

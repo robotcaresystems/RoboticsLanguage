@@ -39,7 +39,8 @@ parameters = {
         'compilerLanguage': 'en',
         'loadOrder': [],
         'skipCopyFiles': [],
-        'skipTemplateFiles': []
+        'skipTemplateFiles': [],
+        'noColours': False
     },
 
     'developer': {
@@ -199,6 +200,11 @@ command_line_flags = {
         'noArgument': True,
         'fileNotNeeded': True,
         'description': 'Deletes the compiler cache'
+    },
+    'globals:noColours': {
+        'longFlag': 'no-colours',
+        'noArgument': True,
+        'description': 'Suppreses syntax highlighting when showing code'
     },
     'globals:language': {
         'longFlag': 'language',

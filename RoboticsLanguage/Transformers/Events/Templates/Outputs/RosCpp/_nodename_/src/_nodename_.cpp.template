@@ -4,9 +4,7 @@
 {% endset %}
 
 {% set initialise %}
-  {% for event in code|xpaths('//*[@eventId]') %}
-    events_list.push_back(std::bind(&{{parameters['node']['name']|camelCase}}Class::eventFunction_{{event|attribute('eventId')}}, this));
-  {% endfor %}
+
 {% endset %}
 
 {% set finalise %}
@@ -22,30 +20,5 @@
 {% endset %}
 
 {% set functions %}
-
-  {% for event in code|xpaths('//*[@eventId]') %}
-    {% if event|attribute('eventClass') == "computation" %}
-    void {{parameters['node']['name']|camelCase}}Class::eventFunction_{{event|attribute('eventId')}} ()
-    {
-        ROS_INFO_STREAM("Events: computation: {{event|attribute('eventId')}}");
-        {{event|attribute('RosCpp')}};
-    }
-    {% endif %}
-
-    {% if event|attribute('eventClass') == "if" %}
-    void {{parameters['node']['name']|camelCase}}Class::eventFunction_{{event|attribute('eventId')}} ()
-    {
-        ROS_INFO_STREAM("Events: if: {{event|attribute('eventId')}}");
-        if({{event|children|first|attribute('RosCpp')}})
-        {
-          eventFunction_{{event|attribute('eventTrue')}}();
-        }
-        else
-        {
-          eventFunction_{{event|attribute('eventFalse')}}();
-        }
-    }
-    {% endif %}
-  {% endfor %}
 
 {% endset %}

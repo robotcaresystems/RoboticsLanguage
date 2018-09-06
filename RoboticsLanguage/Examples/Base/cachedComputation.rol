@@ -1,0 +1,27 @@
+node(
+  name:"example cached computation",
+
+  definitions: block(
+
+    state ∈ Signals(Strings, rosTopic:'/test/state'),
+    x ∈ Signals(Reals, rosTopic:'/test/x'),
+    y ∈ Signals(Reals, rosTopic:'/test/y'),
+    z ∈ Reals
+  ),
+
+  cachedComputation:
+    block(
+      if(state == "idle" and x > 0,
+        z = x
+      ),
+      if(state == "sleep",
+        z = y,
+        if (z > 0,
+          x = z,
+          x = 2)
+      ),
+      if(state == "walk",
+        x = z
+      )
+    )
+)

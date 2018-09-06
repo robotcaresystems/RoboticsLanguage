@@ -52,14 +52,29 @@ sys.setdefaultencoding('utf-8')
 # -------------------------------------------------------------------------------------------------
 
 
-def printCode(code, style='monokai'):
-  print highlight(etree.tostring(code, pretty_print=True), XmlLexer(),
-                  Terminal256Formatter(style=Terminal256Formatter(style=style).style))
+def printCode(code, parameters=None, style='monokai'):
+  if not isinstance(code, list):
+    code = [code]
+
+  # a list of xml elements
+  for element in code:
+    if isinstance(element, etree._Element):
+     if parameters is not None and parameters['globals']['noColours']:
+       print(etree.tostring(element, pretty_print=True))
+     else:
+       print highlight(etree.tostring(element, pretty_print=True), XmlLexer(),
+                        Terminal256Formatter(style=Terminal256Formatter(style=style).style))
+  # a list of string
+  if all([isinstance(element, etree._ElementStringResult) for element in code]):
+    print(code)
 
 
-def printParameters(parameters, style='monokai'):
-  print highlight(pprint.pformat(parameters), PythonLexer(),
-                  Terminal256Formatter(style=Terminal256Formatter(style=style).style))
+def printParameters(elements, parameters=None, style='monokai'):
+  if parameters is not None and parameters['globals']['noColours']:
+    pprint.pprint(elements)
+  else:
+    print highlight(pprint.pformat(elements), PythonLexer(),
+                    Terminal256Formatter(style=Terminal256Formatter(style=style).style))
 
 
 # -------------------------------------------------------------------------------------------------
@@ -348,17 +363,16 @@ def showDeveloperInformation(code, parameters):
 
       # show developer information for xml code
     if parameters['developer']['code'] and code is not None:
-      printCode(code)
+      printCode(code, parameters)
 
     # show developer information for parameters
     if parameters['developer']['parameters']:
-      printParameters(parameters)
+      printParameters(parameters, parameters)
 
     # show developer information for specific xml code
     if parameters['developer']['codePath'] is not '' and code is not None:
       try:
-        for element in code.xpath(parameters['developer']['codePath']):
-          printCode(element)
+        printCode(code.xpath(parameters['developer']['codePath']), parameters)
       except:
         logger.warning(
             "The path'" + parameters['developer']['codePath'] + "' is not present in the code")
@@ -367,7 +381,7 @@ def showDeveloperInformation(code, parameters):
     if parameters['developer']['parametersPath'] is not '':
       try:
         for element in paths(parameters, parameters['developer']['parametersPath']):
-          printParameters(element)
+          printParameters(element, parameters)
       except:
         logger.warning(
             "The path'" + parameters['developer']['parametersPath'] + "' is not defined in the internal parameters.")
@@ -505,6 +519,9 @@ def ensureList(a):
   else:
     return [a]
 
+
+def unique(a):
+  return list(set(a))
 
 # -------------------------------------------------------------------------------------------------
 #  File utilities
