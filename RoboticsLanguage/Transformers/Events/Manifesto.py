@@ -9,7 +9,7 @@
 #    Copyright: copyright
 #
 manifesto = {
-  'packageName':'Events',
-  'packageShortName':'Events',
-  'order': 5,
-  }
+    'packageName': 'Events',
+    'packageShortName': 'Events',
+    'order': 5,
+}

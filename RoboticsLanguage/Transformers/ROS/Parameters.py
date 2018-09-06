@@ -21,11 +21,10 @@
 #   limitations under the License.
 
 
-
 parameters = {
-  'addingNewMessages':False
+    'addingNewMessages': False
 }
 
 command_line_flags = {
-      'addingNewMessages': {'suppress': True},
+    'addingNewMessages': {'suppress': True},
 }

@@ -60,9 +60,9 @@ parameters = {
 
     'symbols':
     {
-      'functions':[],
-      'variables':[],
-      'types':[]
+        'functions': [],
+        'variables': [],
+        'types': []
     },
 
     'errors': [],

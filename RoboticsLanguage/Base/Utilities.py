@@ -62,8 +62,7 @@ def printCode(code, parameters=None, style='monokai'):
      if parameters is not None and parameters['globals']['noColours']:
        print(etree.tostring(element, pretty_print=True))
      else:
-       print highlight(etree.tostring(element, pretty_print=True), XmlLexer(),
-                        Terminal256Formatter(style=Terminal256Formatter(style=style).style))
+       print highlight(etree.tostring(element, pretty_print=True), XmlLexer(), Terminal256Formatter(style=Terminal256Formatter(style=style).style))
   # a list of string
   if all([isinstance(element, etree._ElementStringResult) for element in code]):
     print(code)
@@ -127,8 +126,7 @@ def positionToLineColumn(position, text):
 
 def errorMessage(error_type, reason, line='', filename='', line_number=0, column_number=0):
 
-  line_text = '\n' + line.strip('\n') + '\n' + (' ' *
-                                                column_number + '^') + '\n' if line is not '' else ''
+  line_text = '\n' + line.strip('\n') + '\n' + (' ' * column_number + '^') + '\n' if line is not '' else ''
 
   file_text = ' in file:\n"' + filename + '"\n' if filename is not '' else ''
 
@@ -137,8 +135,7 @@ def errorMessage(error_type, reason, line='', filename='', line_number=0, column
   column_number_text = ' column ' + \
       str(column_number) if column_number > 0 else ''
 
-  return (line_text + error_type + ' error' + file_text + line_number_text + column_number_text + ': ' +
-          color.BOLD + reason + color.END)
+  return (line_text + error_type + ' error' + file_text + line_number_text + column_number_text + ': ' + color.BOLD + reason + color.END)
 
 # creates error message from jinja exception
 
@@ -527,6 +524,7 @@ def unique(a):
 #  File utilities
 # -------------------------------------------------------------------------------------------------
 
+
 def findFileType(extension='py', path='.', followlinks=True):
   for entry in ensureList(path):
     for root, dirs, files in os.walk(entry, followlinks=followlinks):
@@ -619,8 +617,7 @@ def xmlVariable(parameters, name, position=0):
 def xmlMiniLanguage(parameters, key, text, position):
   '''Calls a different parser to process inline mini languages'''
   try:
-    code, parameters = importModule(parameters['manifesto']['Inputs'][key]['type'],
-        'Inputs', key, 'Parse').Parse.parse(text, parameters)
+    code, parameters = importModule(parameters['manifesto']['Inputs'][key]['type'], 'Inputs', key, 'Parse').Parse.parse(text, parameters)
     result = etree.tostring(code)
     return result
   except:
@@ -945,10 +942,9 @@ def CreateGenericGrammar(definitions):
   text = '\n# Generic operators\n'
 
   for key, value in generic.iteritems():
-    text += key + 'Generic = \'' + ''.join([ x + '\' wws values:'+chr(97+y)+' wws \'' for x, y in zip(value['generic'], range(len(value['generic'])))][:-1]) + value['generic'][-1] + '\' -> xml(\'' + key + '\',' + '+'.join([chr(97+x) for x in range(len(value['generic'])-1)]) + ',self.input.position)\n'
+    text += key + 'Generic = \'' + ''.join([x + '\' wws values:'+chr(97+y)+' wws \'' for x, y in zip(value['generic'], range(len(value['generic'])))][:-1]) + value['generic'][-1] + '\' -> xml(\'' + key + '\',' + '+'.join([chr(97+x) for x in range(len(value['generic'])-1)]) + ',self.input.position)\n'
 
   return text, [x + 'Generic' for x in generic.keys()]
-
 
 
 def CreatePreInPostFixGrammar(definitions):
