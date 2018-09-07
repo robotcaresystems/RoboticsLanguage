@@ -9,7 +9,7 @@ node(
 
   ),
 
-  events: block(
+  initialise: block(
     if( □[0,1](¬◇[0,2](◇[0,1](x > 0))),
         print('x positive')
       )
