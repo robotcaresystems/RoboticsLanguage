@@ -94,7 +94,8 @@ def prepareCommandLineArguments(parameters):
   Parameters.command_line_flags['globals:output']['choices'] = parameters['manifesto']['Outputs'].keys()
 
   # create a subset of all the parameters
-  subset = dict((x, parameters[x]) for x in ['Information', 'Transformers', 'Inputs', 'Outputs', 'globals', 'developer'])
+  subset = dict((x, parameters[x])
+                for x in ['Information', 'Transformers', 'Inputs', 'Outputs', 'globals', 'developer'])
 
   # create argparse list parameters
   flags, arguments = generateArgparseArguments(subset, parameters['command_line_flags'])
@@ -141,7 +142,8 @@ def runCommandLineParser(parameters, arguments, flags, file_formats, file_packag
 
   try:
     # get a list of flags where a file is not needed
-    list_of_no_file_needed_flags = reduce(lambda a,b: a+b,[flags[x] for x in dpath.util.search(parameters, 'command_line_flags/*/fileNotNeeded')['command_line_flags'].keys()])
+    list_of_no_file_needed_flags = reduce(lambda a, b: a + b, [flags[x] for x in dpath.util.search(
+        parameters, 'command_line_flags/*/fileNotNeeded')['command_line_flags'].keys()])
   except:
     list_of_no_file_needed_flags = []
 
@@ -254,6 +256,10 @@ def processCommandLineParameters(args, file_formats, parameters):
 
   # remove filename key
   parameters.pop('filename', None)
+
+  # Set the total number of plugins being processed
+  parameters['developer']['progressTotal'] = 1 + \
+      len(parameters['manifesto']['Transformers']) + len(Utilities.ensureList(parameters['globals']['output']))
 
   if len(rol_files) == 0:
     return None, None, Utilities.ensureList(parameters['globals']['output']), parameters
