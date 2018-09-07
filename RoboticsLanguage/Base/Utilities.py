@@ -355,7 +355,41 @@ def incrementCompilerStep(parameters, group, name):
   return parameters
 
 
+def progressMessage(parameters):
+  parameters['developer']['progressPercentage'] = parameters['developer']['progressPercentage'] + 1
+  progress_percentage = parameters['developer']['progressPercentage']
+  progress_total = parameters['developer']['progressTotal']
+  progress_bar = parameters['developer']['progressBar']
+
+  sys.stdout.write('\r[{:04.1f}%] {} {}                         '.format(
+      progress_percentage * 100 / progress_total, '\\|/-'[progress_bar % 4], \
+      parameters['developer']['stepGroup'] + ', ' + parameters['developer']['stepName']))
+  sys.stdout.flush()
+
+
+def progressSpin(parameters):
+  parameters['developer']['progressBar'] = parameters['developer']['progressBar'] + 1
+  progress_percentage = parameters['developer']['progressPercentage']
+  progress_total = parameters['developer']['progressTotal']
+  progress_bar = parameters['developer']['progressBar']
+
+  sys.stdout.write('\r[{:04.1f}%] {}'.format(
+      progress_percentage * 100 / progress_total, '\\|/-'[progress_bar % 4]))
+  sys.stdout.flush()
+
+
+def progressDone(parameters):
+  final_time = time.time() - parameters['developer']['progressStartTime']
+  sys.stdout.write('\r[{:04.1f}%] {}                         \n'.format(
+      100 , 'Done in {}.'.format(time.strftime("%Hh %Mm %Ss", time.gmtime(final_time)))))
+  sys.stdout.flush()
+
+
 def showDeveloperInformation(code, parameters):
+
+  if parameters['developer']['progress']:
+    progressMessage(parameters)
+
   if parameters['developer']['step'] == parameters['developer']['stepCounter']:
 
       # show developer information for xml code

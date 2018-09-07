@@ -42,3 +42,7 @@ def Generate(outputs, code, parameters):
 
       # show developer information
       Utilities.showDeveloperInformation(code, parameters)
+
+  # show final message
+  if parameters['developer']['progress']:
+    Utilities.progressDone(parameters)

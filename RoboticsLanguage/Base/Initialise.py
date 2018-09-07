@@ -22,6 +22,7 @@
 #   limitations under the License.
 import os
 import sys
+import time
 import signal
 from . import Utilities
 from . import Parameters
@@ -38,9 +39,12 @@ signal.signal(signal.SIGTERM, exit_gracefully)
 
 
 @Utilities.cache_in_disk
-def prepareParameters(parameters):
+def prepareParameters():
   '''Collects parameters, language, messages, and error handling functions from all list_of_modules.
   This function is cached in `rol`. To refresh the cache run `rol --remove-cache`.'''
+
+  # start by loading default parameters
+  parameters = Parameters.parameters
 
   # define initial classes of parameters
   manifesto = {'Inputs': {}, 'Outputs': {}, 'Transformers': {}}
@@ -124,17 +128,18 @@ def prepareParameters(parameters):
 # @Utilities.time_all_calls
 def Initialise(remove_cache):
   '''The main initialisation file of `rol`. Grabs information from all modules to assemble a `parameters` dictionary.'''
+
   # remove cache if requested
   if remove_cache:
     Utilities.removeCache()
 
-  # start by loading default parameters
-  parameters = Parameters.parameters
+  # load cached parameters or create if necessary
+  parameters = prepareParameters()
 
   # add plugins folder to python path
   sys.path.append(parameters['globals']['plugins']+'/../')
 
-  # load cached parameters or create if necessary
-  parameters = prepareParameters(parameters)
+  # remember approximate starting time
+  parameters['developer']['progressStartTime'] = time.time()
 
   return parameters

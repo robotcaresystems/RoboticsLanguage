@@ -55,7 +55,12 @@ parameters = {
         'stop': False,
         'skip': '',
         'ignoreErrors': False,
-        'intermediateTemplates': False
+        'intermediateTemplates': False,
+        'progress': False,
+        'progressBar': 0,
+        'progressTotal': 10,
+        'progressPercentage': 0,
+        'progressStartTime': 0
     },
 
     'symbols':
@@ -151,7 +156,12 @@ command_line_flags = {
     'developer:intermediateTemplates': {
         'longFlag': 'show-intermediate-templates',
         'noArgument': True,
-        'description': 'Show the intermidiate templates created by the template engine'
+        'description': 'Show the intermidiate templates created by the template engine.'
+    },
+    'developer:progress': {
+        'longFlag': 'progress',
+        'noArgument': True,
+        'description': 'Shows progress.'
     },
     'globals:version': {
         'longFlag': 'version',
@@ -221,6 +231,10 @@ command_line_flags = {
     'developer:stepCounter': {'suppress': True},
     'developer:stepGroup': {'suppress': True},
     'developer:stepName': {'suppress': True},
+    'developer:progressBar': {'suppress': True},
+    'developer:progressTotal': {'suppress': True},
+    'developer:progressPercentage': {'suppress': True},
+    'developer:progressStartTime': {'suppress': True},
     'globals:plugins': {'suppress': True},
     'globals:RoboticsLanguagePath': {'suppress': True},
     'globals:loadOrder': {'suppress': True},
