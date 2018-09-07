@@ -25,7 +25,16 @@ from RoboticsLanguage.Base import Utilities
 from RoboticsLanguage.Tools import Templates
 
 
+def depth(code, number=0):
+  code.attrib['depth'] = str(number)
+  for element in code.getchildren():
+    depth(element, number + 1)
+
+
 def output(code, parameters):
+
+  # annotate the depth to the xml structure
+  depth(code)
 
   # save the node name for the templates
   parameters['node']['name'] = code.xpath('/node/option[@name="name"]/string')[0].text

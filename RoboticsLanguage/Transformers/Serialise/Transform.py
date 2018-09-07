@@ -24,16 +24,7 @@
 from RoboticsLanguage.Base import Utilities
 
 
-def depth(code, number=0):
-  code.attrib['depth'] = str(number)
-  for element in code.getchildren():
-    depth(element, number + 1)
-
-
 def transform(code, parameters):
-
-  # annotate the depth to the xml structure
-  depth(code)
 
   # serialize for each output
   for language in Utilities.ensureList(parameters['globals']['output']):
