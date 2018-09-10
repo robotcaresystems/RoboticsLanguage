@@ -46,7 +46,7 @@
       // DEBUG: initialising signals for temporal logic expressions
       {% for item in TemporalOperators|ensureList -%}
           {% if item['type']=='alwaysInterval' or item['type']=='eventuallyInterval' -%}
-              sig_debug_{{item['name']|underscore}}handle_out_= nh_.advertise<std_msgs::Int16MultiArray>("/temporal_logic/{{parameters['node']['name']}}/{{item['name']|underscore}}", 1, true);
+              sig_debug_{{item['name']|underscore}}handle_out_= nh_.advertise<std_msgs::Int16MultiArray>("/temporal_logic/{{parameters['node']['name']|underscore}}/{{item['name']|underscore}}", 1, true);
               sig_debug_{{item['name']|underscore}}.data.resize(2*sizeof(std_msgs::Int16MultiArray));
               sig_debug_{{item['name']|underscore}}.data[0]=0;
               sig_debug_{{item['name']|underscore}}.data[1]=0;

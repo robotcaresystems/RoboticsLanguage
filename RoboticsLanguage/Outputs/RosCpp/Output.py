@@ -50,6 +50,7 @@ def runPreparations(code, parameters):
 
 def output(code, parameters):
 
+  # ############ generate code #####################################################
   # check if node tag is present
   if len(code.xpath('/node')) < 1:
     Utilities.logging.warning('No `node` element found. ROS C++ will not generate code!')
@@ -62,26 +63,32 @@ def output(code, parameters):
   if not Templates.templateEngine(code, parameters, file_patterns={'nodename': node_name_underscore}):
     sys.exit(1)
 
+  # ############ beautify code #####################################################
   # if the flag beautify is set then run uncrustify
   if parameters['globals']['beautify']:
     try:
       list_of_cpp_files = ['src/' + node_name_underscore + '.cpp',
                            'include/' + node_name_underscore + '/' + node_name_underscore + '.h']
-
       for file in list_of_cpp_files:
-
         process = subprocess.Popen(['uncrustify', '-c',  unicode(Utilities.myPluginPath(parameters) + '/Resources/uncrustify.cfg'),
                                     file,  '--replace', '--no-backup'],
                                    cwd=parameters['globals']['deploy'] + '/' + node_name_underscore,
                                    stdout=open(os.devnull, 'w'),
                                    stderr=subprocess.STDOUT)
-
         process.wait()
         if process.returncode > 0:
           Utilities.logger.error("Error beautifying code. Uncrustify has returned an error.")
     except:
-      Utilities.logger.error("Error beautifying code. Perhaps you need to install 'uncrustify'?")
+      # open HTML in different platforms
+      if 'darwin' in sys.platform:
+        Utilities.logger.error(
+            "Error beautifying code. You may need to install uncrustify:\n\n  brew install uncrustify")
 
+      if 'linux' in sys.platform:
+        Utilities.logger.error(
+            "Error beautifying code. You may need to install uncrustify:\n\n  sudo apt install uncrustify")
+
+  # ############ compile code #####################################################
   # if the flag compile is set then run catkin
   if parameters['globals']['compile']:
     Utilities.logger.debug("Compiling with: `catkin build " + node_name_underscore +
@@ -91,6 +98,7 @@ def output(code, parameters):
     if process.returncode > 0:
       Utilities.logger.error("Compilation failed!!!")
 
+  # ############ run code #####################################################
   # if the flag launch is set then launch the node
   if parameters['globals']['launch']:
     Utilities.logger.debug("launching: `roslaunch " + node_name_underscore + " " + node_name_underscore + '.launch`')
