@@ -30,6 +30,7 @@ parameters = {
         'debug': False,
         'compile': False,
         'launch': False,
+        'beautify': False,
         'verbose': 'none',
         'deploy': os.path.expanduser('~') + '/deploy/',
         'plugins': os.path.expanduser('~') + '/.rol/plugins/',
@@ -143,11 +144,6 @@ command_line_flags = {
         'description': 'Skip transformer modules',
         'numberArguments': '*'
     },
-    'developer:ignoreSemanticErrors': {
-        'longFlag': 'ignore-semantic-errors',
-        'noArgument': True,
-        'description': 'Ignores the semantic errors and attempts to generate code. Result may not compile.'
-    },
     'developer:ignoreErrors': {
         'longFlag': 'ignore-errors',
         'noArgument': True,
@@ -187,6 +183,12 @@ command_line_flags = {
         'longFlag': 'compile',
         'noArgument': True,
         'description': 'Compiles the output of all modules'
+    },
+    'globals:beautify': {
+        'flag': 'b',
+        'longFlag': 'beautify',
+        'noArgument': True,
+        'description': 'beautifies the output code'
     },
     'globals:verbose': {
         'flag': 'v',

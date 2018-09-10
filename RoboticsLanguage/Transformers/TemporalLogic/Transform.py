@@ -23,6 +23,16 @@
 import copy
 from lxml import etree
 from RoboticsLanguage.Base import Utilities
+import inspect
+import re
+
+def debugPrint(x):
+    frame = inspect.currentframe().f_back
+    s = inspect.getframeinfo(frame).code_context[0]
+    r = re.search(r"\((.*)\)", s).group(1)
+    print("{} = {}".format(r,x))
+
+
 
 
 def processTemporalOperators(code, parameters, list_of_logic, logic_id_counter):
@@ -35,26 +45,30 @@ def processTemporalOperators(code, parameters, list_of_logic, logic_id_counter):
 
   for logic in logics:
 
-    # find all the signals inside the temporal logic operator that affect
+    # find all the variables inside the temporal logic operator that affect
     # its behaviour
-    all_variables = map(lambda x: x.attrib['name'], logic.findall('.//variable'))
+    all_variables = logic.xpath('.//variable/@name')
 
     # also find all signal dependencies of cascated temporal logic
     # operators
-    all_previous_variables = map(
-        lambda x: x.attrib['variables'], logic.findall('.//null'))
+    all_previous_variables = ','.join(logic.xpath('.//null/@variables'))
 
     # add all variables
-    all_variables = sum([all_variables, sum(map(eval, all_previous_variables), [])], [])
+    all_variables = all_variables + all_previous_variables.split(',')
 
     # remove duplicates and preserve order (just in case)
-    unique = []
-    [unique.append(item) for item in all_variables if item not in unique]
-    all_variables = unique
+    all_variables = list(set(all_variables))
+
+    # remove empty elements
+    all_variables = filter(lambda x: x != '', all_variables)
 
     # extract information about logic operator
     logic_id_counter += 1
-    logic_type = logic.tag
+    if len(logic.getchildren()) > 1:
+      logic_type = 'alwaysInterval'
+    else:
+      logic_type = 'always'
+
     logic_name = logic_type + '_' + str(logic_id_counter) + '_'
 
     definition = {'type': logic_type,
@@ -79,50 +93,49 @@ def processTemporalOperators(code, parameters, list_of_logic, logic_id_counter):
     logic.tag = 'logiccode'
 
     # add a 'hidden' tag to pass the dependent signals to the parent tags
-    logic.append(etree.Element("null", variables=str(all_variables)))
+    logic.append(etree.Element("null", variables=','.join(all_variables)))
 
   return logic_id_counter
 
 
 def transform(code, parameters):
 
-  logic_properties = []
-  counter = 0
-
-  logics = code.xpath('//always|//eventually')
-
-  if len(logics) > 0:
-
-    # add id's to logic elements
-    for logic_code in logics:
-      properties = {}
-
-      # create a unique id
-      counter = counter + 1
-      properties['id'] = counter
-      logic_code.attrib['TemporalLogicId'] = str(counter)
-
-      # create text element for the GUI
-      if 'HTMLGUI' in parameters['globals']['output']:
-
-        # make a copy of the code to not polute it with extra attributes
-        xml_copy = copy.deepcopy(logic_code)
-        root = etree.Element("root")
-        root.append(xml_copy)
-
-        # use the RoL serialiser to create the text tag
-        Utilities.serialise(root.getchildren()[0], parameters, parameters['language'], 'RoL')
-        properties['text'] = root.getchildren()[0].attrib['RoL']
-
-      logic_properties.append(properties)
-
-
-
-  parameters['Transformers']['TemporalLogic']['properties'] = logic_properties
+  # logic_properties = []
+  # counter = 0
+  #
+  # logics = code.xpath('//always|//eventually')
+  #
+  # if len(logics) > 0:
+  #
+  #   # add id's to logic elements
+  #   for logic_code in logics:
+  #     properties = {}
+  #
+  #     # create a unique id
+  #     counter = counter + 1
+  #     properties['id'] = counter
+  #     # logic_code.attrib['TemporalLogicId'] = str(counter)
+  #
+  #     # create text element for the GUI
+  #     if 'HTMLGUI' in parameters['globals']['output']:
+  #
+  #       # make a copy of the code to not polute it with extra attributes
+  #       xml_copy = copy.deepcopy(logic_code)
+  #       root = etree.Element("root")
+  #       root.append(xml_copy)
+  #
+  #       # use the RoL serialiser to create the text tag
+  #       Utilities.serialise(root.getchildren()[0], parameters, parameters['language'], 'RoL')
+  #       properties['text'] = root.getchildren()[0].attrib['RoL']
+  #
+  #     logic_properties.append(properties)
+  #
+  #
+  #
+  # parameters['Transformers']['TemporalLogic']['properties'] = logic_properties
 
   list_of_logic = []
-  print processTemporalOperators(code,parameters, list_of_logic, 1)
-  Utilities.printParameters(list_of_logic)
-
+  processTemporalOperators(code, parameters, list_of_logic, 1)
+  parameters['Transformers']['TemporalLogic']['TemporalOperators'] = list_of_logic
 
   return code, parameters

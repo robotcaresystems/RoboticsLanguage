@@ -4,6 +4,57 @@
 {% endset %}
 
 {% set initialise %}
+{% set TemporalOperators = parameters['Transformers']['TemporalLogic']['TemporalOperators'] %}
+
+
+    {% if TemporalOperators|length>0 %}
+        //Initialise temporal logic operators
+        TimedBoolean now_;
+        {% for item in TemporalOperators|ensureList -%}
+            {% if item['type']=='always' -%}
+                {{item['name']}}=true;
+            {% elif item['type']=='eventually' -%}
+                {{item['name']}}=false;
+            {% elif item['type']=='alwaysInterval' or item['type']=='eventuallyInterval' -%}
+                    {% if item['min']!='0' %}
+                        now_.rise = false;
+                        now_.time = ros::Time::now()-ros::Duration({{item['max']}})-ros::Duration(1);
+                        {{item['name']}}signal_.push_back(now_);
+                        {{item['name']}}check_max_=nh_.createTimer(ros::Duration(100), &{{parameters['node']['name']|camelCase}}Class::logic{{item['name']|camelCase}}TimerCB,this,true);
+                        {{item['name']}}check_max_.stop();
+                        {{item['name']}}check_min_=nh_.createTimer(ros::Duration(100), &{{parameters['node']['name']|camelCase}}Class::logic{{item['name']|camelCase}}TimerCB,this,true);
+                        {{item['name']}}check_min_.stop();
+                    {% else %}
+                        {{item['name']}}check_=nh_.createTimer(ros::Duration(100), &{{parameters['node']['name']|camelCase}}Class::logic{{item['name']|camelCase}}TimerCB,this,true);
+                        {{item['name']}}check_.stop();
+                    {% endif %}
+            {% endif -%}
+        {% endfor %}
+         // More initialisation of temporal logic operators
+        {% for item in TemporalOperators|ensureList -%}
+            {% if item['type']=='alwaysInterval' or item['type']=='eventuallyInterval' -%}
+                    {% if item['min']=='0' %}
+                      {{item['name']}}switch_=ros::Time::now()-ros::Duration({{item['max']}})-ros::Duration(1);
+                      {{item['name']}}last_ = {{item['logiccode']}};
+                    {% endif %}
+            {% endif -%}
+        {% endfor %}
+
+    {% endif %}
+
+    {% if parameters['globals']['debug'] %}
+      // DEBUG: initialising signals for temporal logic expressions
+      {% for item in TemporalOperators|ensureList -%}
+          {% if item['type']=='alwaysInterval' or item['type']=='eventuallyInterval' -%}
+              sig_debug_{{item['name']|underscore}}handle_out_= nh_.advertise<std_msgs::Int16MultiArray>("/temporal_logic/{{parameters['node']['name']}}/{{item['name']|underscore}}", 1, true);
+              sig_debug_{{item['name']|underscore}}.data.resize(2*sizeof(std_msgs::Int16MultiArray));
+              sig_debug_{{item['name']|underscore}}.data[0]=0;
+              sig_debug_{{item['name']|underscore}}.data[1]=0;
+              sig_debug_{{item['name']|underscore}}handle_out_.publish(sig_debug_{{item['name']|underscore}});
+          {% endif -%}
+      {% endfor -%}
+    {% endif %}
+
 
 {% endset %}
 
@@ -20,5 +71,203 @@
 {% endset %}
 
 {% set functions %}
+{% set TemporalOperators = parameters['Transformers']['TemporalLogic']['TemporalOperators'] %}
+
+
+
+
+    {% if TemporalOperators|length>0 %}
+    /*************************************************************************************************
+    *** Logical expressions evaluation
+    **************************************************************************************************/
+    {% endif %}
+    {% for logic in TemporalOperators|ensureList %}
+    /********************************* Logic {{logic['name']|camelCase}} *********************************/
+    void {{parameters['node']['name']|camelCase}}Class::logic{{logic['name']|camelCase}}()
+    {
+    {% if logic['type']=='always' -%}
+        {{logic['name']}}={{logic['name']}} && ({{logic['logiccode']}});
+    {% elif logic['type']=='eventually' -%}
+        {{logic['name']}}={{logic['name']}} || ({{logic['logiccode']}});
+    {# --------------------------  Interval logic: Always, min=0 ------------------------------------ #}
+    {% elif logic['type']=='alwaysInterval' -%}
+      {% if logic['min']=='0' -%}
+        // check the condition inside the operator
+        bool condition_ = {{logic['logiccode']}};
+        // check if this condition has changed since last time. If so record the rise or fall times
+        if (condition_ != {{logic['name']}}last_)
+          {
+                {{logic['name']}}switch_ =ros::Time::now();
+                {{logic['name']}}check_.stop();
+                {{logic['name']}}check_.setPeriod(ros::Duration({{logic['max']}}));
+                {{logic['name']}}check_.start();
+          }
+      // update last value
+      {{logic['name']}}last_=condition_;
+      // set the outcome of the interval temporal logic operator
+      {{logic['name']}} = condition_ &&
+                ({{logic['name']}}switch_ < ros::Time::now() - ros::Duration({{logic['max']}}));
+          {% else -%}
+    {# --------------------------  Interval logic: Always, min>0 ------------------------------------ #}
+              bool condition_ = {{logic['logiccode']}};
+
+              // check if this condition has changed since last time. If so record the switching time
+              if (condition_ != {{logic['name']}}last_)
+              {
+                  TimedBoolean now_;
+                  now_.rise = condition_;
+                  now_.time = ros::Time::now();
+                  {{logic['name']}}signal_.push_back(now_);
+              }
+
+              // update last value
+              {{logic['name']}}last_=condition_;
+
+              // clean up the buffer events that have past the time region of interest
+              while ({{logic['name']}}signal_.size()>1 && {{logic['name']}}signal_[1].time < ros::Time::now() - ros::Duration({{logic['max']}}))
+              {
+                  {{logic['name']}}signal_.pop_front();
+              }
+
+              // The front element of the buffer is always past the max time, so remember the condition
+              bool rise = {{logic['name']}}signal_.front().rise;
+
+              // traverse history of switches and check if they lie inside the desired interval
+              bool test = true;
+              bool inside = false;
+              bool first = true;
+              for (std::deque<TimedBoolean>::iterator it = {{logic['name']}}signal_.begin() ; it != {{logic['name']}}signal_.end(); ++it)
+              {
+                  inside = it->time > ros::Time::now() - ros::Duration({{logic['max']}})
+                          && it->time < ros::Time::now() - ros::Duration({{logic['min']}});
+
+                  if (inside && first)
+                  {
+                      {{logic['name']}}check_max_.stop();
+                      {{logic['name']}}check_max_.setPeriod(ros::Duration(it->time - ros::Time::now() + ros::Duration({{logic['max']}})));
+                      {{logic['name']}}check_max_.start();
+                      first = false;
+                  }
+
+                  test = test && !inside;
+
+                  if (it->time > ros::Time::now() - ros::Duration({{logic['min']}}) )
+                  {
+                      {{logic['name']}}check_min_.stop();
+                      {{logic['name']}}check_min_.setPeriod(ros::Duration(it->time - ros::Time::now() + ros::Duration({{logic['min']}})));
+                      {{logic['name']}}check_min_.start();
+                      break;
+                  }
+              }
+
+              // set the outcome of the interval temporal logic operator
+              {{logic['name']}} = test && rise;
+    {# --------------------------  DEBUG ------------------------------------ #}
+          {% endif -%}
+            {% if parameters['globals']['debug'] %}
+            // DEBUG: publish interval temporal logic state
+            sig_debug_{{logic['name']|underscore}}.data[0] = (condition_ ? 1 : 0);
+            sig_debug_{{logic['name']|underscore}}.data[1] = ({{logic['name']}} ? 1 : 0);
+            sig_debug_{{logic['name']|underscore}}handle_out_.publish(sig_debug_{{logic['name']|underscore}});
+            {% endif %}
+    {# --------------------------  Interval logic: Eventually, min=0 ------------------------------------ #}
+    {% elif logic['type']=='eventuallyInterval' -%}
+          {% if logic['min']=='0' -%}
+              // check the condition inside the operator
+              bool condition_ = {{logic['logiccode']}};
+              // check if this condition has changed since last time. If so record the switching time
+              if (condition_ != {{logic['name']}}last_)
+              {
+                   {{logic['name']}}switch_ =ros::Time::now();
+                   {{logic['name']}}check_.stop();
+                   {{logic['name']}}check_.setPeriod(ros::Duration({{logic['max']}}));
+                   {{logic['name']}}check_.start();
+              }
+              // update last value
+              {{logic['name']}}last_=condition_;
+              // set the outcome of the interval temporal logic operator
+              {{logic['name']}} = condition_ ||
+                      ({{logic['name']}}switch_ > ros::Time::now() - ros::Duration({{logic['max']}})) ;
+          {% else -%}
+    {# --------------------------  Interval logic: Eventually, min>0 ------------------------------------ #}
+                    bool condition_ = {{logic['logiccode']}};
+
+                    // check if this condition has changed since last time. If so record the switching time
+                    if (condition_ != {{logic['name']}}last_)
+                    {
+                        TimedBoolean now_;
+                        now_.rise = condition_;
+                        now_.time = ros::Time::now();
+                        {{logic['name']}}signal_.push_back(now_);
+                    }
+
+                    // update last value
+                    {{logic['name']}}last_=condition_;
+
+                    // clean up the buffer events that have past the time region of interest
+                    while ({{logic['name']}}signal_.size()>1 && {{logic['name']}}signal_[1].time < ros::Time::now() - ros::Duration({{logic['max']}}))
+                    {
+                        {{logic['name']}}signal_.pop_front();
+                    }
+
+                    // The front element of the buffer is always past the max time, so remember the condition
+                    bool rise = {{logic['name']}}signal_.front().rise;
+
+                    // traverse history of switches and check if they lie inside the desired interval
+                    bool test = false;
+                    bool inside = false;
+                    bool first = true;
+                    for (std::deque<TimedBoolean>::iterator it = {{logic['name']}}signal_.begin() ; it != {{logic['name']}}signal_.end(); ++it)
+                    {
+                        inside = it->time > ros::Time::now() - ros::Duration({{logic['max']}})
+                                && it->time < ros::Time::now() - ros::Duration({{logic['min']}});
+
+                        if (inside && first)
+                        {
+                            {{logic['name']}}check_max_.stop();
+                            {{logic['name']}}check_max_.setPeriod(ros::Duration(it->time - ros::Time::now() + ros::Duration({{logic['max']}})));
+                            {{logic['name']}}check_max_.start();
+                            first = false;
+                        }
+
+                        test = test || inside;
+
+                        if (it->time > ros::Time::now() - ros::Duration({{logic['min']}}) )
+                        {
+                            {{logic['name']}}check_min_.stop();
+                            {{logic['name']}}check_min_.setPeriod(ros::Duration(it->time - ros::Time::now() + ros::Duration({{logic['min']}})));
+                            {{logic['name']}}check_min_.start();
+                            break;
+                        }
+                    }
+
+                    // set the outcome of the interval temporal logic operator
+                    {{logic['name']}} = test || rise;
+          {% endif -%}
+    {# --------------------------  DEBUG ------------------------------------ #}
+              {% if parameters['globals']['debug'] %}
+              // DEBUG: publish interval temporal logic state
+               sig_debug_{{logic['name']|underscore}}.data[0] = (condition_ ? 1 : 0);
+               sig_debug_{{logic['name']|underscore}}.data[1] = ({{logic['name']}} ? 1 : 0);
+               sig_debug_{{logic['name']|underscore}}handle_out_.publish(sig_debug_{{logic['name']|underscore}});
+             {% endif %}
+
+       {% endif -%}
+    }
+
+    {% if logic['type']=='alwaysInterval' or logic['type']=='eventuallyInterval' -%}
+    void {{parameters['node']['name']|camelCase}}Class::logic{{logic['name']|camelCase}}TimerCB(const ros::TimerEvent& e)
+    {
+      {% if parameters['globals']['debug'] -%}
+          // DEBUG:
+          ROS_INFO("Timer Callback: {{logic['name']}}");
+      {% endif -%}
+      {% for signal in logic['variables']|ensureList -%}
+          signal_{{signal}}_callback( {{signal}} );
+      {% endfor -%}
+    }
+    {% endif %}
+    {% endfor %}
+
 
 {% endset %}

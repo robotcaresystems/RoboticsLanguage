@@ -82,5 +82,15 @@ language = {
         {
             'RosCpp': '{{text}}'
         }
+    },
+    'null': {
+        'definition': {
+            'arguments': arguments('anything'),
+            'returns': returns('boolean')
+        },
+        'output':
+        {
+            'RosCpp': ''
+        }
     }
 }
