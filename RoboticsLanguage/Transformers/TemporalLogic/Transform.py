@@ -64,10 +64,11 @@ def processTemporalOperators(code, parameters, list_of_logic, logic_id_counter):
 
     # extract information about logic operator
     logic_id_counter += 1
+
+    logic_type = logic.tag
+
     if len(logic.getchildren()) > 1:
-      logic_type = 'alwaysInterval'
-    else:
-      logic_type = 'always'
+      logic_type += 'Interval'
 
     logic_name = logic_type + '_' + str(logic_id_counter) + '_'
 
@@ -135,7 +136,7 @@ def transform(code, parameters):
   # parameters['Transformers']['TemporalLogic']['properties'] = logic_properties
 
   list_of_logic = []
-  processTemporalOperators(code, parameters, list_of_logic, 1)
+  processTemporalOperators(code, parameters, list_of_logic, 0)
   parameters['Transformers']['TemporalLogic']['TemporalOperators'] = list_of_logic
 
   return code, parameters

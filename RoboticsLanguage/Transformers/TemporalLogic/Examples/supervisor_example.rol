@@ -1,0 +1,25 @@
+node(
+  name:'rcs temporal logic example',
+
+  definitions: block(
+    # a signal
+    sensor_getup ∈ Signals(Naturals, bits:8, rosTopic:'/sensor/getup'),
+
+    sensor_seat ∈ Signals(Booleans, rosType:'/sensor/seat')
+
+  ),
+
+  initialise: block(
+    if(◇[3,0](
+         □[2,1](
+             ◇[2,1](sensor_getup > 0 ) ∧ □[5,6](¬(sensor_getup > 0)))),
+                print('Oscilating...')),
+
+    if(□[2,0](sensor_seat),
+      print('Sitting (ALWAYS INTERVAL)')),
+
+    if(◇[4,0](sensor_seat),
+      print('Sitting (EVENTUALLY INTERVAL)'))
+
+  )
+)
