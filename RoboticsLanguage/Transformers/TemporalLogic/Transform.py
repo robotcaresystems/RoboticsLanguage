@@ -20,19 +20,19 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
+import re
 import copy
+import inspect
+import dpath.util
 from lxml import etree
 from RoboticsLanguage.Base import Utilities
-import inspect
-import re
+
 
 def debugPrint(x):
-    frame = inspect.currentframe().f_back
-    s = inspect.getframeinfo(frame).code_context[0]
-    r = re.search(r"\((.*)\)", s).group(1)
-    print("{} = {}".format(r,x))
-
-
+  frame = inspect.currentframe().f_back
+  s = inspect.getframeinfo(frame).code_context[0]
+  r = re.search(r"\((.*)\)", s).group(1)
+  print("{} = {}".format(r, x))
 
 
 def processTemporalOperators(code, parameters, list_of_logic, logic_id_counter):
@@ -80,9 +80,11 @@ def processTemporalOperators(code, parameters, list_of_logic, logic_id_counter):
     if definition['type'] == 'alwaysInterval' or definition['type'] == 'eventuallyInterval':
       definition['max'] = Utilities.serialise(logic.getchildren()[0], parameters, parameters['language'], 'RosCpp')
       definition['min'] = Utilities.serialise(logic.getchildren()[1], parameters, parameters['language'], 'RosCpp')
-      definition['logiccode'] = Utilities.serialise(logic.getchildren()[2], parameters, parameters['language'], 'RosCpp')
+      definition['logiccode'] = Utilities.serialise(
+          logic.getchildren()[2], parameters, parameters['language'], 'RosCpp')
     else:
-      definition['logiccode'] = Utilities.serialise(logic.getchildren()[0], parameters, parameters['language'], 'RosCpp')
+      definition['logiccode'] = Utilities.serialise(
+          logic.getchildren()[0], parameters, parameters['language'], 'RosCpp')
 
     list_of_logic.append(definition)
 
@@ -92,6 +94,11 @@ def processTemporalOperators(code, parameters, list_of_logic, logic_id_counter):
     # rename the temporal logic tag to be 'logiccode'. Inside all replacememts of operators by
     # local variables are complete
     logic.tag = 'logiccode'
+
+    for variable in all_variables:
+      new_parameters = {}
+      dpath.util.new(new_parameters, '/Transformers/Base/assign/' + variable + '/post', ['logic' + logic_type[0].title() + logic_type[1:] + str(logic_id_counter) + '()'])
+      dpath.util.merge(parameters, new_parameters)
 
     # add a 'hidden' tag to pass the dependent signals to the parent tags
     logic.append(etree.Element("null", variables=','.join(all_variables)))

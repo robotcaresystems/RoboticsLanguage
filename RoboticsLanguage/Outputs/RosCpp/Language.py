@@ -168,7 +168,7 @@ language = {
 
     'assign': {
         'output': {
-            'RosCpp': '{{children[0]}}{% if "assignDomain" in attributes %}{{attributes["assignFunction"]}}{% endif %} = {{children[1]}}',
+            'RosCpp': '{% if "assignFunction" in attributes %}{{children[0]}}_assign({{children[1]}}){% else %}{{children[0]}}{% if "assignDomain" in attributes %}{{attributes["assignFunction"]}}{% endif %} = {{children[1]}}{% endif %}',
         },
     },
 

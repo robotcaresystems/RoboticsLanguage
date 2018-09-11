@@ -1,11 +1,12 @@
 node(
   name:'rcs temporal logic example',
+  rate:25,
 
   definitions: block(
     # a signal
-    sensor_getup ∈ Signals(Naturals, bits:8, rosTopic:'/sensor/getup'),
+    sensor_seat ∈ Signals(Booleans, rosTopic:'/sensor/seat', onNew:print('Sensor_seat: ', sensor_seat.data)),
+    sensor_getup ∈ Signals(Naturals, bits:8, rosTopic:'/sensor/getup', onNew:print('Sensor_getup: ', sensor_getup.data))
 
-    sensor_seat ∈ Signals(Booleans, rosType:'/sensor/seat')
 
   ),
 

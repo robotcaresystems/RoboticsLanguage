@@ -44,8 +44,28 @@
        {{topic['ros_type']}} previous = {{topic['variable']}};
        {% endif -%}
 
+
+       {% if parameters['Transformers']['Base']['assign'][topic['variable']] is defined %}
+       /* run pre precessing instructions */
+         {% for instructions in parameters['Transformers']['Base']['assign'][topic['variable']]['pre'] %}
+         {{instructions}};
+         {% endfor %}
+       {% endif %}
+
        /* Cache a copy of this signal inside the class */
        {{topic['variable']}} = message;
+
+       {% if parameters['Transformers']['Base']['assign'][topic['variable']] is defined %}
+       /* run post precessing instructions */
+         {% for instructions in parameters['Transformers']['Base']['assign'][topic['variable']]['post'] %}
+         {{instructions}};
+         {% endfor %}
+       {% endif %}
+
+
+
+
+
 
        {% if onChange|length > 0 -%}
        if (previous.data != message.data)

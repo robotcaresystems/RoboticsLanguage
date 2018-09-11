@@ -13,5 +13,37 @@
   }
   {% endfor -%}
 
+  {# Assign Functions #################################### #}
+  {% if parameters['Transformers']['Base']['assign'] is defined %}
+    {% for variable, value in parameters['Transformers']['Base']['assign'].iteritems() %}
+    {# get the type #}
+    {% if parameters['Transformers']['Base']['variables'][variable]['type'] is defined %}
+      {% set variable_type = parameters['Transformers']['Base']['variables'][variable]['type'] %}
+    {% else %}
+      {# it is not explicitely defined, so try to find it #}
+      {% if parameters['Transformers']['Base']['variables'][variable]['definition'].tag == 'Signals' %}
+        {% set variable_type = parameters['Transformers']['Base']['variables'][variable]['definition'].getchildren()[0]|attribute('RosCpp') %}
+      {% else %}
+        {% set variable_type = parameters['Transformers']['Base']['variables'][variable]['definition']|attribute('RosCpp') %}
+      {% endif %}
+    {% endif %}
+
+    void {{parameters['node']['name']|camelCase}}Class::{{variable}}_assign({{variable_type}} {{variable}}_value)
+    {
+
+      {% for instructions in parameters['Transformers']['Base']['assign'][variable]['pre'] %}
+      {{instructions}};
+      {% endfor %}
+
+      {{variable}} = {{variable}}_value;
+
+      {% for instructions in parameters['Transformers']['Base']['assign'][variable]['post'] %}
+      {{instructions}};
+      {% endfor %}
+    }
+    {% endfor %}
+  {% endif %}
+
+
 
 {% endset %}

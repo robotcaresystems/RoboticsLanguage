@@ -107,9 +107,8 @@ def processTopics(code, parameters):
           bits = '32'
 
           # try to get the specified bits parameter
-          for option in topic_type.xpath('option'):
-            if option.attrib['name'] is 'bits':
-              bits = option.getchildren()[0].attrib['RosCpp']
+          for option in topic_type.xpath('option[@name="bits"]'):
+            bits = option.getchildren()[0].text
 
           ros_type = 'std_msgs::' + ros_type_mapping[topic_type.tag + bits]
           cpp_type = cpp_type_mapping[topic_type.tag + bits]
@@ -125,6 +124,9 @@ def processTopics(code, parameters):
       else:
         ros_type = signal.xpath('option[@name="rosType"]/string')[0].text.replace('/','::')
         cpp_type = ros_type
+
+      # save type in base/variables
+      parameters['Transformers']['Base']['variables'][variable]['type'] = ros_type
 
       # add header file for msg
       parameters['Outputs']['RosCpp']['globalIncludes'].add(ros_type.replace('::','/') + '.h')
