@@ -97,7 +97,7 @@ def processTemporalOperators(code, parameters, list_of_logic, logic_id_counter):
 
     for variable in all_variables:
       new_parameters = {}
-      dpath.util.new(new_parameters, '/Transformers/Base/assign/' + variable + '/post', ['logic' + logic_type[0].title() + logic_type[1:] + str(logic_id_counter) + '()'])
+      dpath.util.new(new_parameters, '/Transformers/Base/assign/' + variable + '/post/RosCpp', ['logic' + logic_type[0].title() + logic_type[1:] + str(logic_id_counter) + '()'])
       dpath.util.merge(parameters, new_parameters)
 
     # add a 'hidden' tag to pass the dependent signals to the parent tags

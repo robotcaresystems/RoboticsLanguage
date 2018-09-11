@@ -45,9 +45,9 @@
        {% endif -%}
 
 
-       {% if parameters['Transformers']['Base']['assign'][topic['variable']] is defined %}
+       {% if parameters['Transformers']['Base']['assign'][topic['variable']]['pre'] is defined %}
        /* run pre precessing instructions */
-         {% for instructions in parameters['Transformers']['Base']['assign'][topic['variable']]['pre'] %}
+         {% for instructions in parameters['Transformers']['Base']['assign'][topic['variable']]['pre']['RosCpp'] %}
          {{instructions}};
          {% endfor %}
        {% endif %}
@@ -55,9 +55,9 @@
        /* Cache a copy of this signal inside the class */
        {{topic['variable']}} = message;
 
-       {% if parameters['Transformers']['Base']['assign'][topic['variable']] is defined %}
+       {% if parameters['Transformers']['Base']['assign'][topic['variable']]['post']['RosCpp'] is defined %}
        /* run post precessing instructions */
-         {% for instructions in parameters['Transformers']['Base']['assign'][topic['variable']]['post'] %}
+         {% for instructions in parameters['Transformers']['Base']['assign'][topic['variable']]['post']['RosCpp'] %}
          {{instructions}};
          {% endfor %}
        {% endif %}
