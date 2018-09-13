@@ -15,13 +15,13 @@
  // connect to topics
 var fsm_{{machine_name}}_publisher = new ROSLIB.Topic({
   ros: ros,
-  name: '/finite_state_machine/{{parameters['node']['name']|underscore}}/{{machine_name}}/fire',
+  name: '/finite_state_machine/{{parameters.node.name|underscore}}/{{machine_name}}/fire',
   messageType: 'std_msgs/String',
 });
 
 var fsm_{{machine_name}}_subscriber = new ROSLIB.Topic({
   ros: ros,
-  name: '/finite_state_machine/{{parameters['node']['name']|underscore}}/{{machine_name}}/state',
+  name: '/finite_state_machine/{{parameters.node.name|underscore}}/{{machine_name}}/state',
   messageType: 'std_msgs/String',
 });
 

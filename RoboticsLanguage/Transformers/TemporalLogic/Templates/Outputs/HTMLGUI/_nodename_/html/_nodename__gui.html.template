@@ -6,14 +6,14 @@
   var temporal_logic_update = false;
 
   temporal_logic_plots = {
-  {% for logic in parameters['Transformers']['TemporalLogic']['properties'] -%}
-      '{{logic['id']}}':false,
+  {% for logic in parameters.Transformers.TemporalLogic.properties -%}
+      '{{logic.id}}':false,
   {% endfor -%}
   };
 
   temporal_logic_plot_data = {
-  {% for logic in parameters['Transformers']['TemporalLogic']['properties'] -%}
-      '{{logic['id']}}':{'expression':[], 'outcome':[], 'min': 0 , 'max': 0, 'open':false },
+  {% for logic in parameters.Transformers.TemporalLogic.properties -%}
+      '{{logic.id}}':{'expression':[], 'outcome':[], 'min': 0 , 'max': 0, 'open':false },
   {% endfor -%}
   };
 
@@ -27,17 +27,17 @@
 
     now = (Date.now() - temporal_logic_initial_time) / 1000;
 
-    temporal_logic_plot_data[id]['expression'].push([now, expression]);
-    temporal_logic_plot_data[id]['outcome'].push([now, outcome]);
+    temporal_logic_plot_data[id].expression.push([now, expression]);
+    temporal_logic_plot_data[id].outcome.push([now, outcome]);
 
-    if (temporal_logic_plot_data[id]['expression'].length > temporal_logic_max_samples)
+    if (temporal_logic_plot_data[id].expression.length > temporal_logic_max_samples)
     {
-      temporal_logic_plot_data[id]['expression'].shift();
-      temporal_logic_plot_data[id]['outcome'].shift();
+      temporal_logic_plot_data[id].expression.shift();
+      temporal_logic_plot_data[id].outcome.shift();
     };
 
-    temporal_logic_plot_data[id]['min'] = min;
-    temporal_logic_plot_data[id]['max'] = max;
+    temporal_logic_plot_data[id].min = min;
+    temporal_logic_plot_data[id].max = max;
 
   };
 
@@ -68,7 +68,7 @@
     $('#temporal_logic_accordion').accordion({
         onOpen: function () {
           this_id = this.id.substr(15) // length("temporal_logic_")
-          temporal_logic_plot_data[this_id]['open'] = true;
+          temporal_logic_plot_data[this_id].open = true;
           if (temporal_logic_update == false)
           {
             setTimeout(UpdateTemporalLogicPlots, temporal_logic_draw_rate);
@@ -80,7 +80,7 @@
             // create plot the first time the accordion is open
             temporal_logic_plots[this_id] = new Dygraph(
                     document.getElementById("temporal_logic_plot_" + this_id),
-                    temporal_logic_plot_data[this_id]['expression'], {
+                    temporal_logic_plot_data[this_id].expression, {
                       labels: ['time', this_id],
                       underlayCallback: function(canvas, area, g) {
                         var bottom_left = g.toDomCoords(highlight_start, -20);
@@ -98,27 +98,27 @@
         },
       onClose: function () {
         this_id = this.id.substr(15) // length("temporal_logic_")
-        temporal_logic_plot_data[this_id]['open'] = false;
+        temporal_logic_plot_data[this_id].open = false;
 
-        if ({% for logic in parameters['Transformers']['TemporalLogic']['properties'] -%}
-          !temporal_logic_plot_data[{{logic['id']}}]['open'] &&
+        if ({% for logic in parameters.Transformers.TemporalLogic.properties -%}
+          !temporal_logic_plot_data[{{logic.id}}].open &&
         {% endfor -%} true)
         {
           temporal_logic_update = false;
         }
     }});
 
-  {% for logic in parameters['Transformers']['TemporalLogic']['properties'] -%}
+  {% for logic in parameters.Transformers.TemporalLogic.properties -%}
     // connect to topics
-    var temporal_logic_{{logic['id']}} = new ROSLIB.Topic({
+    var temporal_logic_{{logic.id}} = new ROSLIB.Topic({
       ros: ros,
-      name: 'temporal_logic/{{parameters['node']['name']|underscore}}/{{logic['id']}}',
+      name: 'temporal_logic/{{parameters.node.name|underscore}}/{{logic.id}}',
       messageType: 'std_msgs/Float32MultiArray',
     });
 
     // subscribe functions
-    temporal_logic_{{logic['id']}}.subscribe(function(message) {
-      UpdateTemporalLogicData({{logic['id']}}, message.data[0], message.data[1], message.data[2], message.data[3]);
+    temporal_logic_{{logic.id}}.subscribe(function(message) {
+      UpdateTemporalLogicData({{logic.id}}, message.data[0], message.data[1], message.data[2], message.data[3]);
     });
 
 
@@ -133,12 +133,12 @@
 <h1>Temporal logic</h1>
 
   <div class="ui styled accordion" id="temporal_logic_accordion">
-  {% for logic in parameters['Transformers']['TemporalLogic']['properties'] -%}
+  {% for logic in parameters.Transformers.TemporalLogic.properties -%}
     <div class="title">
-      <i class="dropdown icon"></i> {{logic['text']}}
+      <i class="dropdown icon"></i> {{logic.text}}
     </div>
-    <div class="content hidden" id="temporal_logic_{{logic['id']}}">
-      <div id="temporal_logic_plot_{{logic['id']}}"></div>
+    <div class="content hidden" id="temporal_logic_{{logic.id}}">
+      <div id="temporal_logic_plot_{{logic.id}}"></div>
     </div>
   {% endfor -%}
   </div>

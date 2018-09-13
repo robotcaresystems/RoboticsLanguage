@@ -1,10 +1,10 @@
 
 {% set includes %}
-{% set TemporalOperators = parameters['Transformers']['TemporalLogic']['TemporalOperators'] %}
+{% set TemporalOperators = parameters.Transformers.TemporalLogic.TemporalOperators %}
 
 
 {% if TemporalOperators|length>0 %}
-{% if parameters['globals']['debug'] %}
+{% if parameters.globals.debug %}
 #include "std_msgs/Int16MultiArray.h"
 {% endif %}
 
@@ -17,35 +17,35 @@ typedef struct {ros::Time time; bool rise;} TimedBoolean;
 {% endset %}
 
 {% set definitions %}
-  {% set TemporalOperators = parameters['Transformers']['TemporalLogic']['TemporalOperators'] %}
+  {% set TemporalOperators = parameters.Transformers.TemporalLogic.TemporalOperators %}
 
 
     {% if TemporalOperators|length>0 %}
         //Temporal logic operators
         {% for item in TemporalOperators|ensureList -%}
-            {% if item['type']=='always' or item['type']=='eventually' -%}
-                bool {{item['name']}}; //simple always or eventually
-            {% elif item['min']=='0' -%}
-                bool {{item['name']}}; // always or eventually with min=0
-                bool {{item['name']}}last_;
-                ros::Time {{item['name']}}switch_;
-                ros::Timer {{item['name']}}check_;
+            {% if item.type=='always' or item.type=='eventually' -%}
+                bool {{item.name}}; //simple always or eventually
+            {% elif item.min=='0' -%}
+                bool {{item.name}}; // always or eventually with min=0
+                bool {{item.name}}last_;
+                ros::Time {{item.name}}switch_;
+                ros::Timer {{item.name}}check_;
                 /*!
                  * @brief Self-trigger for temporal logic callback.
                  * @param e The event information: time and rise.
                  */
-                void logic{{item['name']|camelCase}}TimerCB(const ros::TimerEvent& e);
+                void logic{{item.name|camelCase}}TimerCB(const ros::TimerEvent& e);
             {% else -%}
-                bool {{item['name']}}; // always or eventually with min>0
-                bool {{item['name']}}last_;
-                std::deque<TimedBoolean> {{item['name']}}signal_;
-                ros::Timer {{item['name']}}check_max_;
-                ros::Timer {{item['name']}}check_min_;
+                bool {{item.name}}; // always or eventually with min>0
+                bool {{item.name}}last_;
+                std::deque<TimedBoolean> {{item.name}}signal_;
+                ros::Timer {{item.name}}check_max_;
+                ros::Timer {{item.name}}check_min_;
                 /*!
                  * @brief Self-trigger for temporal logic callback.
                  * @param e The event information: time and rise.
                  */
-                void logic{{item['name']|camelCase}}TimerCB(const ros::TimerEvent& e);
+                void logic{{item.name|camelCase}}TimerCB(const ros::TimerEvent& e);
             {% endif -%}
         {% endfor %}
     {% endif %}
@@ -56,7 +56,7 @@ typedef struct {ros::Time time; bool rise;} TimedBoolean;
             /*!
              * @brief Logic support function
             */
-            void logic{{logic['name']|camelCase}}();
+            void logic{{logic.name|camelCase}}();
         {% endfor %}
 
         {% if PackageTransform=='true' %}
@@ -64,12 +64,12 @@ typedef struct {ros::Time time; bool rise;} TimedBoolean;
             tf::TransformListener transform_listener_;
         {% endif %}
 
-        {% if parameters['globals']['debug'] %}
+        {% if parameters.globals.debug %}
         // DEBUG: Creating publisher nodes to debug the temporal logic expressions
           {% for item in TemporalOperators|ensureList -%}
-              {% if item['type']=='alwaysInterval' or item['type']=='eventuallyInterval' -%}
-                  ros::Publisher sig_debug_{{item['name']|underscore}}handle_out_;
-                  std_msgs::Int16MultiArray sig_debug_{{item['name']|underscore}};
+              {% if item.type=='alwaysInterval' or item.type=='eventuallyInterval' -%}
+                  ros::Publisher sig_debug_{{item.name|underscore}}handle_out_;
+                  std_msgs::Int16MultiArray sig_debug_{{item.name|underscore}};
               {% endif -%}
           {% endfor -%}
         {% endif %}

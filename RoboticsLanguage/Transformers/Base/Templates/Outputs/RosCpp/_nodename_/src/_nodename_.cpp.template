@@ -7,40 +7,40 @@
   /******************************* {{function|attribute('name')}} ************************************************/
   {% set returns = function|xpaths('function_returns/@RosCpp')|first -%}
   {% set arguments = (function|xpaths('function_arguments/element/@RosCpp'))+(function|xpaths('function_arguments/*/element/@RosCpp')) -%}
-  {% if returns|length==0 %}void{% else %}{{returns}}{% endif %} {{parameters['node']['name']|camelCase}}Class::{{function|attribute('name')}}({% if arguments|length==0 %}void{% else %}{{arguments|join(", ")}}{% endif %})
+  {% if returns|length==0 %}void{% else %}{{returns}}{% endif %} {{parameters.node.name|camelCase}}Class::{{function|attribute('name')}}({% if arguments|length==0 %}void{% else %}{{arguments|join(", ")}}{% endif %})
   {
     {{function|xpaths('function_content/@RosCpp')|first}};
   }
   {% endfor -%}
 
   {# Assign Functions #################################### #}
-  {% if parameters['Transformers']['Base']['assign'] is defined %}
-    {% for variable, value in parameters['Transformers']['Base']['assign'].iteritems() %}
+  {% if parameters.Transformers.Base.assign is defined %}
+    {% for variable, value in parameters.Transformers.Base.assign.iteritems() %}
     {# get the type #}
-    {% if parameters['Transformers']['Base']['variables'][variable]['type'] is defined %}
-      {% set variable_type = parameters['Transformers']['Base']['variables'][variable]['type'] %}
+    {% if parameters.Transformers.Base.variables[variable].type is defined %}
+      {% set variable_type = parameters.Transformers.Base.variables[variable].type %}
     {% else %}
       {# it is not explicitely defined, so try to find it #}
-      {% if parameters['Transformers']['Base']['variables'][variable]['definition'].tag == 'Signals' %}
-        {% set variable_type = parameters['Transformers']['Base']['variables'][variable]['definition'].getchildren()[0]|attribute('RosCpp') %}
+      {% if parameters.Transformers.Base.variables[variable].definition.tag == 'Signals' %}
+        {% set variable_type = parameters.Transformers.Base.variables[variable].definition.getchildren()[0]|attribute('RosCpp') %}
       {% else %}
-        {% set variable_type = parameters['Transformers']['Base']['variables'][variable]['definition']|attribute('RosCpp') %}
+        {% set variable_type = parameters.Transformers.Base.variables[variable].definition|attribute('RosCpp') %}
       {% endif %}
     {% endif %}
 
-    void {{parameters['node']['name']|camelCase}}Class::{{variable}}_assign({{variable_type}} {{variable}}_value)
+    void {{parameters.node.name|camelCase}}Class::{{variable}}_assign({{variable_type}} {{variable}}_value)
     {
 
-      {% if parameters['Transformers']['Base']['assign'][variable]['pre'] is defined %}
-      {% for instructions in parameters['Transformers']['Base']['assign'][variable]['pre']['RosCpp'] %}
+      {% if parameters.Transformers.Base.assign[variable].pre is defined %}
+      {% for instructions in parameters.Transformers.Base.assign[variable].pre.RosCpp %}
       {{instructions}};
       {% endfor %}
       {% endif %}
 
       {{variable}} = {{variable}}_value;
 
-      {% if parameters['Transformers']['Base']['assign'][variable]['post']['RosCpp'] is defined %}
-      {% for instructions in parameters['Transformers']['Base']['assign'][variable]['post']['RosCpp'] %}
+      {% if parameters.Transformers.Base.assign[variable].post.RosCpp is defined %}
+      {% for instructions in parameters.Transformers.Base.assign[variable].post.RosCpp %}
       {{instructions}};
       {% endfor %}
       {% endif %}

@@ -1,6 +1,6 @@
 <<<header->>>
 cmake_minimum_required(VERSION 2.8.3)
-project({{parameters['node']['name']|underscore }})
+project({{parameters.node.name|underscore }})
 
 ## Find catkin and any catkin packages
 find_package(catkin REQUIRED COMPONENTS
@@ -9,7 +9,7 @@ find_package(catkin REQUIRED COMPONENTS
     <<<'findPackage'|group>>>
 )
 
-{% if parameters['Transformers']['ROS']['addingNewMessages'] %}
+{% if parameters.Transformers.ROS.addingNewMessages %}
 add_message_files(
   FILES
   <<<'addMessageFiles'|group>>>
@@ -44,12 +44,12 @@ include_directories(
   <<<'includeDirectories'|group>>>
 )
 
-add_executable({{parameters['node']['name']|underscore}} src/{{parameters['node']['name']|underscore}}.cpp)
-target_link_libraries({{parameters['node']['name']|underscore}}  ${catkin_LIBRARIES})
-add_dependencies({{parameters['node']['name']|underscore}} ${catkin_EXPORTED_TARGETS})
+add_executable({{parameters.node.name|underscore}} src/{{parameters.node.name|underscore}}.cpp)
+target_link_libraries({{parameters.node.name|underscore}}  ${catkin_LIBRARIES})
+add_dependencies({{parameters.node.name|underscore}} ${catkin_EXPORTED_TARGETS})
 
 
-install(TARGETS {{parameters['node']['name']|underscore}}
+install(TARGETS {{parameters.node.name|underscore}}
         RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 

@@ -5,7 +5,7 @@
 
 {% set initialise %}
   {% for cache in code|xpaths('//*[@cacheId]') %}
-    caches_list.push_back(std::bind(&{{parameters['node']['name']|camelCase}}Class::cacheFunction_{{cache|attribute('cacheId')}}, this));
+    caches_list.push_back(std::bind(&{{parameters.node.name|camelCase}}Class::cacheFunction_{{cache|attribute('cacheId')}}, this));
   {% endfor %}
 {% endset %}
 
@@ -25,7 +25,7 @@
 
   {% for cache in code|xpaths('//*[@cacheId]') %}
     {% if cache|attribute('cacheClass') == "computation" %}
-    void {{parameters['node']['name']|camelCase}}Class::cacheFunction_{{cache|attribute('cacheId')}} ()
+    void {{parameters.node.name|camelCase}}Class::cacheFunction_{{cache|attribute('cacheId')}} ()
     {
         ROS_INFO_STREAM("Events: computation: {{cache|attribute('cacheId')}}");
         {{cache|attribute('RosCpp')}};
@@ -33,7 +33,7 @@
     {% endif %}
 
     {% if cache|attribute('cacheClass') == "if" %}
-    void {{parameters['node']['name']|camelCase}}Class::cacheFunction_{{cache|attribute('cacheId')}} ()
+    void {{parameters.node.name|camelCase}}Class::cacheFunction_{{cache|attribute('cacheId')}} ()
     {
         ROS_INFO_STREAM("Events: if: {{cache|attribute('cacheId')}}");
         if({{cache|children|first|attribute('RosCpp')}})
