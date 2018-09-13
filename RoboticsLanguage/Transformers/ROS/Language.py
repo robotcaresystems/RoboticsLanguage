@@ -33,8 +33,7 @@ language = {
             'optional': {
                 'rosTopic': optional('string', ''),
                 'rosType': optional('string', ''),
-                # @REFACTOR currently defaults to bidirectional. Detect automatically?
-                'rosFlow': optional('string', 'bidirectional')
+                'rosFlow': optional('string', '')
             },
         },
     },

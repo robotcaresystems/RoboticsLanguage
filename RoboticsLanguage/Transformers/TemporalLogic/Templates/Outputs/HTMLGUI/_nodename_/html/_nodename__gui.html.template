@@ -1,5 +1,7 @@
 
 {% set beforeLoad %}
+{% if code|xpaths('//always|//eventually')|length > 0 %}
+
 
   var temporal_logic_max_samples = 1000;
   var temporal_logic_draw_rate = 25;
@@ -54,10 +56,11 @@
   }
 
 
-
+{% endif %}
 {% endset %}
 
 {% set afterLoad %}
+{% if code|xpaths('//always|//eventually')|length > 0 %}
 
     var highlight_start = -1;
     var highlight_end = 0;
@@ -125,10 +128,11 @@
   {% endfor -%}
 
 
-
+{% endif %}
 {% endset %}
 
 {% set body %}
+{% if code|xpaths('//always|//eventually')|length > 0 %}
 
 <h1>Temporal logic</h1>
 
@@ -144,5 +148,5 @@
   </div>
 
 
-
+{% endif %}
 {% endset %}

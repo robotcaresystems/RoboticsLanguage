@@ -19,6 +19,7 @@
 #   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
+from RoboticsLanguage.Base import Utilities
 
 ros_type_mapping = {
     'Booleans': 'Bool',
@@ -51,8 +52,6 @@ cpp_type_mapping = {
 }
 
 
-from RoboticsLanguage.Base import Utilities
-
 def processTopics(code, parameters):
   '''Processes all the ROS topics in the RoL code'''
 
@@ -71,6 +70,24 @@ def processTopics(code, parameters):
       # get options
       topic_name = signal.xpath('option[@name="rosTopic"]')[0].getchildren()[0].text
       flow = signal.xpath('option[@name="rosFlow"]')[0].getchildren()[0].text
+
+      # detect the type of flow if not specified
+      if flow == '':
+        # look for usages:
+        result = code.xpath('//variable[@name="' + variable + '"]')
+        used = False
+        for item in result:
+          if item.getparent().tag in ['assign', 'element']:
+            used = used or len(item.getparent().xpath('variable[1][@name="' + variable + '"]')) == 0
+
+        # look for assignment:
+        result = code.xpath('//assign/variable[1][@name="' + variable + '"]')
+        assigned = len(result) > 0
+
+        # figure out the type of flow
+        flow = 'outgoing' if assigned and not used else flow
+        flow = 'incoming' if not assigned and used else flow
+        flow = 'bidirectional' if assigned and used else flow
 
       # Save the variable name on the `Signals` tag. Helps simplifying code
       signal.attrib['ROSvariable'] = variable
@@ -99,7 +116,6 @@ def processTopics(code, parameters):
         # get the type of the signal
         topic_type = signal.getchildren()[0]
 
-
         # Find the type for the topic
         if topic_type.tag in ['Reals', 'Integers', 'Naturals']:
 
@@ -122,14 +138,14 @@ def processTopics(code, parameters):
           ros_type = 'std_msgs::Empty'
           cpp_type = 'int'
       else:
-        ros_type = signal.xpath('option[@name="rosType"]/string')[0].text.replace('/','::')
+        ros_type = signal.xpath('option[@name="rosType"]/string')[0].text.replace('/', '::')
         cpp_type = ros_type
 
       # save type in base/variables
       parameters['Transformers']['Base']['variables'][variable]['type'] = ros_type
 
       # add header file for msg
-      parameters['Outputs']['RosCpp']['globalIncludes'].add(ros_type.replace('::','/') + '.h')
+      parameters['Outputs']['RosCpp']['globalIncludes'].add(ros_type.replace('::', '/') + '.h')
 
       # save the topic definitions
       parameters['Transformers']['ROS']['topicDefinitions'].append({'variable': variable,

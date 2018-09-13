@@ -103,5 +103,6 @@ def output(code, parameters):
   if parameters['globals']['launch']:
     Utilities.logger.debug("launching: `roslaunch " + node_name_underscore + " " + node_name_underscore + '.launch`')
     process = subprocess.Popen(['roslaunch', node_name_underscore, node_name_underscore + '.launch'])
+    process.wait()
 
   return 0
