@@ -33,7 +33,7 @@ def CreateVariableList(code, parameters):
   parameters['Transformers']['Base']['variables'] = {}
 
   for variable in code.xpath('/node/option[@name="definitions"]/*//element/variable'):
-    parameters['Transformers']['Base']['variables'][variable.attrib['name']] = {'definition': variable.getparent().getchildren()[1] }
+    parameters['Transformers']['Base']['variables'][variable.attrib['name']] = {'definition': variable.getparent().getchildren()[1]}
 
   return code, parameters
 

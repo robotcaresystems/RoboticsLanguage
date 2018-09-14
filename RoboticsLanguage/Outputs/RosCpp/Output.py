@@ -45,6 +45,7 @@ def runPreparations(code, parameters):
     if len(code.xpath('//' + tag)) > 0:
       parameters['Outputs']['RosCpp']['globalIncludes'].add(library)
 
+
   return code, parameters, node_name_underscore
 
 
