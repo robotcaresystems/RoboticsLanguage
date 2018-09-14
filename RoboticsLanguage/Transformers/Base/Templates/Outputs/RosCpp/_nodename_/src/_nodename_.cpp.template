@@ -14,39 +14,43 @@
   {% endfor -%}
 
   {# Assign Functions #################################### #}
-  {% if parameters.Transformers.Base.assign is defined %}
-    {% for variable, value in parameters.Transformers.Base.assign.iteritems() %}
+  {% for variable, value in parameters.Transformers.Base.variables.iteritems() %}
+  {% if value.assign is defined %}
     {# get the type #}
-    {% if parameters.Transformers.Base.variables[variable].type is defined %}
-      {% set variable_type = parameters.Transformers.Base.variables[variable].type %}
+    {% if value.type is defined %}
+      {% set variable_type = value.type %}
     {% else %}
       {# it is not explicitely defined, so try to find it #}
-      {% if parameters.Transformers.Base.variables[variable].definition.tag == 'Signals' %}
-        {% set variable_type = parameters.Transformers.Base.variables[variable].definition.getchildren()[0]|attribute('RosCpp') %}
+      {% if value.definition.tag == 'Signals' %}
+        {% set variable_type = value.definition.getchildren()[0]|attribute('RosCpp') %}
       {% else %}
-        {% set variable_type = parameters.Transformers.Base.variables[variable].definition|attribute('RosCpp') %}
+        {% set variable_type = value.definition|attribute('RosCpp') %}
       {% endif %}
     {% endif %}
 
     void {{parameters.node.name|camelCase}}Class::{{variable}}_assign({{variable_type}} {{variable}}_value)
     {
 
-      {% if parameters.Transformers.Base.assign[variable].pre is defined %}
-      {% for instructions in parameters.Transformers.Base.assign[variable].pre.RosCpp %}
+      {% if value.assign.pre is defined %}
+      {% if value.assign.pre.RosCpp is defined %}
+      {% for instructions in value.assign.pre.RosCpp %}
       {{instructions}};
       {% endfor %}
+      {% endif %}
       {% endif %}
 
       {{variable}} = {{variable}}_value;
 
-      {% if parameters.Transformers.Base.assign[variable].post.RosCpp is defined %}
-      {% for instructions in parameters.Transformers.Base.assign[variable].post.RosCpp %}
+      {% if value.assign.post is defined %}
+      {% if value.assign.post.RosCpp is defined %}
+      {% for instructions in value.assign.post.RosCpp %}
       {{instructions}};
       {% endfor %}
       {% endif %}
+      {% endif %}
     }
-    {% endfor %}
   {% endif %}
+  {% endfor %}
 
 
 

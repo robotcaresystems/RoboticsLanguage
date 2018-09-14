@@ -67,17 +67,18 @@ def output(code, parameters):
   # if the flag beautify is set then run uncrustify
   if parameters['globals']['beautify']:
     try:
-      list_of_cpp_files = ['src/' + node_name_underscore + '.cpp',
-                           'include/' + node_name_underscore + '/' + node_name_underscore + '.h']
-      for file in list_of_cpp_files:
-        process = subprocess.Popen(['uncrustify', '-c',  unicode(Utilities.myPluginPath(parameters) + '/Resources/uncrustify.cfg'),
-                                    file,  '--replace', '--no-backup'],
-                                   cwd=parameters['globals']['deploy'] + '/' + node_name_underscore,
-                                   stdout=open(os.devnull, 'w'),
-                                   stderr=subprocess.STDOUT)
-        process.wait()
-        if process.returncode > 0:
-          Utilities.logger.error("Error beautifying code. Uncrustify has returned an error.")
+      with open(os.devnull, 'w') as output_file:
+        list_of_cpp_files = ['src/' + node_name_underscore + '.cpp',
+                             'include/' + node_name_underscore + '/' + node_name_underscore + '.h']
+        for file in list_of_cpp_files:
+          process = subprocess.Popen(['uncrustify', '-c',  unicode(Utilities.myPluginPath(parameters) + '/Resources/uncrustify.cfg'),
+                                      file,  '--replace', '--no-backup'],
+                                     cwd=parameters['globals']['deploy'] + '/' + node_name_underscore,
+                                     stdout=output_file,
+                                     stderr=subprocess.STDOUT)
+          process.wait()
+          if process.returncode > 0:
+            Utilities.logger.error("Error beautifying code. Uncrustify has returned an error.")
     except:
       # open HTML in different platforms
       if 'darwin' in sys.platform:

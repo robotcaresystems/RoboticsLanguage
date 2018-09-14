@@ -6,22 +6,23 @@
 {% set definitions %}
 
 {# Assign Functions #################################### #}
-{% if parameters.Transformers.Base.assign is defined %}
-  {% for variable, value in parameters.Transformers.Base.assign.iteritems() %}
+{% for variable, value in parameters.Transformers.Base.variables.iteritems() %}
+{% if value.assign is defined %}
   {# get the type #}
-  {% if parameters.Transformers.Base.variables[variable].type is defined %}
-    {% set variable_type = parameters.Transformers.Base.variables[variable].type %}
+  {% if value.type is defined %}
+    {% set variable_type = value.type %}
   {% else %}
     {# it is not explicitely defined, so try to find it #}
-    {% if parameters.Transformers.Base.variables[variable].definition.tag == 'Signals' %}
-      {% set variable_type = parameters.Transformers.Base.variables[variable].definition.getchildren()[0]|attribute('RosCpp') %}
+    {% if value.definition.tag == 'Signals' %}
+      {% set variable_type = value.definition.getchildren()[0]|attribute('RosCpp') %}
     {% else %}
-      {% set variable_type = parameters.Transformers.Base.variables[variable].definition|attribute('RosCpp') %}
+      {% set variable_type = value.definition|attribute('RosCpp') %}
     {% endif %}
   {% endif %}
+
   void {{variable}}_assign({{variable_type}} {{variable}}_value);
-  {% endfor %}
-{% endif %}
+  {% endif %}
+{% endfor %}
 
 
 {% endset %}

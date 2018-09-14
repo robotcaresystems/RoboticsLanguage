@@ -19,6 +19,7 @@
 #   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
+import dpath.util
 from RoboticsLanguage.Base import Utilities
 
 ros_type_mapping = {
@@ -79,6 +80,8 @@ def processTopics(code, parameters):
         for item in result:
           if item.getparent().tag in ['assign', 'element']:
             used = used or len(item.getparent().xpath('variable[1][@name="' + variable + '"]')) == 0
+          else:
+            used = True
 
         # look for assignment:
         result = code.xpath('//assign/variable[1][@name="' + variable + '"]')
@@ -88,6 +91,15 @@ def processTopics(code, parameters):
         flow = 'outgoing' if assigned and not used else flow
         flow = 'incoming' if not assigned and used else flow
         flow = 'bidirectional' if assigned and used else flow
+
+        # save flow on code structure
+        code.xpath('//element/variable[@name="' + variable + '"]/../Signals/option[@name="rosFlow"]/string')[0].text = flow
+
+      # create assign function to publish automatically
+      if flow in ['outgoing', 'bidirectional']:
+        new_parameters = {}
+        dpath.util.new(new_parameters, '/Transformers/Base/variables/' + variable + '/assign/post/RosCpp', [variable + '_publisher.publish(' + variable + ');'])
+        dpath.util.merge(parameters, new_parameters)
 
       # Save the variable name on the `Signals` tag. Helps simplifying code
       signal.attrib['ROSvariable'] = variable

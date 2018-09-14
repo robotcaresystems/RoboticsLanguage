@@ -38,13 +38,36 @@ def output(code, parameters):
   if not Templates.templateEngine(code, parameters, file_patterns={'nodename': node_name_underscore}):
     sys.exit(1)
 
+  # ############ beautify code #####################################################
+  # if the flag beautify is set then run uncrustify
+  if parameters['globals']['beautify']:
+    try:
+      with open(os.devnull, 'w') as output_file:
+        process = subprocess.Popen(['tidy', '-im',
+                                    parameters['globals']['deploy'] + '/' + node_name_underscore + '/html/' + node_name_underscore + '_gui.html'],
+                                   stdout=output_file,
+                                   stderr=subprocess.STDOUT)
+        process.wait()
+    except Exception as e:
+      print e
+      # open HTML in different platforms
+      if 'darwin' in sys.platform:
+        Utilities.logger.error(
+            "Error beautifying code. You may need to install tidy:\n\n  brew install tidy-html5")
+
+      if 'linux' in sys.platform:
+        Utilities.logger.error(
+            "Error beautifying code. You may need to install tidy:\n\n  sudo apt install tidy")
+
+
+  # ############ launching code #####################################################
   # if the flag launch is set then launch the node
   if parameters['globals']['launch']:
     # open HTML in different platforms
     if 'darwin' in sys.platform:
-      open = 'open'
+      launch_command = 'open'
 
     if 'linux' in sys.platform:
-      open = 'xdg-open'
+      launch_command = 'xdg-open'
 
-    subprocess.Popen([open, parameters['globals']['deploy'] + node_name_underscore + '/html/' + node_name_underscore + '_gui.html'])
+    subprocess.Popen([launch_command, parameters['globals']['deploy'] + node_name_underscore + '/html/' + node_name_underscore + '_gui.html'])
