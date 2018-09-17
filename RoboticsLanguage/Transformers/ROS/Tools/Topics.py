@@ -53,7 +53,7 @@ cpp_type_mapping = {
 }
 
 
-def processTopics(code, parameters):
+def process(code, parameters):
   '''Processes all the ROS topics in the RoL code'''
 
   # a place to store the information needed for the topics

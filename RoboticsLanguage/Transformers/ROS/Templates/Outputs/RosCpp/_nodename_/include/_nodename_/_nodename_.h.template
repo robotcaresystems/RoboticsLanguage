@@ -1,3 +1,13 @@
+
+{% set includes %}
+
+{% for item in code.xpath('//element/RosType/string/text()') %}
+#include <{{item}}.h>
+{% endfor %}
+
+{% endset %}
+
+
 {% set definitions %}
 
       {# ROS TOPICS #################################### #}

@@ -176,7 +176,7 @@ language = {
     'variable': {
         'output':
         {
-            'RosCpp': '{{attributes["name"]}}{% if "returnDomain" in attributes %}{{attributes["returnDomain"]}}{% endif %}',
+            'RosCpp': '{{attributes["name"]}}{% if "returnDomain" in attributes and parentTag != "assign"%}{{attributes["returnDomain"]}}{% endif %}',
         },
     },
 
@@ -191,6 +191,14 @@ language = {
         'output':
         {
             'RosCpp': '{{";\n".join(children)}}'
+        },
+    },
+
+
+    'RosType': {
+        'output':
+        {
+            'RosCpp': '{{code.getchildren()[0].text|replace("/","::")}}'
         },
     },
 
