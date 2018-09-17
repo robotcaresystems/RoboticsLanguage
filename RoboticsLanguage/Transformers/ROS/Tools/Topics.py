@@ -84,7 +84,7 @@ def process(code, parameters):
             used = True
 
         # look for assignment:
-        result = code.xpath('//assign/variable[1][@name="' + variable + '"]')
+        result = code.xpath('//assign/variable[1][@name="' + variable + '"]|//assign/domain/variable[1][@name="' + variable + '"]')
         assigned = len(result) > 0
 
         # figure out the type of flow
