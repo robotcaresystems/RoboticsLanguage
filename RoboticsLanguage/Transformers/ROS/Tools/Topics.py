@@ -98,7 +98,7 @@ def setPublish(variable, flow, assignments):
       if 'postRosCpp' not in assignment.attrib.keys():
         assignment.attrib['postRosCpp'] = ''
 
-      assignment.attrib['postRosCpp'] += variable + '_publisher.publish(' + variable + ');'
+      assignment.attrib['postRosCpp'] += ';' + variable + '_publisher.publish(' + variable + ');'
 
 
 def checkTypes(signal, variable, assignments, usages, code, parameters):
