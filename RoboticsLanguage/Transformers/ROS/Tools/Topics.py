@@ -59,6 +59,7 @@ def process(code, parameters):
   # a place to store the information needed for the topics
   parameters['Transformers']['ROS']['topicDefinitions'] = []
 
+  # '/node/option[@name="definitions"]/*//element/Signals/option[@name="rosTopic"]/string[text()!=""]/../..'
   # find all the signals in definitions
   for signal in code.xpath('/node/option[@name="definitions"]/*//element/Signals'):
 
