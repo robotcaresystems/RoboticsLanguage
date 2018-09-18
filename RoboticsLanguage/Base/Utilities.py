@@ -247,13 +247,13 @@ def errorLanguageDefinition(code, parameters):
 
 @decorator
 def log_all_calls(function):
-  print 'function name:', function._func.__name__, ' arguments:', function._args
+  print('function name: ' + function._func.__name__ + ' arguments: ' + str(function._args))
   return function()
 
 
 @decorator
 def name_all_calls(function):
-  print 'function name:', function._func.__name__
+  print('function name:' + function._func.__name__)
   return function()
 
 
@@ -263,7 +263,7 @@ def time_all_calls(function):
   sys.stdout.write('<<<')
   sys.stdout.flush()
   result = function()
-  print 'function name:', function._func.__name__, 'execution time: ', time.time() - start, 'seconds>>>'
+  print('function name: ' + function._func.__name__ + 'execution time: ' + str(time.time() - start) + ' seconds>>>')
   return result
 
 
