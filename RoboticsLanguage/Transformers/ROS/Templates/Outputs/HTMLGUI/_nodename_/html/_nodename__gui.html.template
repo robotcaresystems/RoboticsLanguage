@@ -66,6 +66,7 @@
 
       // activate the accordion list
       $('#ros_topics_accordion').accordion({
+          exclusive: false,
           onOpen: function () {
             this_id = this.id.substr(11) // length("ros_topics_")
             if (topic_plots[this_id] == false)
