@@ -122,7 +122,7 @@ def prepareCommandLineArguments(parameters):
 def checkSpecialCommandLineArguments(command_line_parameters, parameters):
   if '--version' in command_line_parameters:
     import pkg_resources
-    print 'The Robotics Language version: ' + pkg_resources.get_distribution('RoboticsLanguage').version
+    print('The Robotics Language version: ' + pkg_resources.get_distribution('RoboticsLanguage').version)
 
 
 def runCommandLineParser(parameters, arguments, flags, file_formats, file_package_name, command_line_arguments):

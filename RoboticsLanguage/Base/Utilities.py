@@ -62,7 +62,7 @@ def printCode(code, parameters=None, style='monokai'):
      if parameters is not None and parameters['globals']['noColours']:
        print(etree.tostring(element, pretty_print=True))
      else:
-       print highlight(etree.tostring(element, pretty_print=True), XmlLexer(), Terminal256Formatter(style=Terminal256Formatter(style=style).style))
+       print(highlight(etree.tostring(element, pretty_print=True), XmlLexer(), Terminal256Formatter(style=Terminal256Formatter(style=style).style)))
   # a list of string
   if all([isinstance(element, etree._ElementStringResult) for element in code]):
     print(code)
@@ -72,8 +72,8 @@ def printParameters(elements, parameters=None, style='monokai'):
   if parameters is not None and parameters['globals']['noColours']:
     pprint.pprint(elements)
   else:
-    print highlight(pprint.pformat(elements), PythonLexer(),
-                    Terminal256Formatter(style=Terminal256Formatter(style=style).style))
+    print(highlight(pprint.pformat(elements), PythonLexer(),
+                    Terminal256Formatter(style=Terminal256Formatter(style=style).style)))
 
 
 # -------------------------------------------------------------------------------------------------
@@ -247,13 +247,13 @@ def errorLanguageDefinition(code, parameters):
 
 @decorator
 def log_all_calls(function):
-  print 'function name:', function._func.__name__, ' arguments:', function._args
+  print('function name: ' + function._func.__name__ + ' arguments: ' + str(function._args))
   return function()
 
 
 @decorator
 def name_all_calls(function):
-  print 'function name:', function._func.__name__
+  print('function name:' + function._func.__name__)
   return function()
 
 
@@ -263,7 +263,7 @@ def time_all_calls(function):
   sys.stdout.write('<<<')
   sys.stdout.flush()
   result = function()
-  print 'function name:', function._func.__name__, 'execution time: ', time.time() - start, 'seconds>>>'
+  print('function name: ' + function._func.__name__ + 'execution time: ' + str(time.time() - start) + ' seconds>>>')
   return result
 
 

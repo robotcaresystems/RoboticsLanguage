@@ -49,7 +49,7 @@ def output(code, parameters):
                                    stderr=subprocess.STDOUT)
         process.wait()
     except Exception as e:
-      print e
+      print(e)
       # open HTML in different platforms
       if 'darwin' in sys.platform:
         Utilities.logger.error(
