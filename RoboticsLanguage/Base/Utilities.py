@@ -62,7 +62,7 @@ def printCode(code, parameters=None, style='monokai'):
      if parameters is not None and parameters['globals']['noColours']:
        print(etree.tostring(element, pretty_print=True))
      else:
-       print highlight(etree.tostring(element, pretty_print=True), XmlLexer(), Terminal256Formatter(style=Terminal256Formatter(style=style).style))
+       print(highlight(etree.tostring(element, pretty_print=True), XmlLexer(), Terminal256Formatter(style=Terminal256Formatter(style=style).style)))
   # a list of string
   if all([isinstance(element, etree._ElementStringResult) for element in code]):
     print(code)
@@ -72,8 +72,8 @@ def printParameters(elements, parameters=None, style='monokai'):
   if parameters is not None and parameters['globals']['noColours']:
     pprint.pprint(elements)
   else:
-    print highlight(pprint.pformat(elements), PythonLexer(),
-                    Terminal256Formatter(style=Terminal256Formatter(style=style).style))
+    print(highlight(pprint.pformat(elements), PythonLexer(),
+                    Terminal256Formatter(style=Terminal256Formatter(style=style).style)))
 
 
 # -------------------------------------------------------------------------------------------------
