@@ -25,6 +25,13 @@ from RoboticsLanguage.Base import Utilities
 
 def transform(code, parameters):
 
+
+  # look for all variables with an assign function
+  for variable, value in parameters['Transformers']['Base']['variables'].iteritems():
+    if 'assign' in value.keys():
+      for assignment in code.xpath('//assign/variable[@name="' + variable + '"]/..'):
+        assignment.attrib['assignFunction'] = 'true'
+
   # serialize for each output
   for language in Utilities.ensureList(parameters['globals']['output']):
     for xml_child in code.getchildren():

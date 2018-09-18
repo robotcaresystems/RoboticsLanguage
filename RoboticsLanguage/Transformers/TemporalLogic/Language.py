@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #
 #   This is the Robotics Language compiler
 #
@@ -20,11 +21,28 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
+from RoboticsLanguage.Base.Types import arguments, optional, returns
+
 language = {
 
     'eventually': {
+        'definition': {
+            'arguments': arguments('(real real boolean | boolean)'),
+            'returns': returns('boolean')
+        },
+        'input':
+        {
+            'RoL':
+            {
+                'alternatives': ['◇'],
+                'generic': ['◇[', '](', ')']
+            }
+        },
+
         'output':
         {
+            'RoL': '{% if children|length == 1 %}◇({{children[0]}}){% else %}◇[{{children[0]}},{{children[1]}}]({{children[2]}}){% endif %}',
+            'RosCpp': 'temporalLogic_{{attributes["TemporalLogicId"]}}()'
         },
         'localisation':
         {
@@ -33,12 +51,46 @@ language = {
     },
 
     'always': {
+        'definition': {
+            'arguments': arguments('(real real boolean | boolean)'),
+            'returns': returns('boolean')
+        },
+        'input':
+        {
+            'RoL':
+            {
+                'alternatives': ['□'],
+                'generic': ['□[', '](', ')']
+            }
+        },
         'output':
         {
+            'RoL': '{% if children|length == 1 %}□({{children[0]}}){% else %}□[{{children[0]}},{{children[1]}}]({{children[2]}}){% endif %}',
+            'RosCpp': 'temporalLogic_{{attributes["TemporalLogicId"]}}()'
         },
         'localisation':
         {
             'pt': 'sempre',
         },
+    },
+    'logiccode': {
+        'definition': {
+            'arguments': arguments('anything'),
+            'returns': returns('boolean')
+        },
+        'output':
+        {
+            'RosCpp': '{{text}}'
+        }
+    },
+    'null': {
+        'definition': {
+            'arguments': arguments('anything'),
+            'returns': returns('boolean')
+        },
+        'output':
+        {
+            'RosCpp': ''
+        }
     }
 }

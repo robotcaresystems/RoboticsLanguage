@@ -1,26 +1,26 @@
 <<<header->>>
 /*
- * Node name: {{parameters['node']['name']}}
+ * Node name: {{parameters.node.name}}
  *
  * Generated on: {{"%d %B, %Y"|todaysDate}}
- *       Author: {{parameters['Information']['user']['name']}}
- *      Licence: {{parameters['Information']['software']['license']}}
- *    Copyright: {{parameters['Information']['software']['copyright']}}
+ *       Author: {{parameters.Information.user.name}}
+ *      Licence: {{parameters.Information.software.license}}
+ *    Copyright: {{parameters.Information.software.copyright}}
  *
  *    THIS FILE WAS AUTOMATICALLY GENERATED USING THE ROBOTICS LANGUAGE
  *
  */
 
-#include "{{parameters['node']['name']|underscore}}/{{parameters['node']['name']|underscore}}.h"
+#include "{{parameters.node.name|underscore}}/{{parameters.node.name|underscore}}.h"
 
 /***************************************************************************************
-*       {{parameters['node']['name']|camelCase}}Class Definition
+*       {{parameters.node.name|camelCase}}Class Definition
 ****************************************************************************************/
-namespace {{parameters['node']['name']|underscore}}
+namespace {{parameters.node.name|underscore}}
 {
 
   /******************************* constructor *****************************************/
-  {{parameters['node']['name']|camelCase}}Class::{{parameters['node']['name']|camelCase}}Class():
+  {{parameters.node.name|camelCase}}Class::{{parameters.node.name|camelCase}}Class():
     nh_("~")
     <<<'classInitialisation'|group>>>
   {
@@ -28,7 +28,7 @@ namespace {{parameters['node']['name']|underscore}}
 
 
   /******************************* initialise ********************************************/
-  void {{parameters['node']['name']|camelCase}}Class::initialise()
+  void {{parameters.node.name|camelCase}}Class::initialise()
   {
     <<<'initialise'|group>>>
 
@@ -37,7 +37,7 @@ namespace {{parameters['node']['name']|underscore}}
   }
 
   /******************************* finalise ********************************************/
-  void {{parameters['node']['name']|camelCase}}Class::finalise()
+  void {{parameters.node.name|camelCase}}Class::finalise()
   {
     <<<'finalise'|group>>>
 
@@ -45,7 +45,7 @@ namespace {{parameters['node']['name']|underscore}}
   }
 
   /******************************* spin ************************************************/
-  void {{parameters['node']['name']|camelCase}}Class::spin()
+  void {{parameters.node.name|camelCase}}Class::spin()
   {
     // Sets the spin rate
     ros::Rate r({{code|xpath('/node')|option('rate')|attribute('RosCpp')}});
@@ -71,10 +71,10 @@ namespace {{parameters['node']['name']|underscore}}
 int main(int argc, char **argv)
 {
   // Initialize the node
-  ros::init(argc, argv, "{{parameters['node']['name']|underscore}}");
+  ros::init(argc, argv, "{{parameters.node.name|underscore}}");
 
   // Create the node object
-  {{parameters['node']['name']|underscore}}::{{parameters['node']['name']|camelCase}}Class instance;
+  {{parameters.node.name|underscore}}::{{parameters.node.name|camelCase}}Class instance;
 
   // initialise
   instance.initialise();

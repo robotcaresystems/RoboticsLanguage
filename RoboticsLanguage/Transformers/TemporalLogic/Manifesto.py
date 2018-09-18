@@ -22,6 +22,6 @@
 
 manifesto = {
   'packageName':'Temporal Logic',
-  'packageShortName':'tlogic',
-  'order':100
+  'packageShortName':'TemporalLogic',
+  'order': 200,
   }

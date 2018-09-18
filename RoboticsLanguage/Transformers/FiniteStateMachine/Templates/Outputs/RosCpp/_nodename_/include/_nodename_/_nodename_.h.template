@@ -9,7 +9,7 @@
 #include <exception>
 #include <functional>
 #include "FiniteStateMachine.h"
-{% if 'HTMLGUI' in parameters['globals']['output'] -%}
+{% if 'HTMLGUI' in parameters.globals.output -%}
 #include <std_msgs/String.h>
 {% endif %}
 {% endif %}
@@ -23,7 +23,7 @@
 
   FiniteStateMachine {{machine_name}} = FiniteStateMachine("{{machine_name}}");
 
-  {% if 'HTMLGUI' in parameters['globals']['output'] -%}
+  {% if 'HTMLGUI' in parameters.globals.output -%}
   // topics for interaction with the HTMLGUI
   ros::Publisher fsm_{{machine_name}}_publisher;
   ros::Subscriber fsm_{{machine_name}}_subscriber;

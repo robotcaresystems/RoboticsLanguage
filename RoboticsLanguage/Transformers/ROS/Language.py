@@ -20,21 +20,25 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-from RoboticsLanguage.Base.Types import optional
+from RoboticsLanguage.Base.Types import optional, arguments, returns
 
 # from RoboticsLanguage.Base.Types import singleString, singleReal, manyStrings, manyExpressions, manyCodeBlocks, codeBlock, anything, singleBoolean
 # from RoboticsLanguage.Base.Types import returnNothing, returnCodeBlock
 
 
 language = {
+    'RosType': {
+        'definition':
+        {'arguments': arguments('string'),
+         'returns': returns('rosType')}
+    },
 
     'Signals': {
         'definition': {
             'optional': {
                 'rosTopic': optional('string', ''),
                 'rosType': optional('string', ''),
-                # @REFACTOR currently defaults to bidirectional. Detect automatically?
-                'rosFlow': optional('string', 'bidirectional')
+                'rosFlow': optional('string', '')
             },
         },
     },

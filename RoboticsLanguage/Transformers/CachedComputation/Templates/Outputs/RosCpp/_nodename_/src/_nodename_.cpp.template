@@ -1,0 +1,51 @@
+
+{% set classInitialisation %}
+
+{% endset %}
+
+{% set initialise %}
+  {% for cache in code|xpaths('//*[@cacheId]') %}
+    caches_list.push_back(std::bind(&{{parameters.node.name|camelCase}}Class::cacheFunction_{{cache|attribute('cacheId')}}, this));
+  {% endfor %}
+{% endset %}
+
+{% set finalise %}
+
+{% endset %}
+
+{% set beforeSpin %}
+
+{% endset %}
+
+{% set afterSpin %}
+
+{% endset %}
+
+{% set functions %}
+
+  {% for cache in code|xpaths('//*[@cacheId]') %}
+    {% if cache|attribute('cacheClass') == "computation" %}
+    void {{parameters.node.name|camelCase}}Class::cacheFunction_{{cache|attribute('cacheId')}} ()
+    {
+        ROS_INFO_STREAM("Events: computation: {{cache|attribute('cacheId')}}");
+        {{cache|attribute('RosCpp')}};
+    }
+    {% endif %}
+
+    {% if cache|attribute('cacheClass') == "if" %}
+    void {{parameters.node.name|camelCase}}Class::cacheFunction_{{cache|attribute('cacheId')}} ()
+    {
+        ROS_INFO_STREAM("Events: if: {{cache|attribute('cacheId')}}");
+        if({{cache|children|first|attribute('RosCpp')}})
+        {
+          cacheFunction_{{cache|attribute('cacheTrue')}}();
+        }
+        else
+        {
+          cacheFunction_{{cache|attribute('cacheFalse')}}();
+        }
+    }
+    {% endif %}
+  {% endfor %}
+
+{% endset %}

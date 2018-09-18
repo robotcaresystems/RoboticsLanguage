@@ -20,9 +20,9 @@
     // Initial state
     {{machine_name}}.setInitialState("{{machine|xpath('fsm:initial/text()', {'fsm':'fsm'})}}");
 
-  {% if 'HTMLGUI' in parameters['globals']['output'] -%}
-    fsm_{{machine_name}}_publisher = nh_.advertise<std_msgs::String>("/finite_state_machine/{{parameters['node']['name']|underscore}}/{{machine_name}}/state",10);
-    fsm_{{machine_name}}_subscriber = nh_.subscribe("/finite_state_machine/{{parameters['node']['name']|underscore}}/{{machine_name}}/fire", 10, &{{parameters['node']['name']|camelCase}}Class::fsm_{{machine_name}}_callback, this);
+  {% if 'HTMLGUI' in parameters.globals.output -%}
+    fsm_{{machine_name}}_publisher = nh_.advertise<std_msgs::String>("/finite_state_machine/{{parameters.node.name|underscore}}/{{machine_name}}/state",10);
+    fsm_{{machine_name}}_subscriber = nh_.subscribe("/finite_state_machine/{{parameters.node.name|underscore}}/{{machine_name}}/fire", 10, &{{parameters.node.name|camelCase}}Class::fsm_{{machine_name}}_callback, this);
 
     {{machine_name}}.addStateFeedbackPublisher(&fsm_{{machine_name}}_publisher);
   {% endif %}
@@ -45,11 +45,11 @@
 
 {% set functions %}
 
-{% if 'HTMLGUI' in parameters['globals']['output'] -%}
+{% if 'HTMLGUI' in parameters.globals.output -%}
   {% for machine in code|xpaths('//fsm:machine', {'fsm':'fsm'}) -%}
     {% set machine_name = machine|xpath('fsm:name/text()', {'fsm':'fsm'})-%}
 
-  void {{parameters['node']['name']|camelCase}}Class::fsm_{{machine_name}}_callback(const std_msgs::String& message)
+  void {{parameters.node.name|camelCase}}Class::fsm_{{machine_name}}_callback(const std_msgs::String& message)
   {
     {{machine_name}}.fire(message.data);
   };

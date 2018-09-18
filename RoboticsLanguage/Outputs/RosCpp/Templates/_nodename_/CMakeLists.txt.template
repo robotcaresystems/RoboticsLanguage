@@ -1,12 +1,27 @@
 <<<header->>>
 cmake_minimum_required(VERSION 2.8.3)
-project({{parameters['node']['name']|underscore }})
+project({{parameters.node.name|underscore }})
 
 ## Find catkin and any catkin packages
 find_package(catkin REQUIRED COMPONENTS
     roscpp
     std_msgs
+    <<<'findPackage'|group>>>
 )
+
+{% if parameters.Transformers.ROS.addingNewMessages %}
+add_message_files(
+  FILES
+  <<<'addMessageFiles'|group>>>
+)
+
+generate_messages(
+   DEPENDENCIES
+   std_msgs
+   <<<'generateMessages'|group>>>
+)
+{% endif %}
+
 
 ## Declare a catkin package
 catkin_package(
@@ -14,6 +29,7 @@ catkin_package(
   CATKIN_DEPENDS
     roscpp
     std_msgs
+    <<<'catkinDepends'|group>>>
 )
 
 ###########
@@ -25,14 +41,15 @@ catkin_package(
 include_directories(include)
 include_directories(
   ${catkin_INCLUDE_DIRS}
+  <<<'includeDirectories'|group>>>
 )
 
-add_executable({{parameters['node']['name']|underscore}} src/{{parameters['node']['name']|underscore}}.cpp)
-target_link_libraries({{parameters['node']['name']|underscore}}  ${catkin_LIBRARIES})
-add_dependencies({{parameters['node']['name']|underscore}} ${catkin_EXPORTED_TARGETS})
+add_executable({{parameters.node.name|underscore}} src/{{parameters.node.name|underscore}}.cpp)
+target_link_libraries({{parameters.node.name|underscore}}  ${catkin_LIBRARIES})
+add_dependencies({{parameters.node.name|underscore}} ${catkin_EXPORTED_TARGETS})
 
 
-install(TARGETS {{parameters['node']['name']|underscore}}
+install(TARGETS {{parameters.node.name|underscore}}
         RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
@@ -43,3 +60,5 @@ install(DIRECTORY
 
 set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 set(CMAKE_CXX_FLAGS_RELEASE "-O2")
+
+<<<'extras'|group>>>

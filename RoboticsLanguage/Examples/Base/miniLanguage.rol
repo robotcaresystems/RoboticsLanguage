@@ -1,4 +1,0 @@
-node(
-  initialise:
-    RoLXML<{ <print><string>hello</string></print>  }>
-  )

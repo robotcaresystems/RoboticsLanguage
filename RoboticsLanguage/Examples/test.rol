@@ -1,4 +1,0 @@
-node(
-  name:'test',
-  initialise:print("hello", "world")
-)

@@ -80,13 +80,11 @@ def output(code, parameters):
                                       parameters['globals']['plugins'] + '/' + type):
         sys.exit(1)
 
-
       # make sure the path ~/.rol/plugins containts an __init__.py file
       try:
         subprocess.call(['touch', parameters['globals']['plugins']+'/__init__.py'])
       except:
         pass
-
 
       # create template code elements for transformers
       if type == 'Transformers':
@@ -118,6 +116,5 @@ def output(code, parameters):
                         Utilities.logger.debug('Wrote file ' + file_name)
 
       print('Created ' + type + ' plugin "' + filepatterns['name'] + '" in folder ' + parameters['globals']['plugins'] + '/' + type + '/' + filepatterns['name'])
-
 
   return 0

@@ -168,7 +168,10 @@ language = {
 
     'assign': {
         'output': {
-            'RosCpp': '{{children[0]}}{% if "assignDomain" in attributes %}{{attributes["assignFunction"]}}{% endif %} = {{children[1]}}',
+            'RosCpp': '{{attributes["preRosCpp"]}}{{children[0]}}{{attributes["preAssignRosCpp"]}}={{attributes["postAssignRosCpp"]}}{{children[1]}}{{attributes["postRosCpp"]}}'
+            # ,
+            #
+            # 'RosCpp2': '{% if "assignFunction" in attributes %}{{children[0]}}_assign({{children[1]}}){% else %}{{children[0]}}{% if "assignDomain" in attributes %}{{attributes["assignFunction"]}}{% endif %} = {{children[1]}}{% endif %}',
         },
     },
 
@@ -176,7 +179,7 @@ language = {
     'variable': {
         'output':
         {
-            'RosCpp': '{{attributes["name"]}}{% if "returnDomain" in attributes %}{{attributes["returnDomain"]}}{% endif %}',
+            'RosCpp': '{{attributes["name"]}}{% if "returnDomainRosCpp" in attributes %}{{attributes["returnDomainRosCpp"]}}{% endif %}',
         },
     },
 
@@ -191,6 +194,14 @@ language = {
         'output':
         {
             'RosCpp': '{{";\n".join(children)}}'
+        },
+    },
+
+
+    'RosType': {
+        'output':
+        {
+            'RosCpp': '{{code.getchildren()[0].text|replace("/","::")}}'
         },
     },
 

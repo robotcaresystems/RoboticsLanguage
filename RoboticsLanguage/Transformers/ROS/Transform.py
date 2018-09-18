@@ -20,14 +20,18 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-from Tools import Topics
+from Tools import Topics, Types
 
 def transform(code, parameters):
 
   # make sure RosCpp is part of the output
   if any(x in parameters['globals']['output'] for x in ['RosCpp', 'HTMLGUI']):
 
+    # Types
+    code, parameters = Types.process(code, parameters)
+
     # Topics
-    code, parameters = Topics.processTopics(code, parameters)
+    code, parameters = Topics.process(code, parameters)
+
 
   return code, parameters

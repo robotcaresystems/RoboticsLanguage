@@ -1,12 +1,12 @@
-<<<header->>>
 <!DOCTYPE html>
+<<<header->>>
 <!--
- * Node name: {{parameters['node']['name']}}
+ * Node name: {{parameters.node.name}}
  *
  * Generated on: {{"%d %B, %Y"|todaysDate}}
- *       Author: {{parameters['Information']['user']['name']}}
- *      Licence: {{parameters['Information']['software']['license']}}
- *    Copyright: {{parameters['Information']['software']['copyright']}}
+ *       Author: {{parameters.Information.user.name}}
+ *      Licence: {{parameters.Information.software.license}}
+ *    Copyright: {{parameters.Information.software.copyright}}
  *
  *    THIS FILE WAS AUTOMATICALLY GENERATED USING THE ROBOTICS LANGUAGE
  -->
@@ -24,12 +24,24 @@
 
   <<<'head'|group>>>
 
+  <script type="text/javascript">
+
+  // before page loads
+  <<<'beforeLoad'|group>>>
+
+  // after page loads
+  $(function() {
+    <<<'afterLoad'|group>>>
+  });
+
+  </script>
+
 </head>
 
 <!-- THIS IS THE HTML PART -->
 <body>
   <div class="ui container">
-  <h1> {{parameters['node']['name']}} </h1>
+  <h1> {{parameters.node.name}} </h1>
 
     <<<'body'|group>>>
 

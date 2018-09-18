@@ -1,0 +1,30 @@
+node(
+  name:"example events",
+
+  definitions: block(
+
+    state ∈ Signals(Strings, rosTopic:'/test/state'),
+    x ∈ Signals(Reals, rosTopic:'/test/x'),
+    y ∈ Signals(Reals, rosTopic:'/test/y'),
+    z ∈ Reals
+  ),
+
+  events: [
+    when(state == 'idle',
+      when( x > 1,
+        y = x),
+      when( x < 1,
+        y = -x),
+      z = y
+    ),
+
+    when(state == 'stop',
+      when( x > 1,
+        y = x+1),
+      when( x < 1,
+        y = 1-x),
+      z = y+1
+    )
+
+  ]
+)

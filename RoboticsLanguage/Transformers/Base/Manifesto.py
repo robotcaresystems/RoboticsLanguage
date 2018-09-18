@@ -21,7 +21,7 @@
 #   limitations under the License.
 
 manifesto = {
-  'packageName':'Base',
-  'packageShortName':'base',
-  'order':0
-  }
+    'packageName': 'Base',
+    'packageShortName': 'base',
+    'order': 0
+}

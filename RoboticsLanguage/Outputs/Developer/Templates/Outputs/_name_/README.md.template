@@ -1,1 +1,1 @@
-# Output module {{parameters['Outputs']['Developer']['create']['Outputs']}}
+# Output module {{parameters.Outputs.Developer.create.Outputs}}

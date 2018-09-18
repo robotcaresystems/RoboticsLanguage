@@ -1,1 +1,1 @@
-# Transformer module {{parameters['Outputs']['Developer']['create']['Transformers']}}
+# Transformer module {{parameters.Outputs.Developer.create.Transformers}}

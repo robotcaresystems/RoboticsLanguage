@@ -15,6 +15,8 @@ parameters = {
 
 command_line_flags = {
     'ignoreSemanticErrors': {
-        'longFlag': 'ignore-semantic-errors'
-    }
+        'longFlag': 'ignore-semantic-errors',
+        'noArgument': True,
+        'description': 'Ignores the semantic errors and attempts to generate code. Result may not compile.'
+    },
 }

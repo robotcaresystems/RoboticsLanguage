@@ -1,0 +1,24 @@
+node(
+  name:'example temporal logic',
+
+  definitions: block(
+    # a signal
+    x ∈ Signals(Reals, rosTopic:'/temporal_logic/x'),
+
+    y ∈ Signals(Reals, rosTopic:'/temporal_logic/y'),
+
+    z ∈ Signals(Booleans, rosTopic:'/temporal_logic/z')
+
+  ),
+
+  initialise: block(
+    if( □[0,1](¬◇[1,2](z or ◇[0,1](x > y))),
+        print('x positive')
+      )
+    ,
+
+    if(◇(x == 0),
+      print('x = 0')
+      )
+    )
+)

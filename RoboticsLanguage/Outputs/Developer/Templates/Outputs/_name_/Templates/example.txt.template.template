@@ -1,7 +1,7 @@
 Examples:
 
 Information of the developer:
- - Author: {{parameters['Information']['user']['name']}}
+ - Author: {{parameters.Information.user.name}}
 
 Name of first tag of the code:
  - Tag: {{code.tag}}

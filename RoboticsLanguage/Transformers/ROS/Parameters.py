@@ -21,7 +21,10 @@
 #   limitations under the License.
 
 
+parameters = {
+    'addingNewMessages': False
+}
 
-parameters = {}
-
-command_line_flags = {}
+command_line_flags = {
+    'addingNewMessages': {'suppress': True},
+}

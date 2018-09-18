@@ -1,0 +1,64 @@
+node(
+  name:"example types",
+
+  definitions:block(
+
+    # The type is defined as a real number that translates to a rostype of Float32 by default
+    x ∈ Signals(Reals(bits:64),
+      rosTopic:'/test/x',
+      rosFlow:'incoming'),
+
+      x1 ∈ Signals(Reals(bits:64),
+        rosTopic:'/test/x',
+        rosFlow:'incoming'),
+
+    # The type is an explicit ROS type
+    y ∈ Signals(
+      rosType:'std_msgs/Float64',
+      rosTopic:'/test/y',
+      rosFlow:'incoming')
+      ,
+      # The type is an explicit ROS type
+      y1 ∈ Signals(
+        rosType:'std_msgs/Float64',
+        rosTopic:'/test/y',
+        rosFlow:'incoming')
+        ,
+
+    # The type is an explicit ROS type
+    z ∈ Signals(
+      rosType:'geometry_msgs/Pose',
+      rosTopic:'/test/z',
+      rosFlow:'incoming'
+      ),
+
+      w ∈ Signals(
+        rosType:'geometry_msgs/Pose',
+        rosTopic:'/test/z',
+        rosFlow:'incoming'
+        )#,
+
+
+    # w ∈ Signals(Reals)
+
+    ),
+  initialise:block(
+
+    x = x1,
+    x = y.data,
+    y = y1,
+    y.data = x,
+    z= w,
+
+    # x can be used directly as a real number
+    x = 4,
+    #w = 1,
+
+    # y has to be used as a rosType
+    #y['data'] = 4,
+    y.data = 5,
+
+    # z can be accessed as a class
+    z.position.x = 5
+  )
+)
