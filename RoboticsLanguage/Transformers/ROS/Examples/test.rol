@@ -7,7 +7,6 @@ node(
     x1 ∈ Signals(Reals(bits:64), rosTopic:'/test/x1'),
     x2 ∈ Signals(Reals(bits:64), rosTopic:'/test/x2'),
     x3 ∈ Reals(bits:64),
-    x4 ∈ Signals(Reals(bits:64)),
 
 
     # The type is an explicit ROS type
@@ -26,15 +25,9 @@ node(
     x1 = 3.4,
     x1 = x2,
     x1 = x3,
-    x1 = x4,
 
     x3 = 3.5,
     x3 = x1,
-    x3 = x4,
-
-    x4 = 3.5,
-    x4 = x1,
-    x4 = x3,
 
 
     y1.data = 3.3,

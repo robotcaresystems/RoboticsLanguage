@@ -13,45 +13,4 @@
   }
   {% endfor -%}
 
-  {# Assign Functions #################################### #}
-  {% for variable, value in parameters.Transformers.Base.variables.iteritems() %}
-  {% if value.assign is defined %}
-    {# get the type #}
-    {% if value.type is defined %}
-      {% set variable_type = value.type %}
-    {% else %}
-      {# it is not explicitely defined, so try to find it #}
-      {% if value.definition.tag == 'Signals' %}
-        {% set variable_type = value.definition.getchildren()[0]|attribute('RosCpp') %}
-      {% else %}
-        {% set variable_type = value.definition|attribute('RosCpp') %}
-      {% endif %}
-    {% endif %}
-
-    void {{parameters.node.name|camelCase}}Class::{{variable}}_assign({{variable_type}} {{variable}}_value)
-    {
-
-      {% if value.assign.pre is defined %}
-      {% if value.assign.pre.RosCpp is defined %}
-      {% for instructions in value.assign.pre.RosCpp %}
-      {{instructions}};
-      {% endfor %}
-      {% endif %}
-      {% endif %}
-
-      {{variable}} = {{variable}}_value;
-
-      {% if value.assign.post is defined %}
-      {% if value.assign.post.RosCpp is defined %}
-      {% for instructions in value.assign.post.RosCpp %}
-      {{instructions}};
-      {% endfor %}
-      {% endif %}
-      {% endif %}
-    }
-  {% endif %}
-  {% endfor %}
-
-
-
 {% endset %}

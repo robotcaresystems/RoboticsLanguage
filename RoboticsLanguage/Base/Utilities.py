@@ -733,6 +733,15 @@ def getTextMinimumPositionXML(xml):
   else:
     return min(min(childrens_minimum), minimum)
 
+def getFirstParent(code, parent_name):
+  try:
+    if code.getparent().tag == parent_name:
+      return code.getparent()
+    else:
+      return getFirstParent(code.getparent(), parent_name)
+  except:
+    return None
+
 # -------------------------------------------------------------------------------------------------
 #  Other utilities
 # -------------------------------------------------------------------------------------------------
