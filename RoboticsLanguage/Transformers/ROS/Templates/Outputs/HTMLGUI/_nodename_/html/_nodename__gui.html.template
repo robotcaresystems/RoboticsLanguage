@@ -44,7 +44,7 @@
     // dictionary of topic_plots for numeric type signals
     var topic_plots = {
       {% for topic in parameters|dpath('/Transformers/ROS/topicDefinitions') -%}
-        {% if 'std_msgs::Float' in topic.ros_type or 'std_msgs::Integer' in topic.ros_type -%}
+        {% if 'std_msgs::Float' in topic.ros_type or 'std_msgs::Int' in topic.ros_type or 'std_msgs::UInt' in topic.ros_type %}
             '{{topic.topic_name|underscore}}':false,
         {% endif -%}
       {% endfor -%}
@@ -97,7 +97,7 @@
 
           // create a ROS message
           var message = new ROSLIB.Message({
-            {% if 'std_msgs::Float' in topic.ros_type or 'std_msgs::Integer' in topic.ros_type %}
+            {% if 'std_msgs::Float' in topic.ros_type or 'std_msgs::Int' in topic.ros_type or 'std_msgs::UInt' in topic.ros_type %}
               data : parseFloat($('#ros_topics_input_{{topic.topic_name|underscore}}').val())
             {% else %}
               data : $('#ros_topics_input_{{topic.topic_name|underscore}}').val()
@@ -112,7 +112,7 @@
       // subscribe function
       topic_{{topic.topic_name|underscore}}.subscribe(function(message) {
 
-        {% if 'std_msgs::Float' in topic.ros_type or 'std_msgs::Integer' in topic.ros_type %}
+        {% if 'std_msgs::Float' in topic.ros_type or 'std_msgs::Int' in topic.ros_type or 'std_msgs::UInt' in topic.ros_type %}
         // numeric type
 
         // prepare the topic_plot_data
@@ -224,7 +224,7 @@
         </div>
       {% endif %}
 
-      {% if 'std_msgs::Float' in topic.ros_type or 'std_msgs::Integer' in topic.ros_type %}
+      {% if 'std_msgs::Float' in topic.ros_type or 'std_msgs::Int' in topic.ros_type or 'std_msgs::UInt' in topic.ros_type %}
         <!-- numeric topic  -->
         <div class="ui segment">
           <div id="ros_topics_plot_{{topic.topic_name|underscore}}"></div>
