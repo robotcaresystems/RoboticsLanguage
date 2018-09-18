@@ -45,10 +45,10 @@
        {% endif -%}
 
 
-       {% if parameters.Transformers.Base.assign is defined %}
-       {% if parameters.Transformers.Base.assign[topic.variable].pre is defined %}
-       /* run pre precessing instructions */
-         {% for instructions in parameters.Transformers.Base.assign[topic.variable].pre.RosCpp %}
+       {% if parameters.Transformers.Base.variables[topic.variable].assign is defined %}
+       {% if parameters.Transformers.Base.variables[topic.variable].assign.pre is defined %}
+       /* run  pre-processing instructions */
+         {% for instructions in parameters.Transformers.Base.variables[topic.variable].assign.pre.RosCpp %}
          {{instructions}};
          {% endfor %}
        {% endif %}
@@ -57,10 +57,10 @@
        /* Cache a copy of this signal inside the class */
        {{topic.variable}} = message;
 
-       {% if parameters.Transformers.Base.assign is defined %}
-       {% if parameters.Transformers.Base.assign[topic.variable].post.RosCpp is defined %}
-       /* run post precessing instructions */
-         {% for instructions in parameters.Transformers.Base.assign[topic.variable].post.RosCpp %}
+       {% if parameters.Transformers.Base.variables[topic.variable].assign is defined %}
+       {% if parameters.Transformers.Base.variables[topic.variable].assign.post is defined %}
+       /* run post-processing instructions */
+         {% for instructions in parameters.Transformers.Base.variables[topic.variable].assign.post.RosCpp %}
          {{instructions}};
          {% endfor %}
        {% endif %}
