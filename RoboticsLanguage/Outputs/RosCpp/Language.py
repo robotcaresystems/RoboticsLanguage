@@ -32,21 +32,21 @@ language = {
     'Reals': {
         'output':
         {
-            'RosCpp': '{% if "option" in childrenTags %}{% if option(code,"bits").text == "64"%}double{% else %}float{% endif %}{% else %}float{% endif %}',
+            'RosCpp': '{% if "bits" in options %}{% if options["bits"] == "64"%}double{% else %}float{% endif %}{% else %}float{% endif %}',
         },
     },
 
     'Integers': {
         'output':
         {
-            'RosCpp': 'int{% if "option" in childrenTags %}{{option(code,"bits").text}}{% else %}32{% endif %}_t',
+            'RosCpp': 'int{% if "bits" in options %}{{options["bits"]}}{% else %}32{% endif %}_t',
         },
     },
 
     'Naturals': {
         'output':
         {
-            'RosCpp': 'uint{% if "option" in childrenTags %}{{option(code,"bits").text}}{% else %}32{% endif %}_t',
+            'RosCpp': 'uint{% if "bits" in options %}{{options["bits"]}}{% else %}32{% endif %}_t',
         },
     },
 
