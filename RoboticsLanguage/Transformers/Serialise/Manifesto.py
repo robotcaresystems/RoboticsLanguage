@@ -21,7 +21,8 @@
 #   limitations under the License.
 
 manifesto = {
-  'packageName':'Serialise',
-  'packageShortName':'Serialise',
-  'order': 10000000,
-  }
+    'packageName': 'Serialise',
+    'packageShortName': 'Serialise',
+    'order': 10000000,
+    'version': '0.0.1'
+}

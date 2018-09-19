@@ -23,5 +23,6 @@
 manifesto = {
     'packageName': 'Developer',
     'packageShortName': 'developer',
-    'requiresCode': False
+    'requiresCode': False,
+    'version': '0.0.1'
 }

@@ -9,7 +9,8 @@
 #    Copyright: {{parameters.Information.software.copyright}}
 #
 manifesto = {
-  'packageName':'{{parameters.Outputs.Developer.create.Inputs}}',
-  'packageShortName':'{{parameters.Outputs.Developer.create.Inputs|camelCase}}',
+  'packageName': '{{parameters.Outputs.Developer.create.Inputs}}',
+  'packageShortName': '{{parameters.Outputs.Developer.create.Inputs|camelCase}}',
   'fileFormat': '{{parameters.Outputs.Developer.create.Inputs|initials|lower}}',
-  }
+  'version': '0.0.1'
+}

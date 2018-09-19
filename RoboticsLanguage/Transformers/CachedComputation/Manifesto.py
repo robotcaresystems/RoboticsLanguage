@@ -12,4 +12,5 @@ manifesto = {
     'packageName': 'Cached Computation',
     'packageShortName': 'CachedComputation',
     'order': 10,
+    'version': '0.0.1'
 }

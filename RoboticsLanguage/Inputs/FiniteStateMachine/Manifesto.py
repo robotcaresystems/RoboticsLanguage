@@ -24,4 +24,5 @@ manifesto = {
     'packageName': 'Finite State Machine',
     'packageShortName': 'FiniteStateMachine',
     'fileFormat': 'fsm',
+    'version': '0.0.1'
 }

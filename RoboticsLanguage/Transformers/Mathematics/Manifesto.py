@@ -21,7 +21,8 @@
 #   limitations under the License.
 
 manifesto = {
-  'packageName':'Mathematics',
-  'packageShortName':'math',
-  'order':100
-  }
+    'packageName': 'Mathematics',
+    'packageShortName': 'math',
+    'order': 100,
+    'version': '0.0.1'
+}

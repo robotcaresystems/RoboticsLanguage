@@ -23,5 +23,6 @@
 manifesto = {
     'packageName': 'Base',
     'packageShortName': 'base',
-    'order': 0
+    'order': 0,
+    'version': '0.0.1'
 }

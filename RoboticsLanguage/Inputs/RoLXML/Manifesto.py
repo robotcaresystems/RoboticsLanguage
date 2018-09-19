@@ -21,7 +21,8 @@
 #   limitations under the License.
 
 manifesto = {
-  'packageName':'Robotics Language XML',
-  'packageShortName':'RoLXML',
-  'fileFormat': 'xml',
-  }
+    'packageName': 'Robotics Language XML',
+    'packageShortName': 'RoLXML',
+    'fileFormat': 'xml',
+    'version': '0.0.1'
+}

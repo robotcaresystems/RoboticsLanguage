@@ -21,6 +21,7 @@
 #   limitations under the License.
 
 manifesto = {
-  'packageName':'ROS c++',
-  'packageShortName':'roscpp',
-  }
+    'packageName': 'ROS c++',
+    'packageShortName': 'roscpp',
+    'version': '0.0.1'
+}

@@ -21,7 +21,8 @@
 #   limitations under the License.
 
 manifesto = {
-  'packageName':'ROS',
-  'packageShortName':'ros',
-  'order':10
-  }
+    'packageName': 'ROS',
+    'packageShortName': 'ros',
+    'order': 10,
+    'version': '0.0.1'
+}
