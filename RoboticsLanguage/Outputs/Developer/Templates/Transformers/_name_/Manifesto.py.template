@@ -12,5 +12,5 @@ manifesto = {
   'packageName': '{{parameters.Outputs.Developer.create.Transformers}}',
   'packageShortName': '{{parameters.Outputs.Developer.create.Transformers|camelCase}}',
   'order': 100,
-  'version': '0.0.1'
+  'version': '0.0.0'
 }

@@ -11,5 +11,5 @@
 manifesto = {
   'packageName': '{{parameters.Outputs.Developer.create.Outputs}}',
   'packageShortName': '{{parameters.Outputs.Developer.create.Outputs|camelCase}}',
-  'version': '0.0.1'
+  'version': '0.0.0'
 }
