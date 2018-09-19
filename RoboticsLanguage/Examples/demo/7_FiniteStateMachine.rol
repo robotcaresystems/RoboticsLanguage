@@ -1,6 +1,6 @@
 # A finite state machine
 node(
-  name:'example state machine 1',
+  name:'example state machine A',
   rate:25,
   definitions: block(
 
