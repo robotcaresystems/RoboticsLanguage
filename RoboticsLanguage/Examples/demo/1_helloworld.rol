@@ -1,0 +1,4 @@
+node(
+  name:"hello world",
+  initialise:print("hello world!")
+)
