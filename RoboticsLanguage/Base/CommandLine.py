@@ -130,7 +130,8 @@ def checkSpecialCommandLineArguments(command_line_parameters, parameters):
     for key, value in parameters['manifesto'].iteritems():
       print key + ':'
       for item, content in value.iteritems():
-        print '  ' + item + ' (' + content['version'] + ')'
+        extra = ' *' if parameters['globals']['plugins'] in content['path'] else ''
+        print '  ' + item + ' (' + content['version'] + ')' + extra
 
 
 
