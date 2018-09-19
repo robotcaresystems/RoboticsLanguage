@@ -99,6 +99,13 @@ language = {
         },
     },
 
+    'cpp': {
+        'output':
+        {
+            'RosCpp': '{{text}}',
+        },
+    },
+
     'real': {
         'output':
         {

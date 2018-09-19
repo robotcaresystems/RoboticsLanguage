@@ -1,5 +1,14 @@
 node(
   name:"example mini language",
-  initialise:
-    RoLXML<{ <print><string>hello</string></print>  }>
+  initialise: block(
+
+    RoLXML<{ <print><string>hello</string></print>  }>,
+
+    Cpp<{ ROS_INFO("Hello again"); }>
+    
+    )
+
+
+
+
   )
