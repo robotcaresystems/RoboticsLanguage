@@ -124,6 +124,16 @@ def checkSpecialCommandLineArguments(command_line_parameters, parameters):
     import pkg_resources
     print('The Robotics Language version: ' + pkg_resources.get_distribution('RoboticsLanguage').version)
 
+  if '--info' in command_line_parameters:
+    import pkg_resources
+    print('The Robotics Language version: ' + pkg_resources.get_distribution('RoboticsLanguage').version)
+    for key, value in parameters['manifesto'].iteritems():
+      print key + ':'
+      for item, content in value.iteritems():
+        extra = ' *' if parameters['globals']['plugins'] in content['path'] else ''
+        print '  ' + item + ' (' + content['version'] + ')' + extra
+
+
 
 def runCommandLineParser(parameters, arguments, flags, file_formats, file_package_name, command_line_arguments):
 

@@ -21,7 +21,8 @@
 #   limitations under the License.
 
 manifesto = {
-  'packageName':'Temporal Logic',
-  'packageShortName':'TemporalLogic',
-  'order': 200,
-  }
+    'packageName': 'Temporal Logic',
+    'packageShortName': 'TemporalLogic',
+    'order': 200,
+    'version': '0.0.1'
+}

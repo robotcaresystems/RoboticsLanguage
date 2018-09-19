@@ -21,6 +21,7 @@
 #   limitations under the License.
 
 manifesto = {
-  'packageName':'HTML Graphical User Interface',
-  'packageShortName':'htmlgui',
-  }
+    'packageName': 'HTML Graphical User Interface',
+    'packageShortName': 'htmlgui',
+    'version': '0.0.1'
+}

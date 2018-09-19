@@ -1,0 +1,21 @@
+# A finite state machine
+node(
+  name:'example state machine A',
+  rate:25,
+  definitions: block(
+
+    # a mini-language: code is defined within `<{ }>`
+    FiniteStateMachine<{
+
+        name:machine
+        initial:idle
+
+        (idle) -start-> (running) -stop-> (idle)
+
+      }>,
+
+    # a fire signal
+    fire ∈ Signals(Strings, rosTopic:'/fire', onNew: machine.fire(fire))
+
+  )
+)

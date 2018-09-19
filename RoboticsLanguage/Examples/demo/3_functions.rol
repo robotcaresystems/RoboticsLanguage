@@ -1,0 +1,59 @@
+node(
+  name:"example functions",
+  definitions: block(
+
+    # one can use mathematical symbols
+    x ∈ ℤ = 1,
+
+    # use normal text
+    y in Integers = 2,
+
+    # or use the function definition
+    assign(element(z,Integers),3),
+
+    # a string
+    s in Strings = "Hello",
+
+    # a function with a single argument
+    define testB(x ∈ ℝ) -> ℝ:
+      return(x+1),
+
+    # a function that does not return
+    define testC(x ∈ Strings):
+      print(x),
+
+    # a function with optional arguments
+    define test_1(x ∈ ℤ, y ∈ ℤ, z ∈ ℤ = 1) -> ℤ:
+      return(x+y+z),
+
+    # a function without arguments and no return
+    define testD():
+      block(
+        print("Test D"),
+        print("Works")
+      ),
+
+    # a function that returns multiple parameters
+    define testE(x ∈ ℤ, y ∈ ℤ) -> (ℤ, ℤ):
+      return(y,x)
+  ),
+
+  initialise: block(
+
+    x = test_1(x,y,z),
+    x = test_1(x,y),
+
+    testB(3),
+
+    testC(s),
+    testC("Test C"),
+
+    testD(),
+
+    {x, y} = testE(1,2),
+
+    print(x),
+    print(y)
+
+  )
+)

@@ -9,7 +9,8 @@
 #    Copyright: copyright
 #
 manifesto = {
-  'packageName':'Type Checking',
-  'packageShortName':'TypeChecking',
-  'order': 10,
-  }
+    'packageName': 'Type Checking',
+    'packageShortName': 'TypeChecking',
+    'order': 10,
+    'version': '0.0.1'
+}

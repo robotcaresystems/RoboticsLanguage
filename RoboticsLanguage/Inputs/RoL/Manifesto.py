@@ -24,4 +24,5 @@ manifesto = {
     'packageName': 'Robotics Language',
     'packageShortName': 'RoL',
     'fileFormat': 'rol',
+    'version': '0.0.1'
 }

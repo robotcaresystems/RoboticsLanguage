@@ -21,6 +21,7 @@
 #   limitations under the License.
 
 manifesto = {
-  'packageName':'HTML Documentation',
-  'packageShortName':'htmldoc',
-  }
+    'packageName': 'HTML Documentation',
+    'packageShortName': 'htmldoc',
+    'version': '0.0.1'
+}

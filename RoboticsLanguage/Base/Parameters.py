@@ -54,6 +54,7 @@ parameters = {
         'stepGroup': '',
         'stepName': '',
         'stop': False,
+        'info': False,
         'skip': '',
         'ignoreErrors': False,
         'intermediateTemplates': False,
@@ -110,6 +111,12 @@ parameters = {
 }
 
 command_line_flags = {
+    'developer:info': {
+        'noArgument': True,
+        'longFlag': 'info',
+        'fileNotNeeded': True,
+        'description': 'Shows Rol and package information'
+    },
     'developer:code': {
         'noArgument': True,
         'flag':'x',
