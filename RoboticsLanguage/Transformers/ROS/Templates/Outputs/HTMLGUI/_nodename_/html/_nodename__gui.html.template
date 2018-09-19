@@ -133,6 +133,9 @@
         // string type
         $('#ros_topics_string_{{topic.topic_name|underscore}}').html($('#ros_topics_string_{{topic.topic_name|underscore}}').html() + '\n' + message.data)
 
+        var textarea = document.getElementById('ros_topics_string_{{topic.topic_name|underscore}}');
+        textarea.scrollTop = textarea.scrollHeight;
+
         // trim text if necessary
         if (message.data.length > topic_max_string_length)
         {
