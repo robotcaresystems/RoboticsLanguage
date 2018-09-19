@@ -46,6 +46,9 @@ def prepareParameters():
   # start by loading default parameters
   parameters = Parameters.parameters
 
+  # add plugins folder to python path
+  sys.path.append(parameters['globals']['plugins']+'/../')
+
   # define initial classes of parameters
   manifesto = {'Inputs': {}, 'Outputs': {}, 'Transformers': {}}
   parameters['Inputs'] = {}
