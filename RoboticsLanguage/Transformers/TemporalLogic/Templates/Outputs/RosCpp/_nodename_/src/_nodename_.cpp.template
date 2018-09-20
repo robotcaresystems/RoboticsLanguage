@@ -42,15 +42,17 @@
 
     {% endif %}
 
-    {% if parameters.globals.debug %}
-      // DEBUG: initialising signals for temporal logic expressions
+    {% if 'HTMLGUI' in parameters.globals.output %}
+      // HTMLGUI: initialising signals for temporal logic expressions
       {% for item in TemporalOperators|ensureList -%}
           {% if item.type=='alwaysInterval' or item.type=='eventuallyInterval' -%}
-              sig_debug_{{item.name|underscore}}handle_out_= nh_.advertise<std_msgs::Int16MultiArray>("/temporal_logic/{{parameters.node.name|underscore}}/{{item.name|underscore}}", 1, true);
-              sig_debug_{{item.name|underscore}}.data.resize(2*sizeof(std_msgs::Int16MultiArray));
-              sig_debug_{{item.name|underscore}}.data[0]=0;
-              sig_debug_{{item.name|underscore}}.data[1]=0;
-              sig_debug_{{item.name|underscore}}handle_out_.publish(sig_debug_{{item.name|underscore}});
+              sig_temporal_logic_gui_{{item.name|underscore}}handle_out_= nh_.advertise<std_msgs::Int16MultiArray>("/temporal_logic/{{parameters.node.name|underscore}}/{{item.name|underscore}}", 1, true);
+              sig_temporal_logic_gui_{{item.name|underscore}}.data.resize(4);
+              sig_temporal_logic_gui_{{item.name|underscore}}.data[0]=0;
+              sig_temporal_logic_gui_{{item.name|underscore}}.data[1]=0;
+              sig_temporal_logic_gui_{{item.name|underscore}}.data[2]=0;
+              sig_temporal_logic_gui_{{item.name|underscore}}.data[3]=0;
+              sig_temporal_logic_gui_{{item.name|underscore}}handle_out_.publish(sig_temporal_logic_gui_{{item.name|underscore}});
           {% endif -%}
       {% endfor -%}
     {% endif %}
@@ -162,13 +164,15 @@
 
               // set the outcome of the interval temporal logic operator
               {{logic.name}} = test && rise;
-    {# --------------------------  DEBUG ------------------------------------ #}
+    {# --------------------------  HTMLGUI ------------------------------------ #}
           {% endif -%}
-            {% if parameters.globals.debug %}
-            // DEBUG: publish interval temporal logic state
-            sig_debug_{{logic.name|underscore}}.data[0] = (condition_ ? 1 : 0);
-            sig_debug_{{logic.name|underscore}}.data[1] = ({{logic.name}} ? 1 : 0);
-            sig_debug_{{logic.name|underscore}}handle_out_.publish(sig_debug_{{logic.name|underscore}});
+            {% if 'HTMLGUI' in parameters.globals.output %}
+            // HTMLGUI: publish interval temporal logic state
+            sig_temporal_logic_gui_{{logic.name|underscore}}.data[0] = (condition_ ? 1 : 0);
+            sig_temporal_logic_gui_{{logic.name|underscore}}.data[1] = ({{logic.name}} ? 1 : 0);
+            sig_temporal_logic_gui_{{logic.name|underscore}}.data[2] = {{logic.min}};
+            sig_temporal_logic_gui_{{logic.name|underscore}}.data[3] = {{logic.max}};
+            sig_temporal_logic_gui_{{logic.name|underscore}}handle_out_.publish(sig_temporal_logic_gui_{{logic.name|underscore}});
             {% endif %}
     {# --------------------------  Interval logic: Eventually, min=0 ------------------------------------ #}
     {% elif logic.type=='eventuallyInterval' -%}
@@ -244,12 +248,14 @@
                     // set the outcome of the interval temporal logic operator
                     {{logic.name}} = test || rise;
           {% endif -%}
-    {# --------------------------  DEBUG ------------------------------------ #}
-              {% if parameters.globals.debug %}
-              // DEBUG: publish interval temporal logic state
-               sig_debug_{{logic.name|underscore}}.data[0] = (condition_ ? 1 : 0);
-               sig_debug_{{logic.name|underscore}}.data[1] = ({{logic.name}} ? 1 : 0);
-               sig_debug_{{logic.name|underscore}}handle_out_.publish(sig_debug_{{logic.name|underscore}});
+    {# --------------------------  HTMLGUI ------------------------------------ #}
+              {% if 'HTMLGUI' in parameters.globals.output %}
+                // HTMLGUI: publish interval temporal logic state
+                sig_temporal_logic_gui_{{logic.name|underscore}}.data[0] = (condition_ ? 1 : 0);
+                sig_temporal_logic_gui_{{logic.name|underscore}}.data[1] = ({{logic.name}} ? 1 : 0);
+                sig_temporal_logic_gui_{{logic.name|underscore}}.data[2] = {{logic.min}};
+                sig_temporal_logic_gui_{{logic.name|underscore}}.data[3] = {{logic.max}};
+               sig_temporal_logic_gui_{{logic.name|underscore}}handle_out_.publish(sig_temporal_logic_gui_{{logic.name|underscore}});
              {% endif %}
 
        {% endif -%}
@@ -259,7 +265,7 @@
     void {{parameters.node.name|camelCase}}Class::logic{{logic.name|camelCase}}TimerCB(const ros::TimerEvent& e)
     {
       {% if parameters.globals.debug -%}
-          // DEBUG:
+          // HTMLGUI:
           ROS_INFO("Timer Callback: {{logic.name}}");
       {% endif -%}
       {% for signal in logic.variables|ensureList -%}

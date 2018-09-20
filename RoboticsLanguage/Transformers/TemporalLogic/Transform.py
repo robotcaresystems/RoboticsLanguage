@@ -51,7 +51,8 @@ def processTemporalOperators(code, parameters, list_of_logic, logic_id_counter):
 
     # also find all signal dependencies of cascated temporal logic
     # operators
-    all_previous_variables = ','.join(logic.xpath('.//null/@variables'))
+    all_previous_variables = ','.join(logic.xpath(
+        './/always/@temporalLogicVariables|.//eventually/@temporalLogicVariables'))
 
     # add all variables
     all_variables = all_variables + all_previous_variables.split(',')
@@ -74,7 +75,8 @@ def processTemporalOperators(code, parameters, list_of_logic, logic_id_counter):
 
     definition = {'type': logic_type,
                   'name': logic_name,
-                  'variables': all_variables}
+                  'variables': all_variables,
+                  'id': logic_id_counter}
 
     # replace the xml by serialised code
     if definition['type'] == 'alwaysInterval' or definition['type'] == 'eventuallyInterval':
@@ -86,22 +88,43 @@ def processTemporalOperators(code, parameters, list_of_logic, logic_id_counter):
       definition['logiccode'] = Utilities.serialise(
           logic.getchildren()[0], parameters, parameters['language'], 'RosCpp')
 
-    list_of_logic.append(definition)
 
     # remove cascated logic from element
-    logic.remove(logic.getchildren()[0])
-    logic.text = logic_name
+
+    # logic.remove(logic.getchildren()[0])
+
+    logic.attrib['temporalLogicName'] = logic_name
+    logic.attrib['temporalLogicVariables'] = ','.join(all_variables)
+
+    # logic.text = logic_name
     # rename the temporal logic tag to be 'logiccode'. Inside all replacememts of operators by
     # local variables are complete
-    logic.tag = 'logiccode'
+    # logic.tag = 'logiccode'
+
+    # add a 'hidden' tag to pass the dependent signals to the parent tags
+    # logic.append(etree.Element("null", variables=','.join(all_variables)))
 
     for variable in all_variables:
       new_parameters = {}
-      dpath.util.new(new_parameters, '/Transformers/Base/variables/' + variable + '/assign/post/RosCpp', ['logic' + logic_type[0].title() + logic_type[1:] + str(logic_id_counter) + '()'])
+      dpath.util.new(new_parameters, '/Transformers/Base/variables/' + variable + '/assign/post/RosCpp',
+                     ['logic' + logic_type[0].title() + logic_type[1:] + str(logic_id_counter) + '()'])
       dpath.util.merge(parameters, new_parameters)
 
-    # add a 'hidden' tag to pass the dependent signals to the parent tags
-    logic.append(etree.Element("null", variables=','.join(all_variables)))
+    # create text element for the GUI
+    if 'HTMLGUI' in parameters['globals']['output']:
+
+      # make a copy of the code to not polute it with extra attributes
+      xml_copy = copy.deepcopy(logic)
+      root = etree.Element("root")
+      root.append(xml_copy)
+
+      # use the RoL serialiser to create the text tag
+      Utilities.serialise(root.getchildren()[0], parameters, parameters['language'], 'RoL')
+
+      # annotate tag
+      definition['text'] = root.getchildren()[0].attrib['RoL']
+
+    list_of_logic.append(definition)
 
   return logic_id_counter
 

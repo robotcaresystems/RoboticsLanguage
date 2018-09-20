@@ -1,5 +1,6 @@
 
 {% set beforeLoad %}
+
 {% if code|xpaths('//always|//eventually')|length > 0 %}
 
 
@@ -8,13 +9,13 @@
   var temporal_logic_update = false;
 
   temporal_logic_plots = {
-  {% for logic in parameters.Transformers.TemporalLogic.properties -%}
+  {% for logic in parameters.Transformers.TemporalLogic.TemporalOperators -%}
       '{{logic.id}}':false,
   {% endfor -%}
   };
 
   temporal_logic_plot_data = {
-  {% for logic in parameters.Transformers.TemporalLogic.properties -%}
+  {% for logic in parameters.Transformers.TemporalLogic.TemporalOperators -%}
       '{{logic.id}}':{'expression':[], 'outcome':[], 'min': 0 , 'max': 0, 'open':false },
   {% endfor -%}
   };
@@ -103,7 +104,7 @@
         this_id = this.id.substr(15) // length("temporal_logic_")
         temporal_logic_plot_data[this_id].open = false;
 
-        if ({% for logic in parameters.Transformers.TemporalLogic.properties -%}
+        if ({% for logic in parameters.Transformers.TemporalLogic.TemporalOperators -%}
           !temporal_logic_plot_data[{{logic.id}}].open &&
         {% endfor -%} true)
         {
@@ -111,7 +112,7 @@
         }
     }});
 
-  {% for logic in parameters.Transformers.TemporalLogic.properties -%}
+  {% for logic in parameters.Transformers.TemporalLogic.TemporalOperators -%}
     // connect to topics
     var temporal_logic_{{logic.id}} = new ROSLIB.Topic({
       ros: ros,
@@ -137,7 +138,7 @@
 <h1>Temporal logic</h1>
 
   <div class="ui styled accordion" id="temporal_logic_accordion">
-  {% for logic in parameters.Transformers.TemporalLogic.properties -%}
+  {% for logic in parameters.Transformers.TemporalLogic.TemporalOperators -%}
     <div class="title">
       <i class="dropdown icon"></i> {{logic.text}}
     </div>
