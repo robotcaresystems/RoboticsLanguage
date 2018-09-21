@@ -5,8 +5,7 @@
 
 {% if TemporalOperators|length>0 %}
 {% if 'HTMLGUI' in parameters.globals.output %}
-#include "std_msgs/Int16MultiArray.h"
-#include "std_msgs/Int16.h"
+#include "std_msgs/Float32MultiArray.h"
 {% endif %}
 
   // A structure used by interval temporal logic
@@ -70,7 +69,7 @@ typedef struct {ros::Time time; bool rise;} TimedBoolean;
           {% for item in TemporalOperators|ensureList -%}
               {% if item.type=='alwaysInterval' or item.type=='eventuallyInterval' -%}
                   ros::Publisher sig_temporal_logic_gui_{{item.name|underscore}}handle_out_;
-                  std_msgs::Int16MultiArray sig_temporal_logic_gui_{{item.name|underscore}};
+                  std_msgs::Float32MultiArray sig_temporal_logic_gui_{{item.name|underscore}};
               {% endif -%}
           {% endfor -%}
         {% endif %}
