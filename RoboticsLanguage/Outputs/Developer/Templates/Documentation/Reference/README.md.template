@@ -4,7 +4,7 @@
 
 ## Index of keywords
 
-{% for k,v in parameters.memory.documentation.groups.iteritems() %}
+{% for k,v in parameters.documentation.groups.iteritems() %}
 - {{k}}
   {% for kk, vv in v.iteritems() %}
   - {{kk}}
@@ -16,7 +16,7 @@
 {# ------------------------------------------------------------------- #}
 {# All keywords ------------------------------------------------------ #}
 
-{% for k,v in parameters.memory.documentation.groups.iteritems() %}
+{% for k,v in parameters.documentation.groups.iteritems() %}
 {% for kk, vv in v.iteritems() %}
 # {{k}}, {{kk}}
 
@@ -45,22 +45,21 @@
 
 {# formal definition ------------------------------------------------------ #}
 
-{% if parameters.language[keyword]|isDefined('definition/argumentTypes') and parameters.language[keyword]|isDefined('definition/returnType') %}
+{% if parameters.language[keyword]|isDefined('definition/arguments/documentation') and parameters.language[keyword]|isDefined('definition/returns') %}
 Definition:
 
-`{{keyword}}` ( `{{parameters.language[keyword].definition.argumentTypes.__doc__}}` ) -> `{{parameters.language[keyword].definition.returnType.__doc__}}`
+`{{keyword}}` ( `{{parameters.language[keyword].definition.arguments.documentation}}` ) -> ` something `
 
-{# `{{keyword}}` : `{{parameters.language[keyword]|dpath('definition/mandatory')|join('` x `')}}` -> {{parameters.language[keyword]|dpath('definition/return')|join('` x `')}} #}
 
 {# optional parameters ------------------------------------------------------ #}
 
-{% if parameters.language[keyword].definition.optionalArguments|length > 0 %}
+{% if parameters.language[keyword].definition.optional|length > 0 %}
 Optional parameters:
 
 name | type
 --|--
-{% for p,t in parameters.language[keyword].definition.optionalArguments.iteritems() -%}
-`{{p}}` | `{{t.__doc__}}`
+{% for p,t in parameters.language[keyword].definition.optional.iteritems() -%}
+`{{p}}` | `{{t.documentation}}`
 {% endfor -%}
 {% endif %}
 {% endif %}
@@ -70,16 +69,30 @@ Alternative notations
 
 notation | example code
 --|--
+{% if parameters.language[keyword]|isDefined('input/RoL/alternatives') -%}
+{% for alternatives in parameters.language[keyword]|dpath('input/RoL/alternatives')|ensureList -%}
+alternatives | `{{alternatives}}` ( `type` )
+{% endfor -%}
+{% endif -%}
+{% if parameters.language[keyword]|isDefined('input/RoL/generic') -%}
+generic | `{{ parameters.language[keyword]|dpath('input/RoL/generic')|ensureList|join('` `type` `')  }}`
+{% endif -%}
 {% if parameters.language[keyword]|isDefined('input/RoL/infix') -%}
-{% for infix in parameters.language[keyword]|dpath('input/RoL/infix')|ensureList -%}
+{% for infix in parameters.language[keyword]|dpath('input/RoL/infix/key')|ensureList -%}
 infix | `type` `{{infix}}` `type`
 {% endfor -%}
 {% endif -%}
 {% if parameters.language[keyword]|isDefined('input/RoL/prefix') -%}
-{% for prefix in parameters.language[keyword]|dpath('input/RoL/prefix')|ensureList -%}
+{% for prefix in parameters.language[keyword]|dpath('input/RoL/prefix/key')|ensureList -%}
 prefix | `{{prefix}}` ( `type` )
 {% endfor -%}
 {% endif -%}
+
+{% if parameters.language[keyword]|isDefined('input/RoL/bracket') -%}
+bracket | `{{parameters.language[keyword].input.RoL.bracket.open}}` `{{parameters.language[keyword].input.RoL.bracket.arguments}}` `{{parameters.language[keyword].input.RoL.bracket.close}}`
+{% endif -%}
+
+
 {% if parameters.language[keyword]|isDefined('input/RoL/pre-in-postfix') -%}
 pre-postfix | {{parameters.language[keyword]|dpath('input/RoL/pre-in-postfix')|join(' `type` ')}}
 {% endif -%}
@@ -100,12 +113,12 @@ language | keyword
 {% endif %}
 
 {# Missing elements ------------------------------------------------------ #}
-{% if not (parameters.language[keyword]|isDefined('definition/optionalArguments') and parameters.language[keyword]|isDefined('definition/argumentTypes')  and parameters.language[keyword]|isDefined('definition/returnType') and parameters.language[keyword]|isDefined('documentation/title')  and parameters.language[keyword]|isDefined('documentation/description') and parameters.language[keyword]|isDefined('documentation/usage')  and parameters.language[keyword]|isDefined('localisation')) %}
+{% if not (parameters.language[keyword]|isDefined('definition/optional') and parameters.language[keyword]|isDefined('definition/arguments')  and parameters.language[keyword]|isDefined('definition/returns') and parameters.language[keyword]|isDefined('documentation/title')  and parameters.language[keyword]|isDefined('documentation/description') and parameters.language[keyword]|isDefined('documentation/usage')  and parameters.language[keyword]|isDefined('localisation')) %}
 &#x274C; Missing:
 {% endif %}
-{% if not parameters.language[keyword]|isDefined('definition/argumentTypes') %} - definition: argument types {% endif %}
-{% if not parameters.language[keyword]|isDefined('definition/optionalArguments') %} - definition: optional arguments {% endif %}
-{% if not parameters.language[keyword]|isDefined('definition/returnType') %} - definition: return type {% endif %}
+{% if not parameters.language[keyword]|isDefined('definition/arguments') %} - definition: argument types {% endif %}
+{% if not parameters.language[keyword]|isDefined('definition/optional') %} - definition: optional arguments {% endif %}
+{% if not parameters.language[keyword]|isDefined('definition/returns') %} - definition: return type {% endif %}
 {% if not parameters.language[keyword]|isDefined('documentation/title') %} - documentation: title {% endif %}
 {% if not parameters.language[keyword]|isDefined('documentation/description') %} - documentation: description {% endif %}
 {% if not parameters.language[keyword]|isDefined('documentation/usage') %} - documentation: usage {% endif %}
