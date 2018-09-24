@@ -25,22 +25,27 @@
   {
     now = (Date.now() - temporal_logic_initial_time) / 1000;
 
-    // make a square wave
-    try {
+    if (temporal_logic_plot_data[id].expression.length > 0)
+    {
+      // make a square wave
       if (temporal_logic_plot_data[id].expression[temporal_logic_plot_data[id].expression.length - 1][1] != expression)
       {
         temporal_logic_plot_data[id].expression.push([now, 1 - expression]);
+        temporal_logic_plot_data[id].expression.push([now, expression]);
       }
       if (temporal_logic_plot_data[id].outcome[temporal_logic_plot_data[id].outcome.length - 1][1] != outcome)
       {
         temporal_logic_plot_data[id].outcome.push([now, 1 - expression]);
+        temporal_logic_plot_data[id].outcome.push([now, outcome]);
       }
     }
-    catch(err) {}
+    else
+    {
+      temporal_logic_plot_data[id].expression.push([now, expression]);
+      temporal_logic_plot_data[id].outcome.push([now, outcome]);
+    }
 
     // save the data
-    temporal_logic_plot_data[id].expression.push([now, expression]);
-    temporal_logic_plot_data[id].outcome.push([now, outcome]);
     temporal_logic_plot_data[id].min = min;
     temporal_logic_plot_data[id].max = max;
 
@@ -62,8 +67,15 @@
       {
         if (temporal_logic_plots[id])
         {
-          options = {'file': temporal_logic_plot_data[id].expression , 'dateWindow': [now - 15, now]};
-          temporal_logic_plots[id].updateOptions(options);
+          try
+          {
+            last_expression = temporal_logic_plot_data[id].expression[temporal_logic_plot_data[id].expression.length-1][1];
+            temporal_logic_plot_data[id].expression.push([now, last_expression]);
+            options = {'file': temporal_logic_plot_data[id].expression , 'dateWindow': [now - 15, now]};
+            temporal_logic_plots[id].updateOptions(options);
+            temporal_logic_plot_data[id].expression.pop();
+          }
+          catch(err) {}
         }
       }
       setTimeout(UpdateTemporalLogicPlots, temporal_logic_draw_rate);
@@ -99,6 +111,7 @@
               document.getElementById("temporal_logic_plot_" + this_id),
               temporal_logic_plot_data[this_id].expression,
               {
+                fillGraph: true,
                 labels: ['time', this_id],
                 underlayCallback: function(canvas, area, g) {
                   try
