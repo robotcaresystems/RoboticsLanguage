@@ -36,6 +36,10 @@
 
   </script>
 
+  <style>
+    <<<'style'|group>>>
+  </style>
+
 </head>
 
 <!-- THIS IS THE HTML PART -->
