@@ -1,56 +1,71 @@
 
 {% set beforeLoad %}
+
 {% if code|xpaths('//always|//eventually')|length > 0 %}
 
 
   var temporal_logic_max_samples = 1000;
   var temporal_logic_draw_rate = 25;
   var temporal_logic_update = false;
+  var temporal_logic_initial_time = Date.now();
 
-  temporal_logic_plots = {
-  {% for logic in parameters.Transformers.TemporalLogic.properties -%}
+  var temporal_logic_plots = {
+  {% for logic in parameters.Transformers.TemporalLogic.TemporalOperators -%}
       '{{logic.id}}':false,
   {% endfor -%}
   };
 
-  temporal_logic_plot_data = {
-  {% for logic in parameters.Transformers.TemporalLogic.properties -%}
+  var temporal_logic_plot_data = {
+  {% for logic in parameters.Transformers.TemporalLogic.TemporalOperators -%}
       '{{logic.id}}':{'expression':[], 'outcome':[], 'min': 0 , 'max': 0, 'open':false },
   {% endfor -%}
   };
 
   function UpdateTemporalLogicData(id, expression, outcome, min, max)
   {
-    console.log('id: ' + id);
-    console.log('expression: ' + expression);
-    console.log('outcome: ' + outcome);
-    console.log('min: ' + min);
-    console.log('max: ' + max);
-
     now = (Date.now() - temporal_logic_initial_time) / 1000;
 
+    // make a square wave
+    try {
+      if (temporal_logic_plot_data[id].expression[temporal_logic_plot_data[id].expression.length - 1][1] != expression)
+      {
+        temporal_logic_plot_data[id].expression.push([now, 1 - expression]);
+      }
+      if (temporal_logic_plot_data[id].outcome[temporal_logic_plot_data[id].outcome.length - 1][1] != outcome)
+      {
+        temporal_logic_plot_data[id].outcome.push([now, 1 - expression]);
+      }
+    }
+    catch(err) {}
+
+    // save the data
     temporal_logic_plot_data[id].expression.push([now, expression]);
     temporal_logic_plot_data[id].outcome.push([now, outcome]);
+    temporal_logic_plot_data[id].min = min;
+    temporal_logic_plot_data[id].max = max;
 
+    // ring buffer
     if (temporal_logic_plot_data[id].expression.length > temporal_logic_max_samples)
     {
       temporal_logic_plot_data[id].expression.shift();
       temporal_logic_plot_data[id].outcome.shift();
     };
-
-    temporal_logic_plot_data[id].min = min;
-    temporal_logic_plot_data[id].max = max;
-
   };
+
 
   function UpdateTemporalLogicPlots()
   {
     if (temporal_logic_update)
     {
-
-
-
-
+      now = (Date.now() - temporal_logic_initial_time) / 1000;
+      for (id in temporal_logic_plot_data)
+      {
+        if (temporal_logic_plots[id])
+        {
+          options = {'file': temporal_logic_plot_data[id].expression , 'dateWindow': [now - 15, now]};
+          temporal_logic_plots[id].updateOptions(options);
+        }
+      }
       setTimeout(UpdateTemporalLogicPlots, temporal_logic_draw_rate);
     }
   }
@@ -62,48 +77,59 @@
 {% set afterLoad %}
 {% if code|xpaths('//always|//eventually')|length > 0 %}
 
-    var highlight_start = -1;
-    var highlight_end = 0;
     var temporal_logic_initial_time = Date.now();
 
 
     // activate the accordion list
     $('#temporal_logic_accordion').accordion({
+        exclusive: false,
         onOpen: function () {
           this_id = this.id.substr(15) // length("temporal_logic_")
           temporal_logic_plot_data[this_id].open = true;
           if (temporal_logic_update == false)
           {
-            setTimeout(UpdateTemporalLogicPlots, temporal_logic_draw_rate);
             temporal_logic_update = true;
+            setTimeout(UpdateTemporalLogicPlots, temporal_logic_draw_rate);
           }
 
           if (temporal_logic_plots[this_id] == false)
           {
             // create plot the first time the accordion is open
             temporal_logic_plots[this_id] = new Dygraph(
-                    document.getElementById("temporal_logic_plot_" + this_id),
-                    temporal_logic_plot_data[this_id].expression, {
-                      labels: ['time', this_id],
-                      underlayCallback: function(canvas, area, g) {
-                        var bottom_left = g.toDomCoords(highlight_start, -20);
-                        var top_right = g.toDomCoords(highlight_end, +20);
+              document.getElementById("temporal_logic_plot_" + this_id),
+              temporal_logic_plot_data[this_id].expression,
+              {
+                labels: ['time', this_id],
+                underlayCallback: function(canvas, area, g) {
+                  try
+                  {
+                    var now = (Date.now() - temporal_logic_initial_time) / 1000;
+                    var my_id = parseInt(this.maindiv_.id.substr(20));
 
-                        var left = bottom_left[0];
-                        var right = top_right[0];
+                    var left = g.toDomXCoord(now - temporal_logic_plot_data[my_id].min);
+                    var right = g.toDomXCoord(now - temporal_logic_plot_data[my_id].max);
 
-                        canvas.fillStyle = "rgba(255, 255, 102, 1.0)";
-                        canvas.fillRect(left, area.y, right - left, area.h);
-                      }
-
-                    });
+                    if (temporal_logic_plot_data[my_id].outcome[temporal_logic_plot_data[my_id].outcome.length-1][1] > 0)
+                    {
+                      canvas.fillStyle = "rgba(0, 255, 0, 0.5)";
+                    }
+                    else
+                    {
+                      canvas.fillStyle = "rgba(255, 0, 0, 0.5)";
+                    }
+                    canvas.fillRect(left, area.y, right - left, area.h);
+                  }
+                  catch(err) {}
+                }
+              }
+            );
           }
         },
       onClose: function () {
         this_id = this.id.substr(15) // length("temporal_logic_")
         temporal_logic_plot_data[this_id].open = false;
 
-        if ({% for logic in parameters.Transformers.TemporalLogic.properties -%}
+        if ({% for logic in parameters.Transformers.TemporalLogic.TemporalOperators -%}
           !temporal_logic_plot_data[{{logic.id}}].open &&
         {% endfor -%} true)
         {
@@ -111,11 +137,11 @@
         }
     }});
 
-  {% for logic in parameters.Transformers.TemporalLogic.properties -%}
+  {% for logic in parameters.Transformers.TemporalLogic.TemporalOperators -%}
     // connect to topics
     var temporal_logic_{{logic.id}} = new ROSLIB.Topic({
       ros: ros,
-      name: 'temporal_logic/{{parameters.node.name|underscore}}/{{logic.id}}',
+      name: '/temporal_logic/{{parameters.node.name|underscore}}/{{logic.name}}',
       messageType: 'std_msgs/Float32MultiArray',
     });
 
@@ -137,7 +163,7 @@
 <h1>Temporal logic</h1>
 
   <div class="ui styled accordion" id="temporal_logic_accordion">
-  {% for logic in parameters.Transformers.TemporalLogic.properties -%}
+  {% for logic in parameters.Transformers.TemporalLogic.TemporalOperators -%}
     <div class="title">
       <i class="dropdown icon"></i> {{logic.text}}
     </div>
@@ -147,6 +173,21 @@
   {% endfor -%}
   </div>
 
+
+{% endif %}
+{% endset %}
+
+
+{% set style %}
+{% if code|xpaths('//always|//eventually')|length > 0 %}
+
+  {% for logic in parameters.Transformers.TemporalLogic.TemporalOperators -%}
+
+  #temporal_logic_plot_{{logic.id}} {
+      height: 100px;
+  }
+
+  {% endfor -%}
 
 {% endif %}
 {% endset %}

@@ -42,7 +42,7 @@ language = {
         'output':
         {
             'RoL': '{% if children|length == 1 %}◇({{children[0]}}){% else %}◇[{{children[0]}},{{children[1]}}]({{children[2]}}){% endif %}',
-            'RosCpp': 'temporalLogic_{{attributes["TemporalLogicId"]}}()'
+            'RosCpp': '{{attributes["temporalLogicName"]}}'
         },
         'localisation':
         {
@@ -66,31 +66,11 @@ language = {
         'output':
         {
             'RoL': '{% if children|length == 1 %}□({{children[0]}}){% else %}□[{{children[0]}},{{children[1]}}]({{children[2]}}){% endif %}',
-            'RosCpp': 'temporalLogic_{{attributes["TemporalLogicId"]}}()'
+            'RosCpp':  '{{attributes["temporalLogicName"]}}'
         },
         'localisation':
         {
             'pt': 'sempre',
         },
-    },
-    'logiccode': {
-        'definition': {
-            'arguments': arguments('anything'),
-            'returns': returns('boolean')
-        },
-        'output':
-        {
-            'RosCpp': '{{text}}'
-        }
-    },
-    'null': {
-        'definition': {
-            'arguments': arguments('anything'),
-            'returns': returns('boolean')
-        },
-        'output':
-        {
-            'RosCpp': ''
-        }
     }
 }

@@ -4,8 +4,8 @@
 
 
 {% if TemporalOperators|length>0 %}
-{% if parameters.globals.debug %}
-#include "std_msgs/Int16MultiArray.h"
+{% if 'HTMLGUI' in parameters.globals.output %}
+#include "std_msgs/Float32MultiArray.h"
 {% endif %}
 
   // A structure used by interval temporal logic
@@ -64,12 +64,12 @@ typedef struct {ros::Time time; bool rise;} TimedBoolean;
             tf::TransformListener transform_listener_;
         {% endif %}
 
-        {% if parameters.globals.debug %}
-        // DEBUG: Creating publisher nodes to debug the temporal logic expressions
+        {% if 'HTMLGUI' in parameters.globals.output %}
+        // HTMLGUI: Creating publisher nodes to visualise the temporal logic expressions
           {% for item in TemporalOperators|ensureList -%}
               {% if item.type=='alwaysInterval' or item.type=='eventuallyInterval' -%}
-                  ros::Publisher sig_debug_{{item.name|underscore}}handle_out_;
-                  std_msgs::Int16MultiArray sig_debug_{{item.name|underscore}};
+                  ros::Publisher sig_temporal_logic_gui_{{item.name|underscore}}handle_out_;
+                  std_msgs::Float32MultiArray sig_temporal_logic_gui_{{item.name|underscore}};
               {% endif -%}
           {% endfor -%}
         {% endif %}
