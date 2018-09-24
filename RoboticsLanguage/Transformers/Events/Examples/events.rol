@@ -1,27 +1,21 @@
 node(
+  rate:25,
   name:"example events",
 
   definitions: block(
 
-    state ∈ Signals(Strings, rosTopic:'/test/state'),
-    x ∈ Signals(Reals, rosTopic:'/test/x'),
-    y ∈ Signals(Reals, rosTopic:'/test/y'),
-    z ∈ Reals
-  ),
+    state ∈ Signals(Booleans, rosTopic:'/test/events/state'),
 
-  events: block(
-    when(state == 'idle',
-      block(
-        if( x > 1, print('x larger than 1')),
-        if( x < 1, print('x smaller than 1'))
-      )
+    when(□[1,0](state),
+      print('always true for 1 second')
     ),
 
-    when(state == 'running',
-      block(
-        if( y > 1, print('y larger than 1')),
-        if( y < 1, print('y smaller than 1'))
-      )
+    when(state,
+      print('true')
+    ),
+
+    when(¬state,
+      print('false')
     )
   )
 )

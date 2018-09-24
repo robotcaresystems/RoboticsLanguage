@@ -11,6 +11,6 @@
 manifesto = {
     'packageName': 'Events',
     'packageShortName': 'Events',
-    'order': 5,
+    'order': 5000,
     'version': '0.0.1'
 }

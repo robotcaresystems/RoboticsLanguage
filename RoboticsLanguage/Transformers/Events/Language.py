@@ -8,18 +8,9 @@
 #      Licence: license
 #    Copyright: copyright
 #
-from RoboticsLanguage.Base.Types import optional, arguments, returns
-
+from RoboticsLanguage.Base.Types import arguments, returns
 
 language = {
-    'node': {
-        'definition': {
-            'optional': {
-                'events': optional('anything', None)
-            },
-        },
-    },
-
     'when': {
         'definition': {
             'arguments': arguments('boolean anything'),
