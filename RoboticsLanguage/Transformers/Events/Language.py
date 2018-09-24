@@ -8,7 +8,7 @@
 #      Licence: license
 #    Copyright: copyright
 #
-from RoboticsLanguage.Base.Types import optional
+from RoboticsLanguage.Base.Types import optional, arguments, returns
 
 
 language = {
@@ -19,8 +19,11 @@ language = {
             },
         },
     },
+
     'when': {
         'definition': {
+            'arguments': arguments('boolean anything'),
+            'returns': returns('nothing')
         }
     }
 }

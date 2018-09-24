@@ -9,22 +9,19 @@ node(
     z ∈ Reals
   ),
 
-  events: [
+  events: block(
     when(state == 'idle',
-      when( x > 1,
-        y = x),
-      when( x < 1,
-        y = -x),
-      z = y
+      block(
+        if( x > 1, print('x larger than 1')),
+        if( x < 1, print('x smaller than 1'))
+      )
     ),
 
-    when(state == 'stop',
-      when( x > 1,
-        y = x+1),
-      when( x < 1,
-        y = 1-x),
-      z = y+1
+    when(state == 'running',
+      block(
+        if( y > 1, print('y larger than 1')),
+        if( y < 1, print('y smaller than 1'))
+      )
     )
-
-  ]
+  )
 )

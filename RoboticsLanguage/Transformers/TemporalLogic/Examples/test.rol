@@ -8,19 +8,19 @@ node(
   ),
 
   initialise: block(
-    if(□[1,0](x),
+    when(□[1,0](x),
       print('always 1 0')),
 
-    if(◇[2,0](x),
+    when(◇[2,0](x),
       print('eventually 2 0')),
 
-    if(□[3,1](x),
+    when(□[3,1](x),
       print('always 3 1')),
 
-    if(◇[4,1](x),
+    when(◇[4,1](x),
       print('eventually 4 1')),
 
-    if(□[5,0](◇[1,0](x) ∧ ◇[1,0](¬x)),
+    when(□[5,0](◇[1,0](x) ∧ ◇[1,0](¬x)),
       print('oscilating faster then 1Hz for at least 5 seconds'))
 
   )

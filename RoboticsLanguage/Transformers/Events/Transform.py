@@ -16,4 +16,6 @@ from RoboticsLanguage.Base import Utilities
 
 def transform(code, parameters):
 
+  Utilities.printCode(code.xpath('//when'))
+
   return code, parameters
