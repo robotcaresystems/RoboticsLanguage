@@ -2,6 +2,15 @@
 
 ## RoL parser
 
+### Strings are not HTML safe
+
+The code wii return an error:
+
+```coffeescript
+print('x > 1')
+```
+
+
 ###  Issue with parsing real numbers in scientific notation. Conflicting with negation operator:
 
 Parsing: `-1.3e-44` results in:

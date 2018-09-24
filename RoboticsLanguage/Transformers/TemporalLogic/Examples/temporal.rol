@@ -3,11 +3,11 @@ node(
 
   definitions: block(
     # a signal
-    x ∈ Signals(Reals, rosTopic:'/temporal_logic/x'),
+    x ∈ Signals(Reals, rosTopic:'/temporal_logic/test/x'),
 
-    y ∈ Signals(Reals, rosTopic:'/temporal_logic/y'),
+    y ∈ Signals(Reals, rosTopic:'/temporal_logic/test/y'),
 
-    z ∈ Signals(Booleans, rosTopic:'/temporal_logic/z')
+    z ∈ Signals(Booleans, rosTopic:'/temporal_logic/test/z')
 
   ),
 
