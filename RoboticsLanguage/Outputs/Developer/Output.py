@@ -57,7 +57,7 @@ def output(code, parameters):
 
     groups = prepareGroups(parameters)
 
-    parameters['memory']['documentation'] = {'groups': groups}
+    parameters['documentation'] = {'groups': groups}
 
     # run template engine to generate code API
     if not Utilities.templateEngine(code, parameters, {},
