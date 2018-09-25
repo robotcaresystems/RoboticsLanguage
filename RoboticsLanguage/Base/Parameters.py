@@ -25,7 +25,7 @@ from iso639 import languages
 
 parameters = {
     'globals': {
-        'version': '',
+        'version': False,
         'output': 'RosCpp',
         'debug': False,
         'compile': False,
@@ -55,6 +55,7 @@ parameters = {
         'stepName': '',
         'stop': False,
         'info': False,
+        'infoPackage': '',
         'skip': '',
         'ignoreErrors': False,
         'intermediateTemplates': False,
@@ -116,6 +117,11 @@ command_line_flags = {
         'longFlag': 'info',
         'fileNotNeeded': True,
         'description': 'Shows Rol and package information'
+    },
+    'developer:infoPackage': {
+        'longFlag': 'info-package',
+        'fileNotNeeded': True,
+        'description': 'Shows information about a specific packages'
     },
     'developer:code': {
         'noArgument': True,
