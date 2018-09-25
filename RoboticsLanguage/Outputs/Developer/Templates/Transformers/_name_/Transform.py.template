@@ -1,7 +1,7 @@
 #
 #   This is the Robotics Language compiler
 #
-#   Parameters.py: Definition of the parameters for this package
+#   Transform.py: {{parameters.Outputs.Developer.Info.name}} code transformer
 #
 #   Created on: {{"%d %B, %Y"|todaysDate}}
 #       Author: {{parameters.Information.user.name}}
@@ -10,7 +10,6 @@
 #
 
 
-from lxml import etree
 from RoboticsLanguage.Base import Utilities
 
 def transform(code, parameters):
