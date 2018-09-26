@@ -113,12 +113,12 @@ For example the text `name: hello` matches the rule, and the result is `<word>he
 Make sure to look at the [parsley tutorials](https://parsley.readthedocs.io/en/latest/).
 
 
-We can modify the grammar to include the definition of the machine name and the initial state:
+We can modify the grammar to include the definition of the machine name and the initial state, i.e. `name:word` and `initial:word`:
 ```python
 grammar_definition = """
 word = <letter+>
 
-name = 'name' ws ':' ws word:n -> xml('name',n)
+name = 'name' ws ':' ws word:name -> xml('name',name)
 
 initial = 'initial' ws ':' ws word:state -> xml('initial',state)
 """
@@ -130,5 +130,286 @@ Next we create the grammar for `(state)-transition->(state)`:
 ```
 state = '(' ws word:state ws ')' -> xml('state', text=state)
 
-transition = state:begin ws '-' ws word:transition ws '->' state:end -> xml('transition', [begin, end] {'name':transition})
+transition = state:begin ws '-' ws word:transition ws '->' state:end -> xml('transition', [begin, end], {'name':transition})
 ```
+
+Finally, we allow for many transitions:
+
+```python
+
+grammar_definition = """
+word = <letter+>
+
+name = 'name' ws ':' ws word:name -> xml('name',text=name)
+
+initial = 'initial' ws ':' ws word:state -> xml('initial', text=state)
+
+state = '(' ws word:state ws ')' -> xml('state', text=state)
+
+transition = state:begin ws '-' ws word:transition ws '->' state:end -> xml('transition', [begin, end], {'name':transition})
+
+machine = ws name:n ws initial:i (ws transition)*:t ws -> xml('machine',[n, i] + t)
+"""
+```
+
+We change the parsing line to look for the `machine` rule:
+
+```python
+# parse the text
+code = grammar(text).machine()
+```
+
+We are now ready to test the parser. To do this create a file called `test.mfsm` and add the following text:
+
+```
+  name: test
+  initial: idle
+
+  (idle)-start->(running)
+  (running)-stop->(idle)
+```
+
+Since we created an input plugin, the `rol` now opens files with the extension equal to the initials of the package name. Run:
+
+```bash
+rol test.mfsm --show-code --show-stop
+```
+Note that `--show-code` shows the abstract syntax tree in XML, and `--show-stop` will stop the compiler from continuing after the parsing step. This is useful to debug the parser before code is generated.
+
+
+We get the result:
+
+```xml
+<mfsm:machine xmlns:mfsm="mfsm">
+  <mfsm:name>test</mfsm:name>
+  <mfsm:initial>idle</mfsm:initial>
+  <mfsm:transition name="start">
+    <mfsm:state>idle</mfsm:state>
+    <mfsm:state>running</mfsm:state>
+  </mfsm:transition>
+  <mfsm:transition name="stop">
+    <mfsm:state>running</mfsm:state>
+    <mfsm:state>idle</mfsm:state>
+  </mfsm:transition>
+</mfsm:machine>
+```
+
+Note that a namespace `mfsm` is added to every tag used on this mini-language. This allows you to safely use any tag names without interfering with the built-in tags already defined.
+
+### New keywords for the abstract syntax tree
+
+
+The final step in this tutorial is defining the language keywords so that the compiler knows what to do with the new tags we have created. For this, edit the file `Language.py`, and replace the language dictionary by:
+
+```python
+language = {
+  '{mfsm}machine':    { 'definition': { arguments: arguments('anything'), returns: returns('nothing')}},
+  '{mfsm}name':       { 'definition': { arguments: arguments('anything'), returns: returns('nothing')}},
+  '{mfsm}initial':    { 'definition': { arguments: arguments('anything'), returns: returns('nothing')}},
+  '{mfsm}state':      { 'definition': { arguments: arguments('anything'), returns: returns('nothing')}},
+  '{mfsm}transition': { 'definition': { arguments: arguments('anything'), returns: returns('nothing')}},
+}
+```
+
+For now we simplify by saying that the tag (functions in the abstract syntax tree) accept any argument and return nothing. Later these definitions can be modified so that the type checker can catch any semantic errors.
+
+
+We are ready to include the new language as a mini language on a `.rol` file. Create and edit the file `test.rol`:
+
+```coffeescript
+node(
+	name:'my finite state machine',
+
+	definitions: MyFiniteStateMachine<{
+
+		  name: test
+		  initial: idle
+
+		  (idle)-start->(running)
+
+		  (running)-stop->(idle)
+
+	}>
+)
+```
+
+Run
+
+```bash
+rol test.rol --show-code --compile
+```
+
+It should compile fine, and will display the abstract syntax tree:
+
+```xml
+<node p="174">
+  <option p="37" name="name">
+    <string p="37">my finite state machine</string>
+  </option>
+  <option p="173" name="definitions">
+    <mfsm:machine xmlns:mfsm="mfsm">
+      <mfsm:name>test</mfsm:name>
+      <mfsm:initial>idle</mfsm:initial>
+      <mfsm:transition name="start">
+        <mfsm:state>idle</mfsm:state>
+        <mfsm:state>running</mfsm:state>
+      </mfsm:transition>
+      <mfsm:transition name="stop">
+        <mfsm:state>running</mfsm:state>
+        <mfsm:state>idle</mfsm:state>
+      </mfsm:transition>
+    </mfsm:machine>
+  </option>
+</node>
+```
+
+### Simpler language
+
+Now suppose we want to simplify the language by allowing many sequences of states and transitions, e.g.:
+
+```
+(idle)-start->(running)-stop->(idle)
+```
+
+To achieve this we need to modify the grammar rule for a transitions:
+
+
+```
+transition = state:begin ws '-' ws word:label ws '->' ws ( transition:t -> [ xml('transition', [begin, copy(t[0].getchildren()[0])], {'name':label})] + t
+                                                         | state:end -> [ xml('transition', [begin, end], {'name':label}) ]
+                                                         )
+```
+
+- This rule means that after the arrow `->` it will look first for another transition. Otherwise it looks for a state.
+- If the element after `->` is a transition then it will create arc from  `begin` to the first state of the first forward transition, i.e. `t[0].getchildren()[0]` (with meaning: get the first child of the first transition). Note that a "deepcopy" is needed, since we are reusing an element in `lxml`. The resulting transition is prepended to the list of forward transitions.
+- If the element is a state, then return the transition as a list with one xml element.
+- The rule `transition` now returns a list of transitions
+
+Additionally we need to adapt the definition of machine to merge a "list of lists" of transitions:
+
+```
+machine = ws name:n ws initial:i (ws transition)*:t ws -> xml('machine',[n, i] + [item for sublist in t for item in sublist])
+```
+
+The new complete grammar is:
+
+```python
+grammar_definition = """
+word = <letter+>
+
+name = 'name' ws ':' ws word:name -> xml('name',text=name)
+
+initial = 'initial' ws ':' ws word:state -> xml('initial', text=state)
+
+state = '(' ws word:state ws ')' -> xml('state', text=state)
+
+transition = state:begin ws '-' ws word:label ws '->' ws ( transition:t -> [ xml('transition', [begin, copy(t[0].getchildren()[0])], {'name':label})] + t
+                                                         | state:end -> [ xml('transition', [begin, end], {'name':label}) ]
+                                                         )
+
+machine = ws name:n ws initial:i (ws transition)*:t ws -> xml('machine',[n, i] + [item for sublist in t for item in sublist])
+"""
+```
+
+We are ready to test the new grammar. Update the file `test.rol` to read:
+
+```coffeescript
+node(
+	name:'my finite state machine',
+
+	definitions: MyFiniteStateMachine<{
+
+		  name: test
+		  initial: idle
+
+		  (idle)-start->(running)-stop->(idle)
+
+	}>
+)
+```
+
+Run
+
+```bash
+rol test.rol --show-code --compile
+```
+
+It should compile fine, and will display the same abstract syntax tree as previously:
+
+```xml
+<node p="159">
+  <option p="37" name="name">
+    <string p="37">my finite state machine</string>
+  </option>
+  <option p="158" name="definitions">
+    <mfsm:machine xmlns:mfsm="mfsm">
+      <mfsm:name>test</mfsm:name>
+      <mfsm:initial>idle</mfsm:initial>
+      <mfsm:transition name="start">
+        <mfsm:state>idle</mfsm:state>
+        <mfsm:state>running</mfsm:state>
+      </mfsm:transition>
+      <mfsm:transition name="stop">
+        <mfsm:state>running</mfsm:state>
+        <mfsm:state>idle</mfsm:state>
+      </mfsm:transition>
+    </mfsm:machine>
+  </option>
+</node>
+```
+
+
+### Discussion
+
+It is usually up to the user to decide on how the abstract syntax tree looks like. For example an alternative representation could add information into attributes instead of the text element, e.g.:
+
+```xml
+<mfsm:machine xmlns:mfsm="mfsm" name="test" initial="idle">
+  <mfsm:transition name="start">
+    <mfsm:state name="idle"/>
+    <mfsm:state name="running"/>
+  </mfsm:transition>
+  <mfsm:transition name="stop">
+    <mfsm:state name="running"/>
+    <mfsm:state name="idle"/>
+  </mfsm:transition>
+</mfsm:machine>
+```
+
+or even more compactly
+
+```xml
+<mfsm:machine xmlns:mfsm="mfsm" name="test" initial="idle">
+  <mfsm:transition name="start" begin="idle" end="running"/>
+  <mfsm:transition name="stop" begin="running" end="idle"/>
+</mfsm:machine>
+```
+
+The more compact the representation the more rigid it might become. For example in the last example, since there exist no `state` tags, one cannot add attributes to the states. In addition, when searching with `xpath`, different approaches must be used depending on the representation. Suppose we aim to compile a list of all the states in a machine.
+- For the example used in the tutorial the `xpath` expression is:
+
+  ```
+  //mfsm:state/text()
+  ```
+
+
+- For the 2nd example representation the `xpath` expression is:
+
+  ```
+  //mfsm:state/@name
+  ```
+
+
+- For the 3rd example (most compact) representation the `xpath` expression becomes more complicated:
+
+  ```
+  //mfsm:transition/@begin|//mfsm:transition/@end
+  ```
+
+  or
+
+  ```
+  //mfsm:transition/@*[name()="begin" or name()="end"]
+  ```
+
+There exists a tradeoff between compactness and complexity. It is up to the developer to decide what is better suited for each problem.
