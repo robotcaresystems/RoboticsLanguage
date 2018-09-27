@@ -174,7 +174,7 @@ Information:
   user:
     name: Gabriel Lopes
     email: g.lopes@robotcaresystems.com
-    web: http://www.dcsc.tudelft.nl/~glopes
+    web: http://www.dcsc.tudelft.nl/~glopes/publications.html
   company:
     name: Robot Care Systems B.V.
     address: Taco Scheltemastraat 5
