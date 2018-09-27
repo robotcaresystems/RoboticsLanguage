@@ -37,13 +37,14 @@ node(
     # a mini-language: code is defined within `<{ }>`
     FiniteStateMachine<{
 
-        name:machine
-        initial:idle
+      name:machine
+      initial:idle
 
-        (idle) -start-> (running) -stop-> (idle)
-        (running) -error-> (fault) -reset-> (idle)
+      (idle)-start->(running)-stop->(idle)
+      (running)-error->(fault)-reset->(idle)
+      (idle)-calibration->(calibrate)-reset->(idle)
 
-      }>,
+    }>,
 
     # the start signal
     start ∈ Signals(Empty, rosTopic:'/start', onNew: machine.fire('start')),
@@ -54,6 +55,41 @@ node(
   )
 )
 ```
+Automatically generated graphical user interfaces in the browser allow for development and monitoring.
+
+![](RoboticsLanguage/Documentation/Assets/FiniteStateMachine.png)
+
+
+RoL contains high-level language element abstractions that are very useful for robotics, such as Interval [Temporal Logic](https://en.wikipedia.org/wiki/Temporal_logic) for signals.
+
+
+```coffeescript
+node(
+  name:'temporal logic test example',
+
+  definitions: block(
+
+    # a signal
+    x ∈ Signals(Booleans, rosTopic:'/temporal_logic/x'),
+
+    when(□[1,0](x),
+      print('always in the last second')),
+
+    when(◇[4,1](x),
+      print('eventually from 4 seconds to 1 second ago')),
+
+    when(□[5,0](◇[1,0](x) ∧ ◇[1,0](¬x)),
+      print('oscillating faster then 1Hz for at least 5 seconds'))
+
+  )
+)
+```
+
+Generated GUIs visualise the signals in time and the outcome of the logic.
+
+
+![](RoboticsLanguage/Documentation/Assets/TemporalLogic.png)
+
 
 The RoL is in practice an **open compiler** where users can develop their own languages by means of plug-ins. The RoL is programmed in python and uses XML as the internal abstract syntax tree.
 
@@ -129,6 +165,9 @@ Now you are ready to launch:
 rol RoboticsLanguage/Examples/helloworld.rol -l
 ```
 
+## Work in progress
+
+The Robotics Language is continuously evolving. Not all features are implemented. If find errors or you wish a new feature [please let us know](https://github.com/robotcaresystems/RoboticsLanguage/issues).
 
 
 ## Acknowledgements
