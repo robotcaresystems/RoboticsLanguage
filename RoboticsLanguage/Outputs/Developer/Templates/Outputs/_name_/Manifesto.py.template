@@ -11,5 +11,26 @@
 manifesto = {
   'packageName': '{{parameters.Outputs.Developer.create.Outputs}}',
   'packageShortName': '{{parameters.Outputs.Developer.create.Outputs|camelCase}}',
-  'version': '0.0.0'
+  'version': '0.0.0',
+
+  'information': {
+    'author':
+    {
+      'name': '{{parameters.Information.user.name}}',
+      'email': '{{parameters.Information.user.email}}',
+      'web': '{{parameters.Information.user.web}}',
+      'telephone': '{{parameters.Information.user.telephone}}'
+    },
+    'company':
+    {
+      'name': '{{parameters.Information.company.name}}',
+      'address': '{{parameters.Information.company.address}}',
+      'zipcode': '{{parameters.Information.company.zipcode}}',
+      'city': '{{parameters.Information.company.city}}',
+      'country': '{{parameters.Information.company.country}}',
+      'email': '{{parameters.Information.company.email}}',
+      'web': '{{parameters.Information.company.web}}',
+      'telephone': '{{parameters.Information.company.telephone}}',
+    }
+  }
 }

@@ -1,13 +1,11 @@
 node(
   name:'temporal logic test example',
-  rate:100,
 
   definitions: block(
-    # a signal
-    x ∈ Signals(Booleans, rosTopic:'/temporal_logic/x')
-  ),
 
-  initialise: block(
+    # a signal
+    x ∈ Signals(Booleans, rosTopic:'/temporal_logic/x'),
+
     when(□[1,0](x),
       print('always 1 0')),
 

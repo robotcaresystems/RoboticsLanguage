@@ -1,7 +1,7 @@
 #
 #   This is the Robotics Language compiler
 #
-#   Parameters.py: Definition of the parameters for this package
+#   Parse.py: Parses the {{parameters.Outputs.Developer.create.Inputs}} language
 #
 #   Created on: {{"%d %B, %Y"|todaysDate}}
 #       Author: {{parameters.Information.user.name}}
@@ -9,13 +9,24 @@
 #    Copyright: {{parameters.Information.software.copyright}}
 #
 from lxml import etree
+from parsley import makeGrammar
+from RoboticsLanguage.Tools import Parsing
 from RoboticsLanguage.Base import Utilities
+
+grammar_definition = """
+word = <letter+>
+
+name = ws 'word' ws ':' ws word:w ws -> xml('word', text=w)
+"""
 
 
 def parse(text, parameters):
   Utilities.logging.info("Parsing {{parameters.Outputs.Developer.create.Inputs}} language...")
 
-  # parse language into XML
-  parsed_xml = etree.fromstring('<root/>')
+  # make the grammar
+  grammar = makeGrammar(grammar_definition, {'xml': Parsing.xmlNamespace('{{parameters.Outputs.Developer.create.Inputs|initials|lower}}')})
 
-  return parsed_xml, parameters
+  # parse the text
+  code = grammar(text).name()
+
+  return code, parameters

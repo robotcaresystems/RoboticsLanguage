@@ -1,3 +1,5 @@
+<%% raw %%>{% raw %}<<<header->>>
+
 Examples:
 
 Information of the developer:
@@ -8,3 +10,5 @@ Name of first tag of the code:
 
  Place where other plugins can inject code:
  <<<'example'|group>>>
+{% endraw %}
+<%% endraw %%>

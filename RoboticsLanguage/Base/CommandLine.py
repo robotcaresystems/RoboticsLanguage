@@ -119,22 +119,6 @@ def prepareCommandLineArguments(parameters):
   return flags, arguments, file_package_name, file_formats
 
 
-def checkSpecialCommandLineArguments(command_line_parameters, parameters):
-  if '--version' in command_line_parameters:
-    import pkg_resources
-    print('The Robotics Language version: ' + pkg_resources.get_distribution('RoboticsLanguage').version)
-
-  if '--info' in command_line_parameters:
-    import pkg_resources
-    print('The Robotics Language version: ' + pkg_resources.get_distribution('RoboticsLanguage').version)
-    for key, value in parameters['manifesto'].iteritems():
-      print key + ':'
-      for item, content in value.iteritems():
-        extra = ' *' if parameters['globals']['plugins'] in content['path'] else ''
-        print '  ' + item + ' (' + content['version'] + ')' + extra
-
-
-
 def runCommandLineParser(parameters, arguments, flags, file_formats, file_package_name, command_line_arguments):
 
   # instantiate the command line parser
@@ -277,7 +261,7 @@ def processCommandLineParameters(args, file_formats, parameters):
     return rol_files[0]['name'], rol_files[0]['type'], Utilities.ensureList(parameters['globals']['output']), parameters
 
 
-def postCommandLineParser(parameters):
+def loadRemainingParameters(parameters):
 
   language = {}
   messages = {}
@@ -366,23 +350,52 @@ def postCommandLineParser(parameters):
   return parameters
 
 
-# @Utilities.time_all_calls
+def postCommandLineParser(parameters):
+
+  if parameters['globals']['version']:
+    import pkg_resources
+    print('The Robotics Language version: ' + pkg_resources.get_distribution('RoboticsLanguage').version)
+
+  if parameters['developer']['info']:
+    import pkg_resources
+    print('The Robotics Language version: ' + pkg_resources.get_distribution('RoboticsLanguage').version)
+    for key, value in parameters['manifesto'].iteritems():
+      print key + ':'
+      for item, content in value.iteritems():
+        extra = ' *' if parameters['globals']['plugins'] in content['path'] else ''
+        print '  ' + item + ' (' + content['version'] + ')' + extra
+
+  if parameters['developer']['infoPackage'] != '':
+    for type in ['Inputs', 'Transformers', 'Outputs']:
+      if parameters['developer']['infoPackage'] in parameters['manifesto'][type].keys():
+        package = parameters['manifesto'][type][parameters['developer']['infoPackage']]
+        print('Package ' + type + '/' + parameters['developer']['infoPackage'])
+        print('Version: ' + package['version'])
+        print('Path: ' + package['path'])
+        print('Information:')
+        Utilities.printParameters(package['information'])
+
+
+
+  return parameters
+
+
 def ProcessArguments(command_line_parameters, parameters):
 
   # load cached command line flags or create if necessary
   flags, arguments, file_package_name, file_formats = prepareCommandLineArguments(parameters)
 
-  # deal with special command line arguments, e.g. '--version'
-  checkSpecialCommandLineArguments(command_line_parameters, parameters)
-
   # run the command line parser
   parser, args = runCommandLineParser(parameters, arguments, flags, file_formats,
                                       file_package_name, command_line_parameters)
 
-  # complete processing, e.g. load languages, etc.
-  parameters = postCommandLineParser(parameters)
+  # loads definitions for language, messages, etc
+  parameters = loadRemainingParameters(parameters)
 
   # process the parameters
   file_name, file_type, outputs, parameters = processCommandLineParameters(args, file_formats, parameters)
+
+  # processes special generic flags
+  parameters = postCommandLineParser(parameters)
 
   return file_name, file_type, outputs, parameters
