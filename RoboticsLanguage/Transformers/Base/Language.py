@@ -232,7 +232,7 @@ language = {
         'definition': {
             'arguments': arguments('anything'),
             'optional': {
-                'rate': optional('real', 1),
+                'rate': optional('real', 25),
                 'name': optional('string', 'unnamed'),
                 'initialise': optional('anything', None),
                 'finalise': optional('anything', None),
