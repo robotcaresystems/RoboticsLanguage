@@ -4,6 +4,7 @@
 
 
 {% if TemporalOperators|length>0 %}
+#include <deque>
 {% if 'HTMLGUI' in parameters.globals.output %}
 #include "std_msgs/Float32MultiArray.h"
 {% endif %}
