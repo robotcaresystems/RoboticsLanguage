@@ -128,7 +128,7 @@ rol RoboticsLanguage/Examples/helloworld.rol
 This will create a ROS node in the folder `~/deploy`. If you have installed the catkin workspace at `~/catkin_ws` then you can supply the path to the compiler and compile and launch the node directly:
 
 ```shell
-rol -p ~/catkin_ws/src/deploy/ RoboticsLanguage/Examples/helloworld.rol -c -l
+rol --deploy-path ~/catkin_ws/src/deploy/ RoboticsLanguage/Examples/helloworld.rol -c -l
 ```
 
 ## Docker image
