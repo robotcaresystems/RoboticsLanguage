@@ -18,8 +18,12 @@
 #   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
-
+import os
 from setuptools import setup, find_packages
+
+
+path = os.path.abspath(os.path.dirname(__file__))
+result = [os.path.join(dp, f) for dp, dn, filenames in os.walk(path) for f in filenames]
 
 setup(name='RoboticsLanguage',
       version='0.2',
@@ -42,6 +46,6 @@ setup(name='RoboticsLanguage',
       ],
       include_package_data=True,
       package_data={
-          'RoboticsLanguage': ['Examples/*.rol', 'Examples/*.xml']
+          'RoboticsLanguage': result
       },
       zip_safe=False)

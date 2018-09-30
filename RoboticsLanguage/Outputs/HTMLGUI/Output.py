@@ -43,7 +43,7 @@ def output(code, parameters):
   if parameters['globals']['beautify']:
     try:
       with open(os.devnull, 'w') as output_file:
-        process = subprocess.Popen(['tidy', '-im',
+        process = subprocess.Popen(['tidy', '-utf8', '-im',
                                     parameters['globals']['deploy'] + '/' + node_name_underscore + '/html/' + node_name_underscore + '_gui.html'],
                                    stdout=output_file,
                                    stderr=subprocess.STDOUT)
