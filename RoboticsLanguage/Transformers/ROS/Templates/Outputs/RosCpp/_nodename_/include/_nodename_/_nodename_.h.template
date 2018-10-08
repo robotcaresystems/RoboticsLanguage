@@ -23,7 +23,7 @@
           {# SUBSCRIBER + CALLBACK #################################### #}
           {% if topic.flow == 'incoming' or topic.flow == 'bidirectional' -%}
       ros::Subscriber {{topic.variable}}_subscriber;
-      void signal_{{topic.variable}}_callback(const {{topic.ros_type}}& message);
+      void signal_{{topic.variable}}_callback(const {{topic.ros_type}}& signal_{{topic.variable}}_message);
           {% endif -%}
 
 
