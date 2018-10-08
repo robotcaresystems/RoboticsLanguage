@@ -269,7 +269,13 @@
           ROS_INFO("Timer Callback: {{logic.name}}");
       {% endif -%}
       {% for signal in logic.variables|ensureList -%}
-          signal_{{signal}}_callback( {{signal}} );
+        {% if parameters.Transformers.Base.variables[signal].assign is defined -%}
+          {% if parameters.Transformers.Base.variables[signal].assign.post is defined -%}
+            {% for element in parameters.Transformers.Base.variables[signal].assign.post.RosCpp -%}
+              {{element}};
+            {% endfor -%}
+          {% endif -%}
+        {% endif -%}
       {% endfor -%}
     }
     {% endif %}
