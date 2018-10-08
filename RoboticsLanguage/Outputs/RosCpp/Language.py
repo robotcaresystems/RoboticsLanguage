@@ -32,21 +32,21 @@ language = {
     'Reals': {
         'output':
         {
-            'RosCpp': '{% if "option" in childrenTags %}{% if option(code,"bits").text == "64"%}double{% else %}float{% endif %}{% else %}float{% endif %}',
+            'RosCpp': '{% if "bits" in options %}{% if options["bits"] == "64"%}double{% else %}float{% endif %}{% else %}float{% endif %}',
         },
     },
 
     'Integers': {
         'output':
         {
-            'RosCpp': 'int{% if "option" in childrenTags %}{{option(code,"bits").text}}{% else %}32{% endif %}_t',
+            'RosCpp': 'int{% if "bits" in options %}{{options["bits"]}}{% else %}32{% endif %}_t',
         },
     },
 
     'Naturals': {
         'output':
         {
-            'RosCpp': 'uint{% if "option" in childrenTags %}{{option(code,"bits").text}}{% else %}32{% endif %}_t',
+            'RosCpp': 'uint{% if "bits" in options %}{{options["bits"]}}{% else %}32{% endif %}_t',
         },
     },
 
@@ -93,6 +93,13 @@ language = {
     },
 
     'number': {
+        'output':
+        {
+            'RosCpp': '{{text}}',
+        },
+    },
+
+    'cpp': {
         'output':
         {
             'RosCpp': '{{text}}',
@@ -168,7 +175,10 @@ language = {
 
     'assign': {
         'output': {
-            'RosCpp': '{{children[0]}}{% if "assignDomain" in attributes %}{{attributes["assignFunction"]}}{% endif %} = {{children[1]}}',
+            'RosCpp': '{{attributes["preRosCpp"]}}{{children[0]}}{{attributes["preAssignRosCpp"]}}={{attributes["postAssignRosCpp"]}}{{children[1]}}{{attributes["postRosCpp"]}}'
+            # ,
+            #
+            # 'RosCpp2': '{% if "assignFunction" in attributes %}{{children[0]}}_assign({{children[1]}}){% else %}{{children[0]}}{% if "assignDomain" in attributes %}{{attributes["assignFunction"]}}{% endif %} = {{children[1]}}{% endif %}',
         },
     },
 
@@ -176,7 +186,7 @@ language = {
     'variable': {
         'output':
         {
-            'RosCpp': '{{attributes["name"]}}{% if "returnDomain" in attributes %}{{attributes["returnDomain"]}}{% endif %}',
+            'RosCpp': '{{attributes["name"]}}{% if "returnDomainRosCpp" in attributes %}{{attributes["returnDomainRosCpp"]}}{% endif %}',
         },
     },
 
@@ -191,6 +201,14 @@ language = {
         'output':
         {
             'RosCpp': '{{";\n".join(children)}}'
+        },
+    },
+
+
+    'RosType': {
+        'output':
+        {
+            'RosCpp': '{{code.getchildren()[0].text|replace("/","::")}}'
         },
     },
 

@@ -1,6 +1,8 @@
 #include <map>
 #include <string>
 #include <iostream>
+#include <ros/ros.h>
+#include <std_msgs/String.h>
 
 class FiniteStateMachine {
 
@@ -23,9 +25,12 @@ private:
   // last transition
 	std::string last_transition;
 
-
   // the name of the state machine
   std::string name;
+
+  // publisher for HTML GUI
+  ros::Publisher *state_feedback_publisher = 0;
+  std_msgs::String state_message;
 
   // check if state exists
   bool state_exists_(std::string state_)
@@ -67,6 +72,21 @@ public:
 		};
 
 	~FiniteStateMachine(){};
+
+
+  void addStateFeedbackPublisher(ros::Publisher *state_feedback_publisher_)
+  {
+    state_feedback_publisher = state_feedback_publisher_;
+  }
+
+  void publishState()
+  {
+    if (state_feedback_publisher != 0)
+    {
+      state_message.data = current_state;
+      state_feedback_publisher->publish(state_message);
+    }
+  }
 
 	bool addState(std::string name)
   {
@@ -146,6 +166,8 @@ public:
 
       // change state
       current_state = current_transition->second;
+
+      publishState();
 
       // remember last transition
       last_transition = transition;

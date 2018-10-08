@@ -1,0 +1,5 @@
+node(
+  name:"example mini language",
+  initialise:
+    RoLXML<{ <print><string>hello</string></print>  }>
+  )

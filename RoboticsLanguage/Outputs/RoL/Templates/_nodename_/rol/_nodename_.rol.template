@@ -1,0 +1,3 @@
+node(
+{{code|xpaths('/node/*')|map("attribute","RoL")|reject("equalto","")|list|join(',')}}
+)

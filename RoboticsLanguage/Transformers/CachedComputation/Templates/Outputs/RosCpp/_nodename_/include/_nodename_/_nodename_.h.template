@@ -1,0 +1,20 @@
+
+{% set includes %}
+{% if code.xpath('//option[@name="cachedComputation"]')[0].getchildren()|length > 0 %}
+
+#include <vector>
+#include <functional>
+
+{% endif %}
+{% endset %}
+
+{% set definitions %}
+{% if code.xpath('//option[@name="cachedComputation"]')[0].getchildren()|length > 0 %}
+  {% for cache in code|xpaths('//*[@cacheId]') %}
+    void cacheFunction_{{cache|attribute('cacheId')}} ();
+  {% endfor %}
+    void cacheFunction_{{code|xpaths('//*[@cacheId]')|length + 1}} (){};
+
+    std::vector<std::function<void()>> caches_list;
+{% endif %}
+{% endset %}

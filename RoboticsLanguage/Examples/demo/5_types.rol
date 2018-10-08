@@ -1,0 +1,38 @@
+node(
+  name:"example types",
+  definitions:block(
+
+    ## variables defined in the "definitions" optional parameter have global scope. Variables defined outside only have local scope. ##
+
+    # Integers
+    a ∈ ℤ = -1,
+    b ∈ ℤ(bits:8),
+    c ∈ ℤ(bits:16),
+    d ∈ ℤ(bits:32),
+    e ∈ ℤ(bits:64),
+
+    # Naturals (unsigned integers)
+    f ∈ ℕ = 1,
+    g ∈ ℕ(bits:8),
+    h ∈ ℕ(bits:16),
+    i ∈ ℕ(bits:32),
+    j ∈ ℕ(bits:64),
+
+    # Reals
+    k ∈ ℝ = 1.3,
+    l ∈ ℝ(bits:32),
+    m ∈ ℝ(bits:64),
+
+    # Booleans
+    n ∈ 𝔹 = true,
+
+    # Strings
+    o ∈ Strings = "3434"
+    ),
+
+    initialise:block(
+      f1 ∈ ℕ = 1,
+      f2 ∈ ℕ = 1
+      )
+
+)

@@ -1,0 +1,16 @@
+
+{% set head %}
+
+{% endset %}
+
+{% set beforeLoad %}
+
+{% endset %}
+
+{% set afterLoad %}
+
+{% endset %}
+
+{% set body %}
+
+{% endset %}

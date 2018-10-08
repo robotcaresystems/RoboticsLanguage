@@ -26,6 +26,7 @@ import sys
 import subprocess
 import dpath.util
 from RoboticsLanguage.Base import Utilities
+from RoboticsLanguage.Tools import Templates
 
 ignored_files = ['.DS_Store']
 
@@ -57,12 +58,11 @@ def output(code, parameters):
 
     groups = prepareGroups(parameters)
 
-    parameters['memory']['documentation'] = {'groups': groups}
+    parameters['documentation'] = {'groups': groups}
 
     # run template engine to generate code API
-    if not Utilities.templateEngine(code, parameters, {},
-                                    os.path.dirname(__file__) + '/templates/Documentation/Reference',
-                                    parameters['globals']['deploy']):
+    if not Templates.templateEngine(code, parameters,
+                                    templates_path=os.path.dirname(__file__) + '/Templates/Documentation'):
       sys.exit(1)
 
   paths = [parameters['globals']['RoboticsLanguagePath'], parameters['globals']['plugins']]
@@ -71,22 +71,25 @@ def output(code, parameters):
 
   for type in ['Inputs', 'Transformers', 'Outputs']:
     if parameters['Outputs']['Developer']['create'][type] is not '':
+
+      parameters['Outputs']['Developer']['Info'] = {'type': type,
+                                                    'name': parameters['Outputs']['Developer']['create'][type]}
+
       filepatterns = {'name': Utilities.camelCase(parameters['Outputs']['Developer']['create'][type])}
 
       # @UPDATE to use latest template engine
       # run template engine to generate node code
-      if not Utilities.templateEngine(code, parameters,
-                                      filepatterns, os.path.dirname(__file__) + '/Templates/' + type,
-                                      parameters['globals']['plugins'] + '/' + type):
+      if not Templates.templateEngine(code, parameters,
+                                      file_patterns=filepatterns,
+                                      templates_path=os.path.dirname(__file__) + '/Templates/' + type,
+                                      deploy_path=parameters['globals']['plugins'] + '/' + type):
         sys.exit(1)
-
 
       # make sure the path ~/.rol/plugins containts an __init__.py file
       try:
-        subprocess.call(['touch', parameters['globals']['plugins']+'/__init__.py'])
+        subprocess.call(['touch', parameters['globals']['plugins'] + '/__init__.py'])
       except:
         pass
-
 
       # create template code elements for transformers
       if type == 'Transformers':
@@ -117,7 +120,7 @@ def output(code, parameters):
                           output_file.write(include_template.format(element))
                         Utilities.logger.debug('Wrote file ' + file_name)
 
-      print('Created ' + type + ' plugin "' + filepatterns['name'] + '" in folder ' + parameters['globals']['plugins'] + '/' + type + '/' + filepatterns['name'])
-
+      print('Created ' + type + ' plugin "' + filepatterns['name'] + '" in folder ' +
+            parameters['globals']['plugins'] + '/' + type + '/' + filepatterns['name'])
 
   return 0

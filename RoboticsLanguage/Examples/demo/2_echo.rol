@@ -1,0 +1,12 @@
+# A simple topic echo node
+node(
+  name:"example echo",
+
+  definitions: block(
+    # the input signal
+    echo_in ∈ Signals(Strings, rosTopic:'/echo/in', onNew: echo_out = echo_in),
+
+    # the echo signal
+    echo_out ∈ Signals(Strings, rosTopic:'/echo/out')
+  )
+)

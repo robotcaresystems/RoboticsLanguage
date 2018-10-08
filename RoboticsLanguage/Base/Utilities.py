@@ -52,14 +52,28 @@ sys.setdefaultencoding('utf-8')
 # -------------------------------------------------------------------------------------------------
 
 
-def printCode(code, style='monokai'):
-  print highlight(etree.tostring(code, pretty_print=True), XmlLexer(),
-                  Terminal256Formatter(style=Terminal256Formatter(style=style).style))
+def printCode(code, parameters=None, style='monokai'):
+  if not isinstance(code, list):
+    code = [code]
+
+  # a list of xml elements
+  for element in code:
+    if isinstance(element, etree._Element):
+     if parameters is not None and parameters['globals']['noColours']:
+       print(etree.tostring(element, pretty_print=True))
+     else:
+       print(highlight(etree.tostring(element, pretty_print=True), XmlLexer(), Terminal256Formatter(style=Terminal256Formatter(style=style).style)))
+  # a list of string
+  if all([isinstance(element, etree._ElementStringResult) for element in code]):
+    print(code)
 
 
-def printParameters(parameters, style='monokai'):
-  print highlight(pprint.pformat(parameters), PythonLexer(),
-                  Terminal256Formatter(style=Terminal256Formatter(style=style).style))
+def printParameters(elements, parameters=None, style='monokai'):
+  if parameters is not None and parameters['globals']['noColours']:
+    pprint.pprint(elements)
+  else:
+    print(highlight(pprint.pformat(elements), PythonLexer(),
+                    Terminal256Formatter(style=Terminal256Formatter(style=style).style)))
 
 
 # -------------------------------------------------------------------------------------------------
@@ -112,8 +126,7 @@ def positionToLineColumn(position, text):
 
 def errorMessage(error_type, reason, line='', filename='', line_number=0, column_number=0):
 
-  line_text = '\n' + line.strip('\n') + '\n' + (' ' *
-                                                column_number + '^') + '\n' if line is not '' else ''
+  line_text = '\n' + line.strip('\n') + '\n' + (' ' * column_number + '^') + '\n' if line is not '' else ''
 
   file_text = ' in file:\n"' + filename + '"\n' if filename is not '' else ''
 
@@ -122,8 +135,7 @@ def errorMessage(error_type, reason, line='', filename='', line_number=0, column
   column_number_text = ' column ' + \
       str(column_number) if column_number > 0 else ''
 
-  return (line_text + error_type + ' error' + file_text + line_number_text + column_number_text + ': ' +
-          color.BOLD + reason + color.END)
+  return (line_text + error_type + ' error' + file_text + line_number_text + column_number_text + ': ' + color.BOLD + reason + color.END)
 
 # creates error message from jinja exception
 
@@ -235,13 +247,13 @@ def errorLanguageDefinition(code, parameters):
 
 @decorator
 def log_all_calls(function):
-  print 'function name:', function._func.__name__, ' arguments:', function._args
+  print('function name: ' + function._func.__name__ + ' arguments: ' + str(function._args))
   return function()
 
 
 @decorator
 def name_all_calls(function):
-  print 'function name:', function._func.__name__
+  print('function name:' + function._func.__name__)
   return function()
 
 
@@ -251,7 +263,7 @@ def time_all_calls(function):
   sys.stdout.write('<<<')
   sys.stdout.flush()
   result = function()
-  print 'function name:', function._func.__name__, 'execution time: ', time.time() - start, 'seconds>>>'
+  print('function name: ' + function._func.__name__ + 'execution time: ' + str(time.time() - start) + ' seconds>>>')
   return result
 
 
@@ -343,22 +355,55 @@ def incrementCompilerStep(parameters, group, name):
   return parameters
 
 
+def progressMessage(parameters):
+  parameters['developer']['progressPercentage'] = parameters['developer']['progressPercentage'] + 1
+  progress_percentage = parameters['developer']['progressPercentage']
+  progress_total = parameters['developer']['progressTotal']
+  progress_bar = parameters['developer']['progressBar']
+
+  sys.stdout.write('\r[{:04.1f}%] {} {}                         '.format(
+      progress_percentage * 100 / progress_total, '\\|/-'[progress_bar % 4], \
+      parameters['developer']['stepGroup'] + ', ' + parameters['developer']['stepName']))
+  sys.stdout.flush()
+
+
+def progressSpin(parameters):
+  parameters['developer']['progressBar'] = parameters['developer']['progressBar'] + 1
+  progress_percentage = parameters['developer']['progressPercentage']
+  progress_total = parameters['developer']['progressTotal']
+  progress_bar = parameters['developer']['progressBar']
+
+  sys.stdout.write('\r[{:04.1f}%] {}'.format(
+      progress_percentage * 100 / progress_total, '\\|/-'[progress_bar % 4]))
+  sys.stdout.flush()
+
+
+def progressDone(parameters):
+  final_time = time.time() - parameters['developer']['progressStartTime']
+  sys.stdout.write('\r[{:04.1f}%] {}                         \n'.format(
+      100 , 'Done in {}.'.format(time.strftime("%Hh %Mm %Ss", time.gmtime(final_time)))))
+  sys.stdout.flush()
+
+
 def showDeveloperInformation(code, parameters):
+
+  if parameters['developer']['progress']:
+    progressMessage(parameters)
+
   if parameters['developer']['step'] == parameters['developer']['stepCounter']:
 
       # show developer information for xml code
     if parameters['developer']['code'] and code is not None:
-      printCode(code)
+      printCode(code, parameters)
 
     # show developer information for parameters
     if parameters['developer']['parameters']:
-      printParameters(parameters)
+      printParameters(parameters, parameters)
 
     # show developer information for specific xml code
     if parameters['developer']['codePath'] is not '' and code is not None:
       try:
-        for element in code.xpath(parameters['developer']['codePath']):
-          printCode(element)
+        printCode(code.xpath(parameters['developer']['codePath']), parameters)
       except:
         logger.warning(
             "The path'" + parameters['developer']['codePath'] + "' is not present in the code")
@@ -367,7 +412,7 @@ def showDeveloperInformation(code, parameters):
     if parameters['developer']['parametersPath'] is not '':
       try:
         for element in paths(parameters, parameters['developer']['parametersPath']):
-          printParameters(element)
+          printParameters(element, parameters)
       except:
         logger.warning(
             "The path'" + parameters['developer']['parametersPath'] + "' is not defined in the internal parameters.")
@@ -506,9 +551,13 @@ def ensureList(a):
     return [a]
 
 
+def unique(a):
+  return list(set(a))
+
 # -------------------------------------------------------------------------------------------------
 #  File utilities
 # -------------------------------------------------------------------------------------------------
+
 
 def findFileType(extension='py', path='.', followlinks=True):
   for entry in ensureList(path):
@@ -602,8 +651,7 @@ def xmlVariable(parameters, name, position=0):
 def xmlMiniLanguage(parameters, key, text, position):
   '''Calls a different parser to process inline mini languages'''
   try:
-    code, parameters = importModule(parameters['manifesto']['Inputs'][key]['type'],
-        'Inputs', key, 'Parse').Parse.parse(text, parameters)
+    code, parameters = importModule(parameters['manifesto']['Inputs'][key]['type'], 'Inputs', key, 'Parse').Parse.parse(text, parameters)
     result = etree.tostring(code)
     return result
   except:
@@ -613,6 +661,14 @@ def xmlMiniLanguage(parameters, key, text, position):
 # -------------------------------------------------------------------------------------------------
 #  XML utilities used in code generators
 # -------------------------------------------------------------------------------------------------
+
+def children(xml):
+  return xml.getchildren()
+
+
+def parent(xml):
+  return xml.getparent()
+
 
 def xpath(xml, path, namespaces={}):
   result = xml.xpath(path, namespaces=namespaces)
@@ -676,6 +732,15 @@ def getTextMinimumPositionXML(xml):
     return minimum
   else:
     return min(min(childrens_minimum), minimum)
+
+def getFirstParent(code, parent_name):
+  try:
+    if code.getparent().tag == parent_name:
+      return code.getparent()
+    else:
+      return getFirstParent(code.getparent(), parent_name)
+  except:
+    return None
 
 # -------------------------------------------------------------------------------------------------
 #  Other utilities
@@ -869,8 +934,10 @@ def serialise(code, parameters, keywords, language, filters=default_template_eng
           parentAttributes=code.getparent().attrib,
           parentTag=code.getparent().tag,
           text=text(code),
+          tag=code.tag,
           parameters=parameters,
           code=code)
+
       # save text in attribute
       code.attrib[language] = snippet
 
@@ -910,6 +977,18 @@ def CreateBracketGrammar(definitions):
         '\' -> xml(\'' + key + '\',a,self.input.position)\n'
 
   return text, bracket.keys()
+
+
+def CreateGenericGrammar(definitions):
+  # extract only generic operators
+  generic = dpath.util.search(definitions, '/*/generic')
+
+  text = '\n# Generic operators\n'
+
+  for key, value in generic.iteritems():
+    text += key + 'Generic = \'' + ''.join([x + '\' wws values:'+chr(97+y)+' wws \'' for x, y in zip(value['generic'], range(len(value['generic'])))][:-1]) + value['generic'][-1] + '\' -> xml(\'' + key + '\',' + '+'.join([chr(97+x) for x in range(len(value['generic'])-1)]) + ',self.input.position)\n'
+
+  return text, [x + 'Generic' for x in generic.keys()]
 
 
 def CreatePreInPostFixGrammar(definitions):

@@ -1,0 +1,14 @@
+<%% raw %%>{% raw %}<<<header->>>
+
+Examples:
+
+Information of the developer:
+ - Author: {{parameters.Information.user.name}}
+
+Name of first tag of the code:
+ - Tag: {{code.tag}}
+
+ Place where other plugins can inject code:
+ <<<'example'|group>>>
+{% endraw %}
+<%% endraw %%>
