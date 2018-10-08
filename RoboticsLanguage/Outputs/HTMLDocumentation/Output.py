@@ -20,7 +20,14 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
+import sys
+from RoboticsLanguage.Tools import Templates
+
 
 def output(code, parameters):
+
+  # run template engine to generate code
+  if not Templates.templateEngine(code, parameters):
+    sys.exit(1)
 
   return 0

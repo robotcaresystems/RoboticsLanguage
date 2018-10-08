@@ -1,0 +1,43 @@
+# A finite state machine
+node(
+  name:'example state machine B',
+  rate:25,
+  definitions: block(
+
+    # a mini-language: code is defined within `<{ }>`
+    FiniteStateMachine<{
+
+        name:machine
+        initial:idle
+
+
+        (running) -error-> (fault) -reset-> (idle) -start-> (running) -stop-> (idle) -calibration-> (calibrate) -reset-> (idle)
+
+
+      }>,
+
+
+      define entering():
+        print('Transition: ', machine.lastTransition(), ', Entering: ', machine.state()),
+
+      define exiting():
+        print('Leaving: ', machine.state() ),
+
+      define enteredIdle():
+        print('Back to Idle!'),
+
+    # a fire signal
+    fire ∈ Signals(Strings, rosTopic:'/fire', onNew: machine.fire(fire))
+
+  ),
+
+  initialise: block(
+
+    machine.addInitFunction(entering),
+    machine.addExitFunction(exiting),
+
+    machine.addInitFunction(enteredIdle, "idle")
+
+    )
+
+)

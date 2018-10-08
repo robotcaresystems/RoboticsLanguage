@@ -32,13 +32,17 @@ def Generate(outputs, code, parameters):
     if (code is not None) or (code is None and 'requiresCode' in parameters['manifesto']['Outputs'][output].keys() and not parameters['manifesto']['Outputs'][output]['requiresCode']):
 
       # update the compiler step
-      parameters = Utilities.incrementCompilerStep(parameters, 'Output ' + output)
+      parameters = Utilities.incrementCompilerStep(parameters, 'Outputs', output)
 
       # load the module
-      output_function = Utilities.importModule('Outputs', output, 'Output')
+      output_function = Utilities.importModule(parameters['manifesto']['Outputs'][output]['type'], 'Outputs', output, 'Output')
 
       # apply transformations
       output_function.Output.output(code, parameters)
 
       # show developer information
       Utilities.showDeveloperInformation(code, parameters)
+
+  # show final message
+  if parameters['developer']['progress']:
+    Utilities.progressDone(parameters)

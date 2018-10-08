@@ -1,13 +1,19 @@
 ![](RoboticsLanguage/Documentation/Assets/rol-logo.png)
 
-# The Robotics Language
+# What is the language of Robotics?
 
-The Robotics Language (RoL) is a high level robotics programming language that generates ROS c++ nodes.
+This is a very deep question with difficult answers. If robotics is meant to equal or even surpass human capabilities, then the language of robotics should be able to describe human behaviour, all the way from muscle activation to intelligence. Achieving this on a single programming language seems like an impossible task. This project proposes a new framework where multiple domain specific languages are used together to describe the behaviour of a robot. Specifically, the *Robotics Language (RoL)* is a high level robotics programming language that generates ROS c++ nodes, HTML interfaces, or other elements.
+
+[Domain Specific Languages](https://en.wikipedia.org/wiki/Domain-specific_language) *are computer languages specialised to a particular application domain*. Such languages use the minimum information required to describe a particular concept for a domain, thus present an **abstraction** of information. This project uses the concept of **mini-languages** to abstract programming by combining multiple domain specific languages in a single file.  
+
+
+
+The base RoL language has a structure similar to standard high-level programming languages
 
 ```coffeescript
 # A simple topic echo node
 node(
-  name:"example echo",
+  name:'example echo',
 
   definitions: block(
     # the input signal
@@ -24,30 +30,68 @@ The power of the RoL is in its ability to integrate mini-languages to build code
 ```coffeescript
 # A finite state machine
 node(
-  name:"example state machine",
+  name:'example state machine',
 
   definitions: block(
 
     # a mini-language: code is defined within `<{ }>`
     FiniteStateMachine<{
 
-        name:machine
-        initial:idle
+      name:machine
+      initial:idle
 
-        idle -(start)-> running
-        running -(stop)-> idle
+      (idle)-start->(running)-stop->(idle)
+      (running)-error->(fault)-reset->(idle)
+      (idle)-calibration->(calibrate)-reset->(idle)
 
-      }>,
+    }>,
 
     # the start signal
-    start ∈ Signals(Empty, rosTopic:'/start', onNew: fire(machine,"start")),
+    start ∈ Signals(Empty, rosTopic:'/start', onNew: machine.fire('start')),
 
     # the stop signal
-    stop ∈ Signals(Empty, rosTopic:'/stop', onNew: fire(machine,"stop"))
+    stop ∈ Signals(Empty, rosTopic:'/stop', onNew: machine.fire('stop'))
 
   )
 )
 ```
+Automatically generated graphical user interfaces in the browser allow for development and monitoring.
+
+![](RoboticsLanguage/Documentation/Assets/FiniteStateMachine.png)
+
+
+RoL contains high-level language element abstractions that are very useful for robotics, such as Interval [Temporal Logic](https://en.wikipedia.org/wiki/Temporal_logic) for signals.
+
+
+```coffeescript
+node(
+  name:'temporal logic test example',
+
+  definitions: block(
+
+    # a signal
+    x ∈ Signals(Booleans, rosTopic:'/temporal_logic/x'),
+
+    when(□[1,0](x),
+      print('always in the last second')),
+
+    when(◇[4,1](x),
+      print('eventually from 4 seconds to 1 second ago')),
+
+    when(□[5,0](◇[1,0](x) ∧ ◇[1,0](¬x)),
+      print('oscillating faster then 1Hz for at least 5 seconds'))
+
+  )
+)
+```
+
+Generated GUIs visualise the signals in time and the outcome of the logic.
+
+
+![](RoboticsLanguage/Documentation/Assets/TemporalLogic.png)
+
+
+The RoL is in practice an **open compiler** where users can develop their own languages by means of plug-ins. The RoL is programmed in python and uses XML as the internal abstract syntax tree.
 
 ## Documentation
 
@@ -84,7 +128,7 @@ rol RoboticsLanguage/Examples/helloworld.rol
 This will create a ROS node in the folder `~/deploy`. If you have installed the catkin workspace at `~/catkin_ws` then you can supply the path to the compiler and compile and launch the node directly:
 
 ```shell
-rol -p ~/catkin_ws/src/deploy/ RoboticsLanguage/Examples/helloworld.rol -c -l
+rol --deploy-path ~/catkin_ws/src/deploy/ RoboticsLanguage/Examples/helloworld.rol -c -l
 ```
 
 ## Docker image
@@ -121,14 +165,31 @@ Now you are ready to launch:
 rol RoboticsLanguage/Examples/helloworld.rol -l
 ```
 
+## Work in progress
+
+The Robotics Language is continuously evolving. Not all features are implemented. If find errors or you wish a new feature [please let us know](https://github.com/robotcaresystems/RoboticsLanguage/issues).
 
 
 ## Acknowledgements
 
-The Robotics Language is developed by Robot Care Systems B.V. (http://www.robotcaresystems.com) with the support of the **ROSIN project** (http://rosin-project.eu) and the **European Commission**. We kindly thank their support.
+The Robotics Language is developed by Robot Care Systems B.V. (http://www.robotcaresystems.com)
 
-This project has received funding from the European Union’s Horizon 2020 research and innovation programme under grant agreement No. 732287
+***
+<!--
+    ROSIN acknowledgement from the ROSIN press kit
+    @ https://github.com/rosin-project/press_kit
+-->
 
-<image src="http://rosin-project.eu/wp-content/uploads/2017/03/Logo_ROSIN_CMYK-Website.png" />
-<br><br>
-<image src="https://europa.eu/european-union/sites/europaeu/files/docs/body/flag_yellow_low.jpg" width=200/>
+<a href="http://rosin-project.eu">
+  <img src="http://rosin-project.eu/wp-content/uploads/rosin_ack_logo_wide.png"
+       alt="rosin_logo" height="60" >
+</a>
+
+Supported by ROSIN - ROS-Industrial Quality-Assured Robot Software Components.  
+More information: <a href="http://rosin-project.eu">rosin-project.eu</a>
+
+<img src="http://rosin-project.eu/wp-content/uploads/rosin_eu_flag.jpg"
+     alt="eu_flag" height="45" align="left" >  
+
+This project has received funding from the European Union’s Horizon 2020  
+research and innovation programme under grant agreement no. 732287.

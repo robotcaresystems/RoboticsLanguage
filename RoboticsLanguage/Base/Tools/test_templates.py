@@ -83,14 +83,14 @@ def templateEngine(code, parameters, output_name, file_patterns=default_file_pat
     # render it
     render = template.render(header=files_to_process[file]['header'])
 
-    print '================================='
-    print render
-    print '================================='
+    print('=================================')
+    print(render)
+    print('=================================')
 
     # create a new template that includes all the plugin template code
     preprocessed_template = Environment(loader=FileSystemLoader('/')).from_string(render)
 
     # render the combined template
-    print '-----------------------------------'
-    print preprocessed_template.render(message="hello", number="3")
-    print '-----------------------------------'
+    print('-----------------------------------')
+    print(preprocessed_template.render(message="hello", number="3"))
+    print('-----------------------------------')

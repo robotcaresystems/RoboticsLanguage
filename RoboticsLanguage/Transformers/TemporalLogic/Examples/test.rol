@@ -1,0 +1,25 @@
+node(
+  name:'temporal logic test example',
+
+  definitions: block(
+
+    # a signal
+    x ∈ Signals(Booleans, rosTopic:'/temporal_logic/x'),
+
+    when(□[1,0](x),
+      print('always 1 0')),
+
+    when(◇[2,0](x),
+      print('eventually 2 0')),
+
+    when(□[3,1](x),
+      print('always 3 1')),
+
+    when(◇[4,1](x),
+      print('eventually 4 1')),
+
+    when(□[5,0](◇[1,0](x) ∧ ◇[1,0](¬x)),
+      print('oscilating faster then 1Hz for at least 5 seconds'))
+
+  )
+)

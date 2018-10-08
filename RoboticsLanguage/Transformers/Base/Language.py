@@ -232,7 +232,7 @@ language = {
         'definition': {
             'arguments': arguments('anything'),
             'optional': {
-                'rate': optional('real', 1),
+                'rate': optional('real', 25),
                 'name': optional('string', 'unnamed'),
                 'initialise': optional('anything', None),
                 'finalise': optional('anything', None),
@@ -258,12 +258,6 @@ language = {
             'optional': {'level': optional('string', 'info')},
             'returns': returns('none')
         },
-        'output':
-        {
-            'HTMLDocumentation': 'print({{children|first}})',
-            'HTMLGUI': '',
-            'RoL': 'print({{children|first}})',
-        },
         'localisation':
         {
             'pt': 'imprimir',
@@ -286,11 +280,6 @@ language = {
                 'infix': {'key': '=',
                           'order': 100}
             }
-        },
-        'output': {
-            'HTMLDocumentation': 'print({{children|join(" = ")}})',
-            'HTMLGUI': '',
-            'RoL': 'print({{children|join(" = ")}})',
         },
         'localisation':
         {
@@ -322,12 +311,6 @@ language = {
             'arguments': arguments('none'),
             'returns': returns('none')
         },
-        'output':
-        {
-            'HTMLDocumentation': '{{attributes["name"]}}',
-            'HTMLGUI': '{{attributes["name"]}}',
-            'RoL': '{{attributes["name"]}}',
-        },
         'localisation':
         {
             'pt': 'variável'
@@ -346,6 +329,18 @@ language = {
         {
         }
     },
+
+
+    'function_pointer': {
+        'definition': {
+            'arguments': arguments('anything'),
+            'returns': returns('function')
+        },
+        'documentation':
+        {
+        }
+    },
+
 
     'return': {
         'definition': {
@@ -419,7 +414,38 @@ language = {
             'returns': returns('none')
         },
 
-    }
+    },
+
+    'part': {
+        'definition': {
+            'arguments': arguments('anything'),
+            'returns': returns('none')
+        },
+        'documentation':
+        {
+        }
+    },
+
+    'index': {
+        'definition': {
+            'arguments': arguments('anything'),
+            'returns': returns('none')
+        },
+        'documentation':
+        {
+        }
+    },
+
+    'domain': {
+        'definition': {
+            'arguments': arguments('anything'),
+            'returns': returns('none')
+        },
+        'documentation':
+        {
+        }
+    },
+
 
 }
 

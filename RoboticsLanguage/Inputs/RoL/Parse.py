@@ -132,19 +132,28 @@ main = wws ( functionDefinition
   # create the bracket operators part of the grammar
   bracket_text, bracket_keys = Utilities.CreateBracketGrammar(definitions)
 
+  # create generic operators
+  generic_text, generic_keys = Utilities.CreateGenericGrammar(definitions)
+
   # add the brackets to the main list of elements
   if len(bracket_keys) > 0:
     bracket_keys_text = '         | ' + '\n         | '.join(bracket_keys)
   else:
     bracket_keys_text = ''
 
+  # add the generic key to the main list of elements
+  if len(generic_keys) > 0:
+    generic_keys_text = '         | ' + '\n         | '.join(generic_keys)
+  else:
+    generic_keys_text = ''
+
   # set the element with maximum precedence
   max_precedence_text = '\nP' + \
       str(max_precedence) + ' = ( parenthesis | main )\n'
 
   # the grammar is the concatenation of many definitions
-  grammar = base_grammar + fix_text + bracket_text + max_precedence_text + \
-      main_loop_start + bracket_keys_text + main_loop_end
+  grammar = base_grammar + fix_text + bracket_text + generic_text + max_precedence_text + \
+      main_loop_start + generic_keys_text + bracket_keys_text + main_loop_end
 
   return grammar
 
@@ -164,7 +173,7 @@ def parse(text, parameters):
   # create the grammar
   language = parsley.makeGrammar(grammar, {'xml': Utilities.xml,
                                            'xmlAttributes': Utilities.xmlAttributes,
-                                           'xmlFunctionDefinition': Utilities.xmlFunctionDefinition,
+                                           'xmlFunctionDefinition': lambda x, y, z, w, k: Utilities.xmlFunctionDefinition(parameters, x, y, z, w, k),
                                            'xmlVariable': lambda x, y: Utilities.xmlVariable(parameters, x, y),
                                            'xmlFunction': lambda x, y, z: Utilities.xmlFunction(parameters, x, y, z),
                                            'xmlMiniLanguage': lambda x, y, z: Utilities.xmlMiniLanguage(parameters, x, y, z)})

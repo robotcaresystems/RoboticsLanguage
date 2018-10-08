@@ -1,13 +1,13 @@
-<<<header->>>
 <?xml version="1.0"?>
+<<<header->>>
 <package>
-  <name>{{parameters['node']['name']|underscore}}</name>
-  <version>{{parameters['Information']['software']['version']}}</version>
-  <description>{{parameters['Information']['software']['description']}}</description>
-  <maintainer email="{{parameters['Information']['software']['maintainer']['email']}}">{{parameters['Information']['software']['maintainer']['name']}}</maintainer>
-  <license>{{parameters['Information']['software']['license']}}</license>
-  <url type="website">{{parameters['Information']['software']['url']}}</url>
-  <author email="{{parameters['Information']['software']['author']['email']}}">{{parameters['Information']['software']['author']['name']}}</author>
+  <name>{{parameters.node.name|underscore}}</name>
+  <version>{{parameters.Information.software.version}}</version>
+  <description>{{parameters.Information.software.description}}</description>
+  <maintainer email="{{parameters.Information.software.maintainer.email}}">{{parameters.Information.software.maintainer.name}}</maintainer>
+  <license>{{parameters.Information.software.license}}</license>
+  <url type="website">{{parameters.Information.software.url}}</url>
+  <author email="{{parameters.Information.software.author.email}}">{{parameters.Information.software.author.name}}</author>
 
   <buildtool_depend>catkin</buildtool_depend>
 

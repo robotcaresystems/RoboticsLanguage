@@ -1,0 +1,6 @@
+
+name:machine
+initial:idle
+
+(idle) -start-> (running) -stop-> (idle)
+(running) -error-> (fault) -reset-> (idle)

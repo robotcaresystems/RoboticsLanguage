@@ -22,8 +22,20 @@
 #   limitations under the License.
 import os
 import sys
+import time
+import signal
 from . import Utilities
 from . import Parameters
+
+sys.setrecursionlimit(99999)
+
+
+def exit_gracefully(*arguments):
+  sys.exit(1)
+
+
+signal.signal(signal.SIGINT, exit_gracefully)
+signal.signal(signal.SIGTERM, exit_gracefully)
 
 
 @Utilities.cache_in_disk
@@ -31,14 +43,11 @@ def prepareParameters():
   '''Collects parameters, language, messages, and error handling functions from all list_of_modules.
   This function is cached in `rol`. To refresh the cache run `rol --remove-cache`.'''
 
-  # read the path
-  language_path = os.path.abspath(os.path.dirname(__file__) + '/../../') + '/'
-
   # start by loading default parameters
   parameters = Parameters.parameters
 
-  # add some globals information
-  parameters['globals']['RoboticsLanguagePath'] = language_path + 'RoboticsLanguage/'
+  # add plugins folder to python path
+  sys.path.append(parameters['globals']['plugins']+'/../')
 
   # define initial classes of parameters
   manifesto = {'Inputs': {}, 'Outputs': {}, 'Transformers': {}}
@@ -51,7 +60,7 @@ def prepareParameters():
   package_order = {}
 
   # load the manifesto from all the modules
-  for element in Utilities.findFileName('Manifesto.py', [language_path, parameters['globals']['plugins']]):
+  for element in Utilities.findFileName('Manifesto.py', [parameters['globals']['RoboticsLanguagePath']+'/../', parameters['globals']['plugins']]):
 
     name_split = element.split('/')[-4:-1]
     module_name = '.'.join(name_split)
@@ -64,6 +73,12 @@ def prepareParameters():
 
         # read manifesto
         manifesto[name_split[1]][name_split[2]] = manifesto_module.manifesto
+
+        # add path
+        manifesto[name_split[1]][name_split[2]]['path'] = os.path.realpath(os.path.dirname(element))
+
+        # add type: built-in or plugin
+        manifesto[name_split[1]][name_split[2]]['type'] = name_split[0]
 
         # get the load order for the packages
         if 'order' in manifesto_module.manifesto.keys():
@@ -116,11 +131,18 @@ def prepareParameters():
 # @Utilities.time_all_calls
 def Initialise(remove_cache):
   '''The main initialisation file of `rol`. Grabs information from all modules to assemble a `parameters` dictionary.'''
+
   # remove cache if requested
   if remove_cache:
     Utilities.removeCache()
 
   # load cached parameters or create if necessary
   parameters = prepareParameters()
+
+  # add plugins folder to python path
+  sys.path.append(parameters['globals']['plugins']+'/../')
+
+  # remember approximate starting time
+  parameters['developer']['progressStartTime'] = time.time()
 
   return parameters

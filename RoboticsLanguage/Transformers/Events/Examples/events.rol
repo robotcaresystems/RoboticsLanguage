@@ -1,0 +1,21 @@
+node(
+  rate:25,
+  name:"example events",
+
+  definitions: block(
+
+    state ∈ Signals(Booleans, rosTopic:'/test/events/state'),
+
+    when(□[1,0](state),
+      print('always true for 1 second')
+    ),
+
+    when(state,
+      print('true')
+    ),
+
+    when(¬state,
+      print('false')
+    )
+  )
+)
