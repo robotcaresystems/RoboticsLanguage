@@ -32,6 +32,10 @@ parameters = {
         'launch': False,
         'beautify': False,
         'verbose': 'none',
+        'deployOutputs': {
+            'RosCpp': os.path.expanduser('~') + '/catkin_ws/src/',
+            'Ros2Cpp': os.path.expanduser('~') + '/ros2_ws/src/'
+        },
         'deploy': os.path.expanduser('~') + '/deploy/',
         'plugins': os.path.expanduser('~') + '/.rol/plugins/',
         'RoboticsLanguagePath': os.path.abspath(os.path.dirname(__file__) + '/../') + '/',
@@ -125,30 +129,30 @@ command_line_flags = {
     },
     'developer:code': {
         'noArgument': True,
-        'flag':'x',
+        'flag': 'x',
         'longFlag': 'show-code',
         'description': 'Prints the internal XML representation of the code'
     },
     'developer:codePath': {
-        'flag':'X',
+        'flag': 'X',
         'longFlag': 'show-code-path',
         'description': 'Prints the internal XML representation of the code for a specific path'
     },
     'developer:parameters': {
-        'flag':'p',
+        'flag': 'p',
         'longFlag': 'show-parameters',
         'noArgument': True,
         'fileNotNeeded': True,
         'description': 'Prints the internal parameters'
     },
     'developer:parametersPath': {
-        'flag':'P',
+        'flag': 'P',
         'longFlag': 'show-parameters-path',
         'fileNotNeeded': True,
         'description': 'Prints the internal parameters for a specific path'
     },
     'developer:step': {
-        'flag':'s',
+        'flag': 's',
         'longFlag': 'show-step',
         'description': 'Prints parameters or code for a specific compiler step'
     },
@@ -222,7 +226,15 @@ command_line_flags = {
     },
     'globals:deploy': {
         'longFlag': 'deploy-path',
-        'description': 'The path where the generated code is saved'
+        'description': 'The generic path where the generated code is saved'
+    },
+    'globals:deployOutputs:RosCpp': {
+        'longFlag': 'deploy-ros-cpp-path',
+        'description': 'The path where the generated ROS code is saved'
+    },
+    'globals:deployOutputs:Ros2Cpp': {
+        'longFlag': 'deploy-ros-2-cpp-path',
+        'description': 'The path where the generated ROS 2 code is saved'
     },
     'globals:removeCache': {
         'longFlag': 'remove-cache',

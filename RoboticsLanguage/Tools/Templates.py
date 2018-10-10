@@ -58,7 +58,10 @@ def templateEngine(code, parameters, output=None,
     output = parameters['developer']['stepName']
 
   if deploy_path is None:
-    deploy_path = parameters['globals']['deploy']
+    if parameters['developer']['stepName'] in parameters['globals']['deployOutputs'].keys():
+      deploy_path = parameters['globals']['deployOutputs'][parameters['developer']['stepName']]
+    else:
+      deploy_path = parameters['globals']['deploy']
 
   if not os.path.isdir(templates_path):
     templates_path = parameters['manifesto'][parameters['developer']['stepGroup']][parameters['developer']['stepName']]['path'] + '/' + templates_path
