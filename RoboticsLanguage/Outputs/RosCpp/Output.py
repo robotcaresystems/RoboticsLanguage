@@ -45,8 +45,13 @@ def runPreparations(code, parameters):
     if len(code.xpath('//' + tag)) > 0:
       parameters['Outputs']['RosCpp']['globalIncludes'].add(library)
 
+  # get the path to deploy the code
+  if 'RosCpp' in parameters['globals']['deployOutputs'].keys():
+    deploy_path = parameters['globals']['deployOutputs']['RosCpp']
+  else:
+    deploy_path = parameters['globals']['deploy']
 
-  return code, parameters, node_name_underscore
+  return code, parameters, node_name_underscore, deploy_path
 
 
 def output(code, parameters):
@@ -58,7 +63,7 @@ def output(code, parameters):
     return
 
   # preprocess the code to provide information for templares
-  code, parameters, node_name_underscore = runPreparations(code, parameters)
+  code, parameters, node_name_underscore, deploy_path = runPreparations(code, parameters)
 
   # run template engine to generate node code
   if not Templates.templateEngine(code, parameters, file_patterns={'nodename': node_name_underscore}):
@@ -74,7 +79,7 @@ def output(code, parameters):
         for file in list_of_cpp_files:
           process = subprocess.Popen(['uncrustify', '-c',  unicode(Utilities.myPluginPath(parameters) + '/Resources/uncrustify.cfg'),
                                       file,  '--replace', '--no-backup'],
-                                     cwd=parameters['globals']['deploy'] + '/' + node_name_underscore,
+                                     cwd=deploy_path + '/' + node_name_underscore,
                                      stdout=output_file,
                                      stderr=subprocess.STDOUT)
           process.wait()
@@ -94,8 +99,8 @@ def output(code, parameters):
   # if the flag compile is set then run catkin
   if parameters['globals']['compile']:
     Utilities.logger.debug("Compiling with: `catkin build " + node_name_underscore +
-                           "` in folder " + parameters['globals']['deploy'])
-    process = subprocess.Popen(['catkin', 'build', node_name_underscore], cwd=parameters['globals']['deploy'])
+                           "` in folder " + deploy_path)
+    process = subprocess.Popen(['catkin', 'build', node_name_underscore], cwd=deploy_path)
     process.wait()
     if process.returncode > 0:
       Utilities.logger.error("Compilation failed!!!")

@@ -17,7 +17,7 @@
 #include "rclcpp/rclcpp.hpp"
 
 // extra global includes
-{% for library in parameters.Outputs.RosCpp.globalIncludes -%}
+{% for library in parameters.Outputs.Ros2Cpp.globalIncludes -%}
 #include <{{library}}>
 {% endfor -%}
 
@@ -55,7 +55,7 @@ namespace {{parameters.node.name|underscore}}
     private:
 
       /* definitions */
-      {{code|xpath('/node')|option('definitions')|attribute('RosCpp')}};
+      {{code|xpath('/node')|option('definitions')|attribute('Ros2Cpp')}};
 
       <<<'definitions'|group>>>
   };
