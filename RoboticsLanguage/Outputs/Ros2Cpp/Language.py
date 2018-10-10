@@ -255,5 +255,87 @@ language = {
         },
     },
 
+    # math
+    'times': {
+        'output': {
+            'Ros2Cpp': '({{children|join(" * ")}})',
+        },
+    },
+    'divide': {
+        'output': {
+            'Ros2Cpp': '({{children|join(" / ")}})',
+        },
+    },
+
+    'plus': {
+        'output': {
+            'Ros2Cpp': '({{children|join(" + ")}})',
+        },
+    },
+    'minus': {
+        'output': {
+            'Ros2Cpp': '({{children|join(" - ")}})',
+        },
+    },
+
+    'larger': {
+        'output': {
+            'Ros2Cpp': '({{children|join(" > ")}})',
+        },
+    },
+    'smaller': {
+        'output': {
+            'Ros2Cpp': '({{children|join(" < ")}})',
+        },
+    },
+    'largerEqual': {
+        'output': {
+            'Ros2Cpp': '({{children|join(" >= ")}})',
+        },
+    },
+    'smallerEqual': {
+        'output': {
+            'Ros2Cpp': '({{children|join(" <= ")}})',
+        },
+    },
+
+    'equal': {
+        'output': {
+            'Ros2Cpp': '({{children|join(" == ")}})',
+        },
+    },
+    'notEqual': {
+        'output': {
+            'Ros2Cpp': '({{children|join(" != ")}})',
+        },
+    },
+
+    'and': {
+        'output': {
+            'Ros2Cpp': '({{children|join(" && ")}})',
+        },
+    },
+    'or': {
+        'output': {
+            'Ros2Cpp': '({{children|join(" || ")}})',
+        },
+    },
+    'not': {
+        'output': {
+            'Ros2Cpp': '!({{children[0]}})',
+        },
+    },
+
+    'negative': {
+        'output': {
+            'Ros2Cpp': '-({{children[0]}})',
+        },
+    },
+
+    'positive': {
+        'output': {
+            'Ros2Cpp': '({{children[0]}})',
+        },
+    },
 
 }
