@@ -8,10 +8,7 @@ curl -O https://bootstrap.pypa.io/get-pip.py && python get-pip.py
 rm get-pip.py
 
 # install the Tools
-apt update
-apt install git-all
-pip install git+git://github.com/colcon/colcon-core.git
-pip install -U colcon-common-extensions
+pip3 install -U colcon-common-extensions
 
 # install the Robotics Language
 pip install -e .
