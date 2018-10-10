@@ -1,36 +1,37 @@
 #!/bin/bash
 
 # setup the environment
-# source /opt/ros/kinetic/setup.bash
+source /opt/ros/bouncy/setup.bash
 
 # install pip
 curl -O https://bootstrap.pypa.io/get-pip.py && python get-pip.py
 rm get-pip.py
 
-# install the catkin tools
-# pip install catkin_tools
+# install the Tools
+apt update
+apt install git-all
+pip install git+git://github.com/colcon/colcon-core.git
+pip install -U colcon-common-extensions
 
 # install the Robotics Language
 pip install -e .
 
 # create the catkin workspace
-# mkdir -p ~/catkin_ws/src
-# cd ~/catkin_ws/
-# catkin init
-# catkin build
+mkdir -p ~/ros2_ws/src
+cd ~/ros2_ws/
 
 # make sure .bashrc loads ros
-# echo 'source ~/catkin_ws/devel/setup.bash' >> ~/.bashrc
+echo 'source ~/ros2_ws/install/setup.bash' >> ~/.bashrc
 
 # set the development path
 mkdir -p ~/.rol
 echo 'globals:
-  deploy: /root/catkin_ws/src/deploy' > ~/.rol/parameters.yaml
+  deploy: /root/ros2_ws/src/deploy' > ~/.rol/parameters.yaml
 
 # compile the example
-# rol /RoL/RoboticsLanguage/Examples/helloworld.rol -c
+rol /RoL/RoboticsLanguage/Examples/helloworld.rol -c -o Ros2Cpp
 
 # source the new code to be able to launch
-# source ~/catkin_ws/devel/setup.bash
+source ~/ros2_ws/install/setup.bash
 
 cd /RoL

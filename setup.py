@@ -45,7 +45,7 @@ setup(name='RoboticsLanguage',
                'RoboticsLanguage/Scripts/docker/rol_2_docker'
                ],
       install_requires=[
-          'parsley', 'argparse', 'argcomplete', 'jinja2', 'dpath', 'coloredlogs', 'lxml', 'iso-639', 'funcy', 'dill', 'pygments', 'fso'
+          'parsley', 'argparse', 'argcomplete', 'jinja2', 'dpath', 'coloredlogs', 'lxml', 'iso-639', 'funcy', 'dill', 'pygments', 'fso', 'pyyaml'
       ],
       include_package_data=True,
       package_data={
