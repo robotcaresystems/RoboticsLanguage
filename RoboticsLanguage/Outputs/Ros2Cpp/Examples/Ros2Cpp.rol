@@ -1,0 +1,7 @@
+node(
+  name:'example Ros 2 cpp',
+
+  initialise: block(
+    print('Ros2Cpp')
+  )
+)
