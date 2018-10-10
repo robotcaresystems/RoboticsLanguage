@@ -1,0 +1,7 @@
+#!/bin/bash
+
+ROL_PATH=`python -c "import os; import RoboticsLanguage; print os.path.dirname(os.path.abspath(RoboticsLanguage.__file__)) + '/..'"`
+
+echo "Initialising Docker..."
+
+docker run -it --rm -v $ROL_PATH:/RoL --workdir=/RoL --name=RoboticsLanguage2 osrf/ros2:bouncy-desktop bash -c "source ./RoboticsLanguage/Scripts/docker/rol_2_source_in_docker_developer.sh; bash"

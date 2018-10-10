@@ -39,7 +39,10 @@ setup(name='RoboticsLanguage',
                'RoboticsLanguage/Scripts/tests/rol_run_tests',
                'RoboticsLanguage/Scripts/docker/rol_docker_join',
                'RoboticsLanguage/Scripts/docker/rol_docker_start',
-               'RoboticsLanguage/Scripts/docker/rol_docker'
+               'RoboticsLanguage/Scripts/docker/rol_docker',
+               'RoboticsLanguage/Scripts/docker/rol_2_docker_join',
+               'RoboticsLanguage/Scripts/docker/rol_2_docker_start',
+               'RoboticsLanguage/Scripts/docker/rol_2_docker'
                ],
       install_requires=[
           'parsley', 'argparse', 'argcomplete', 'jinja2', 'dpath', 'coloredlogs', 'lxml', 'iso-639', 'funcy', 'dill', 'pygments', 'fso'
