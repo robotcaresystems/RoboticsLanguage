@@ -25,7 +25,7 @@ from Tools import Topics, Types
 def transform(code, parameters):
 
   # make sure RosCpp is part of the output
-  if any(x in parameters['globals']['output'] for x in ['RosCpp', 'HTMLGUI']):
+  if any(x in parameters['globals']['output'] for x in ['RosCpp', 'HTMLGUI', 'Ros2Cpp']):
 
     # Types
     code, parameters = Types.process(code, parameters)

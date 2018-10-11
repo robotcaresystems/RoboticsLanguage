@@ -1,0 +1,80 @@
+
+{% set includes %}
+{% set TemporalOperators = parameters.Transformers.TemporalLogic.TemporalOperators %}
+
+
+{% if TemporalOperators|length>0 %}
+#include <deque>
+{% if 'HTMLGUI' in parameters.globals.output %}
+#include "std_msgs/Float32MultiArray.h"
+{% endif %}
+
+  // A structure used by interval temporal logic
+typedef struct {ros::Time time; bool rise;} TimedBoolean;
+
+{% endif %}
+
+
+{% endset %}
+
+{% set definitions %}
+  {% set TemporalOperators = parameters.Transformers.TemporalLogic.TemporalOperators %}
+
+
+    {% if TemporalOperators|length>0 %}
+        //Temporal logic operators
+        {% for item in TemporalOperators|ensureList -%}
+            {% if item.type=='always' or item.type=='eventually' -%}
+                bool {{item.name}}; //simple always or eventually
+            {% elif item.min=='0' -%}
+                bool {{item.name}}; // always or eventually with min=0
+                bool {{item.name}}last_;
+                ros::Time {{item.name}}switch_;
+                ros::Timer {{item.name}}check_;
+                /*!
+                 * @brief Self-trigger for temporal logic callback.
+                 * @param e The event information: time and rise.
+                 */
+                void logic{{item.name|camelCase}}TimerCB(const ros::TimerEvent& e);
+            {% else -%}
+                bool {{item.name}}; // always or eventually with min>0
+                bool {{item.name}}last_;
+                std::deque<TimedBoolean> {{item.name}}signal_;
+                ros::Timer {{item.name}}check_max_;
+                ros::Timer {{item.name}}check_min_;
+                /*!
+                 * @brief Self-trigger for temporal logic callback.
+                 * @param e The event information: time and rise.
+                 */
+                void logic{{item.name|camelCase}}TimerCB(const ros::TimerEvent& e);
+            {% endif -%}
+        {% endfor %}
+    {% endif %}
+
+
+
+        {% for logic in TemporalOperators|ensureList -%}
+            /*!
+             * @brief Logic support function
+            */
+            void logic{{logic.name|camelCase}}();
+        {% endfor %}
+
+        {% if PackageTransform=='true' %}
+            // transform listener
+            tf::TransformListener transform_listener_;
+        {% endif %}
+
+        {% if 'HTMLGUI' in parameters.globals.output %}
+        // HTMLGUI: Creating publisher nodes to visualise the temporal logic expressions
+          {% for item in TemporalOperators|ensureList -%}
+              {% if item.type=='alwaysInterval' or item.type=='eventuallyInterval' -%}
+                  ros::Publisher sig_temporal_logic_gui_{{item.name|underscore}}handle_out_;
+                  std_msgs::Float32MultiArray sig_temporal_logic_gui_{{item.name|underscore}};
+              {% endif -%}
+          {% endfor -%}
+        {% endif %}
+
+
+
+{% endset %}

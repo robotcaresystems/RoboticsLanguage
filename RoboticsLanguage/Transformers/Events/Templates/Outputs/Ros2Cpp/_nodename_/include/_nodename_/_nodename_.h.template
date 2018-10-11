@@ -1,0 +1,16 @@
+
+{% set includes %}
+
+{% endset %}
+
+{% set definitions %}
+
+
+{% for when in code.xpath('//when') %}
+
+  void when{{when|attribute('whenId')}}();
+  bool when_last_{{when|attribute('whenId')}} = false;
+
+{% endfor %}
+
+{% endset %}

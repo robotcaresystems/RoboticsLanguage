@@ -21,6 +21,13 @@
 #include <{{library}}>
 {% endfor -%}
 
+// extra local includes
+{% for library in parameters.Outputs.Ros2Cpp.localIncludes -%}
+#include "{{library}}"
+{% endfor -%}
+
+
+
 <<<'includes'|group>>>
 
 using std::placeholders::_1;
