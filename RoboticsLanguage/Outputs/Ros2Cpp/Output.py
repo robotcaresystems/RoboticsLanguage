@@ -90,8 +90,8 @@ def output(code, parameters):
   # if the flag compile is set then run colcon
   if parameters['globals']['compile']:
     command = ['colcon', 'build', '--packages-select', node_name_underscore]
-    Utilities.logger.debug("Compiling with: `" + ' '.join(command) + "` in folder " + deploy_path)
-    process = subprocess.Popen(command, cwd=deploy_path)
+    Utilities.logger.debug("Compiling with: `" + ' '.join(command) + "` in folder " + deploy_path + '/..')
+    process = subprocess.Popen(command, cwd=deploy_path +'/..')
     process.wait()
     if process.returncode > 0:
       Utilities.logger.error("Compilation failed!!!")
