@@ -14,12 +14,12 @@ endif()
 
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(std_msgs REQUIRED)
 <<<'findPackage'|group>>>
 
 
 add_executable({{parameters.node.name|underscore}} src/{{parameters.node.name|underscore}}.cpp)
-ament_target_dependencies({{parameters.node.name|underscore}} rclcpp <<<'ament_target_dependencies'|group>>>)
-
+ament_target_dependencies({{parameters.node.name|underscore}} rclcpp std_msgs <<<'ament_target_dependencies'|group>>>)
 
 install(TARGETS {{parameters.node.name|underscore}}
         DESTINATION lib/${PROJECT_NAME})
