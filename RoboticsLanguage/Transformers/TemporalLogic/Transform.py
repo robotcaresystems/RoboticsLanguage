@@ -71,22 +71,36 @@ def processTemporalOperators(code, parameters, list_of_logic, logic_id_counter):
     if len(logic.getchildren()) > 1:
       logic_type += 'Interval'
 
-    logic_name = logic_type + '_' + str(logic_id_counter) + '_'
+    logic_name = logic_type + '_' + str(logic_id_counter)
 
-    definition = {'type': logic_type,
-                  'name': logic_name,
-                  'variables': all_variables,
-                  'id': logic_id_counter}
-
-    # replace the xml by serialised code
-    if definition['type'] == 'alwaysInterval' or definition['type'] == 'eventuallyInterval':
-      definition['max'] = Utilities.serialise(logic.getchildren()[0], parameters, parameters['language'], 'RosCpp')
-      definition['min'] = Utilities.serialise(logic.getchildren()[1], parameters, parameters['language'], 'RosCpp')
-      definition['logiccode'] = Utilities.serialise(
-          logic.getchildren()[2], parameters, parameters['language'], 'RosCpp')
-    else:
-      definition['logiccode'] = Utilities.serialise(
-          logic.getchildren()[0], parameters, parameters['language'], 'RosCpp')
+    # definition = {'type': logic_type,
+    #               'name': logic_name,
+    #               'variables': all_variables,
+    #               'id': logic_id_counter}
+    #
+    # # replace the xml by serialised code
+    # if definition['type'] == 'alwaysInterval' or definition['type'] == 'eventuallyInterval':
+    #   # ROS 1
+    #   if 'RosCpp' in parameters['globals']['output']:
+    #     definition['max_ros'] = Utilities.serialise(logic.getchildren()[0], parameters, parameters['language'], 'RosCpp')
+    #     definition['min_ros'] = Utilities.serialise(logic.getchildren()[1], parameters, parameters['language'], 'RosCpp')
+    #     definition['code_ros'] = Utilities.serialise(
+    #         logic.getchildren()[2], parameters, parameters['language'], 'RosCpp')
+    #   # ROS 2
+    #   if 'Ros2Cpp' in parameters['globals']['output']:
+    #     definition['max_ros2'] = Utilities.serialise(logic.getchildren()[0], parameters, parameters['language'], 'Ros2Cpp')
+    #     definition['min_ros2'] = Utilities.serialise(logic.getchildren()[1], parameters, parameters['language'], 'Ros2Cpp')
+    #     definition['code_ros2'] = Utilities.serialise(
+    #         logic.getchildren()[2], parameters, parameters['language'], 'Ros2Cpp')
+    # else:
+    #   # ROS 1
+    #   if 'RosCpp' in parameters['globals']['output']:
+    #     definition['code_ros'] = Utilities.serialise(
+    #         logic.getchildren()[0], parameters, parameters['language'], 'RosCpp')
+    #   # ROS 2
+    #   if 'Ros2Cpp' in parameters['globals']['output']:
+    #     definition['code_ros2'] = Utilities.serialise(
+    #         logic.getchildren()[0], parameters, parameters['language'], 'Ros2Cpp')
 
 
     # remove cascated logic from element
@@ -97,16 +111,16 @@ def processTemporalOperators(code, parameters, list_of_logic, logic_id_counter):
     logic.attrib['temporalLogicVariables'] = ','.join(all_variables)
 
     # logic.text = logic_name
-    # rename the temporal logic tag to be 'logiccode'. Inside all replacememts of operators by
+    # rename the temporal logic tag to be 'code'. Inside all replacememts of operators by
     # local variables are complete
-    # logic.tag = 'logiccode'
+    # logic.tag = 'code'
 
     # add a 'hidden' tag to pass the dependent signals to the parent tags
     # logic.append(etree.Element("null", variables=','.join(all_variables)))
 
     for variable in all_variables:
       new_parameters = {}
-      dpath.util.new(new_parameters, '/Transformers/Base/variables/' + variable + '/assign/post/RosCpp',
+      dpath.util.new(new_parameters, '/Transformers/Base/variables/' + variable + '/operators/assign/post/RosCpp',
                      ['logic' + logic_type[0].title() + logic_type[1:] + str(logic_id_counter) + '()'])
       dpath.util.merge(parameters, new_parameters)
 
@@ -122,9 +136,9 @@ def processTemporalOperators(code, parameters, list_of_logic, logic_id_counter):
       Utilities.serialise(root.getchildren()[0], parameters, parameters['language'], 'RoL')
 
       # annotate tag
-      definition['text'] = root.getchildren()[0].attrib['RoL']
-
-    list_of_logic.append(definition)
+    #   definition['text'] = root.getchildren()[0].attrib['RoL']
+    #
+    # list_of_logic.append(definition)
 
   return logic_id_counter
 
