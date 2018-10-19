@@ -144,7 +144,7 @@ def checkTypes(signal, variable, assignments, usages, code, parameters):
       cpp_type = 'int'
   else:
     ros_type = signal.xpath('option[@name="rosType"]/string')[0].text.replace('/', '::')
-    ros_2_type = signal.xpath('option[@name="rosType"]/string')[0].text.replace('/', '::')
+    ros_2_type = signal.xpath('option[@name="rosType"]/string')[0].text.replace('/', '::msg::')
     cpp_type = ros_type
 
   return code, parameters, ros_type, cpp_type, ros_2_type
@@ -174,8 +174,7 @@ def process(code, parameters):
     signal.attrib['ROSvariable'] = variable
 
     # save type in base/variables
-    parameters['Transformers']['Base']['variables'][variable]['RosCppType'] = ros_type
-    parameters['Transformers']['Base']['variables'][variable]['Ros2CppType'] = ros_2_type
+    parameters['Transformers']['Base']['variables'][variable]['type'] = { 'RosCpp': ros_type, 'Ros2Cpp': ros_2_type}
 
     # add header file for msg
     parameters['Outputs']['RosCpp']['globalIncludes'].add(ros_type.replace('::', '/') + '.h')
