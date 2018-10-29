@@ -15,10 +15,10 @@
         {% if item.getchildren()|length == 1 -%}
             {% if item.tag=='always' -%}
                 // global always
-                {{item.name}}=true;
+                {{name}}=true;
             {% elif item.tag=='eventually' -%}
                 // global eventually
-                {{item.name}}=false;
+                {{name}}=false;
             {% endif %}
         {% else %}
           {% set minimum = item.getchildren()[1].attrib['RosCpp'] %}
@@ -30,8 +30,8 @@
               {{name}}signal_.push_back(now_);
               {{name}}check_max_=nh_.createTimer(ros::Duration(100), &{{parameters.node.name|camelCase}}Class::logic{{name|camelCase}}TimerCB,this,true);
               {{name}}check_max_.stop();
-              {{name}}check_minimum_=nh_.createTimer(ros::Duration(100), &{{parameters.node.name|camelCase}}Class::logic{{name|camelCase}}TimerCB,this,true);
-              {{name}}check_minimum_.stop();
+              {{name}}check_min_=nh_.createTimer(ros::Duration(100), &{{parameters.node.name|camelCase}}Class::logic{{name|camelCase}}TimerCB,this,true);
+              {{name}}check_min_.stop();
           {% else %}
               {{name}}check_=nh_.createTimer(ros::Duration(100), &{{parameters.node.name|camelCase}}Class::logic{{name|camelCase}}TimerCB,this,true);
               {{name}}check_.stop();
@@ -156,9 +156,9 @@
 
             if (it->time > ros::Time::now() - ros::Duration({{minimum}}) )
             {
-                {{name}}check_minimum_.stop();
-                {{name}}check_minimum_.setPeriod(ros::Duration(it->time - ros::Time::now() + ros::Duration({{minimum}})));
-                {{name}}check_minimum_.start();
+                {{name}}check_min_.stop();
+                {{name}}check_min_.setPeriod(ros::Duration(it->time - ros::Time::now() + ros::Duration({{minimum}})));
+                {{name}}check_min_.start();
                 break;
             }
           }
@@ -239,9 +239,9 @@
 
             if (it->time > ros::Time::now() - ros::Duration({{minimum}}) )
             {
-                {{name}}check_minimum_.stop();
-                {{name}}check_minimum_.setPeriod(ros::Duration(it->time - ros::Time::now() + ros::Duration({{minimum}})));
-                {{name}}check_minimum_.start();
+                {{name}}check_min_.stop();
+                {{name}}check_min_.setPeriod(ros::Duration(it->time - ros::Time::now() + ros::Duration({{minimum}})));
+                {{name}}check_min_.start();
                 break;
             }
           }
