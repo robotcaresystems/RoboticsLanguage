@@ -1,6 +1,6 @@
 
 {% set includes %}
-{% set TemporalOperators = parameters.Transformers.TemporalLogic.TemporalOperators %}
+{% set TemporalOperators = code|xpaths('//always|//eventually') %}
 
 
 {% if TemporalOperators|length>0 %}
@@ -18,15 +18,14 @@ typedef struct {ros::Time time; bool rise;} TimedBoolean;
 {% endset %}
 
 {% set definitions %}
-  {% set TemporalOperators = code|xpath('//always|//eventually') %}
-
+  {% set TemporalOperators = code|xpaths('//always|//eventually') %}
     {% if TemporalOperators|length>0 %}
         //Temporal logic operators
         {% for item in TemporalOperators|ensureList -%}
           {% set name = item.attrib['temporalLogicName'] -%}
-            {% if item.getchildren()|length > 1 -%}
-                bool {{name}}}; //simple always or eventually
-            {% elif item.getchildren()[0].text=='0' -%}
+            {% if item.getchildren()|length == 1 -%}
+                bool {{name}}; //simple always or eventually
+            {% elif item.getchildren()[1].text=='0' -%}
                 bool {{name}}; // always or eventually with min=0
                 bool {{name}}last_;
                 ros::Time {{name}}switch_;
@@ -61,11 +60,6 @@ typedef struct {ros::Time time; bool rise;} TimedBoolean;
             */
             void logic{{name|camelCase}}();
         {% endfor %}
-
-        {% if PackageTransform=='true' %}
-            // transform listener
-            tf::TransformListener transform_listener_;
-        {% endif %}
 
         {% if 'HTMLGUI' in parameters.globals.output %}
         // HTMLGUI: Creating publisher nodes to visualise the temporal logic expressions
