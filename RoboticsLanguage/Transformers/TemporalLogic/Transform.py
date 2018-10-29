@@ -107,6 +107,7 @@ def processTemporalOperators(code, parameters, list_of_logic, logic_id_counter):
 
     # logic.remove(logic.getchildren()[0])
 
+    logic.attrib['temporalLogicId'] = str(logic_id_counter)
     logic.attrib['temporalLogicName'] = logic_name
     logic.attrib['temporalLogicVariables'] = ','.join(all_variables)
 

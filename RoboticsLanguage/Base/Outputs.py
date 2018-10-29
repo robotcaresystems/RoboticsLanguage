@@ -26,7 +26,7 @@ from . import Utilities
 def Generate(outputs, code, parameters):
   """Generates the outputs"""
 
-  for output in outputs:
+  for output in Utilities.unique(outputs):
 
     # Checks if the plugin can run without code
     if (code is not None) or (code is None and 'requiresCode' in parameters['manifesto']['Outputs'][output].keys() and not parameters['manifesto']['Outputs'][output]['requiresCode']):
