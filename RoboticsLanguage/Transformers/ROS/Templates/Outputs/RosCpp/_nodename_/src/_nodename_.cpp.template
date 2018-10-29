@@ -44,26 +44,21 @@
        {{topic.ros_type}} previous = {{topic.variable}};
        {% endif -%}
 
-
-       {% if parameters.Transformers.Base.variables[topic.variable].operators.assign is defined %}
-       {% if parameters.Transformers.Base.variables[topic.variable].operators.assign.pre is defined %}
+       {% if parameters|isDefined('Transformers/Base/variables/' + topic.variable + '/operators/assign/pre/RosCpp') %}
        /* run  pre-processing instructions */
          {% for instructions in parameters.Transformers.Base.variables[topic.variable].operators.assign.pre.RosCpp %}
          {{instructions}};
          {% endfor %}
        {% endif %}
-       {% endif %}
 
        /* Cache a copy of this signal inside the class */
        {{topic.variable}} = signal_{{topic.variable}}_message;
 
-       {% if parameters.Transformers.Base.variables[topic.variable].operators.assign is defined %}
-       {% if parameters.Transformers.Base.variables[topic.variable].operators.assign.post is defined %}
+       {% if parameters|isDefined('Transformers/Base/variables/' + topic.variable + '/operators/assign/post/RosCpp') %}
        /* run post-processing instructions */
          {% for instructions in parameters.Transformers.Base.variables[topic.variable].operators.assign.post.RosCpp %}
          {{instructions}};
          {% endfor %}
-       {% endif %}
        {% endif %}
 
 

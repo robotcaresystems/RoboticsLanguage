@@ -268,12 +268,10 @@
         ROS_INFO("Timer Callback: {{name}}");
     {% endif -%}
     {% for signal in logic.attrib['temporalLogicVariables']|ensureList -%}
-      {% if parameters.Transformers.Base.variables[signal].operators.assign is defined -%}
-        {% if parameters.Transformers.Base.variables[signal].operators.assign.post is defined -%}
-          {% for element in parameters.Transformers.Base.variables[signal].operators.assign.post.RosCpp -%}
-            {{element}};
-          {% endfor -%}
-        {% endif -%}
+      {% if parameters|isDefined('Transformers/Base/variables/'+signal+'/operators/assign/post/RosCpp') -%}
+        {% for element in parameters.Transformers.Base.variables[signal].operators.assign.post.RosCpp -%}
+          {{element}};
+        {% endfor -%}
       {% endif -%}
     {% endfor -%}
   }
