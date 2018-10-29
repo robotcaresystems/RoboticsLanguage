@@ -58,6 +58,11 @@ node(
       define enteredIdle():
         print('Back to Idle!'),
 
+
+      define test(): block(
+        x = false)
+        ,
+
     # a fire signal
     fire ∈ Signals(Strings, rosTopic:'/fire', onNew: machine.fire(fire))
 

@@ -175,7 +175,7 @@ language = {
 
     'assign': {
         'output': {
-            'RosCpp': '{{attributes["preRosCpp"]}}{{children[0]}}{{attributes["preAssignRosCpp"]}}={{attributes["postAssignRosCpp"]}}{{children[1]}}{{attributes["postRosCpp"]}}'
+            'RosCpp': '{% if isDefined(parameters,"Transformers/Base/variables/"+children[0]+"/operators/assign/pre/RosCpp") %}{{parameters["Transformers"]["Base"]["variables"][children[0]]["operators"]["assign"]["pre"]["RosCpp"]|join(";\n")}}{% endif %}{{attributes["preRosCpp"]}}{{children[0]}}{{attributes["preAssignRosCpp"]}}={{attributes["postAssignRosCpp"]}}{{children[1]}}{{attributes["postRosCpp"]}}{% if isDefined(parameters,"Transformers/Base/variables/"+children[0]+"/operators/assign/post/RosCpp") %}{{parameters["Transformers"]["Base"]["variables"][children[0]]["operators"]["assign"]["post"]["RosCpp"]|join(";\n")}}{% endif %}'
             # ,
             #
             # 'RosCpp2': '{% if "assignFunction" in attributes %}{{children[0]}}_assign({{children[1]}}){% else %}{{children[0]}}{% if "assignDomain" in attributes %}{{attributes["assignFunction"]}}{% endif %} = {{children[1]}}{% endif %}',
