@@ -4,11 +4,11 @@
 {% endset %}
 
 {% set initialise %}
-  {% set TemporalOperators = code|xpaths('//always|//eventually') %}
+  {% set TemporalOperators = code|xpaths('//always|//eventually')|sortListCodeByAttribute('temporalLogicId') %}
   {% if TemporalOperators|length>0 %}
         //Initialise temporal logic operators
         TimedBoolean now_;
-        {% for item in TemporalOperators|ensureList|sortListCodeByAttribute('temporalLogicId') -%}
+        {% for item in TemporalOperators -%}
         {% set name = item.attrib['temporalLogicName'] -%}
 
           // Logic element {{name}}
@@ -69,14 +69,14 @@
 {% endset %}
 
 {% set functions %}
-  {% set TemporalOperators = code|xpaths('//always|//eventually') %}
+  {% set TemporalOperators = code|xpaths('//always|//eventually')|sortListCodeByAttribute('temporalLogicId') %}
 
   {% if TemporalOperators|length>0 %}
   /*************************************************************************************************
   *** Logical expressions evaluation
   **************************************************************************************************/
   {% endif %}
-  {% for logic in TemporalOperators|ensureList|sortListCodeByAttribute('temporalLogicId') %}
+  {% for logic in TemporalOperators %}
   {% set name = logic.attrib['temporalLogicName'] -%}
 
   /********************************* Logic {{name|camelCase}} *********************************/

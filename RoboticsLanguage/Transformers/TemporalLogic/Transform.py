@@ -71,7 +71,7 @@ def processTemporalOperators(code, parameters, list_of_logic, logic_id_counter):
     if len(logic.getchildren()) > 1:
       logic_type += 'Interval'
 
-    logic_name = logic_type + '_' + str(logic_id_counter)
+    logic_name = logic_type + '_' + str(logic_id_counter) + '_'
 
     # definition = {'type': logic_type,
     #               'name': logic_name,
