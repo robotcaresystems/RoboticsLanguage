@@ -137,7 +137,7 @@ def processTemporalOperators(code, parameters, list_of_logic, logic_id_counter):
       Utilities.serialise(root.getchildren()[0], parameters, parameters['language'], 'RoL')
 
       # annotate tag
-    #   definition['text'] = root.getchildren()[0].attrib['RoL']
+      logic.attrib['temporalLogicText'] = root.getchildren()[0].attrib['RoL']
     #
     # list_of_logic.append(definition)
 

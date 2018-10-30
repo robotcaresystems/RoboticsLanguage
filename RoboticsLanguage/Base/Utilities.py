@@ -554,6 +554,11 @@ def ensureList(a):
 def unique(a):
   return list(set(a))
 
+
+def sortListCodeByAttribute(list, attribute):
+  return sorted(list, key=lambda x: x.attrib[attribute])
+
+
 # -------------------------------------------------------------------------------------------------
 #  File utilities
 # -------------------------------------------------------------------------------------------------

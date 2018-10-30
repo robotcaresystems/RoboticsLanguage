@@ -8,7 +8,7 @@
   {% if TemporalOperators|length>0 %}
         //Initialise temporal logic operators
         TimedBoolean now_;
-        {% for item in TemporalOperators|ensureList -%}
+        {% for item in TemporalOperators|ensureList|sortListCodeByAttribute('temporalLogicId') -%}
         {% set name = item.attrib['temporalLogicName'] -%}
 
           // Logic element {{name}}
@@ -76,7 +76,7 @@
   *** Logical expressions evaluation
   **************************************************************************************************/
   {% endif %}
-  {% for logic in TemporalOperators|ensureList %}
+  {% for logic in TemporalOperators|ensureList|sortListCodeByAttribute('temporalLogicId') %}
   {% set name = logic.attrib['temporalLogicName'] -%}
 
   /********************************* Logic {{name|camelCase}} *********************************/

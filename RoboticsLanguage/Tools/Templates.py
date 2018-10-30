@@ -29,7 +29,9 @@ default_template_engine_filters = {'todaysDate': Utilities.todaysDate,
                                    'underscore': Utilities.underscore,
                                    'fullCaps': Utilities.fullCaps,
                                    'camelCase': Utilities.camelCase,
-                                   'underscoreFullCaps': Utilities.underscoreFullCaps}
+                                   'underscoreFullCaps': Utilities.underscoreFullCaps,
+                                   'sortListCodeByAttribute': Utilities.sortListCodeByAttribute
+                                   }
 
 delimeters = {'block_start_string': '<%%',
               'block_end_string': '%%>',

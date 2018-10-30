@@ -21,7 +21,7 @@ typedef struct {ros::Time time; bool rise;} TimedBoolean;
   {% set TemporalOperators = code|xpaths('//always|//eventually') %}
     {% if TemporalOperators|length>0 %}
         //Temporal logic operators
-        {% for item in TemporalOperators|ensureList -%}
+        {% for item in TemporalOperators|ensureList|sortListCodeByAttribute('temporalLogicId') -%}
           {% set name = item.attrib['temporalLogicName'] -%}
             {% if item.getchildren()|length == 1 -%}
                 bool {{name}}; //simple always or eventually
@@ -52,7 +52,7 @@ typedef struct {ros::Time time; bool rise;} TimedBoolean;
 
 
 
-        {% for logic in TemporalOperators|ensureList -%}
+        {% for logic in TemporalOperators|ensureList|sortListCodeByAttribute('temporalLogicId') -%}
         {% set name = logic.attrib['temporalLogicName'] -%}
 
             /*!
@@ -63,7 +63,7 @@ typedef struct {ros::Time time; bool rise;} TimedBoolean;
 
         {% if 'HTMLGUI' in parameters.globals.output %}
         // HTMLGUI: Creating publisher nodes to visualise the temporal logic expressions
-          {% for item in TemporalOperators|ensureList -%}
+          {% for item in TemporalOperators|ensureList|sortListCodeByAttribute('temporalLogicId') -%}
             {% if item.getchildren()|length > 1 -%}
                   ros::Publisher sig_temporal_logic_gui_{{item.attrib['temporalLogicName']|underscore}}handle_out_;
                   std_msgs::Float32MultiArray sig_temporal_logic_gui_{{item.attrib['temporalLogicName']|underscore}};

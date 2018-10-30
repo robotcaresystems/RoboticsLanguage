@@ -171,14 +171,15 @@
 {% endset %}
 
 {% set body %}
-{% if code|xpaths('//always|//eventually')|length > 0 %}
+{% set TemporalOperators = code|xpaths('//always|//eventually') %}
+{% if TemporalOperators|length>0 %}
 
 <h1>Temporal logic</h1>
 
   <div class="ui styled accordion" id="temporal_logic_accordion">
-  {% for logic in TemporalOperators -%}
+  {% for logic in TemporalOperators|sortListCodeByAttribute('temporalLogicId') -%}
     <div class="title">
-      <i class="dropdown icon"></i> {{logic.text}}
+      <i class="dropdown icon"></i> {{logic.attrib['temporalLogicText']}}  - {{logic.attrib['temporalLogicId']}}
     </div>
     <div class="content hidden" id="temporal_logic_{{logic.attrib['temporalLogicId']}}">
       <div id="temporal_logic_plot_{{logic.attrib['temporalLogicId']}}"></div>
