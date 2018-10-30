@@ -20,6 +20,7 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
+import re
 import os
 import sys
 import time
@@ -28,6 +29,7 @@ import errno
 import pprint
 import hashlib
 import logging
+import inspect
 import datetime
 import dpath.util
 import coloredlogs
@@ -74,6 +76,13 @@ def printParameters(elements, parameters=None, style='monokai'):
   else:
     print(highlight(pprint.pformat(elements), PythonLexer(),
                     Terminal256Formatter(style=Terminal256Formatter(style=style).style)))
+
+
+def printVariable(x):
+  frame = inspect.currentframe().f_back
+  s = inspect.getframeinfo(frame).code_context[0]
+  r = re.search(r"\((.*)\)", s).group(1)
+  print("{} = {}".format(r, x))
 
 
 # -------------------------------------------------------------------------------------------------
