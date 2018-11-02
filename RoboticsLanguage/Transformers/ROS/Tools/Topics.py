@@ -95,10 +95,10 @@ def setPublish(variable, flow, assignments):
     for variable_element in assignments:
       assignment = Utilities.getFirstParent(variable_element, 'assign')
 
-      if 'postRosCpp' not in assignment.attrib.keys():
-        assignment.attrib['postRosCpp'] = ''
+      if 'postCpp' not in assignment.attrib.keys():
+        assignment.attrib['postCpp'] = ''
 
-      assignment.attrib['postRosCpp'] += ';' + variable + '_publisher.publish(' + variable + ');'
+      assignment.attrib['postCpp'] += ';' + variable + '_publisher.publish(' + variable + ');'
 
 
 def checkTypes(signal, variable, assignments, usages, code, parameters):
@@ -108,12 +108,12 @@ def checkTypes(signal, variable, assignments, usages, code, parameters):
 
     # Tell every assignment with this variable in the left side to use to data domain
     for element in assignments:
-      Utilities.getFirstParent(element, 'assign').attrib['preAssignRosCpp'] = '.data'
+      Utilities.getFirstParent(element, 'assign').attrib['preAssignCpp'] = '.data'
 
     # Tell all usages not with a domain parent to use data domain
     for use in usages:
       # if use.getparent().tag != 'domain':
-      use.attrib['returnDomainRosCpp'] = '.data'
+      use.attrib['returnDomainCpp'] = '.data'
 
     # get the type of the signal
     topic_type = signal.getchildren()[0]

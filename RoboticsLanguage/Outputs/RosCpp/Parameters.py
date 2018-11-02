@@ -21,6 +21,12 @@
 #   limitations under the License.
 
 
-parameters = {}
+parameters = {
+    'globalIncludes': set(),
+    'localIncludes': set()
+}
 
-command_line_flags = {}
+command_line_flags = {
+    'globalIncludes': {'suppress': True},
+    'localIncludes': {'suppress': True}
+}

@@ -9,6 +9,13 @@
 #    Copyright: copyright
 #
 
-parameters = {}
 
-command_line_flags = {}
+parameters = {
+    'globalIncludes': set(),
+    'localIncludes': set()
+}
+
+command_line_flags = {
+    'globalIncludes': {'suppress': True},
+    'localIncludes': {'suppress': True}
+}

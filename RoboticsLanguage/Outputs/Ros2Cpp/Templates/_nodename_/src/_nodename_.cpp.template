@@ -25,7 +25,7 @@ namespace {{parameters.node.name|underscore}}
     <<<'initialise'|group>>>
 
     /* initialisation */
-    {{code|xpath('/node')|option('initialise')|attribute('Ros2Cpp')}};
+    {{code|xpath('/node')|option('initialise')|serializedCode}};
   }
 
   /******************************* finalise ********************************************/
@@ -33,14 +33,14 @@ namespace {{parameters.node.name|underscore}}
   {
     <<<'finalise'|group>>>
 
-    {{code|xpath('/node')|option('finalise')|attribute('Ros2Cpp')}};
+    {{code|xpath('/node')|option('finalise')|serializedCode}};
   }
 
   {# /******************************* spin ************************************************/
   void {{parameters.node.name|camelCase}}Class::spin()
   {
     // Sets the spin rate
-    ros::Rate r({{code|xpath('/node')|option('rate')|attribute('Ros2Cpp')}});
+    ros::Rate r({{code|xpath('/node')|option('rate')|serializedCode}});
     while(ros::ok())
     {
       <<<'beforeSpin'|group>>>

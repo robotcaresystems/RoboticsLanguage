@@ -65,7 +65,7 @@ namespace {{parameters.node.name|underscore}}
     private:
 
       /* definitions */
-      {{code|xpath('/node')|option('definitions')|attribute('Ros2Cpp')}};
+      {{code|xpath('/node')|option('definitions')|serializedCode}};
 
       <<<'definitions'|group>>>
   };

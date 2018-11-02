@@ -69,6 +69,13 @@ def createGroupFunction(text):
   return lambda x: '\n'.join([z.format(x) for z in text])
 
 
+def getPackageParents(parameters, package):
+  if 'parent' in parameters['manifesto']['Outputs'][package].keys():
+    return [package] + getPackageParents(parameters, parameters['manifesto']['Outputs'][package]['parent'])
+  else:
+    return [package]
+
+
 def templateEngine(code, parameters, output=None,
                    ignore_files=default_ignore_files,
                    file_patterns=default_file_patterns,
@@ -87,15 +94,11 @@ def templateEngine(code, parameters, output=None,
       deploy_path = parameters['globals']['deploy']
 
   if not os.path.isdir(templates_path):
-    templates_path = parameters['manifesto'][parameters['developer']['stepGroup']][parameters['developer']['stepName']]['path'] + '/' + templates_path
+    templates_paths = [parameters['manifesto'][parameters['developer']['stepGroup']][x]['path'] + '/' + templates_path for x in reversed(getPackageParents(parameters, output))]
 
-    # templates_path = '/'.join([parameters['globals']['RoboticsLanguagePath'],
-    #                            parameters['developer']['stepGroup'],
-    #                            parameters['developer']['stepName'],
-    #                            templates_path])
-    # @TODO give warning
-    # if not os.path.isdir(templates_path):
-    #   Tools.Exceptions(...)
+  else:
+    templates_paths = [templates_path]
+
 
   transformers = [x.split('.')[-1] for x in filter(lambda x: 'Transformers' in x, parameters['globals']['loadOrder'])]
 
@@ -104,30 +107,38 @@ def templateEngine(code, parameters, output=None,
   new_files_to_copy = []
 
   # find all the files in the output template folder
-  for root, dirs, files in os.walk(templates_path):
-    for file in files:
-      if file.endswith(".template"):
+  for templates_path in templates_paths:
+    for root, dirs, files in os.walk(templates_path):
+      for file in files:
+        if file.endswith(".template"):
 
-        # extracts full and relative paths
-        file_full_path = os.path.join(root, file)
-        file_relative_path = Utilities.replaceFirst(file_full_path, templates_path, '')
-        file_deploy_path = Utilities.replaceLast(Utilities.replaceFirst(file_full_path, templates_path, deploy_path), '.template', '')
+          # extracts full and relative paths
+          file_full_path = os.path.join(root, file)
+          file_relative_path = Utilities.replaceFirst(file_full_path, templates_path, '')
+          file_deploy_path = Utilities.replaceLast(Utilities.replaceFirst(file_full_path, templates_path, deploy_path), '.template', '')
 
-        # apply file template names
-        for key, value in file_patterns.iteritems():
-          file_deploy_path = file_deploy_path.replace('_' + key + '_', value)
+          # apply file template names
+          for key, value in file_patterns.iteritems():
+            file_deploy_path = file_deploy_path.replace('_' + key + '_', value)
 
-        # save it
-        files_to_process[file_relative_path] = {
-            'full_path': file_full_path,
-            'deploy_path': file_deploy_path,
-            'includes': [], 'header': '', 'elements': []}
-      else:
-        # just copy the files
-        if file not in default_ignore_files:
-          copy_file_name = os.path.join(root, file)
-          files_to_copy.append(copy_file_name)
-          new_files_to_copy.append(Utilities.replaceFirst(copy_file_name, templates_path, deploy_path))
+          # save it
+          files_to_process[file_relative_path] = {
+              'full_path': file_full_path,
+              'deploy_path': file_deploy_path,
+              'includes': [], 'header': '', 'elements': []}
+        else:
+          # just copy the files
+          if file not in default_ignore_files:
+            copy_file_name = os.path.join(root, file)
+            files_to_copy.append(copy_file_name)
+            new_files_to_copy.append(Utilities.replaceFirst(copy_file_name, templates_path, deploy_path))
+
+
+  # Utilities.printParameters(files_to_process)
+  # print '----------------------------'
+  # Utilities.printParameters(files_to_copy)
+  # print '----------------------------'
+  # Utilities.printParameters(new_files_to_copy)
 
   # find all the non template files in the transformers template folder
   for element in parameters['globals']['loadOrder']:
@@ -168,6 +179,7 @@ def templateEngine(code, parameters, output=None,
     # after all modules create a grouping function for fill in includes
     files_to_process[file]['group_function'] = createGroupFunction(files_to_process[file]['elements'])
 
+
   # all the data is now ready, time to apply templates
   for file in files_to_process.keys():
 
@@ -194,6 +206,9 @@ def templateEngine(code, parameters, output=None,
 
         # create a new environment that includes all the plugin template code
         preprocessed_environment = Environment(loader=FileSystemLoader('/'), trim_blocks=True, lstrip_blocks=True)
+
+        # add filter that collects serialized code for this output
+        filters['serializedCode'] = lambda x: Utilities.attribute(x, output)
 
         # add filters to environment
         preprocessed_environment.filters.update(filters)
