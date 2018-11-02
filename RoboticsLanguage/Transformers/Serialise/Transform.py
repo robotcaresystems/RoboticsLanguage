@@ -21,6 +21,7 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 from RoboticsLanguage.Base import Utilities
+from RoboticsLanguage.Tools import Serialise
 
 
 def transform(code, parameters):
@@ -35,6 +36,6 @@ def transform(code, parameters):
   # serialize for each output
   for language in Utilities.ensureList(parameters['globals']['output']):
     for xml_child in code.getchildren():
-      Utilities.serialise(xml_child, parameters, parameters['language'], language)
+      Serialise.serialise(xml_child, parameters, parameters['language'], language)
 
   return code, parameters

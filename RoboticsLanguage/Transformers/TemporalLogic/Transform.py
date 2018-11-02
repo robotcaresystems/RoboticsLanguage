@@ -24,6 +24,7 @@ import copy
 import dpath.util
 from lxml import etree
 from RoboticsLanguage.Base import Utilities
+from RoboticsLanguage.Tools import Serialise
 
 
 def processTemporalOperators(code, parameters, logic_id_counter):
@@ -71,7 +72,7 @@ def processTemporalOperators(code, parameters, logic_id_counter):
     # add logic update function to all variable involved in this operator
     for variable in all_variables:
       new_parameters = {}
-      dpath.util.new(new_parameters, '/Transformers/Base/variables/' + variable + '/operators/assign/post/RosCpp',
+      dpath.util.new(new_parameters, '/Transformers/Base/variables/' + variable + '/operators/assign/post/Cpp',
                      ['logic' + logic_type[0].title() + logic_type[1:] + str(logic_id_counter) + '()'])
       dpath.util.merge(parameters, new_parameters)
 
@@ -84,7 +85,7 @@ def processTemporalOperators(code, parameters, logic_id_counter):
       root.append(xml_copy)
 
       # use the RoL serialiser to create the text tag
-      Utilities.serialise(root.getchildren()[0], parameters, parameters['language'], 'RoL')
+      Serialise.serialise(root.getchildren()[0], parameters, parameters['language'], 'RoL')
 
       # annotate tag
       logic.attrib['temporalLogicText'] = root.getchildren()[0].attrib['RoL']

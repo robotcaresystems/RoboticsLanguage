@@ -9,13 +9,6 @@
 #    Copyright: copyright
 #
 
-parameters = { 'strict':False,
-               'globalIncludes':set(),
-               'localIncludes':set()
-               }
+parameters = {}
 
-command_line_flags = {
-  'strict': {'suppress': True},
-  'globalIncludes': {'suppress': True},
-  'localIncludes': {'suppress': True}
-}
+command_line_flags = {}

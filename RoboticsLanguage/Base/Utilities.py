@@ -913,62 +913,62 @@ def templateEngine(code, parameters, filepatterns, templates_path, deploy_path,
     return False
   return True
 
-
-# @WARNING this function does not work on the root node (since it uses the getparent function)
-def serialise(code, parameters, keywords, language, filters=default_template_engine_filters):
-
-  snippet = ''
-
-  try:
-
-    # load keyword template text
-    keyword = keywords[code.tag]['output'][language]
-
-    try:
-      # start the template for this tag
-      template = Template(keyword)
-
-      # load the text filters
-      for key, value in filters.iteritems():
-        template.globals[key] = value
-
-      # get all children that are not 'option'
-      children_elements = code.xpath('*[not(self::option)]')
-
-      # get all children
-      # children_elements = code.getchildren()
-
-      # render tags according to dictionary
-      snippet = template.render(children=map(lambda x: serialise(x, parameters, keywords, language, filters), children_elements),
-                                childrenTags=map(
-          lambda x: x.tag, children_elements),
-          options=dict(zip(code.xpath('option/@name'), map(lambda x: serialise(x,
-                                                                               parameters, keywords, language, filters), code.xpath('option')))),
-          attributes=code.attrib,
-          parentAttributes=code.getparent().attrib,
-          parentTag=code.getparent().tag,
-          text=text(code),
-          tag=code.tag,
-          parameters=parameters,
-          code=code)
-
-      # save text in attribute
-      code.attrib[language] = snippet
-
-    except TemplateError as e:
-      # with Error.exception(parameters)
-      logErrors(formatJinjaErrorMessage(e), parameters)
-
-  except KeyError:
-    # get the line and column numbers
-    line_number, column_number, line = positionToLineColumn(
-        int(code.attrib['p']), parameters['text'])
-
-    # create error message
-    logErrors(errorMessage('Language semantic', 'Keyword \'' + code.tag + '\' not defined',
-                           line_number=line_number, column_number=column_number, line=line), parameters)
-
-  return snippet
+#
+# # @WARNING this function does not work on the root node (since it uses the getparent function)
+# def serialise(code, parameters, keywords, language, filters=default_template_engine_filters):
+#
+#   snippet = ''
+#
+#   try:
+#
+#     # load keyword template text
+#     keyword = keywords[code.tag]['output'][language]
+#
+#     try:
+#       # start the template for this tag
+#       template = Template(keyword)
+#
+#       # load the text filters
+#       for key, value in filters.iteritems():
+#         template.globals[key] = value
+#
+#       # get all children that are not 'option'
+#       children_elements = code.xpath('*[not(self::option)]')
+#
+#       # get all children
+#       # children_elements = code.getchildren()
+#
+#       # render tags according to dictionary
+#       snippet = template.render(children=map(lambda x: serialise(x, parameters, keywords, language, filters), children_elements),
+#                                 childrenTags=map(
+#           lambda x: x.tag, children_elements),
+#           options=dict(zip(code.xpath('option/@name'), map(lambda x: serialise(x,
+#                                                                                parameters, keywords, language, filters), code.xpath('option')))),
+#           attributes=code.attrib,
+#           parentAttributes=code.getparent().attrib,
+#           parentTag=code.getparent().tag,
+#           text=text(code),
+#           tag=code.tag,
+#           parameters=parameters,
+#           code=code)
+#
+#       # save text in attribute
+#       code.attrib[language] = snippet
+#
+#     except TemplateError as e:
+#       # with Error.exception(parameters)
+#       logErrors(formatJinjaErrorMessage(e), parameters)
+#
+#   except KeyError:
+#     # get the line and column numbers
+#     line_number, column_number, line = positionToLineColumn(
+#         int(code.attrib['p']), parameters['text'])
+#
+#     # create error message
+#     logErrors(errorMessage('Language semantic', 'Keyword \'' + code.tag + '\' not defined',
+#                            line_number=line_number, column_number=column_number, line=line), parameters)
+#
+#   return snippet
 
 
 # -------------------------------------------------------------------------------------------------

@@ -3,16 +3,15 @@
 #
 #   Manifesto.py: Definition of the parameters for this package
 #
-#   Created on: 08 October, 2018
+#   Created on: 02 November, 2018
 #       Author: Gabriel Lopes
 #      Licence: license
 #    Copyright: copyright
 #
 manifesto = {
-  'packageName': 'Ros 2 cpp',
-  'packageShortName': 'Ros2Cpp',
+  'packageName': 'Cpp',
+  'packageShortName': 'Cpp',
   'version': '0.0.0',
-  'parent': 'RosCpp',
 
   'information': {
     'author':

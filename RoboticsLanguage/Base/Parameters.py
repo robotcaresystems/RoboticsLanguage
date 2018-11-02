@@ -67,7 +67,8 @@ parameters = {
         'progressBar': 0,
         'progressTotal': 10,
         'progressPercentage': 0,
-        'progressStartTime': 0
+        'progressStartTime': 0,
+        'showOutputDependency': False
     },
 
     'symbols':
@@ -126,6 +127,12 @@ command_line_flags = {
         'longFlag': 'info-package',
         'fileNotNeeded': True,
         'description': 'Shows information about a specific packages'
+    },
+    'developer:showOutputDependency': {
+        'noArgument': True,
+        'longFlag': 'show-output-dependencies',
+        'fileNotNeeded': True,
+        'description': 'Shows output package dependencies'
     },
     'developer:code': {
         'noArgument': True,

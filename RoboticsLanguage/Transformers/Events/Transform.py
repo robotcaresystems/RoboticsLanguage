@@ -34,7 +34,7 @@ def transform(code, parameters):
     for variable in variables:
       new_parameters = {}
       dpath.util.new(new_parameters, 'Transformers/Base/variables/' + variable +
-                     '/operators/assign/post/RosCpp', ['when' + str(when_counter) + '()'])
+                     '/operators/assign/post/Cpp', ['when' + str(when_counter) + '()'])
       dpath.util.merge(parameters, new_parameters)
 
   return code, parameters
