@@ -30,6 +30,9 @@
 
 <<<'includes'|group>>>
 
+#include "rol_sleep.hpp"
+#include "rol_timer.hpp"
+
 using std::placeholders::_1;
 
 /***************************************************************************************
