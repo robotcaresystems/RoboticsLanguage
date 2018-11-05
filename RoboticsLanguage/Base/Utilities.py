@@ -450,6 +450,14 @@ def removeCache(cache_path='/.rol/cache'):
 def myPluginPath(parameters):
   return parameters['manifesto'][parameters['developer']['stepGroup']][parameters['developer']['stepName']]['path']
 
+
+def getPackageOutputParents(parameters, package):
+  if 'parent' in parameters['manifesto']['Outputs'][package].keys():
+    return [package] + getPackageOutputParents(parameters, parameters['manifesto']['Outputs'][package]['parent'])
+  else:
+    return [package]
+
+
 # -------------------------------------------------------------------------------------------------
 #  Dictionary utilities
 # -------------------------------------------------------------------------------------------------

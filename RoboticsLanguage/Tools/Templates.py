@@ -69,11 +69,7 @@ def createGroupFunction(text):
   return lambda x: '\n'.join([z.format(x) for z in text])
 
 
-def getPackageParents(parameters, package):
-  if 'parent' in parameters['manifesto']['Outputs'][package].keys():
-    return [package] + getPackageParents(parameters, parameters['manifesto']['Outputs'][package]['parent'])
-  else:
-    return [package]
+
 
 
 def templateEngine(code, parameters, output=None,
@@ -84,17 +80,23 @@ def templateEngine(code, parameters, output=None,
                    deploy_path=None):
   '''The template engine combines multiple template files from different modules to generate code.'''
 
+  # check if the output if specified or use parameters
   if output is None:
     output = parameters['developer']['stepName']
 
+  # check the deploy folder for the code generated
   if deploy_path is None:
     if parameters['developer']['stepName'] in parameters['globals']['deployOutputs'].keys():
       deploy_path = parameters['globals']['deployOutputs'][parameters['developer']['stepName']]
     else:
       deploy_path = parameters['globals']['deploy']
 
+  # check for packege dependencies
+  package_parents = Utilities.getPackageOutputParents(parameters, output)
+
+  # look for all the templates
   if not os.path.isdir(templates_path):
-    templates_paths = [parameters['manifesto'][parameters['developer']['stepGroup']][x]['path'] + '/' + templates_path for x in reversed(getPackageParents(parameters, output))]
+    templates_paths = [parameters['manifesto'][parameters['developer']['stepGroup']][x]['path'] + '/' + templates_path for x in reversed(package_parents)]
 
   else:
     templates_paths = [templates_path]
@@ -106,7 +108,7 @@ def templateEngine(code, parameters, output=None,
   files_to_copy = []
   new_files_to_copy = []
 
-  # find all the files in the output template folder
+  # find all the files in the output template folder, including templates from dependencies
   for templates_path in templates_paths:
     for root, dirs, files in os.walk(templates_path):
       for file in files:
