@@ -136,12 +136,6 @@ def templateEngine(code, parameters, output=None,
             new_files_to_copy.append(Utilities.replaceFirst(copy_file_name, templates_path, deploy_path))
 
 
-  # Utilities.printParameters(files_to_process)
-  # print '----------------------------'
-  # Utilities.printParameters(files_to_copy)
-  # print '----------------------------'
-  # Utilities.printParameters(new_files_to_copy)
-
   # find all the non template files in the transformers template folder
   for element in parameters['globals']['loadOrder']:
     if '.Transformers.' in element:
@@ -165,7 +159,7 @@ def templateEngine(code, parameters, output=None,
       new_files_to_copy[i] = new_files_to_copy[i].replace('_' + key + '_', value)
 
   # search for the same file in transformers plugins to include as plugins
-  for parent_output in package_parents:
+  for parent_output in reversed(package_parents):
     for file in files_to_process.keys():
       for module in transformers:
         if os.path.isfile(path + 'Transformers/' + module + '/Templates/Outputs/' + parent_output + '/' + file):
@@ -181,9 +175,6 @@ def templateEngine(code, parameters, output=None,
 
       # after all modules create a grouping function for fill in includes
       files_to_process[file]['group_function'] = createGroupFunction(files_to_process[file]['elements'])
-
-
-  Utilities.printParameters(files_to_process)
 
   # all the data is now ready, time to apply templates
   for file in files_to_process.keys():
