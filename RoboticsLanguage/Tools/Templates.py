@@ -91,7 +91,7 @@ def templateEngine(code, parameters, output=None,
     else:
       deploy_path = parameters['globals']['deploy']
 
-  # check for packege dependencies
+  # check for package dependencies
   package_parents = Utilities.getPackageOutputParents(parameters, output)
 
   # look for all the templates
@@ -165,22 +165,25 @@ def templateEngine(code, parameters, output=None,
       new_files_to_copy[i] = new_files_to_copy[i].replace('_' + key + '_', value)
 
   # search for the same file in transformers plugins to include as plugins
-  for file in files_to_process.keys():
-    for module in transformers:
-      if os.path.isfile(path + 'Transformers/' + module + '/Templates/Outputs/' + output + '/' + file):
-        # save the include name
-        files_to_process[file]['includes'].append(module)
+  for parent_output in package_parents:
+    for file in files_to_process.keys():
+      for module in transformers:
+        if os.path.isfile(path + 'Transformers/' + module + '/Templates/Outputs/' + parent_output + '/' + file):
+          # save the include name
+          files_to_process[file]['includes'].append(module)
 
-        # fill in the include header for Jinja2
-        files_to_process[file]['header'] += "{{% import '{}' as Include{} with context %}}\n".format(
-            path + 'Transformers/' + module + '/Templates/Outputs/' + output + file, module)
+          # fill in the include header for Jinja2
+          files_to_process[file]['header'] += "{{% import '{}' as Include{} with context %}}\n".format(
+              path + 'Transformers/' + module + '/Templates/Outputs/' + parent_output + file, module)
 
-        # prepare the text to fill in the spots where includes happen
-        files_to_process[file]['elements'].append("{{{{Include" + module + ".{}}}}}")
+          # prepare the text to fill in the spots where includes happen
+          files_to_process[file]['elements'].append("{{{{Include" + module + ".{}}}}}")
 
-    # after all modules create a grouping function for fill in includes
-    files_to_process[file]['group_function'] = createGroupFunction(files_to_process[file]['elements'])
+      # after all modules create a grouping function for fill in includes
+      files_to_process[file]['group_function'] = createGroupFunction(files_to_process[file]['elements'])
 
+
+  Utilities.printParameters(files_to_process)
 
   # all the data is now ready, time to apply templates
   for file in files_to_process.keys():

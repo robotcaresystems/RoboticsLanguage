@@ -1,7 +1,4 @@
 
-{% set includes %}
-
-{% endset %}
 
 {% set definitions %}
 
