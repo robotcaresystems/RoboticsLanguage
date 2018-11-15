@@ -1,0 +1,8 @@
+node(
+  name:'example {{parameters.Outputs.Developer.Info.name}}',
+
+  initialise: block(
+    # the {{parameters.Outputs.Developer.Info.name}} mini-language
+    {{parameters.Outputs.Developer.Info.name|camelCase}}<{  word: Hello  }>
+  )
+)

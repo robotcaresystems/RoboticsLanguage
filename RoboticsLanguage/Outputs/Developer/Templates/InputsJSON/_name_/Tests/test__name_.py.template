@@ -1,0 +1,26 @@
+#
+#   This is the Robotics Language compiler
+#
+#   test_{{parameters.Outputs.Developer.Info.name|underscore}}.py: Unit testing file
+#
+#   Created on: {{"%d %B, %Y"|todaysDate}}
+#       Author: {{parameters.Information.user.name}}
+#      Licence: {{parameters.Information.software.license}}
+#    Copyright: {{parameters.Information.software.copyright}}
+#
+
+import unittest
+from RoboticsLanguage.{{parameters.Outputs.Developer.Info.type}}.{{parameters.Outputs.Developer.Info.name|camelCase}} import Transform
+
+class Test{{parameters.Outputs.Developer.Info.name|camelCase}}(unittest.TestCase):
+
+  # -------------------------------------------------------------------------------------------------
+  #  {{parameters.Outputs.Developer.Info.name}} tests
+  # -------------------------------------------------------------------------------------------------
+  def test_template(self):
+    self.assertEqual(1,1)
+
+
+
+if __name__ == '__main__':
+  unittest.main()
