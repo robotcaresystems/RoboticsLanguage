@@ -69,10 +69,12 @@ def output(code, parameters):
 
   outputs = parameters['Outputs'].keys()
 
-  for type in ['Inputs', 'Transformers', 'Outputs']:
+  for type in ['Inputs', 'InputsJSON', 'InputsYAML', 'InputsXML', 'Transformers', 'Outputs']:
     if parameters['Outputs']['Developer']['create'][type] is not '':
 
-      parameters['Outputs']['Developer']['Info'] = {'type': type,
+      module_type = type.replace('JSON', '').replace('XML', '').replace('YAML', '')
+
+      parameters['Outputs']['Developer']['Info'] = {'type': module_type,
                                                     'name': parameters['Outputs']['Developer']['create'][type]}
 
       filepatterns = {'name': Utilities.camelCase(parameters['Outputs']['Developer']['create'][type])}
@@ -82,7 +84,7 @@ def output(code, parameters):
       if not Templates.templateEngine(code, parameters,
                                       file_patterns=filepatterns,
                                       templates_path=os.path.dirname(__file__) + '/Templates/' + type,
-                                      deploy_path=parameters['globals']['plugins'] + '/' + type):
+                                      deploy_path=parameters['globals']['plugins'] + '/' + module_type):
         sys.exit(1)
 
       # make sure the path ~/.rol/plugins containts an __init__.py file
@@ -120,7 +122,7 @@ def output(code, parameters):
                           output_file.write(include_template.format(element))
                         Utilities.logger.debug('Wrote file ' + file_name)
 
-      print('Created ' + type + ' plugin "' + filepatterns['name'] + '" in folder ' +
-            parameters['globals']['plugins'] + '/' + type + '/' + filepatterns['name'])
+      print('Created ' + module_type + ' plugin "' + filepatterns['name'] + '" in folder ' +
+            parameters['globals']['plugins'] + '/' + module_type + '/' + filepatterns['name'])
 
   return 0
