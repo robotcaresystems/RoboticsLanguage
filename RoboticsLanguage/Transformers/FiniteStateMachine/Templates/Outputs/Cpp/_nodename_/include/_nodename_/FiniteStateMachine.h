@@ -11,7 +11,7 @@ private:
   // States: 'idle', 'running'
   // Transitions: 'start', 'stop'
   // Representation:
-  // { 'idle': { 'start' -> 'running'}, 'running' : { 'stop' -> 'start'} }
+  // { 'idle': { 'start' -> 'running'}, 'running' : { 'stop' -> 'idle'} }
 	std::map<std::string, std::map<std::string, std::string> > machine;
 
   // list of function types: init, exit, inside, global
