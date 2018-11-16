@@ -23,6 +23,8 @@ node(
       define exiting():
         print('Leaving: ', machine.state() ),
 
+        define exitingIdle():
+          print('Leaving Idle: ', machine.state() ),
 
     # a fire signal
     fire ∈ Signals(Strings, rosTopic:'/fire', onNew: machine.fire(fire))
@@ -32,6 +34,7 @@ node(
   initialise: block(
 
     machine.addInitFunction(entering),
+    machine.addInitFunction(exitingIdle, "idle"),
     machine.addExitFunction(exiting)
 
     )
