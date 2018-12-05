@@ -78,7 +78,7 @@ rol -p
 
 
 
-The previous command will probably show too much information. To print only a subset of the parameters the flag `--show-parameters-path 'path'` or `-P` can be used. For example, to see only the `globals` section, one can type:
+The previous command will probably show too much information. To print only a subset of the parameters the flag `--show-parameters-path 'path'` or `-P 'path'` can be used. For example, to see only the `globals` section, one can type:
 
 ```shell
 rol  --show-parameters-path 'globals'
