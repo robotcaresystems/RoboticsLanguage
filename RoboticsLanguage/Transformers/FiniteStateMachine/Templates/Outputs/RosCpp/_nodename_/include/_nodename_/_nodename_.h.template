@@ -3,11 +3,11 @@
 
 {% if code|xpaths('//fsm:machine', {'fsm':'fsm'})|length > 0 %}
 //Finite state machine libraries
-#include <iostream>
+{# #include <iostream>
 #include <vector>
 #include <map>
 #include <exception>
-#include <functional>
+#include <functional> #}
 #include "FiniteStateMachine.h"
 {% if 'HTMLGUI' in parameters.globals.output -%}
 #include <std_msgs/String.h>
