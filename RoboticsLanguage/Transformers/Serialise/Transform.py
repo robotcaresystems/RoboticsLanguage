@@ -33,8 +33,16 @@ def transform(code, parameters):
       for assignment in code.xpath('//assign/variable[@name="' + variable + '"]/..'):
         assignment.attrib['assignFunction'] = 'true'
 
+  # find all relevant outputs
+  package_parents = []
+  for element in Utilities.ensureList(parameters['globals']['output']):
+    package_parents += Utilities.getPackageOutputParents(parameters, element)
+
+  # make them unique
+  package_parents = list(set(package_parents))
+
   # serialize for each output
-  for language in Utilities.ensureList(parameters['globals']['output']):
+  for language in package_parents:
     for xml_child in code.getchildren():
       Serialise.serialise(xml_child, parameters, parameters['language'], language)
 

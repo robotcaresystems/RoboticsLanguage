@@ -41,5 +41,11 @@ language = {
         },
     },
 
+    'assign': {
+        'output': {
+            'RosCpp': '{% if isDefined(parameters,"Transformers/Base/variables/"+children[0]+"/operators/assign/pre/Cpp") %}{{parameters["Transformers"]["Base"]["variables"][children[0]]["operators"]["assign"]["pre"]["Cpp"]|join(";\n")}}{% endif %}{{attributes["preRosCpp"]}}{{attributes["preCpp"]}}{{children[0]}}{{attributes["preAssignCpp"]}}={{attributes["postAssignCpp"]}}{{children[1]}}{{attributes["postCpp"]}}{{attributes["postRosCpp"]}}{% if isDefined(parameters,"Transformers/Base/variables/"+children[0]+"/operators/assign/post/Cpp") %}{{parameters["Transformers"]["Base"]["variables"][children[0]]["operators"]["assign"]["post"]["Cpp"]|join(";\n")}}{% endif %}'
+        },
+    },
+
 
 }

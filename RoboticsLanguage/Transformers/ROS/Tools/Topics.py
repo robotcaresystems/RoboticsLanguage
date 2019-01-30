@@ -95,10 +95,15 @@ def setPublish(variable, flow, assignments):
     for variable_element in assignments:
       assignment = Utilities.getFirstParent(variable_element, 'assign')
 
-      if 'postCpp' not in assignment.attrib.keys():
-        assignment.attrib['postCpp'] = ''
+      # if 'postCpp' not in assignment.attrib.keys():
+      #   assignment.attrib['postCpp'] = ''
+      if 'postRosCpp' not in assignment.attrib.keys():
+        assignment.attrib['postRosCpp'] = ''
+      if 'postRos2Cpp' not in assignment.attrib.keys():
+        assignment.attrib['postRos2Cpp'] = ''
 
-      assignment.attrib['postCpp'] += ';' + variable + '_publisher.publish(' + variable + ');'
+      assignment.attrib['postRosCpp'] += ';' + variable + '_publisher.publish(' + variable + ');'
+      assignment.attrib['postRos2Cpp'] += ';' + variable + '_publisher->publish(' + variable + ');'
 
 
 def checkTypes(signal, variable, assignments, usages, code, parameters):
@@ -174,11 +179,13 @@ def process(code, parameters):
     signal.attrib['ROSvariable'] = variable
 
     # save type in base/variables
-    parameters['Transformers']['Base']['variables'][variable]['type'] = { 'RosCpp': ros_type, 'Ros2Cpp': ros_2_type}
+    parameters['Transformers']['Base']['variables'][variable]['type'] = {'RosCpp': ros_type, 'Ros2Cpp': ros_2_type}
+
+    ros2_include = '/'.join((lambda x: x[:-1] + [Utilities.camelCaseToUnderscore(x[-1])])(ros_2_type.split('::')))
 
     # add header file for msg
     parameters['Outputs']['RosCpp']['globalIncludes'].add(ros_type.replace('::', '/') + '.h')
-    parameters['Outputs']['Ros2Cpp']['localIncludes'].add(ros_2_type.replace('::', '/').lower() + '.hpp')
+    parameters['Outputs']['Ros2Cpp']['localIncludes'].add(ros2_include + '.hpp')
 
     # save the topic definitions
     parameters['Transformers']['ROS']['topicDefinitions'].append({'variable': variable,

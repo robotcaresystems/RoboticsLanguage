@@ -33,5 +33,10 @@ language = {
         },
     },
 
+    'assign': {
+        'output': {
+            'Ros2Cpp': '{% if isDefined(parameters,"Transformers/Base/variables/"+children[0]+"/operators/assign/pre/Cpp") %}{{parameters["Transformers"]["Base"]["variables"][children[0]]["operators"]["assign"]["pre"]["Cpp"]|join(";\n")}}{% endif %}{{attributes["preRos2Cpp"]}}{{attributes["preCpp"]}}{{children[0]}}{{attributes["preAssignCpp"]}}={{attributes["postAssignCpp"]}}{{children[1]}}{{attributes["postCpp"]}}{{attributes["postRos2Cpp"]}}{% if isDefined(parameters,"Transformers/Base/variables/"+children[0]+"/operators/assign/post/Cpp") %}{{parameters["Transformers"]["Base"]["variables"][children[0]]["operators"]["assign"]["post"]["Cpp"]|join(";\n")}}{% endif %}'
+        },
+    },
 
 }

@@ -80,7 +80,7 @@ def templateEngine(code, parameters, output=None,
                    deploy_path=None):
   '''The template engine combines multiple template files from different modules to generate code.'''
 
-  # check if the output if specified or use parameters
+  # check if the output is specified or use parameters
   if output is None:
     output = parameters['developer']['stepName']
 
@@ -127,7 +127,7 @@ def templateEngine(code, parameters, output=None,
           files_to_process[file_relative_path] = {
               'full_path': file_full_path,
               'deploy_path': file_deploy_path,
-              'includes': [], 'header': '', 'elements': []}
+              'includes': [], 'header': [], 'elements': []}
         else:
           # just copy the files
           if file not in default_ignore_files:
@@ -163,18 +163,33 @@ def templateEngine(code, parameters, output=None,
     for file in files_to_process.keys():
       for module in transformers:
         if os.path.isfile(path + 'Transformers/' + module + '/Templates/Outputs/' + parent_output + '/' + file):
+
+          # remove templates for parent outputs if a child template exists
+          if package_parents.index(parent_output) < len(package_parents)-1:
+            parent = package_parents[1+package_parents.index(parent_output)]
+
+            header_parent = "{{% import '{}' as Include{} with context %}}\n".format(
+                path + 'Transformers/' + module + '/Templates/Outputs/' + parent + file, module)
+
+            if header_parent in files_to_process[file]['header']:
+              files_to_process[file]['header'].remove(header_parent)
+
           # save the include name
-          files_to_process[file]['includes'].append(module)
+          if module not in files_to_process[file]['includes']:
+            files_to_process[file]['includes'].append(module)
 
           # fill in the include header for Jinja2
-          files_to_process[file]['header'] += "{{% import '{}' as Include{} with context %}}\n".format(
-              path + 'Transformers/' + module + '/Templates/Outputs/' + parent_output + file, module)
+          files_to_process[file]['header'].append( "{{% import '{}' as Include{} with context %}}\n".format(
+              path + 'Transformers/' + module + '/Templates/Outputs/' + parent_output + file, module))
 
           # prepare the text to fill in the spots where includes happen
-          files_to_process[file]['elements'].append("{{{{Include" + module + ".{}}}}}")
+          elements_text = "{{{{Include" + module + ".{}}}}}"
+          if elements_text not in files_to_process[file]['elements']:
+            files_to_process[file]['elements'].append(elements_text)
 
       # after all modules create a grouping function for fill in includes
       files_to_process[file]['group_function'] = createGroupFunction(files_to_process[file]['elements'])
+
 
   # all the data is now ready, time to apply templates
   for file in files_to_process.keys():
@@ -192,7 +207,7 @@ def templateEngine(code, parameters, output=None,
         template = environment.get_template(files_to_process[file]['full_path'])
 
         # render it
-        render = template.render(header=files_to_process[file]['header'])
+        render = template.render(header=''.join(files_to_process[file]['header']))
 
         # debug
         if parameters['developer']['intermediateTemplates']:
