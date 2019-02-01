@@ -181,6 +181,7 @@ def process(code, parameters):
     # save type in base/variables
     parameters['Transformers']['Base']['variables'][variable]['type'] = {'RosCpp': ros_type, 'Ros2Cpp': ros_2_type}
 
+    # header file name for ros2
     ros2_include = '/'.join((lambda x: x[:-1] + [Utilities.camelCaseToUnderscore(x[-1])])(ros_2_type.split('::')))
 
     # add header file for msg
