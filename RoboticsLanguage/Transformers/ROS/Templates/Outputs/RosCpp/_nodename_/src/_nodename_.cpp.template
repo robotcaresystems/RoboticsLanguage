@@ -41,7 +41,7 @@
 
        {% if onChange|length > 0 -%}
        /* remember the last value for the topic */
-       {{topic.ros_type}} previous = {{topic.variable}};
+       {{topic.ros_type}} signal_{{topic.variable}}_previous = {{topic.variable}};
        {% endif -%}
 
        {% if parameters|isDefined('Transformers/Base/variables/' + topic.variable + '/operators/assign/pre/RosCpp') %}
@@ -67,7 +67,7 @@
 
 
        {% if onChange|length > 0 -%}
-       if (previous.data != signal_{{topic.variable}}_message.data)
+       if (signal_{{topic.variable}}_previous.data != signal_{{topic.variable}}_message.data)
        {
          /* on change */
          {{onChange}};

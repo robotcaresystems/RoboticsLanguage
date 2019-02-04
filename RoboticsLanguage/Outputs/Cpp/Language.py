@@ -147,7 +147,7 @@ language = {
     'function_definition': {
         'output':
         {
-            'Cpp': '{% set returns = attribute(xpaths(code,"function_returns"),"Cpp") %}{% if returns=="" %}void{% else %}{{returns}}{% endif %} {{attributes["name"]}}({{attribute(xpaths(code,"function_arguments"),"Cpp")}})',
+            'Cpp': '',
         },
     },
 

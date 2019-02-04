@@ -34,7 +34,7 @@
     {# CALLBACK #################################### #}
       {% if topic.flow == 'incoming' or topic.flow == 'bidirectional' -%}
       /******************************* signal_{{topic.variable}}_callback ************************************************/
-     void {{parameters.node.name|camelCase}}Class::signal_{{topic.variable}}_callback(const {{topic.ros_2_type}}::SharedPtr message)
+     void {{parameters.node.name|camelCase}}Class::signal_{{topic.variable}}_callback(const {{topic.ros_2_type}}::SharedPtr signal_{{topic.variable}}_message)
      {
        {# Get serialised code #}
        {% set onChange = code|xpath('//Signals[@ROSvariable="' + topic.variable + '"]')|option('onChange')|attribute('Ros2Cpp') %}
@@ -42,9 +42,8 @@
 
        {% if onChange|length > 0 -%}
        /* remember the last value for the topic */
-       {{topic.ros_2_type}} previous = {{topic.variable}};
+       {{topic.ros_2_type}} signal_{{topic.variable}}_previous = {{topic.variable}};
        {% endif -%}
-
 
        {% if parameters|isDefined('Transformers/Base/variables/' + topic.variable + '/operators/assign/pre/RosCpp') %}
        /* run  pre-processing instructions */
@@ -54,7 +53,7 @@
        {% endif %}
 
        /* Cache a copy of this signal inside the class */
-       {{topic.variable}} = *message;
+       {{topic.variable}} = *signal_{{topic.variable}}_message;
 
        {% if parameters|isDefined('Transformers/Base/variables/' + topic.variable + '/operators/assign/post/RosCpp') %}
        /* run post-processing instructions */
@@ -69,7 +68,7 @@
 
 
        {% if onChange|length > 0 -%}
-       if (previous.data != message.data)
+       if (signal_{{topic.variable}}_previous.data != signal_{{topic.variable}}_message->data)
        {
          /* on change */
          {{onChange}};

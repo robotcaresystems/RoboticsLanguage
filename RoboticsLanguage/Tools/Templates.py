@@ -69,9 +69,6 @@ def createGroupFunction(text):
   return lambda x: '\n'.join([z.format(x) for z in text])
 
 
-
-
-
 def templateEngine(code, parameters, output=None,
                    ignore_files=default_ignore_files,
                    file_patterns=default_file_patterns,
@@ -219,7 +216,7 @@ def templateEngine(code, parameters, output=None,
         preprocessed_environment = Environment(loader=FileSystemLoader('/'), trim_blocks=True, lstrip_blocks=True)
 
         # add filter that collects serialized code for this output
-        filters['serializedCode'] = lambda x: Utilities.attribute(x, output)
+        filters['serializedCode'] = lambda x: Utilities.allAttribute(x, output)
 
         # add filters to environment
         preprocessed_environment.filters.update(filters)
@@ -228,7 +225,7 @@ def templateEngine(code, parameters, output=None,
         preprocessed_template = preprocessed_environment.from_string(render)
 
         # render the combined template
-        result = preprocessed_template.render(code=code, parameters=parameters)
+        result = preprocessed_template.render(code=code, parameters=parameters, this=parameters['developer']['stepName'])
       except TemplateError as e:
         Utilities.logger.error(e.__repr__())
         #   # with Error.exception(parameters, filename=files_to_process[i])

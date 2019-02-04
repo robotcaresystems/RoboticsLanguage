@@ -744,6 +744,12 @@ def attribute(xml, name):
     return ''
 
 
+def allAttribute(xml_list, name):
+  if isinstance(xml_list, list):
+    return map(lambda xml: attribute(xml, name), xml_list)
+  else:
+    return attribute(xml_list, name)
+
 def option(xml, name, debug=''):
   try:
     return optionalArguments(xml)[name]
