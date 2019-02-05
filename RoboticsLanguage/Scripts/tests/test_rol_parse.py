@@ -30,6 +30,9 @@ from RoboticsLanguage.Base import Utilities, Initialise, CommandLine
 # initialise compiler
 parameters = Initialise.Initialise(False)
 
+# load partial parameters
+parameters = CommandLine.loadRemainingParameters(parameters)
+
 # load all parameters after the command line parser
 parameters = CommandLine.postCommandLineParser(parameters)
 
