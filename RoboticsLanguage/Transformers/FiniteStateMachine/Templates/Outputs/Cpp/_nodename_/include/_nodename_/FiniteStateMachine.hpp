@@ -27,8 +27,7 @@ private:
   std::string name;
 
   // publisher for HTML GUI
-  ros::Publisher *state_feedback_publisher = 0;
-  std_msgs::String state_message;
+  std::function<void(std::string)> state_feedback_publisher;
 
   // check if state exists
   bool state_exists_(std::string state_)
@@ -70,6 +69,19 @@ public:
 		};
 
 	~FiniteStateMachine(){};
+
+  void addStateFeedbackPublisher(std::function<void(std::string)> state_feedback_publisher_)
+  {
+    state_feedback_publisher = state_feedback_publisher_;
+  }
+
+  void publishState()
+  {
+    if (state_feedback_publisher)
+    {
+      state_feedback_publisher(current_state);
+    }
+  }
 
 
   // void addStateFeedbackPublisher(ros::Publisher *state_feedback_publisher_)
@@ -165,7 +177,7 @@ public:
       // change state
       current_state = current_transition->second;
 
-      // publishState();
+      publishState();
 
       // remember last transition
       last_transition = transition;

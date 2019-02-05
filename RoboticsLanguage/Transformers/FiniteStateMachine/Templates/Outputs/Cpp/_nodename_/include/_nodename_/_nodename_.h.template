@@ -8,7 +8,7 @@
 #include <map>
 #include <exception>
 #include <functional> #}
-#include "FiniteStateMachine.h"
+#include "FiniteStateMachine.hpp"
 {% if 'HTMLGUI' in parameters.globals.output -%}
 #include <std_msgs/String.h>
 {% endif %}
@@ -28,6 +28,8 @@
   ros::Publisher fsm_{{machine_name}}_publisher;
   ros::Subscriber fsm_{{machine_name}}_subscriber;
   void fsm_{{machine_name}}_callback(const std_msgs::String& message);
+  void fsm_{{machine_name}}_publisher_function(const std::string state);
+
   std_msgs::String fsm_{{machine_name}}_data;
   {% endif -%}
 

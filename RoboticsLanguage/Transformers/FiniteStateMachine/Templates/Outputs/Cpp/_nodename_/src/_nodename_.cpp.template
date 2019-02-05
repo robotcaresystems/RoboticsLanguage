@@ -24,7 +24,7 @@
     fsm_{{machine_name}}_publisher = nh_.advertise<std_msgs::String>("/finite_state_machine/{{parameters.node.name|underscore}}/{{machine_name}}/state",10);
     fsm_{{machine_name}}_subscriber = nh_.subscribe("/finite_state_machine/{{parameters.node.name|underscore}}/{{machine_name}}/fire", 10, &{{parameters.node.name|camelCase}}Class::fsm_{{machine_name}}_callback, this);
 
-    {{machine_name}}.addStateFeedbackPublisher(&fsm_{{machine_name}}_publisher);
+    {{machine_name}}.addStateFeedbackPublisher(boost::bind(&{{parameters.node.name|camelCase}}Class::fsm_{{machine_name}}_publisher_function, this, _1));
   {% endif %}
 
 {% endfor -%}
@@ -53,6 +53,14 @@
   {
     {{machine_name}}.fire(message.data);
   };
+
+  void {{parameters.node.name|camelCase}}Class::fsm_{{machine_name}}_publisher_function(const std::string state)
+  {
+    std_msgs::String ros_state;
+    ros_state.data = state;
+    fsm_{{machine_name}}_publisher.publish(ros_state);
+  }
+
   {% endfor %}
 {% endif %}
 
