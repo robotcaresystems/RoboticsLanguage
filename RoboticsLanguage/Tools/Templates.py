@@ -141,14 +141,18 @@ def templateEngine(code, parameters, output=None,
       else:
         path = parameters['globals']['plugins']
 
-      transformer_path = path + '/' + '/'.join(element.split('.')[1:]) + '/Templates/Outputs/' + output
 
-      for root, dirs, files in os.walk(transformer_path):
-        for file in files:
-          if not file.endswith(".template") and file not in default_ignore_files:
-            copy_file_name = os.path.join(root, file)
-            files_to_copy.append(copy_file_name)
-            new_files_to_copy.append(Utilities.replaceFirst(copy_file_name, transformer_path, deploy_path))
+
+      for output_parent in reversed(package_parents):
+
+        transformer_path = path + '/' + '/'.join(element.split('.')[1:]) + '/Templates/Outputs/' + output_parent
+
+        for root, dirs, files in os.walk(transformer_path):
+          for file in files:
+            if not file.endswith(".template") and file not in default_ignore_files:
+              copy_file_name = os.path.join(root, file)
+              files_to_copy.append(copy_file_name)
+              new_files_to_copy.append(Utilities.replaceFirst(copy_file_name, transformer_path, deploy_path))
 
   # rename files acording to file pattern names
   for key, value in file_patterns.iteritems():
