@@ -21,8 +21,8 @@
                 {{name}}=false;
             {% endif %}
         {% else %}
-          {% set minimum = item.getchildren()[1].attrib['RosCpp'] %}
-          {% set maximum = item.getchildren()[0].attrib['RosCpp'] %}
+          {% set minimum = item.getchildren()[1]|serializedCode %}
+          {% set maximum = item.getchildren()[0]|serializedCode %}
           // operator {{item.tag}} with interval [{{minimum}},{{maximum}}]
           {% if minimum!='0' %}
               now_.rise = false;
@@ -38,7 +38,7 @@
           {% endif %}
           {% if minimum=='0' %}
             {{name}}switch_=ros::Time::now()-ros::Duration({{maximum}})-ros::Duration(1);
-            {{name}}last_ = {{item.getchildren()[2].attrib['RosCpp']}};
+            {{name}}last_ = {{item.getchildren()[2]|serializedCode}};
           {% endif %}
           {% if 'HTMLGUI' in parameters.globals.output %}
             // HTMLGUI: initialising signals for temporal logic expressions
@@ -85,18 +85,18 @@
 
     {% if logic.getchildren()|length == 1 -%}
         {% if logic.tag=='always' -%}
-          {{name}}={{name}} && ({{logic.getchildren()[0].attrib['RosCpp']}});
+          {{name}}={{name}} && ({{logic.getchildren()[0]|serializedCode}});
         {% elif logic.tag=='eventually' -%}
-          {{name}}={{name}} || ({{logic.getchildren()[0].attrib['RosCpp']}});
+          {{name}}={{name}} || ({{logic.getchildren()[0]|serializedCode}});
         {% endif %}
     {% else %}
-      {% set minimum = logic.getchildren()[1].attrib['RosCpp'] %}
-      {% set maximum = logic.getchildren()[0].attrib['RosCpp'] %}
+      {% set minimum = logic.getchildren()[1]|serializedCode %}
+      {% set maximum = logic.getchildren()[0]|serializedCode %}
       {# /* --------------------------  Interval logic: Always, minimum=0 ------------------------------------ */ #}
       {% if logic.tag=='always' -%}
         {% if minimum=='0' -%}
           // check the condition inside the operator
-          bool condition_ = {{logic.getchildren()[2].attrib['RosCpp']}};
+          bool condition_ = {{logic.getchildren()[2]|serializedCode}};
           // check if this condition has changed since last time. If so record the rise or fall times
           if (condition_ != {{name}}last_)
           {
@@ -112,7 +112,7 @@
                     ({{name}}switch_ < ros::Time::now() - ros::Duration({{maximum}}));
         {% else -%}
           {# /* --------------------------  Interval logic: Always, minimum>0 ------------------------------------ */ #}
-          bool condition_ = {{logic.getchildren()[2].attrib['RosCpp']}};
+          bool condition_ = {{logic.getchildren()[2]|serializedCode}};
 
           // check if this condition has changed since last time. If so record the switching time
           if (condition_ != {{name}}last_)
@@ -179,7 +179,7 @@
       {% elif logic.tag=='eventually' -%}
         {% if minimum=='0' -%}
           // check the condition inside the operator
-          bool condition_ = {{logic.getchildren()[2].attrib['RosCpp']}};
+          bool condition_ = {{logic.getchildren()[2]|serializedCode}};
           // check if this condition has changed since last time. If so record the switching time
           if (condition_ != {{name}}last_)
           {
@@ -195,7 +195,7 @@
                   ({{name}}switch_ > ros::Time::now() - ros::Duration({{maximum}})) ;
         {% else -%}
           {# /* --------------------------  Interval logic: Eventually, minimum>0 ------------------------------------ */ #}
-          bool condition_ = {{logic.getchildren()[2].attrib['RosCpp']}};
+          bool condition_ = {{logic.getchildren()[2]|serializedCode}};
 
           // check if this condition has changed since last time. If so record the switching time
           if (condition_ != {{name}}last_)
@@ -268,8 +268,8 @@
         ROS_INFO("Timer Callback: {{name}}");
     {% endif -%}
     {% for signal in logic.attrib['temporalLogicVariables']|ensureList -%}
-      {% if parameters|isDefined('Transformers/Base/variables/'+signal+'/operators/assign/post/RosCpp') -%}
-        {% for element in parameters.Transformers.Base.variables[signal].operators.assign.post.RosCpp -%}
+      {% if parameters|isDefined('Transformers/Base/variables/'+signal+'/operators/assign/post/Cpp') -%}
+        {% for element in parameters.Transformers.Base.variables[signal].operators.assign.post.Cpp -%}
           {{element}};
         {% endfor -%}
       {% endif -%}
