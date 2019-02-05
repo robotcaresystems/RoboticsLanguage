@@ -20,6 +20,7 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
+import re
 import os
 import sys
 import time
@@ -28,6 +29,7 @@ import errno
 import pprint
 import hashlib
 import logging
+import inspect
 import datetime
 import dpath.util
 import coloredlogs
@@ -74,6 +76,13 @@ def printParameters(elements, parameters=None, style='monokai'):
   else:
     print(highlight(pprint.pformat(elements), PythonLexer(),
                     Terminal256Formatter(style=Terminal256Formatter(style=style).style)))
+
+
+def printVariable(x):
+  frame = inspect.currentframe().f_back
+  s = inspect.getframeinfo(frame).code_context[0]
+  r = re.search(r"\((.*)\)", s).group(1)
+  print("{} = {}".format(r, x))
 
 
 # -------------------------------------------------------------------------------------------------
@@ -441,6 +450,14 @@ def removeCache(cache_path='/.rol/cache'):
 def myPluginPath(parameters):
   return parameters['manifesto'][parameters['developer']['stepGroup']][parameters['developer']['stepName']]['path']
 
+
+def getPackageOutputParents(parameters, package):
+  if 'parent' in parameters['manifesto']['Outputs'][package].keys():
+    return [package] + getPackageOutputParents(parameters, parameters['manifesto']['Outputs'][package]['parent'])
+  else:
+    return [package]
+
+
 # -------------------------------------------------------------------------------------------------
 #  Dictionary utilities
 # -------------------------------------------------------------------------------------------------
@@ -536,6 +553,16 @@ def camelCase(text):
   return smartTitle(text.replace('/', ' ').replace('.', ' ').replace('_', ' ')).replace(' ', '')
 
 
+# thanks to https://stackoverflow.com/questions/1175208/elegant-python-function-to-convert-camelcase-to-snake-case
+first_cap_re = re.compile('(.)([A-Z][a-z]+)')
+all_cap_re = re.compile('([a-z0-9])([A-Z])')
+
+
+def camelCaseToUnderscore(name):
+    s1 = first_cap_re.sub(r'\1_\2', name)
+    return all_cap_re.sub(r'\1_\2', s1).lower()
+
+
 def initials(text):
   return ''.join(c for c in smartTitle(text) if c.isupper())
 
@@ -553,6 +580,11 @@ def ensureList(a):
 
 def unique(a):
   return list(set(a))
+
+
+def sortListCodeByAttribute(list, attribute):
+  return sorted(list, key=lambda x: x.attrib[attribute])
+
 
 # -------------------------------------------------------------------------------------------------
 #  File utilities
@@ -711,6 +743,12 @@ def attribute(xml, name):
   except:
     return ''
 
+
+def allAttribute(xml_list, name):
+  if isinstance(xml_list, list):
+    return map(lambda xml: attribute(xml, name), xml_list)
+  else:
+    return attribute(xml_list, name)
 
 def option(xml, name, debug=''):
   try:
@@ -899,62 +937,62 @@ def templateEngine(code, parameters, filepatterns, templates_path, deploy_path,
     return False
   return True
 
-
-# @WARNING this function does not work on the root node (since it uses the getparent function)
-def serialise(code, parameters, keywords, language, filters=default_template_engine_filters):
-
-  snippet = ''
-
-  try:
-
-    # load keyword template text
-    keyword = keywords[code.tag]['output'][language]
-
-    try:
-      # start the template for this tag
-      template = Template(keyword)
-
-      # load the text filters
-      for key, value in filters.iteritems():
-        template.globals[key] = value
-
-      # get all children that are not 'option'
-      children_elements = code.xpath('*[not(self::option)]')
-
-      # get all children
-      # children_elements = code.getchildren()
-
-      # render tags according to dictionary
-      snippet = template.render(children=map(lambda x: serialise(x, parameters, keywords, language, filters), children_elements),
-                                childrenTags=map(
-          lambda x: x.tag, children_elements),
-          options=dict(zip(code.xpath('option/@name'), map(lambda x: serialise(x,
-                                                                               parameters, keywords, language, filters), code.xpath('option')))),
-          attributes=code.attrib,
-          parentAttributes=code.getparent().attrib,
-          parentTag=code.getparent().tag,
-          text=text(code),
-          tag=code.tag,
-          parameters=parameters,
-          code=code)
-
-      # save text in attribute
-      code.attrib[language] = snippet
-
-    except TemplateError as e:
-      # with Error.exception(parameters)
-      logErrors(formatJinjaErrorMessage(e), parameters)
-
-  except KeyError:
-    # get the line and column numbers
-    line_number, column_number, line = positionToLineColumn(
-        int(code.attrib['p']), parameters['text'])
-
-    # create error message
-    logErrors(errorMessage('Language semantic', 'Keyword \'' + code.tag + '\' not defined',
-                           line_number=line_number, column_number=column_number, line=line), parameters)
-
-  return snippet
+#
+# # @WARNING this function does not work on the root node (since it uses the getparent function)
+# def serialise(code, parameters, keywords, language, filters=default_template_engine_filters):
+#
+#   snippet = ''
+#
+#   try:
+#
+#     # load keyword template text
+#     keyword = keywords[code.tag]['output'][language]
+#
+#     try:
+#       # start the template for this tag
+#       template = Template(keyword)
+#
+#       # load the text filters
+#       for key, value in filters.iteritems():
+#         template.globals[key] = value
+#
+#       # get all children that are not 'option'
+#       children_elements = code.xpath('*[not(self::option)]')
+#
+#       # get all children
+#       # children_elements = code.getchildren()
+#
+#       # render tags according to dictionary
+#       snippet = template.render(children=map(lambda x: serialise(x, parameters, keywords, language, filters), children_elements),
+#                                 childrenTags=map(
+#           lambda x: x.tag, children_elements),
+#           options=dict(zip(code.xpath('option/@name'), map(lambda x: serialise(x,
+#                                                                                parameters, keywords, language, filters), code.xpath('option')))),
+#           attributes=code.attrib,
+#           parentAttributes=code.getparent().attrib,
+#           parentTag=code.getparent().tag,
+#           text=text(code),
+#           tag=code.tag,
+#           parameters=parameters,
+#           code=code)
+#
+#       # save text in attribute
+#       code.attrib[language] = snippet
+#
+#     except TemplateError as e:
+#       # with Error.exception(parameters)
+#       logErrors(formatJinjaErrorMessage(e), parameters)
+#
+#   except KeyError:
+#     # get the line and column numbers
+#     line_number, column_number, line = positionToLineColumn(
+#         int(code.attrib['p']), parameters['text'])
+#
+#     # create error message
+#     logErrors(errorMessage('Language semantic', 'Keyword \'' + code.tag + '\' not defined',
+#                            line_number=line_number, column_number=column_number, line=line), parameters)
+#
+#   return snippet
 
 
 # -------------------------------------------------------------------------------------------------

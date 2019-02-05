@@ -131,6 +131,21 @@ This will create a ROS node in the folder `~/deploy`. If you have installed the 
 rol --deploy-path ~/catkin_ws/src/deploy/ RoboticsLanguage/Examples/helloworld.rol -c -l
 ```
 
+**Note:** if you don't have a catkin workspace make sure to run:
+
+```shell
+mkdir -p ~/catkin_ws/src
+cd ~/catkin_ws
+catkin init
+```
+
+After compiling the rol package for the first time make sure to source it:
+
+```shell
+source ~/catkin_ws/devel/setup.bash
+```
+
+
 ## Docker image
 
 You can test the robotics language using a docker environment. First make sure the Robotics Language is installed

@@ -95,10 +95,15 @@ def setPublish(variable, flow, assignments):
     for variable_element in assignments:
       assignment = Utilities.getFirstParent(variable_element, 'assign')
 
+      # if 'postCpp' not in assignment.attrib.keys():
+      #   assignment.attrib['postCpp'] = ''
       if 'postRosCpp' not in assignment.attrib.keys():
         assignment.attrib['postRosCpp'] = ''
+      if 'postRos2Cpp' not in assignment.attrib.keys():
+        assignment.attrib['postRos2Cpp'] = ''
 
       assignment.attrib['postRosCpp'] += ';' + variable + '_publisher.publish(' + variable + ');'
+      assignment.attrib['postRos2Cpp'] += ';' + variable + '_publisher->publish(' + variable + ');'
 
 
 def checkTypes(signal, variable, assignments, usages, code, parameters):
@@ -108,12 +113,12 @@ def checkTypes(signal, variable, assignments, usages, code, parameters):
 
     # Tell every assignment with this variable in the left side to use to data domain
     for element in assignments:
-      Utilities.getFirstParent(element, 'assign').attrib['preAssignRosCpp'] = '.data'
+      Utilities.getFirstParent(element, 'assign').attrib['preAssignCpp'] = '.data'
 
     # Tell all usages not with a domain parent to use data domain
     for use in usages:
       # if use.getparent().tag != 'domain':
-      use.attrib['returnDomainRosCpp'] = '.data'
+      use.attrib['returnDomainCpp'] = '.data'
 
     # get the type of the signal
     topic_type = signal.getchildren()[0]
@@ -129,21 +134,25 @@ def checkTypes(signal, variable, assignments, usages, code, parameters):
         bits = option.getchildren()[0].text
 
       ros_type = 'std_msgs::' + ros_type_mapping[topic_type.tag + bits]
+      ros_2_type = 'std_msgs::msg::' + ros_type_mapping[topic_type.tag + bits]
       cpp_type = cpp_type_mapping[topic_type.tag + bits]
 
     elif topic_type.tag in ['Booleans', 'Strings']:
       ros_type = 'std_msgs::' + ros_type_mapping[topic_type.tag]
+      ros_2_type = 'std_msgs::msg::' + ros_type_mapping[topic_type.tag]
       cpp_type = cpp_type_mapping[topic_type.tag]
 
     else:
       # @REFACTOR just a placeholder for now
       ros_type = 'std_msgs::Empty'
+      ros_2_type = 'std_msgs::msg::Empty'
       cpp_type = 'int'
   else:
     ros_type = signal.xpath('option[@name="rosType"]/string')[0].text.replace('/', '::')
+    ros_2_type = signal.xpath('option[@name="rosType"]/string')[0].text.replace('/', '::msg::')
     cpp_type = ros_type
 
-  return code, parameters, ros_type, cpp_type
+  return code, parameters, ros_type, cpp_type, ros_2_type
 
 
 def process(code, parameters):
@@ -164,20 +173,25 @@ def process(code, parameters):
     setPublish(variable, flow, assignments)
 
     # check types and make sure .data is added when needed
-    code, parameters, ros_type, cpp_type = checkTypes(signal, variable, assignments, usages, code, parameters)
+    code, parameters, ros_type, cpp_type, ros_2_type = checkTypes(signal, variable, assignments, usages, code, parameters)
 
     # Save the variable name on the `Signals` tag. Helps simplifying code
     signal.attrib['ROSvariable'] = variable
 
     # save type in base/variables
-    parameters['Transformers']['Base']['variables'][variable]['type'] = ros_type
+    parameters['Transformers']['Base']['variables'][variable]['type'] = {'RosCpp': ros_type, 'Ros2Cpp': ros_2_type}
+
+    # header file name for ros2
+    ros2_include = '/'.join((lambda x: x[:-1] + [Utilities.camelCaseToUnderscore(x[-1])])(ros_2_type.split('::')))
 
     # add header file for msg
     parameters['Outputs']['RosCpp']['globalIncludes'].add(ros_type.replace('::', '/') + '.h')
+    parameters['Outputs']['Ros2Cpp']['localIncludes'].add(ros2_include + '.hpp')
 
     # save the topic definitions
     parameters['Transformers']['ROS']['topicDefinitions'].append({'variable': variable,
                                                                   'ros_type': ros_type,
+                                                                  'ros_2_type': ros_2_type,
                                                                   'cpp_type': cpp_type,
                                                                   'topic_name': topic_name,
                                                                   'flow': flow})

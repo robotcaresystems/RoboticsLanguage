@@ -39,7 +39,6 @@ language = {
             }
         },
         'output': {
-            'RosCpp': '({{children|join(" * ")}})',
             'HTMLDocumentation': '({{children|join(" * ")}})',
 
         },
@@ -67,7 +66,6 @@ language = {
             }
         },
         'output': {
-            'RosCpp': '({{children|join(" / ")}})',
             'HTMLDocumentation': '({{children|join(" / ")}})',
 
         },
@@ -90,9 +88,7 @@ language = {
             }
         },
         'output': {
-            'RosCpp': '({{children|join(" + ")}})',
-            'HTMLDocumentation': 'print({{children|join(" + ")}})',
-            'HTMLGUI': '',
+            'HTMLDocumentation': '({{children|join(" + ")}})',
 
         },
         'localisation':
@@ -113,10 +109,7 @@ language = {
             }
         },
         'output': {
-            'RosCpp': '({{children|join(" - ")}})',
-            'HTMLDocumentation': 'print({{children|join(" - ")}})',
-            'HTMLGUI': '',
-
+            'HTMLDocumentation': '({{children|join(" - ")}})',
         },
         'localisation':
         {
@@ -136,9 +129,8 @@ language = {
             }
         },
         'output': {
-            'RosCpp': '({{children|join(" > ")}})',
-            'HTMLDocumentation': 'print({{children|join(" > ")}})',
-            'HTMLGUI': '',
+            'HTMLDocumentation': '({{children|join(" > ")}})',
+
 
         },
         'localisation':
@@ -158,9 +150,8 @@ language = {
             }
         },
         'output': {
-            'RosCpp': '({{children|join(" < ")}})',
-            'HTMLDocumentation': 'print({{children|join(" < ")}})',
-            'HTMLGUI': '',
+            'HTMLDocumentation': '({{children|join(" < ")}})',
+
 
         },
         'localisation':
@@ -180,9 +171,8 @@ language = {
             }
         },
         'output': {
-            'RosCpp': '({{children|join(" >= ")}})',
-            'HTMLDocumentation': 'print({{children|join(" ≥ ")}})',
-            'HTMLGUI': '',
+            'HTMLDocumentation': '({{children|join(" ≥ ")}})',
+
 
         },
         'localisation':
@@ -202,9 +192,8 @@ language = {
             }
         },
         'output': {
-            'RosCpp': '({{children|join(" <= ")}})',
-            'HTMLDocumentation': 'print({{children|join(" ≤ ")}})',
-            'HTMLGUI': '',
+            'HTMLDocumentation': '({{children|join(" ≤ ")}})',
+
 
         },
         'localisation':
@@ -225,9 +214,8 @@ language = {
             }
         },
         'output': {
-            'RosCpp': '({{children|join(" == ")}})',
-            'HTMLDocumentation': 'print({{children|join(" ≡ ")}})',
-            'HTMLGUI': '',
+            'HTMLDocumentation': '({{children|join(" ≡ ")}})',
+
 
         },
         'localisation':
@@ -247,9 +235,8 @@ language = {
             }
         },
         'output': {
-            'RosCpp': '({{children|join(" != ")}})',
-            'HTMLDocumentation': 'print({{children|join(" ≠ ")}})',
-            'HTMLGUI': '',
+            'HTMLDocumentation': '({{children|join(" ≠ ")}})',
+
 
         },
         'localisation':
@@ -272,9 +259,8 @@ language = {
             }
         },
         'output': {
-            'RosCpp': '({{children|join(" && ")}})',
-            'HTMLDocumentation': 'print({{children|join(" ∧ ")}})',
-            'HTMLGUI': '',
+            'HTMLDocumentation': '({{children|join(" ∧ ")}})',
+
 
         },
         'localisation':
@@ -301,10 +287,7 @@ language = {
             }
         },
         'output': {
-            'RosCpp': '({{children|join(" || ")}})',
-            'HTMLDocumentation': 'print({{children|join(" ∨ ")}})',
-            'HTMLGUI': '',
-
+            'HTMLDocumentation': '({{children|join(" ∨ ")}})',
         },
         'localisation':
         {
@@ -323,7 +306,6 @@ language = {
             }
         },
         'output': {
-            'RosCpp': '!({{children[0]}})',
             'HTMLDocumentation': '¬({{children[0]}})',
 
         },
@@ -344,7 +326,6 @@ language = {
             }
         },
         'output': {
-            'RosCpp': '-({{children[0]}})',
             'HTMLDocumentation': '-({{children[0]}})',
 
         },
@@ -372,7 +353,6 @@ language = {
             }
         },
         'output': {
-            'RosCpp': '({{children[0]}})',
             'HTMLDocumentation': '({{children[0]}})',
 
         },

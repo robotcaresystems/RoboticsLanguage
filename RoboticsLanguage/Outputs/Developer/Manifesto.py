@@ -25,13 +25,14 @@ manifesto = {
     'packageShortName': 'developer',
     'requiresCode': False,
     'version': '0.0.1',
+    'order': 1,
     'information': {
         'author':
         {
             'name': 'Gabriel Lopes',
             'email': 'g.lopes@robotcaresystems.com',
             'web': 'http://www.dcsc.tudelft.nl/~glopes/publications.html',
-            
+
         },
         'company':
         {

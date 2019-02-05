@@ -29,8 +29,7 @@ def transform(code, parameters):
   namespace = {'namespaces': {'fsm': 'fsm'}}
 
   # this is the absolute path to the extra header file needed for finite state machines
-  header_file = Utilities.myPluginPath(
-      parameters) + '/Templates/Outputs/RosCpp/_nodename_/include/_nodename_/FiniteStateMachine.h'
+  header_file = Utilities.myPluginPath(parameters) + '/Templates/Outputs/Cpp/_nodename_/include/_nodename_/FiniteStateMachine.h'
 
   # skip header file if no state machines are defined
   if len(code.xpath('//fsm:machine', **namespace)) == 0:

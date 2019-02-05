@@ -1,0 +1,29 @@
+<<<header->>>
+cmake_minimum_required(VERSION 3.5)
+project({{parameters.node.name|underscore }})
+
+# Default to C++14
+if(NOT CMAKE_CXX_STANDARD)
+  set(CMAKE_CXX_STANDARD 14)
+endif()
+
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  add_compile_options()
+endif()
+
+
+find_package(ament_cmake REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(std_msgs REQUIRED)
+<<<'findPackage'|group>>>
+
+
+add_executable({{parameters.node.name|underscore}} src/{{parameters.node.name|underscore}}.cpp)
+ament_target_dependencies({{parameters.node.name|underscore}} rclcpp std_msgs <<<'ament_target_dependencies'|group>>>)
+
+install(TARGETS {{parameters.node.name|underscore}}
+        DESTINATION lib/${PROJECT_NAME})
+
+<<<'extras'|group>>>
+
+ament_package()

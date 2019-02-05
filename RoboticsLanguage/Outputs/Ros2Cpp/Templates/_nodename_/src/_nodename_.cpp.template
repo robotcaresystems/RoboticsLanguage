@@ -1,0 +1,82 @@
+<<<header->>>
+/*
+ * Node name: {{parameters.node.name}}
+ *
+ * Generated on: {{"%d %B, %Y"|todaysDate}}
+ *       Author: {{parameters.Information.user.name}}
+ *      Licence: {{parameters.Information.software.license}}
+ *    Copyright: {{parameters.Information.software.copyright}}
+ *
+ *    THIS FILE WAS AUTOMATICALLY GENERATED USING THE ROBOTICS LANGUAGE
+ *
+ */
+
+#include "../include/{{parameters.node.name|underscore}}/{{parameters.node.name|underscore}}.h"
+
+/***************************************************************************************
+*       {{parameters.node.name|camelCase}}Class Definition
+****************************************************************************************/
+namespace {{parameters.node.name|underscore}}
+{
+
+  /******************************* initialise ********************************************/
+  void {{parameters.node.name|camelCase}}Class::initialise()
+  {
+    <<<'initialise'|group>>>
+
+    /* initialisation */
+    {{code|xpath('/node')|option('initialise')|serializedCode}};
+  }
+
+  /******************************* finalise ********************************************/
+  void {{parameters.node.name|camelCase}}Class::finalise()
+  {
+    <<<'finalise'|group>>>
+
+    {{code|xpath('/node')|option('finalise')|serializedCode}};
+  }
+
+  {# /******************************* spin ************************************************/
+  void {{parameters.node.name|camelCase}}Class::spin()
+  {
+    // Sets the spin rate
+    ros::Rate r({{code|xpath('/node')|option('rate')|serializedCode}});
+    while(ros::ok())
+    {
+      <<<'beforeSpin'|group>>>
+
+      ros::spinOnce();
+
+      <<<'afterSpin'|group>>>
+
+      r.sleep();
+    }
+  } #}
+
+  <<<'functions'|group>>>
+
+}
+
+/****************************************************************************************
+* The Main
+*****************************************************************************************/
+int main(int argc, char **argv)
+{
+  // Initialize the node
+  rclcpp::init(argc, argv);
+
+  // Create the node object
+  auto instance = std::make_shared<{{parameters.node.name|underscore}}::{{parameters.node.name|camelCase}}Class>();
+
+  // initialise
+  instance->initialise();
+
+  // Spin the node
+  rclcpp::spin(instance);
+
+  // finalise
+  instance->finalise();
+  rclcpp::shutdown();
+
+  return 0;
+}

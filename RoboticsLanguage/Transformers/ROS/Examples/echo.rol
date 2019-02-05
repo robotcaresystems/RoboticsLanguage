@@ -4,7 +4,7 @@ node(
 
   definitions: block(
     # the input signal
-    echo_in ∈ Signals(Strings, rosTopic:'/echo/in', onNew: block(echo_out = echo_in, print('Got: ', echo_out)) ),
+    echo_in ∈ Signals(Strings, rosTopic:'/echo/in', onNew: echo_out = echo_in ),
 
     # the echo signal
     echo_out ∈ Signals(Strings, rosTopic:'/echo/out')

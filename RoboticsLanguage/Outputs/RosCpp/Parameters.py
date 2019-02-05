@@ -21,14 +21,12 @@
 #   limitations under the License.
 
 
-
-parameters = { 'strict':False,
-               'globalIncludes':set(),
-               'localIncludes':set()
-               }
+parameters = {
+    'globalIncludes': set(),
+    'localIncludes': set()
+}
 
 command_line_flags = {
-  'strict': {'suppress': True},
-  'globalIncludes': {'suppress': True},
-  'localIncludes': {'suppress': True}
+    'globalIncludes': {'suppress': True},
+    'localIncludes': {'suppress': True}
 }
