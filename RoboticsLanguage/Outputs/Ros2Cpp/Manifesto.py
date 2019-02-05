@@ -12,7 +12,7 @@ manifesto = {
   'packageName': 'Ros 2 cpp',
   'packageShortName': 'Ros2Cpp',
   'version': '0.0.0',
-  'parent': 'RosCpp',
+  'parent': 'Cpp',
   'order': 120,
   'information': {
     'author':

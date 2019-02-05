@@ -228,8 +228,12 @@ def templateEngine(code, parameters, output=None,
         # create a new template that includes all the plugin template code
         preprocessed_template = preprocessed_environment.from_string(render)
 
+        # add some simpler information about the current output package and its parents
+        parameters['this'] = parameters['developer']['stepName']
+        parameters['this_parents'] = package_parents
+
         # render the combined template
-        result = preprocessed_template.render(code=code, parameters=parameters, this=parameters['developer']['stepName'])
+        result = preprocessed_template.render(code=code, parameters=parameters)
       except TemplateError as e:
         Utilities.logger.error(e.__repr__())
         #   # with Error.exception(parameters, filename=files_to_process[i])
