@@ -27,6 +27,7 @@ parameters = {
     'globals': {
         'version': False,
         'output': 'RosCpp',
+        'input': '',
         'debug': False,
         'compile': False,
         'launch': False,
@@ -200,6 +201,12 @@ command_line_flags = {
         'description': 'Outputs',
         'choices': [],
         'numberArguments': '*'
+    },
+    'globals:input': {
+        'flag': 'i',
+        'longFlag': 'input',
+        'description': 'Use a specific input parser',
+        'choices': []
     },
     'globals:debug': {
         'flag': 'd',

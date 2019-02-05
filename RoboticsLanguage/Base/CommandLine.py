@@ -92,6 +92,7 @@ def prepareCommandLineArguments(parameters):
 
   # remember the available choices for outputs
   Parameters.command_line_flags['globals:output']['choices'] = parameters['manifesto']['Outputs'].keys()
+  Parameters.command_line_flags['globals:input']['choices'] = parameters['manifesto']['Inputs'].keys()
 
   # create a subset of all the parameters
   subset = dict((x, parameters[x])
