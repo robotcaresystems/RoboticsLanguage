@@ -23,25 +23,39 @@
 from . import Utilities
 
 
+@Utilities.cache_in_disk
+def prepareOutputs(parameters):
+
+  outputs = parameters['manifesto']['Outputs']
+
+  return [{'data': outputs[x], 'name': x} for x in sorted(outputs, key=lambda k: outputs[k]['order'])]
+
+
 def Generate(outputs, code, parameters):
   """Generates the outputs"""
 
-  for output in Utilities.unique(outputs):
+  # get a list of the outputs soted by order
+  sorted_outputs = prepareOutputs(parameters)
 
-    # Checks if the plugin can run without code
-    if (code is not None) or (code is None and 'requiresCode' in parameters['manifesto']['Outputs'][output].keys() and not parameters['manifesto']['Outputs'][output]['requiresCode']):
 
-      # update the compiler step
-      parameters = Utilities.incrementCompilerStep(parameters, 'Outputs', output)
+  for output in map(lambda k: k['name'], sorted_outputs):
 
-      # load the module
-      output_function = Utilities.importModule(parameters['manifesto']['Outputs'][output]['type'], 'Outputs', output, 'Output')
+    if output in outputs:
 
-      # apply transformations
-      output_function.Output.output(code, parameters)
+      # Checks if the plugin can run without code
+      if (code is not None) or (code is None and 'requiresCode' in parameters['manifesto']['Outputs'][output].keys() and not parameters['manifesto']['Outputs'][output]['requiresCode']):
 
-      # show developer information
-      Utilities.showDeveloperInformation(code, parameters)
+        # update the compiler step
+        parameters = Utilities.incrementCompilerStep(parameters, 'Outputs', output)
+
+        # load the module
+        output_function = Utilities.importModule(parameters['manifesto']['Outputs'][output]['type'], 'Outputs', output, 'Output')
+
+        # apply transformations
+        output_function.Output.output(code, parameters)
+
+        # show developer information
+        Utilities.showDeveloperInformation(code, parameters)
 
   # show final message
   if parameters['developer']['progress']:

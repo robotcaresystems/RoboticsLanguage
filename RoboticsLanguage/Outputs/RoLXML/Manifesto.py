@@ -24,13 +24,14 @@ manifesto = {
     'packageName': 'Robotics Language XML',
     'packageShortName': 'rolxml',
     'version': '0.0.1',
+    'order': 30,
     'information': {
         'author':
         {
             'name': 'Gabriel Lopes',
             'email': 'g.lopes@robotcaresystems.com',
             'web': 'http://www.dcsc.tudelft.nl/~glopes/publications.html',
-            
+
         },
         'company':
         {

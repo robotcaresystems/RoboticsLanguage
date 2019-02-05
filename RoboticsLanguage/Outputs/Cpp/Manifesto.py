@@ -12,7 +12,7 @@ manifesto = {
   'packageName': 'Cpp',
   'packageShortName': 'Cpp',
   'version': '0.0.0',
-
+  'order': 100,
   'information': {
     'author':
     {

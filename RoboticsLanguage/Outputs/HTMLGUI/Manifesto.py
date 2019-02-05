@@ -24,13 +24,14 @@ manifesto = {
     'packageName': 'HTML Graphical User Interface',
     'packageShortName': 'htmlgui',
     'version': '0.0.1',
+    'order': 10,
     'information': {
         'author':
         {
             'name': 'Gabriel Lopes',
             'email': 'g.lopes@robotcaresystems.com',
             'web': 'http://www.dcsc.tudelft.nl/~glopes/publications.html',
-            
+
         },
         'company':
         {

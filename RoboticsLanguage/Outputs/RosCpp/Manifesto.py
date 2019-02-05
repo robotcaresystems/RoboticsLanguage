@@ -24,9 +24,10 @@ manifesto = {
     'packageName': 'ROS c++',
     'packageShortName': 'roscpp',
     'version': '0.0.1',
+    'order': 110,
 
     'parent': 'Cpp',
-    
+
     'information': {
         'author':
         {

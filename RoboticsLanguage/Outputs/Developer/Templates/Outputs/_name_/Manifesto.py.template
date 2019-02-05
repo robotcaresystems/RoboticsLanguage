@@ -12,7 +12,7 @@ manifesto = {
   'packageName': '{{parameters.Outputs.Developer.create.Outputs}}',
   'packageShortName': '{{parameters.Outputs.Developer.create.Outputs|camelCase}}',
   'version': '0.0.0',
-
+  'order':200,
   'information': {
     'author':
     {
