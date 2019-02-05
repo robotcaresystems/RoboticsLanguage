@@ -37,7 +37,7 @@ def Parse(file_name, file_type, parameters):
     for key, value in parameters['manifesto']['Inputs'].iteritems():
       # @TODO Add support to multiple file extensions per format, e.g.:
       #       if file_type.lower() in value['fileFormat'].lower():
-      if file_type.lower() == value['fileFormat'].lower():
+      if ((file_type.lower() == value['fileFormat'].lower() and parameters['globals']['input'] == '') or (parameters['globals']['input'] == value['packageShortName'])):
 
         # update the compiler step
         parameters = Utilities.incrementCompilerStep(parameters, 'Inputs', value['packageShortName'])
