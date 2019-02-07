@@ -35,8 +35,8 @@
 {# get the list of states from the code #}
 {% set machine_name = machine|xpath('fsm:name/text()', {'fsm':'fsm'})-%}
 {% set initial_state = machine|xpath('fsm:initial/text()', {'fsm':'fsm'}) -%}
-{% set begin_states = machine|xpaths('fsm:transitions/fsm:transition/fsm:begin/text()', {'fsm':'fsm'}) -%}
-{% set end_states = machine|xpaths('fsm:transitions/fsm:transition/fsm:end/text()', {'fsm':'fsm'}) -%}
+{% set begin_states = machine|xpaths('fsm:transition/fsm:begin/text()', {'fsm':'fsm'}) -%}
+{% set end_states = machine|xpaths('fsm:transition/fsm:end/text()', {'fsm':'fsm'}) -%}
 {% set states = ([initial_state] + begin_states + end_states)|unique|list %}
 {% set index_states = {} %}
 {% for state in states %}
@@ -83,8 +83,7 @@ var nodes_{{machine_name}} = new vis.DataSet([
 
 // create an array with edges
 var edges_{{machine_name}} = new vis.DataSet([
-  {% set transitions = machine|xpaths('fsm:transitions', {'fsm':'fsm'}) -%}
-  {% for transition in transitions|xpaths('fsm:transition', {'fsm':'fsm'}) -%}
+  {% for transition in machine|xpaths('.//fsm:transition', {'fsm':'fsm'}) -%}
   {from: {{index_states[transition|xpath('fsm:begin/text()', {'fsm':'fsm'})]}},
    to: {{index_states[transition|xpath('fsm:end/text()', {'fsm':'fsm'})]}},
    label: "{{transition|xpath('fsm:label/text()', {'fsm':'fsm'})}}",
@@ -150,8 +149,8 @@ $('#finite_state_machine_accordion').accordion({exclusive: false});
   {# get the list of states from the code #}
   {% set machine_name = machine|xpath('fsm:name/text()', {'fsm':'fsm'})-%}
   {% set initial_state = machine|xpath('fsm:initial/text()', {'fsm':'fsm'}) -%}
-  {% set begin_states = machine|xpaths('fsm:transitions/fsm:transition/fsm:begin/text()', {'fsm':'fsm'}) -%}
-  {% set end_states = machine|xpaths('fsm:transitions/fsm:transition/fsm:end/text()', {'fsm':'fsm'}) -%}
+  {% set begin_states = machine|xpaths('fsm:transition/fsm:begin/text()', {'fsm':'fsm'}) -%}
+  {% set end_states = machine|xpaths('fsm:transition/fsm:end/text()', {'fsm':'fsm'}) -%}
   {% set states = ([initial_state] + begin_states + end_states)|unique|list %}
   {% set index_states = {} %}
   {% for state in states %}
