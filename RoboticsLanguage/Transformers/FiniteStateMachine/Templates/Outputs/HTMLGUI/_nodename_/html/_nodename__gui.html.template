@@ -83,7 +83,7 @@ var nodes_{{machine_name}} = new vis.DataSet([
 
 // create an array with edges
 var edges_{{machine_name}} = new vis.DataSet([
-  {% set transitions = machine|xpath('fsm:transitions', {'fsm':'fsm'}) -%}
+  {% set transitions = machine|xpaths('fsm:transitions', {'fsm':'fsm'}) -%}
   {% for transition in transitions|xpaths('fsm:transition', {'fsm':'fsm'}) -%}
   {from: {{index_states[transition|xpath('fsm:begin/text()', {'fsm':'fsm'})]}},
    to: {{index_states[transition|xpath('fsm:end/text()', {'fsm':'fsm'})]}},
