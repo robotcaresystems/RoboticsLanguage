@@ -35,20 +35,21 @@ def prepareTransformations(parameters):
 def Apply(code, parameters):
   """Applies transformations to the XML structure"""
 
-  if code is not None:
+  # load the list of transformations by order
+  ordered_transformations_list = prepareTransformations(parameters)
 
-    # load the list of transformations by order
-    ordered_transformations_list = prepareTransformations(parameters)
+  # load the transform modules
+  transform_function_list = [Utilities.importModule(t['data']['type'],
+                                                    'Transformers', t['name'], 'Transform')
+                             for t in ordered_transformations_list]
 
-    # load the transform modules
-    transform_function_list = [Utilities.importModule(t['data']['type'],
-                                                      'Transformers', t['name'], 'Transform')
-                               for t in ordered_transformations_list]
+  # apply transformations
+  for transform_function, transform_name in zip(transform_function_list, [x['name'] for x in ordered_transformations_list]):
 
-    # apply transformations
-    for transform_function, transform_name in zip(transform_function_list, [x['name'] for x in ordered_transformations_list]):
+    if transform_name not in parameters['developer']['skip']:
 
-      if transform_name not in parameters['developer']['skip']:
+      # Checks if the plugin can run without code
+      if (code is not None) or (code is None and 'requiresCode' in parameters['manifesto']['Transformers'][transform_name].keys() and not parameters['manifesto']['Transformers'][transform_name]['requiresCode']):
 
         # update the compiler step
         parameters = Utilities.incrementCompilerStep(parameters, 'Transformers', transform_name)
@@ -59,9 +60,9 @@ def Apply(code, parameters):
         # show developer information
         Utilities.showDeveloperInformation(code, parameters)
 
-    # check if semantic errors have occured
-    if len(parameters['errors']) > 0:
-      Utilities.logging.error("Semantic errors found! Stopping.")
-      sys.exit(1)
+  # check if semantic errors have occured
+  if len(parameters['errors']) > 0:
+    Utilities.logging.error("Semantic errors found! Stopping.")
+    sys.exit(1)
 
   return code, parameters

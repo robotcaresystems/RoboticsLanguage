@@ -125,4 +125,7 @@ def output(code, parameters):
       print('Created ' + module_type + ' plugin "' + filepatterns['name'] + '" in folder ' +
             parameters['globals']['plugins'] + '/' + module_type + '/' + filepatterns['name'])
 
+      # clean cache in disk
+      Utilities.removeCache()
+
   return 0
