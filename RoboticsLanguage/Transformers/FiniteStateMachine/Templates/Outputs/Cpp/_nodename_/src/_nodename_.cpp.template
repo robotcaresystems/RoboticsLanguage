@@ -12,8 +12,7 @@
     // Definitions for Finite State Machine "{{machine_name}}"
 
     // Transitions
-  {% set transitions = machine|xpath('fsm:transitions', {'fsm':'fsm'}) -%}
-  {% for transition in transitions|xpaths('fsm:transition', {'fsm':'fsm'}) -%}
+  {% for transition in machine|xpaths('fsm:transition', {'fsm':'fsm'}) -%}
     {{machine_name}}.addTransition("{{transition|xpath('fsm:label/text()', {'fsm':'fsm'})}}","{{transition|xpath('fsm:begin/text()', {'fsm':'fsm'})}}","{{transition|xpath('fsm:end/text()', {'fsm':'fsm'})}}");
   {% endfor -%}
 
