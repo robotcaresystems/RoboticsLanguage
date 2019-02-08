@@ -1,7 +1,7 @@
 #
 #   This is the Robotics Language compiler
 #
-#   Language.py: Parses the Robotics Language
+#   Topics.py: Processes all code for Ros topics, messages and types
 #
 #   Created on: June 22, 2017
 #       Author: Gabriel A. D. Lopes
@@ -19,22 +19,17 @@
 #   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
+from RoboticsLanguage.Base import Utilities
 
-from Tools import Topics, Types, RosMessage
 
+def process(code, parameters):
 
-def transform(code, parameters):
+  # define the namespace used by the ros message
+  namespace = {'namespaces': {'rosm': 'rosm'}}
 
-  # make sure RosCpp is part of the output
-  if any(x in parameters['globals']['output'] for x in ['RosCpp', 'HTMLGUI', 'Ros2Cpp']):
+  messages = code.xpath('//rosm:message', **namespace)
 
-    # Types
-    code, parameters = Types.process(code, parameters)
-
-    # Topics
-    code, parameters = Topics.process(code, parameters)
-
-    # Ros messages
-    code, parameters = RosMessage.process(code, parameters)
+  if len(messages) > 0:
+    print 'yes'
 
   return code, parameters

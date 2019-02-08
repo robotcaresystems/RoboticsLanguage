@@ -1,0 +1,16 @@
+
+{% set build_depend %}
+
+  {% if code.xpath('//rosm:message', namespaces={'rosm': 'rosm'})|length > 0 %}
+  <build_depend>message_generation</build_depend>
+  {% endif %}
+
+{% endset %}
+
+{% set run_depend %}
+
+  {% if code.xpath('//rosm:message', namespaces={'rosm': 'rosm'})|length > 0 %}
+  <run_depend>message_runtime</run_depend>
+  {% endif %}
+
+{% endset %}

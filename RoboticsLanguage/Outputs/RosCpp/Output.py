@@ -69,6 +69,25 @@ def output(code, parameters):
   if not Templates.templateEngine(code, parameters, file_patterns={'nodename': node_name_underscore}):
     sys.exit(1)
 
+  # ############ create ros message if needed file if needed ############################################
+  namespace = {'namespaces': {'rosm': 'rosm'}}
+
+  messages = code.xpath('//rosm:message', **namespace)
+
+  if len(messages) > 0:
+    folder =  Utilities.myOutputPath(parameters) + '/' + node_name_underscore + '/msg'
+    Utilities.createFolder(folder)
+
+    for message in messages:
+      name = message.xpath('.//rosm:name', **namespace)[0].text
+      definition =  message.xpath('.//rosm:definition', **namespace)[0].text
+
+      with open(folder + '/' + name + '.msg', 'w') as file:
+        file.write(definition)
+
+        Utilities.logging.debug('Wrote file ' + folder + '/' + name + '.msg ...')
+
+
   # ############ beautify code #####################################################
   # if the flag beautify is set then run uncrustify
   if parameters['globals']['beautify']:

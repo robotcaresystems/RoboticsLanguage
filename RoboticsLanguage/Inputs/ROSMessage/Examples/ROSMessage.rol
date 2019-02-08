@@ -1,0 +1,23 @@
+node(
+  name:'example ROS Message',
+
+  initialise: block(
+    # the ROS Message mini-language
+    ROSMessage<{
+
+      name:Test
+
+      # comments
+
+      std_msgs/MultiArrayLayout layout # comment
+      bool[] data
+
+      ###### CONSTANTS ######
+      uint16 CONSTANT_1 = 1
+      uint16 CONSTANT_2 = 2
+      uint16 CONSTANT_3 = 4
+      uint16 CONSTANT_4 = 8
+
+      }>
+  )
+)

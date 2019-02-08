@@ -451,6 +451,14 @@ def myPluginPath(parameters):
   return parameters['manifesto'][parameters['developer']['stepGroup']][parameters['developer']['stepName']]['path']
 
 
+def myOutputPath(parameters):
+  if parameters['developer']['stepName'] in parameters['globals']['deployOutputs'].keys():
+    return parameters['globals']['deployOutputs'][parameters['developer']['stepName']]
+  else:
+    return parameters['globals']['deploy']
+
+
+
 def getPackageOutputParents(parameters, package):
   if 'parent' in parameters['manifesto']['Outputs'][package].keys():
     return [package] + getPackageOutputParents(parameters, parameters['manifesto']['Outputs'][package]['parent'])
