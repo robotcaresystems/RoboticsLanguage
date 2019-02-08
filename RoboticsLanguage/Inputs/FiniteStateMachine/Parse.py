@@ -20,41 +20,41 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-from lxml import etree
 from parsley import makeGrammar
-from RoboticsLanguage.Base import Utilities
+from RoboticsLanguage.Tools import Parsing
+import copy
+
+
+def endTag(element):
+  # extract the begin state (second element) and make a deep copy
+  child = copy.copy(element[0].getchildren()[1])
+  # rename it to an "end" tag
+  child.tag = '{fsm}end'
+  return child
+
 
 grammar_definition = """
 word = <letter letterOrDigit*>
 
-name = 'name' ws ':' ws word:n -> xml('name',n)
+name = 'name' ws ':' ws word:name -> xml('name',text=name)
 
-initialisation = 'initial' ws ':' ws word:state -> xml('initial',state)
+initial = 'initial' ws ':' ws word:state -> xml('initial', text=state)
 
-transitions = ( ws transition:fsm -> fsm[0])*
+state = '(' ws word:state ws ')' -> state
 
-transition = '(' ws word:begin ws ')' ws '-' ws word:label ws '->' ws ( transition:t -> xml('transition', xml('label', label)[0] + xml('begin',begin)[0] + xml('end',str(t[1]))[0] , rest = begin, text = t[0])
-                                | '(' ws word:end ws ')' -> xml('transition', xml('label',label)[0] + xml('begin',begin)[0] + xml('end',end)[0], rest = begin)
-                                )
+transition = state:begin ws '-' ws word:label ws '->' ws ( transition:t -> [ xml('transition', [xml('label', text=label), xml('begin', text=begin), endTag(t)])] + t
+                                                         | state:end -> [ xml('transition', [xml('label', text=label), xml('begin', text=begin), xml('end', text=end)]) ]
+                                                         )
 
-result = ws name:a ws initialisation:b ws transitions:t ws -> a + b + xml('transitions', ''.join(t))
+machine = ws name:n ws initial:i (ws transition)*:t ws -> xml('machine',[n, i] + [item for sublist in t for item in sublist])
 """
 
 
-def xml(tag, content, rest='', text=''):
-  return '<fsm:' + tag + '>' + content + '</fsm:' + tag + '>' + text, rest
-
-
 def parse(text, parameters):
-  Utilities.logging.info("Parsing FiniteStateMachine language...")
-
   # make the grammar
-  grammar = makeGrammar(grammar_definition, {'xml': xml})
+  grammar = makeGrammar(grammar_definition, {'xml': Parsing.xmlNamespace('fsm'), 'endTag': endTag})
 
   # parse the text
-  result = grammar(text).result()
-
-  # convert to XML object
-  code = etree.fromstring('<fsm:machine xmlns:fsm="fsm">' + ''.join(result) + '</fsm:machine>')
+  code = grammar(text).machine()
 
   return code, parameters
