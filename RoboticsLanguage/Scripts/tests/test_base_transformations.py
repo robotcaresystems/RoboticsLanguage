@@ -37,13 +37,17 @@ class TestBaseTransformations(unittest.TestCase):
     # initialise compiler
     parameters = Initialise.Initialise(False)
 
+    # load partial parameters
+    parameters = CommandLine.loadRemainingParameters(parameters)
+
     # load all parameters after the command line parser
     parameters = CommandLine.postCommandLineParser(parameters)
+
 
     xml_code, parameters = Transformations.Apply(xml, parameters)
 
     self.assertEqual(etree.tostring(xml_code),
-                     '<node><print RosCpp="ROS_INFO_STREAM(&quot;hello&quot;)"><string RosCpp="&quot;hello&quot;">hello</string><option name="level" RosCpp="&quot;info&quot;"><string RosCpp="&quot;info&quot;">info</string></option></print><option name="name" RosCpp="&quot;unnamed&quot;"><string RosCpp="&quot;unnamed&quot;">unnamed</string></option><option name="events" RosCpp=""/><option name="rate" RosCpp="1"><real RosCpp="1">1</real></option><option name="initialise" RosCpp=""/><option name="definitions" RosCpp=""/><option name="finalise" RosCpp=""/><option name="cachedComputation" RosCpp=""/></node>')
+                     '<node><print RosCpp="ROS_INFO_STREAM(&quot;hello&quot;)"><string RosCpp="&quot;hello&quot;">hello</string><option name="level" RosCpp="&quot;info&quot;"><string RosCpp="&quot;info&quot;">info</string></option></print><option name="name" RosCpp="&quot;unnamed&quot;"><string RosCpp="&quot;unnamed&quot;">unnamed</string></option><option name="rate" RosCpp="25"><real RosCpp="25">25</real></option><option name="initialise" RosCpp=""/><option name="definitions" RosCpp=""/><option name="finalise" RosCpp=""/><option name="cachedComputation" RosCpp=""/></node>')
 
 
 if __name__ == '__main__':

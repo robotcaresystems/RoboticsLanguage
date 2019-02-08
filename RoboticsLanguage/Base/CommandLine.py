@@ -92,6 +92,7 @@ def prepareCommandLineArguments(parameters):
 
   # remember the available choices for outputs
   Parameters.command_line_flags['globals:output']['choices'] = parameters['manifesto']['Outputs'].keys()
+  Parameters.command_line_flags['globals:input']['choices'] = parameters['manifesto']['Inputs'].keys()
 
   # create a subset of all the parameters
   subset = dict((x, parameters[x])
@@ -261,6 +262,15 @@ def processCommandLineParameters(args, file_formats, parameters):
     return rol_files[0]['name'], rol_files[0]['type'], Utilities.ensureList(parameters['globals']['output']), parameters
 
 
+# @NOTE for speed should we `try/catch` or check first?
+def getTemplateTextForOutputPackage(parameters, keyword, package):
+  if package in parameters['language'][keyword]['output'].keys():
+    return parameters['language'][keyword]['output'][package], package
+  elif 'parent' in parameters['manifesto']['Outputs'][package].keys():
+    return getTemplateTextForOutputPackage(parameters, keyword, parameters['manifesto']['Outputs'][package]['parent'])
+  else:
+    raise
+
 def loadRemainingParameters(parameters):
 
   language = {}
@@ -341,21 +351,32 @@ def loadRemainingParameters(parameters):
       parameters['language'][keyword]['output'] = {}
 
     parameters['language'][keyword]['defaultOutput'] = []
+    parameters['language'][keyword]['inheritedOutput'] = []
     for item in missing:
       # fill in the missing output
-      parameters['language'][keyword]['output'][item] = default_output[item]
-      # log that the default output is being used
-      parameters['language'][keyword]['defaultOutput'].append(item)
+
+      try:
+        parameters['language'][keyword]['output'][item], inherited_package = getTemplateTextForOutputPackage(parameters, keyword, item)
+
+        # log that the inherited output is being used
+        parameters['language'][keyword]['inheritedOutput'].append({item: inherited_package})
+      except:
+        parameters['language'][keyword]['output'][item] = default_output[item]
+
+        # log that the default output is being used
+        parameters['language'][keyword]['defaultOutput'].append(item)
 
   return parameters
 
 
 def postCommandLineParser(parameters):
 
+  # Version
   if parameters['globals']['version']:
     import pkg_resources
     print('The Robotics Language version: ' + pkg_resources.get_distribution('RoboticsLanguage').version)
 
+  # Package information
   if parameters['developer']['info']:
     import pkg_resources
     print('The Robotics Language version: ' + pkg_resources.get_distribution('RoboticsLanguage').version)
@@ -365,6 +386,7 @@ def postCommandLineParser(parameters):
         extra = ' *' if parameters['globals']['plugins'] in content['path'] else ''
         print '  ' + item + ' (' + content['version'] + ')' + extra
 
+  # Detailed Package information
   if parameters['developer']['infoPackage'] != '':
     for type in ['Inputs', 'Transformers', 'Outputs']:
       if parameters['developer']['infoPackage'] in parameters['manifesto'][type].keys():
@@ -375,7 +397,11 @@ def postCommandLineParser(parameters):
         print('Information:')
         Utilities.printParameters(package['information'])
 
-
+  # Outputs dependency
+  if parameters['developer']['showOutputDependency']:
+    for package in parameters['manifesto']['Outputs']:
+      if 'parent' in parameters['manifesto']['Outputs'][package].keys():
+        print parameters['manifesto']['Outputs'][package]['parent'] + ' <- ' + package
 
   return parameters
 

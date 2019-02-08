@@ -1,0 +1,38 @@
+
+{% set includes %}
+
+{% if code|xpaths('//fsm:machine', {'fsm':'fsm'})|length > 0 %}
+//Finite state machine libraries
+{# #include <iostream>
+#include <vector>
+#include <map>
+#include <exception>
+#include <functional> #}
+#include "FiniteStateMachine.hpp"
+{% if 'HTMLGUI' in parameters.globals.output and 'RosCpp' in parameters.this_parents -%}
+#include <std_msgs/String.h>
+{% endif %}
+{% endif %}
+
+{% endset %}
+
+{% set definitions %}
+
+{% for machine in code|xpaths('//fsm:machine', {'fsm':'fsm'}) %}
+  {% set machine_name = machine|xpath('fsm:name/text()', {'fsm':'fsm'}) %}
+
+  FiniteStateMachine {{machine_name}} = FiniteStateMachine("{{machine_name}}");
+
+  {% if 'HTMLGUI' in parameters.globals.output and 'RosCpp' in parameters.this_parents -%}
+  // topics for interaction with the HTMLGUI
+  ros::Publisher fsm_{{machine_name}}_publisher;
+  ros::Subscriber fsm_{{machine_name}}_subscriber;
+  void fsm_{{machine_name}}_callback(const std_msgs::String& message);
+  void fsm_{{machine_name}}_publisher_function(const std::string state);
+
+  std_msgs::String fsm_{{machine_name}}_data;
+  {% endif -%}
+
+{% endfor %}
+
+{% endset %}

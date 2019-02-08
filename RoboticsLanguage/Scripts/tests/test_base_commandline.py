@@ -71,12 +71,12 @@ class TestBaseCommandLine(unittest.TestCase):
       # load cached command line flags or create if necessary
       flags, arguments, file_package_name, file_formats = CommandLine.prepareCommandLineArguments(parameters)
 
-      # deal with special command line arguments, e.g. '--version'
-      CommandLine.checkSpecialCommandLineArguments(command_line_parameters, parameters)
-
       # run the command line parser
       parser, args = CommandLine.runCommandLineParser(parameters, arguments, flags, file_formats,
                                           file_package_name, command_line_parameters)
+
+      # load partial parameters
+      parameters = CommandLine.loadRemainingParameters(parameters)
 
       # complete processing, e.g. load languages, etc.
       parameters = CommandLine.postCommandLineParser(parameters)

@@ -27,11 +27,16 @@ parameters = {
     'globals': {
         'version': False,
         'output': 'RosCpp',
+        'input': '',
         'debug': False,
         'compile': False,
         'launch': False,
         'beautify': False,
         'verbose': 'none',
+        'deployOutputs': {
+            'RosCpp': os.path.expanduser('~') + '/catkin_ws/src/',
+            'Ros2Cpp': os.path.expanduser('~') + '/ros2_ws/src/'
+        },
         'deploy': os.path.expanduser('~') + '/deploy/',
         'plugins': os.path.expanduser('~') + '/.rol/plugins/',
         'RoboticsLanguagePath': os.path.abspath(os.path.dirname(__file__) + '/../') + '/',
@@ -63,7 +68,8 @@ parameters = {
         'progressBar': 0,
         'progressTotal': 10,
         'progressPercentage': 0,
-        'progressStartTime': 0
+        'progressStartTime': 0,
+        'showOutputDependency': False
     },
 
     'symbols':
@@ -123,32 +129,38 @@ command_line_flags = {
         'fileNotNeeded': True,
         'description': 'Shows information about a specific packages'
     },
+    'developer:showOutputDependency': {
+        'noArgument': True,
+        'longFlag': 'show-output-dependencies',
+        'fileNotNeeded': True,
+        'description': 'Shows output package dependencies'
+    },
     'developer:code': {
         'noArgument': True,
-        'flag':'x',
+        'flag': 'x',
         'longFlag': 'show-code',
         'description': 'Prints the internal XML representation of the code'
     },
     'developer:codePath': {
-        'flag':'X',
+        'flag': 'X',
         'longFlag': 'show-code-path',
         'description': 'Prints the internal XML representation of the code for a specific path'
     },
     'developer:parameters': {
-        'flag':'p',
+        'flag': 'p',
         'longFlag': 'show-parameters',
         'noArgument': True,
         'fileNotNeeded': True,
         'description': 'Prints the internal parameters'
     },
     'developer:parametersPath': {
-        'flag':'P',
+        'flag': 'P',
         'longFlag': 'show-parameters-path',
         'fileNotNeeded': True,
         'description': 'Prints the internal parameters for a specific path'
     },
     'developer:step': {
-        'flag':'s',
+        'flag': 's',
         'longFlag': 'show-step',
         'description': 'Prints parameters or code for a specific compiler step'
     },
@@ -190,6 +202,12 @@ command_line_flags = {
         'choices': [],
         'numberArguments': '*'
     },
+    'globals:input': {
+        'flag': 'i',
+        'longFlag': 'input',
+        'description': 'Use a specific input parser',
+        'choices': []
+    },
     'globals:debug': {
         'flag': 'd',
         'longFlag': 'debug',
@@ -222,7 +240,15 @@ command_line_flags = {
     },
     'globals:deploy': {
         'longFlag': 'deploy-path',
-        'description': 'The path where the generated code is saved'
+        'description': 'The generic path where the generated code is saved'
+    },
+    'globals:deployOutputs:RosCpp': {
+        'longFlag': 'deploy-ros-cpp-path',
+        'description': 'The path where the generated ROS code is saved'
+    },
+    'globals:deployOutputs:Ros2Cpp': {
+        'longFlag': 'deploy-ros-2-cpp-path',
+        'description': 'The path where the generated ROS 2 code is saved'
     },
     'globals:removeCache': {
         'longFlag': 'remove-cache',

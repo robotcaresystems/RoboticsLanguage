@@ -12,6 +12,7 @@
 
 
 from RoboticsLanguage.Base import Utilities
+from RoboticsLanguage.Tools import Serialise
 
 # @BUG When using too many 'block' statements this function will fail. Example:
 # cachedComputation:
@@ -109,7 +110,7 @@ def printGraphvizDot(code, parameters):
 
   if len(cachedComputation) > 0:
     # use the RoL serialiser to create the text tag
-    Utilities.serialise(cachedComputation[0], parameters, parameters['language'], 'RoL')
+    Serialise.serialise(cachedComputation[0], parameters, parameters['language'], 'RoL')
 
     # get all cachedComputation
     elements = code.xpath('/node/option[@name="cachedComputation"]//*[@cacheId]')

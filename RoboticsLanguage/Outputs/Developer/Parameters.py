@@ -24,6 +24,9 @@
 parameters = {
     'create': {
         'Inputs': '',
+        'InputsYAML': '',
+        'InputsJSON': '',
+        'InputsXML': '',
         'Transformers': '',
         'Outputs': '',
         'reference': False
@@ -35,6 +38,24 @@ command_line_flags = {
         {
             'longFlag': 'create-input-template',
             'description': 'Create a template for an Input module',
+            'fileNotNeeded': True
+        },
+    'create:InputsJSON':
+        {
+            'longFlag': 'create-input-json-template',
+            'description': 'Create a template for a JSON Input module',
+            'fileNotNeeded': True
+        },
+    'create:InputsYAML':
+        {
+            'longFlag': 'create-input-yaml-template',
+            'description': 'Create a template for a YAML Input module',
+            'fileNotNeeded': True
+        },
+    'create:InputsXML':
+        {
+            'longFlag': 'create-input-xml-template',
+            'description': 'Create a template for a XML Input module',
             'fileNotNeeded': True
         },
     'create:Transformers':

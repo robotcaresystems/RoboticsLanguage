@@ -26,11 +26,11 @@ path = os.path.abspath(os.path.dirname(__file__))
 result = [os.path.join(dp, f) for dp, dn, filenames in os.walk(path) for f in filenames]
 
 setup(name='RoboticsLanguage',
-      version='0.2',
+      version='0.3',
       description='The Robotics Language',
       url='http://github.com/robotcaresystems/roboticslanguage',
       author='Gabriel A. D. Lopes',
-      author_email='g.lopes@robotcaresystems.com',
+      author_email='g.lopes@rrcrobotics.com',
       license='Apache 2.0',
       packages=find_packages(),
       scripts=['RoboticsLanguage/Scripts/rol',
@@ -39,10 +39,13 @@ setup(name='RoboticsLanguage',
                'RoboticsLanguage/Scripts/tests/rol_run_tests',
                'RoboticsLanguage/Scripts/docker/rol_docker_join',
                'RoboticsLanguage/Scripts/docker/rol_docker_start',
-               'RoboticsLanguage/Scripts/docker/rol_docker'
+               'RoboticsLanguage/Scripts/docker/rol_docker',
+               'RoboticsLanguage/Scripts/docker/rol_2_docker_join',
+               'RoboticsLanguage/Scripts/docker/rol_2_docker_start',
+               'RoboticsLanguage/Scripts/docker/rol_2_docker'
                ],
       install_requires=[
-          'parsley', 'argparse', 'argcomplete', 'jinja2', 'dpath', 'coloredlogs', 'lxml', 'iso-639', 'funcy', 'dill', 'pygments', 'fso'
+          'parsley', 'argparse', 'argcomplete', 'jinja2', 'dpath', 'coloredlogs', 'lxml', 'iso-639', 'funcy', 'dill', 'pygments', 'fso', 'pyyaml'
       ],
       include_package_data=True,
       package_data={

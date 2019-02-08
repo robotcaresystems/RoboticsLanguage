@@ -1,0 +1,37 @@
+#
+#   This is the Robotics Language compiler
+#
+#   Manifesto.py: Definition of the parameters for this package
+#
+#   Created on: {{"%d %B, %Y"|todaysDate}}
+#       Author: {{parameters.Information.user.name}}
+#      Licence: {{parameters.Information.software.license}}
+#    Copyright: {{parameters.Information.software.copyright}}
+#
+manifesto = {
+  'packageName': '{{parameters.Outputs.Developer.create.InputsJSON}}',
+  'packageShortName': '{{parameters.Outputs.Developer.create.InputsJSON|camelCase}}',
+  'fileFormat': '{{parameters.Outputs.Developer.create.InputsJSON|initials|lower}}',
+  'version': '0.0.0',
+
+  'information': {
+    'author':
+    {
+      'name': '{{parameters.Information.user.name}}',
+      'email': '{{parameters.Information.user.email}}',
+      'web': '{{parameters.Information.user.web}}',
+      'telephone': '{{parameters.Information.user.telephone}}'
+    },
+    'company':
+    {
+      'name': '{{parameters.Information.company.name}}',
+      'address': '{{parameters.Information.company.address}}',
+      'zipcode': '{{parameters.Information.company.zipcode}}',
+      'city': '{{parameters.Information.company.city}}',
+      'country': '{{parameters.Information.company.country}}',
+      'email': '{{parameters.Information.company.email}}',
+      'web': '{{parameters.Information.company.web}}',
+      'telephone': '{{parameters.Information.company.telephone}}',
+    }
+  }
+}
