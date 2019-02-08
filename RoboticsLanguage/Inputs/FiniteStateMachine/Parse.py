@@ -24,9 +24,14 @@ from parsley import makeGrammar
 from RoboticsLanguage.Tools import Parsing
 import copy
 
+
 def endTag(element):
-  element.tag = '{fsm}end'
-  return element
+  # extract the begin state (second element) and make a deep copy
+  child = copy.copy(element[0].getchildren()[1])
+  # rename it to an "end" tag
+  child.tag = '{fsm}end'
+  return child
+
 
 grammar_definition = """
 word = <letter letterOrDigit*>
@@ -37,7 +42,7 @@ initial = 'initial' ws ':' ws word:state -> xml('initial', text=state)
 
 state = '(' ws word:state ws ')' -> state
 
-transition = state:begin ws '-' ws word:label ws '->' ws ( transition:t -> [ xml('transition', [xml('label', text=label), xml('begin', text=begin), endTag(copy(t[0].getchildren()[1]))])] + t
+transition = state:begin ws '-' ws word:label ws '->' ws ( transition:t -> [ xml('transition', [xml('label', text=label), xml('begin', text=begin), endTag(t)])] + t
                                                          | state:end -> [ xml('transition', [xml('label', text=label), xml('begin', text=begin), xml('end', text=end)]) ]
                                                          )
 
@@ -47,9 +52,7 @@ machine = ws name:n ws initial:i (ws transition)*:t ws -> xml('machine',[n, i] +
 
 def parse(text, parameters):
   # make the grammar
-  grammar = makeGrammar(grammar_definition, {'xml': Parsing.xmlNamespace('fsm'),
-                                             'copy': copy.copy,
-                                             'endTag': endTag})
+  grammar = makeGrammar(grammar_definition, {'xml': Parsing.xmlNamespace('fsm'), 'endTag': endTag})
 
   # parse the text
   code = grammar(text).machine()
