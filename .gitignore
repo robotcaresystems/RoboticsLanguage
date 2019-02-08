@@ -5,3 +5,5 @@
 .DS_Store
 .coverage
 htmlcov
+dist
+build

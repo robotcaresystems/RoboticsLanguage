@@ -170,7 +170,7 @@ $('#finite_state_machine_accordion').accordion({exclusive: false});
 
     <div id="fsm_{{machine_name}}"></div>
   </div>
-
+</div>
     <style type="text/css">
         #fsm_{{machine_name}} {
           width: 550px;

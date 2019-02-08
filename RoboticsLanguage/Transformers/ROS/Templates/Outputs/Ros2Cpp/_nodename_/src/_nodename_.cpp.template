@@ -1,0 +1,89 @@
+
+{% set initialise %}
+
+    {# ROS TOPICS #################################### #}
+    {% if parameters.Transformers.ROS.topicDefinitions|length > 0 -%}
+    /* ROS topics */
+      {% for topic in parameters.Transformers.ROS.topicDefinitions -%}
+    /* signal {{topic.variable}} */
+      {# PUBLISHER #################################### #}
+        {% if topic.flow == 'outgoing' or topic.flow == 'bidirectional' -%}
+    {{topic.variable}}_publisher = this->create_publisher<{{topic.ros_2_type}}>("{{topic.topic_name}}");
+        {% endif -%}
+
+        {# SUBSCRIBER #################################### #}
+        {% if topic.flow == 'incoming' or topic.flow == 'bidirectional' -%}
+    {{topic.variable}}_subscriber = this->create_subscription<{{topic.ros_2_type}}>(
+          "{{topic.topic_name}}", std::bind(&{{parameters.node.name|camelCase}}Class::signal_{{topic.variable}}_callback, this, _1));
+        {% endif -%}
+
+      {% endfor %}
+    {% endif -%}
+
+{% endset %}
+
+
+
+
+{% set functions %}
+
+  {# ROS TOPICS #################################### #}
+  {% if parameters.Transformers.ROS.topicDefinitions|length > 0 -%}
+    /* Callbacks for signals */
+    {% for topic in parameters.Transformers.ROS.topicDefinitions -%}
+    {# CALLBACK #################################### #}
+      {% if topic.flow == 'incoming' or topic.flow == 'bidirectional' -%}
+      /******************************* signal_{{topic.variable}}_callback ************************************************/
+     void {{parameters.node.name|camelCase}}Class::signal_{{topic.variable}}_callback(const {{topic.ros_2_type}}::SharedPtr signal_{{topic.variable}}_message)
+     {
+       {# Get serialised code #}
+       {% set onChange = code|xpath('//Signals[@ROSvariable="' + topic.variable + '"]')|option('onChange')|attribute('Ros2Cpp') %}
+       {% set onNew = code|xpath('//Signals[@ROSvariable="' + topic.variable + '"]')|option('onNew')|attribute('Ros2Cpp') %}
+
+       {% if onChange|length > 0 -%}
+       /* remember the last value for the topic */
+       {{topic.ros_2_type}} signal_{{topic.variable}}_previous = {{topic.variable}};
+       {% endif -%}
+
+       {% if parameters|isDefined('Transformers/Base/variables/' + topic.variable + '/operators/assign/pre/RosCpp') %}
+       /* run  pre-processing instructions */
+         {% for instructions in parameters.Transformers.Base.variables[topic.variable].operators.assign.pre.RosCpp %}
+         {{instructions}};
+         {% endfor %}
+       {% endif %}
+
+       /* Cache a copy of this signal inside the class */
+       {{topic.variable}} = *signal_{{topic.variable}}_message;
+
+       {% if parameters|isDefined('Transformers/Base/variables/' + topic.variable + '/operators/assign/post/RosCpp') %}
+       /* run post-processing instructions */
+         {% for instructions in parameters.Transformers.Base.variables[topic.variable].operators.assign.post.RosCpp %}
+         {{instructions}};
+         {% endfor %}
+       {% endif %}
+
+
+
+
+
+
+       {% if onChange|length > 0 -%}
+       if (signal_{{topic.variable}}_previous.data != signal_{{topic.variable}}_message->data)
+       {
+         /* on change */
+         {{onChange}};
+       }
+       {% endif -%}
+
+       /* on new */
+       {{onNew}};
+
+     };
+      {% endif -%}
+
+
+
+    {% endfor -%}
+  {% endif -%}
+
+{% endset %}

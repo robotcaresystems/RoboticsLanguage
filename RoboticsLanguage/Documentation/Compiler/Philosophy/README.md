@@ -64,17 +64,29 @@ All parameters can be assigned to command line flags that are loaded when the co
 
 ### Viewing parameters in the command line
 
-Parameters can be printed in the terminal using the flag `--show-parameters`:
+Parameters can be printed in the terminal using the flag `--show-parameters` or `-p`:
 
 ```shell
-rol helloworld.rol --show-parameters
+rol --show-parameters
+```
+
+or in compressed form:
+
+```shell
+rol -p
 ```
 
 
-The previous command will probably show too much information. To print only a subset of the parameters the flag `--show-parameters-path 'path'` can be used. For example, to see only the `globals` section, one can type:
+
+The previous command will probably show too much information. To print only a subset of the parameters the flag `--show-parameters-path 'path'` or `-P 'path'` can be used. For example, to see only the `globals` section, one can type:
 
 ```shell
-rol helloworld.rol --show-parameters-path 'globals'
+rol  --show-parameters-path 'globals'
+```
+or
+
+```shell
+rol -P 'globals'
 ```
 
 which returns:
@@ -88,7 +100,8 @@ which returns:
  'launch': False,
  'output': 'RosCpp',
  'removeCache': False,
- 'verbose': 'none'}
+ 'verbose': 'none',
+ ...
 ```
 
 If you type `rol -h` you will be show the full help for the compiler. The section on `globals` appears as:
@@ -116,7 +129,7 @@ For more information on creating custom messages for the command line see the se
 Note that the flag `--show-parameters-path` uses the [dpath](https://github.com/akesterson/dpath-python) library. Please read the [dpath documentation]([dpath](https://github.com/akesterson/dpath-python)) for the available search options. For example, to get all the values for the key `name` in the `Information` domain one can write:
 
 ```shell
- rol helloworld.rol --show-parameters-path 'Information/*/name'
+ rol --show-parameters-path 'Information/*/name'
  ```
 
  ### Compiler steps
@@ -133,6 +146,11 @@ The compiler follows a number of steps, represented by each individual plug-in (
  ```shell
  rol helloworld.rol --show-parameters-path 'Transformers' --show-step 7
  ```
+or
+
+```shell
+rol helloworld.rol -P 'Transformers' -s7
+```
 
 If the flag `--show-step` is not specified, then by default the step is 1.
 
@@ -299,16 +317,27 @@ Code is represented internally by an xml object. The xml tree structure evolves 
 
 ### Viewing the code in the command line
 
-Just as in the case of the parameters, the internal xml code can also be printed to the terminal using the flag `--show-code`:
+Just as in the case of the parameters, the internal xml code can also be printed to the terminal using the flag `--show-code` or `-x`:
 
 ```shell
 rol helloworld.rol --show-code
 ```
+or
+```shell
+rol helloworld.rol -x
+```
+
+
+
 
 To print only a subset of the code the flag `--show-code-path 'path'` can be used. For example, to see only all the string tags one can type:
 
 ```shell
 rol helloworld.rol --show-code-path '//string'
+```
+or
+```shell
+rol helloworld.rol -X '//string'
 ```
 
 The flag `--show-code-path` uses the [lxml](http://lxml.de) implementation of [XPath](https://en.wikipedia.org/wiki/XPath). As such, complex queries can performed. For example, to find all the function options called `initialise` one can use:
@@ -327,6 +356,12 @@ The first step is usually the direct output of the parser:
 ```shell
 rol helloworld.rol --show-code --show-step 1
 ```
+or
+```shell
+rol helloworld.rol -x -s1
+```
+
+
 
 ```xml
 <node p="64">

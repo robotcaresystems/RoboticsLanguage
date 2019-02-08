@@ -1,12 +1,12 @@
 #
 #   This is the Robotics Language compiler
 #
-#   __init__.py: Initialisation of the package
+#   Semantic.py: checking
 #
 #   Created on: June 22, 2017
 #       Author: Gabriel A. D. Lopes
 #      Licence: Apache 2.0
-#    Copyright: 2014-2017 Robot Care Systems BV, The Hague, The Netherlands. All rights reserved.
+#    Copyright: 2014-2018 Robot Care Systems BV, The Hague, The Netherlands. All rights reserved.
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.

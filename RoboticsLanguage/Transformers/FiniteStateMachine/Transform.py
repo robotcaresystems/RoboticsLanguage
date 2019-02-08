@@ -25,11 +25,35 @@ from RoboticsLanguage.Base import Utilities
 
 def transform(code, parameters):
 
+  # define the namespace used by the finite state machine package
+  namespace = {'namespaces': {'fsm': 'fsm'}}
+
   # this is the absolute path to the extra header file needed for finite state machines
-  header_file = Utilities.myPluginPath(parameters) + '/Templates/Outputs/RosCpp/_nodename_/include/_nodename_/FiniteStateMachine.h'
+  header_file = Utilities.myPluginPath(parameters) + '/Templates/Outputs/Cpp/_nodename_/include/_nodename_/FiniteStateMachine.h'
 
   # skip header file if no state machines are defined
-  if len(code.xpath('//fsm:machine', namespaces={'fsm': 'fsm'})) == 0:
+  if len(code.xpath('//fsm:machine', **namespace)) == 0:
     parameters['globals']['skipCopyFiles'].append(header_file)
+
+  else:
+    # Perform semantic checking
+    # look for all machines
+    for machine in code.xpath('//fsm:machine', **namespace):
+
+      # a buffer to store pairs of state/transition names
+      pairs = []
+
+      # look for all transitions in a machine
+      for transition in machine.xpath('.//fsm:transition', **namespace):
+
+        # extract state/transition pair
+        pair = transition.xpath('.//*[self::fsm:begin or self::fsm:label]/text()', **namespace)
+
+        # check if pairs already exist
+        if pair in pairs:
+          print('Error: repeated transitions in FSM "{}": ({}) -{}-> ... '.format(
+              machine.xpath('.//fsm:name/text()', **namespace)[0], *pair))
+        else:
+          pairs.append(pair)
 
   return code, parameters

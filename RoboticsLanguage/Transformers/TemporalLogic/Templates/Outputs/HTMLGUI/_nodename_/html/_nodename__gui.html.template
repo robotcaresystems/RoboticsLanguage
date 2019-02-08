@@ -1,8 +1,7 @@
 
 {% set beforeLoad %}
-
-{% if code|xpaths('//always|//eventually')|length > 0 %}
-
+{% set TemporalOperators = code|xpaths('//always|//eventually')|sortListCodeByAttribute('temporalLogicId') %}
+  {% if TemporalOperators|length>0 %}
 
   var temporal_logic_max_samples = 1000;
   var temporal_logic_draw_rate = 25;
@@ -10,14 +9,14 @@
   var temporal_logic_initial_time = Date.now();
 
   var temporal_logic_plots = {
-  {% for logic in parameters.Transformers.TemporalLogic.TemporalOperators -%}
-      '{{logic.id}}':false,
+  {% for logic in TemporalOperators -%}
+      '{{logic.attrib['temporalLogicId']}}':false,
   {% endfor -%}
   };
 
   var temporal_logic_plot_data = {
-  {% for logic in parameters.Transformers.TemporalLogic.TemporalOperators -%}
-      '{{logic.id}}':{'expression':[], 'outcome':[], 'min': 0 , 'max': 0, 'open':false },
+  {% for logic in TemporalOperators -%}
+      '{{logic.attrib['temporalLogicId']}}':{'expression':[], 'outcome':[], 'min': 0 , 'max': 0, 'open':false },
   {% endfor -%}
   };
 
@@ -87,7 +86,8 @@
 {% endset %}
 
 {% set afterLoad %}
-{% if code|xpaths('//always|//eventually')|length > 0 %}
+{% set TemporalOperators = code|xpaths('//always|//eventually')|sortListCodeByAttribute('temporalLogicId') %}
+  {% if TemporalOperators|length>0 %}
 
     var temporal_logic_initial_time = Date.now();
 
@@ -142,25 +142,25 @@
         this_id = this.id.substr(15) // length("temporal_logic_")
         temporal_logic_plot_data[this_id].open = false;
 
-        if ({% for logic in parameters.Transformers.TemporalLogic.TemporalOperators -%}
-          !temporal_logic_plot_data[{{logic.id}}].open &&
+        if ({% for logic in TemporalOperators -%}
+          !temporal_logic_plot_data[{{logic.attrib['temporalLogicId']}}].open &&
         {% endfor -%} true)
         {
           temporal_logic_update = false;
         }
     }});
 
-  {% for logic in parameters.Transformers.TemporalLogic.TemporalOperators -%}
+  {% for logic in TemporalOperators -%}
     // connect to topics
-    var temporal_logic_{{logic.id}} = new ROSLIB.Topic({
+    var temporal_logic_{{logic.attrib['temporalLogicId']}} = new ROSLIB.Topic({
       ros: ros,
-      name: '/temporal_logic/{{parameters.node.name|underscore}}/{{logic.name}}',
+      name: '/temporal_logic/{{parameters.node.name|underscore}}/{{logic.attrib['temporalLogicName']}}',
       messageType: 'std_msgs/Float32MultiArray',
     });
 
     // subscribe functions
-    temporal_logic_{{logic.id}}.subscribe(function(message) {
-      UpdateTemporalLogicData({{logic.id}}, message.data[0], message.data[1], message.data[2], message.data[3]);
+    temporal_logic_{{logic.attrib['temporalLogicId']}}.subscribe(function(message) {
+      UpdateTemporalLogicData({{logic.attrib['temporalLogicId']}}, message.data[0], message.data[1], message.data[2], message.data[3]);
     });
 
 
@@ -171,17 +171,18 @@
 {% endset %}
 
 {% set body %}
-{% if code|xpaths('//always|//eventually')|length > 0 %}
+{% set TemporalOperators = code|xpaths('//always|//eventually')|sortListCodeByAttribute('temporalLogicId') %}
+{% if TemporalOperators|length>0 %}
 
 <h1>Temporal logic</h1>
 
   <div class="ui styled accordion" id="temporal_logic_accordion">
-  {% for logic in parameters.Transformers.TemporalLogic.TemporalOperators -%}
+  {% for logic in TemporalOperators -%}
     <div class="title">
-      <i class="dropdown icon"></i> {{logic.text}}
+      <i class="dropdown icon"></i> {{logic.attrib['temporalLogicText']}}
     </div>
-    <div class="content hidden" id="temporal_logic_{{logic.id}}">
-      <div id="temporal_logic_plot_{{logic.id}}"></div>
+    <div class="content hidden" id="temporal_logic_{{logic.attrib['temporalLogicId']}}">
+      <div id="temporal_logic_plot_{{logic.attrib['temporalLogicId']}}"></div>
     </div>
   {% endfor -%}
   </div>
@@ -192,11 +193,12 @@
 
 
 {% set style %}
-{% if code|xpaths('//always|//eventually')|length > 0 %}
+{% set TemporalOperators = code|xpaths('//always|//eventually')|sortListCodeByAttribute('temporalLogicId') %}
+{% if TemporalOperators|length>0 %}
 
-  {% for logic in parameters.Transformers.TemporalLogic.TemporalOperators -%}
+  {% for logic in TemporalOperators -%}
 
-  #temporal_logic_plot_{{logic.id}} {
+  #temporal_logic_plot_{{logic.attrib['temporalLogicId']}} {
       height: 100px;
   }
 

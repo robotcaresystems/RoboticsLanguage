@@ -1,0 +1,7 @@
+node(
+  name:'example Cpp',
+
+  initialise: block(
+    print('Cpp')
+  )
+)

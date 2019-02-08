@@ -1,0 +1,34 @@
+
+{% set includes %}
+
+{% for item in code.xpath('//element/RosType/string/text()') %}
+#include <{{item}}.h>
+{% endfor %}
+
+{% endset %}
+
+
+{% set definitions %}
+
+      {# ROS TOPICS #################################### #}
+      {% if parameters.Transformers.ROS.topicDefinitions|length > 0 -%}
+      /* ROS topics */
+        {% for topic in parameters.Transformers.ROS.topicDefinitions -%}
+      /* signal {{topic.variable}} */
+        {# PUBLISHER #################################### #}
+          {% if topic.flow == 'outgoing' or topic.flow == 'bidirectional' -%}
+      rclcpp::Publisher<{{topic.ros_2_type}}>::SharedPtr {{topic.variable}}_publisher;
+          {% endif -%}
+
+          {# SUBSCRIBER + CALLBACK #################################### #}
+          {% if topic.flow == 'incoming' or topic.flow == 'bidirectional' -%}
+      rclcpp::Subscription<{{topic.ros_2_type}}>::SharedPtr {{topic.variable}}_subscriber;
+      void signal_{{topic.variable}}_callback(const {{topic.ros_2_type}}::SharedPtr message);
+          {% endif -%}
+
+      {{topic.ros_2_type}} {{topic.variable}};
+
+        {% endfor %}
+      {% endif -%}
+
+{% endset %}

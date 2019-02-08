@@ -21,6 +21,7 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 from RoboticsLanguage.Base import Utilities
+from RoboticsLanguage.Tools import Serialise
 
 
 def transform(code, parameters):
@@ -32,9 +33,22 @@ def transform(code, parameters):
       for assignment in code.xpath('//assign/variable[@name="' + variable + '"]/..'):
         assignment.attrib['assignFunction'] = 'true'
 
-  # serialize for each output
+  # # find all relevant outputs
+  # package_parents = []
+  # for element in Utilities.ensureList(parameters['globals']['output']):
+  #   package_parents += Utilities.getPackageOutputParents(parameters, element)
+  #
+  # # make them unique
+  # package_parents = list(set(package_parents))
+  #
+  # # serialize for each output
+  # for language in package_parents:
+  #   for xml_child in code.getchildren():
+  #     Serialise.serialise(xml_child, parameters, parameters['language'], language)
+
+
   for language in Utilities.ensureList(parameters['globals']['output']):
     for xml_child in code.getchildren():
-      Utilities.serialise(xml_child, parameters, parameters['language'], language)
+      Serialise.serialise(xml_child, parameters, parameters['language'], language)
 
   return code, parameters

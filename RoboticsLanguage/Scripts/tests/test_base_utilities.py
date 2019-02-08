@@ -23,6 +23,7 @@ import unittest
 import os
 from lxml import etree
 from RoboticsLanguage.Base import Utilities
+from RoboticsLanguage.Tools import Serialise
 
 
 def cache_some_string():
@@ -237,13 +238,13 @@ class TestBaseUtilities(unittest.TestCase):
     parameters = {}
     language = 'cpp'
 
-    Utilities.serialise(xml, parameters, keywords, language)
+    Serialise.serialise(xml, parameters, keywords, language)
 
-    self.assertEqual(Utilities.serialise(xml, parameters, keywords, language), '// "some text"')
+    self.assertEqual(Serialise.serialise(xml, parameters, keywords, language), '// "some text"')
 
     # # now raise an error because the key is not defined
     # languages = {'xml':{'output': {'cpp':'// {{children|first}}'}}, }
-    # self.assertRaises(Utilities.serialise(xml, parameters, keywords, language))
+    # self.assertRaises(Serialise.serialise(xml, parameters, keywords, language))
 
 
 if __name__ == '__main__':
