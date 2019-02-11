@@ -1,0 +1,8 @@
+node(
+  name:'example Fault Detection Topics',
+
+  initialise: block(
+    # the Fault Detection Topics mini-language
+    FaultDetectionTopics<{  print: Hello  }>
+  )
+)
