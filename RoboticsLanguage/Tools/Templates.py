@@ -21,7 +21,10 @@
 #   limitations under the License.
 import os
 from shutil import copy
+from pygments import highlight
 from RoboticsLanguage.Base import Utilities
+from pygments.lexers import get_lexer_for_filename
+from pygments.formatters import Terminal256Formatter
 from jinja2 import Environment, FileSystemLoader, TemplateError
 
 default_templates_path = 'Templates'
@@ -212,9 +215,22 @@ def templateEngine(code, parameters, output=None,
 
         # debug
         if parameters['developer']['intermediateTemplates']:
-          print '====== File: ' + file + ' -> ' + files_to_process[file]['deploy_path'] + ' ==========================='
-          print render
-          print '============================================================'
+          if not parameters['globals']['noColours']:
+            print Utilities.color.BOLD
+            print Utilities.color.YELLOW
+          print '=============================================================================='
+          print 'File: ' + file
+          print 'Full path:' + files_to_process[file]['full_path']
+          print 'Deploy path:' + files_to_process[file]['deploy_path']
+          print '------------------------------------------------------------------------------'
+          if not parameters['globals']['noColours']:
+            print Utilities.color.END
+            try:
+              print(highlight(render, get_lexer_for_filename(files_to_process[file]['deploy_path']),Terminal256Formatter(style=Terminal256Formatter().style)))
+            except:
+              print(render)
+          else:
+            print(render)
 
         # create a new environment that includes all the plugin template code
         preprocessed_environment = Environment(loader=FileSystemLoader('/'), trim_blocks=True, lstrip_blocks=True)

@@ -394,6 +394,16 @@ def progressDone(parameters):
   sys.stdout.flush()
 
 
+def checkQueryNamespaces(text):
+  '''Looks for namespace references in the query text and add them explicitely to xpath'''
+  namespaces = {'namespaces': {}}
+  name = re.split('([a-zA-Z0-9]+):[a-zA-Z0-9]+', text)
+  if name is not None:
+    namespaces['namespaces'] = {value: value for value in name[1::2]}
+
+  return text, namespaces
+
+
 def showDeveloperInformation(code, parameters):
 
   if parameters['developer']['progress']:
@@ -412,7 +422,8 @@ def showDeveloperInformation(code, parameters):
     # show developer information for specific xml code
     if parameters['developer']['codePath'] is not '' and code is not None:
       try:
-        printCode(code.xpath(parameters['developer']['codePath']), parameters)
+        query, namespaces = checkQueryNamespaces(parameters['developer']['codePath'])
+        printCode(code.xpath(query, **namespaces), parameters)
       except:
         logger.warning(
             "The path'" + parameters['developer']['codePath'] + "' is not present in the code")

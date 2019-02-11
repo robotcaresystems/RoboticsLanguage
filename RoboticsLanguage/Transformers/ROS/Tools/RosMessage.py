@@ -30,6 +30,6 @@ def process(code, parameters):
   messages = code.xpath('//rosm:message', **namespace)
 
   if len(messages) > 0:
-    print 'yes'
+    parameters['Transformers']['ROS']['addingNewMessages'] = True
 
   return code, parameters
