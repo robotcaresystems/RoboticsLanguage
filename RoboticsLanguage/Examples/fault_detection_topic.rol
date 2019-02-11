@@ -1,0 +1,15 @@
+node(
+  name:'Fault detection topic',
+
+  definitions: block(
+
+    x ∈ Signals(Reals, rosTopic:'/fault/x'),
+    y ∈ Signals(Reals, rosTopic:'/fault/y'),
+    z ∈ Signals(Reals, rosTopic:'/fault/z'),
+    w ∈ Signals(Reals, rosTopic:'/fault/w'),
+
+    when( □[3,0](x > 0),
+        print('x > 0')
+      )
+    )
+  )
