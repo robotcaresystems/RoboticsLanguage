@@ -61,6 +61,9 @@ def parse(text, parameters):
   # convert into more descriptive dictionary
   discriptive_dictionary = convertParameters(text_dictionary)
 
+  # save the data in the parameters to be used by the GUI
+  parameters['Inputs']['FaultDetectionTopics']['data'] = discriptive_dictionary
+
   # open template file
   with open(Utilities.myPluginPath(parameters) + '/Support/fault_detection_topic.rol.template', 'r') as file:
     template = Template(file.read())
@@ -74,5 +77,8 @@ def parse(text, parameters):
 
   # parse generated rol code
   code, parameters = Parse.parse(rol_code, parameters)
+
+  # add fault detection gui to the outputs
+  parameters['globals']['output'].append('FaultDetectionTopics')
 
   return code, parameters
