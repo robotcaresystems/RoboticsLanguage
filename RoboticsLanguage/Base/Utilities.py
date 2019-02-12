@@ -37,8 +37,8 @@ from lxml import etree
 from funcy import decorator
 from pygments import highlight
 from shutil import copy, rmtree
-from pygments.lexers import PythonLexer, XmlLexer
 from pygments.formatters import Terminal256Formatter
+from pygments.lexers import PythonLexer, XmlLexer, get_lexer_by_name
 from jinja2 import Environment, FileSystemLoader, Template, TemplateSyntaxError, TemplateAssertionError, TemplateError
 
 # -------------------------------------------------------------------------------------------------
@@ -52,6 +52,12 @@ sys.setdefaultencoding('utf-8')
 # -------------------------------------------------------------------------------------------------
 #  Helping functions
 # -------------------------------------------------------------------------------------------------
+
+def printSource(text, language, parameters=None, style='monokai'):
+  if parameters is not None and parameters['globals']['noColours']:
+    print(text)
+  else:
+    print(highlight(text, get_lexer_by_name(language), Terminal256Formatter(style=Terminal256Formatter().style)))
 
 
 def printCode(code, parameters=None, style='monokai'):
