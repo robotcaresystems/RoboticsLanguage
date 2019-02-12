@@ -160,14 +160,13 @@ def checkTypes(signal, variable, assignments, usages, code, parameters):
       cpp_type = cpp_type_mapping[topic_type.tag]
 
     elif topic_type.tag == "RosType":
-      ros_type = topic_type.xpath('//RosType/string/text()')[0]
+      ros_type = topic_type.getchildren()[0].text
       if ros_type in local_definitions:
         node_name = Utilities.underscore(code.xpath('//node/option[@name="name"]/string/text()')[0])
         ros_type = node_name + '::' + ros_type
         ros_2_type = node_name + '::msg::' + ros_type
         cpp_type = 'void'
       else:
-        print 'generic'
         ros_type = ros_type.replace('/', '::')
         ros_2_type = ros_type.replace('::', '::msg::')
         cpp_type = 'void'

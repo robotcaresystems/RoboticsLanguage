@@ -13,7 +13,7 @@ from RoboticsLanguage.Base.Types import arguments, returns
 language = {
     'when': {
         'definition': {
-            'arguments': arguments('boolean anything'),
+            'arguments': arguments('boolean anything*'),
             'returns': returns('nothing')
         }
     }

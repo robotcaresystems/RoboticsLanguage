@@ -8,11 +8,12 @@
 
   void {{parameters.node.name|camelCase}}Class::when{{when|attribute('whenId')}}()
   {
-    bool when_run =  ((when_last_{{when|attribute('whenId')}}) != ({{when.getchildren()[0]|serializedCode}}));
-    if (when_run)
+    bool when_condition_{{when|attribute('whenId')}} = {{when.getchildren()[0]|serializedCode}};
+    bool when_run_{{when|attribute('whenId')}} = (when_last_{{when|attribute('whenId')}} != when_condition_{{when|attribute('whenId')}});
+    if (when_run_{{when|attribute('whenId')}})
     {
-      when_last_{{when|attribute('whenId')}} = ({{when.getchildren()[0]|serializedCode}});
-      if ({{when.getchildren()[0]|serializedCode}})
+      when_last_{{when|attribute('whenId')}} = when_condition_{{when|attribute('whenId')}};
+      if (when_condition_{{when|attribute('whenId')}})
       {
         {{when.getchildren()[1]|serializedCode}};
       }

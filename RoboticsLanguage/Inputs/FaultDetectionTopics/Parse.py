@@ -8,28 +8,50 @@
 #      Licence: license
 #    Copyright: copyright
 #
-import sys
 import yaml
-from lxml import etree
-from RoboticsLanguage.Tools import DictionaryToXML
+import copy
+from jinja2 import Template
 from RoboticsLanguage.Base import Utilities
+from RoboticsLanguage.Inputs.RoL import Parse
+
+
+def getType(value):
+  return u'Reals'
+
+
+def convertParameters(input):
+  output = copy.copy(input)
+
+  # extract parameters
+  output['parameters'] = []
+  for key, value in input['parameters'].iteritems():
+    output['parameters'].append({u'name': key, u'type': getType(value), u'value': value})
+
+  # extract topics
+  output['topics'] = []
+  for key, value in input['topics'].iteritems():
+    [name, type] = value.split(' ')
+    output['topics'].append({u'variable': key, u'type': type, u'name': name})
+
+  return output
 
 
 def parse(text, parameters):
-  Utilities.logging.info("Parsing Fault Detection Topics language...")
 
   # parse JSON into dictionary
   text_dictionary = yaml.safe_load(text)
 
-  # convert dictionary to xml string
-  text_xml = DictionaryToXML.dicttoxml(text_dictionary, namespace='fdt')
+  # convert into more descriptive dictionary
+  discriptive_dictionary = convertParameters(text_dictionary)
 
-  try:
-    # create XML object from xml string
-    code = etree.fromstring(text_xml)
+  # open template file
+  with open(Utilities.myPluginPath(parameters) + '/Support/fault_detection_topic.rol.template', 'r') as file:
+    template = Template(file.read())
 
-  except etree.XMLSyntaxError as error:
-    Utilities.logErrors(Utilities.formatLxmlErrorMessage(error, text=text), parameters)
-    sys.exit(1)
+  # render the template with the data
+  rol_code = template.render(**discriptive_dictionary)
+
+  # parse generated rol file
+  code, parameters = Parse.parse(rol_code, parameters)
 
   return code, parameters

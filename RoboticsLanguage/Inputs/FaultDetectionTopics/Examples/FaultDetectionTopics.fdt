@@ -1,12 +1,13 @@
+nodename: fault detection topics
+
 parameters:
   test1: 5.6
   test2: 0.5
-  test3: 'hello'
 
 fault_topic: /fault
 
 topics:
-  x: /hello/topic_1 std_msgs/Integers8
+  x: /hello/topic_1 std_msgs/Int8
   y: /hello/topic_2 std_msgs/Float32
 
 faults:
