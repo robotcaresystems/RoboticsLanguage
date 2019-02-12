@@ -16,7 +16,7 @@ node(
     {% endfor %}
 
     {% for topic in topics %}
-    {{topic.variable}} in Signals(RosType('{{topic.type}}'), rosTopic:'{{topic.name}}'),
+    {{topic.variable}} in Signals(rosType:'{{topic.type}}', rosTopic:'{{topic.name}}'),
     {% endfor %}
 
     {% for fault in faults %}

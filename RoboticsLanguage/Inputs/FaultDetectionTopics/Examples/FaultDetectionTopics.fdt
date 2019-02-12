@@ -11,19 +11,25 @@ topics:
   x: /hello/topic_1 std_msgs/Int8
   y: /hello/topic_2 std_msgs/Float32
   z: /hello/topic_3 std_msgs/String
+  w: /ok/hello geometry_msgs/Pose
 
 faults:
-  - detection: x > test1
+  - detection: x.data > test1
     code: FCD001
     cause: something did not work
     description: ok
 
-  - detection: y > test2
+  - detection: y.data > test2
     code: FCD005
     cause: something did not work ok
     description: not ok
 
-  - detection: z == test3
+  - detection: z.data == test3
     code: FCD006
     cause: the text is hello
     description: the string has returned a hello test
+
+  - detection: w.position.x > 50
+    code: FCD007
+    cause: geometry fail
+    description: translation is too high
