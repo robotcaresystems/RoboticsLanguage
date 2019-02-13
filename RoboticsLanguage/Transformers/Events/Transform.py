@@ -25,7 +25,7 @@ def transform(code, parameters):
     when.attrib['whenId'] = str(when_counter)
 
     # look for all variable dependencies on the arguments
-    variables = list(set(when.getchildren()[0].xpath('.//variable/@name')))
+    variables = list(set(when.getchildren()[0].xpath('.//variable[not(ancestor::domain)]/@name|.//domain/variable[count(preceding-sibling::*)=0]/@name')))
 
     # also check for first element
     if when.getchildren()[0].tag == 'variable':

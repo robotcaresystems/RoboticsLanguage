@@ -12,9 +12,10 @@ topics:
   y: /hello/topic_2 std_msgs/Float32
   z: /hello/topic_3 std_msgs/String
   w: /ok/hello geometry_msgs/Pose
+  q: /test/array std_msgs/Float32MultiArray
 
 faults:
-  - detection: x.data > test1
+  - detection: always(3,1,x.data > test1)
     code: FCD001
     cause: something did not work
     description: ok
@@ -33,3 +34,8 @@ faults:
     code: FCD007
     cause: geometry fail
     description: translation is too high
+
+  - detection: q.data[0] > 50
+    code: FCD008
+    cause: array is not working
+    description: the multi array has failed

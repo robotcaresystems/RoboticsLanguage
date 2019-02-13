@@ -27,34 +27,36 @@ from pygments.lexers import get_lexer_for_filename
 from pygments.formatters import Terminal256Formatter
 from jinja2 import Environment, FileSystemLoader, TemplateError
 
+default_file_patterns = {}
+
 default_templates_path = 'Templates'
 
 default_ignore_files = {'.DS_Store'}
 
-default_file_patterns = {}
-
-default_template_engine_filters = {'todaysDate': Utilities.todaysDate,
+default_template_engine_filters = {'tag': Utilities.tag,
+                                   'text': Utilities.text,
                                    'dpath': Utilities.path,
                                    'xpath': Utilities.xpath,
                                    'dpaths': Utilities.paths,
                                    'xpaths': Utilities.xpaths,
-                                   'children': Utilities.children,
                                    'parent': Utilities.parent,
-                                   'isDefined': Utilities.isDefined,
-                                   'ensureList': Utilities.ensureList,
-                                   'text': Utilities.text,
-                                   'tag': Utilities.tag,
                                    'unique': Utilities.unique,
-                                   'attributes': Utilities.attributes,
-                                   'attribute': Utilities.attribute,
                                    'option': Utilities.option,
-                                   'optionalArguments': Utilities.optionalArguments,
+                                   'children': Utilities.children,
                                    'initials': Utilities.initials,
-                                   'underscore': Utilities.underscore,
                                    'fullCaps': Utilities.fullCaps,
+                                   'isDefined': Utilities.isDefined,
+                                   'attribute': Utilities.attribute,
                                    'camelCase': Utilities.camelCase,
+                                   'todaysDate': Utilities.todaysDate,
+                                   'ensureList': Utilities.ensureList,
+                                   'attributes': Utilities.attributes,
+                                   'underscore': Utilities.underscore,
+                                   'mergeManyOrdered': Utilities.mergeManyOrdered,
+                                   'optionalArguments': Utilities.optionalArguments,
                                    'underscoreFullCaps': Utilities.underscoreFullCaps,
-                                   'sortListCodeByAttribute': Utilities.sortListCodeByAttribute
+                                   'sortListCodeByAttribute': Utilities.sortListCodeByAttribute,
+                                   'split': lambda x, y: x.split(y)
                                    }
 
 delimeters = {'block_start_string': '<%%',
@@ -233,7 +235,7 @@ def templateEngine(code, parameters, output=None,
             print(render)
 
         # create a new environment that includes all the plugin template code
-        preprocessed_environment = Environment(loader=FileSystemLoader('/'), trim_blocks=True, lstrip_blocks=True)
+        preprocessed_environment = Environment(loader=FileSystemLoader('/'), trim_blocks=True, lstrip_blocks=True, finalize=lambda x: x if x is not None else '')
 
         # add filter that collects serialized code for this output
         filters['serializedCode'] = lambda x: Utilities.allAttribute(x, output)

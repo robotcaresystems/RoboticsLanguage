@@ -596,6 +596,36 @@ def initials(text):
 #  List utilities
 # -------------------------------------------------------------------------------------------------
 
+def mergeManyOrdered(list_of_lists):
+  """Non-optimized generalization of mergeOrdered"""
+  return reduce(mergeOrdered, list_of_lists)
+
+
+def mergeOrdered(a, b):
+  """Merges two lists, while keeping the order of the elements and trying to find
+  minimum number of repetitions. E.g.:
+  a = [0,1,3,8,9]
+  b = [1,2,4,5,8,9]
+  mergeOrdered(a, b) -> [0, 1, 2, 4, 5, 3, 8, 9]
+  """
+  c = []
+  while len(a) > 0 and len(b) > 0:
+    if a[0] == b[0]:
+      c.append(a.pop(0))
+      b.pop(0)
+    elif a[0] in b and b[0] not in a:
+      c.append(b.pop(0))
+    elif a[0] not in b and b[0] in a:
+      c.append(a.pop(0))
+    else:
+      if len(a) > len(b):
+        c.append(a.pop(0))
+      else:
+        c.append(b.pop(0))
+
+  return c + a + b
+
+
 def ensureList(a):
   if isinstance(a, list):
     return a
