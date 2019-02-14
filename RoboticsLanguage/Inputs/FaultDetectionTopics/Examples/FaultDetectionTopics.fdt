@@ -1,41 +1,41 @@
-nodename: fault detection topics
+nodename: example fault detection topics
 
 parameters:
-  test1: 5.6
-  test2: 1
-  test3: hello
+  float_parameter: 5.6
+  integer_parameter: 2
+  string_parameter: hello
 
 fault_topic: /fault
 
 topics:
-  x: /hello/topic_1 std_msgs/Int8
-  y: /hello/topic_2 std_msgs/Float32
-  z: /hello/topic_3 std_msgs/String
-  w: /ok/hello geometry_msgs/Pose
+  x: /test/integer std_msgs/Int8
+  y: /test/float std_msgs/Float32
+  z: /test/string std_msgs/String
+  w: /test/struct geometry_msgs/Pose
   q: /test/array std_msgs/Float32MultiArray
 
 faults:
-  - detection: always(3,1,x.data > test1)
-    code: FCD001
-    cause: something did not work
-    description: ok
+  - detection: always(3,1,x.data > integer_parameter)
+    code: TEST001
+    cause: integer variable has saturated
+    description: This is a test to see if temporal logic is working
 
-  - detection: y.data > test2
-    code: FCD005
-    cause: something did not work ok
-    description: not ok
+  - detection: y.data > float_parameter and x.data < 0
+    code: TEST002
+    cause: float value has saturated
+    description: This is a test to check is simple logic is working
 
-  - detection: z.data == test3
-    code: FCD006
-    cause: the text is hello
-    description: the string has returned a hello test
+  - detection: z.data == string_parameter
+    code: TEST003
+    cause: the string does not match
+    description: This is a test to check strings
 
-  - detection: w.position.x > 50
-    code: FCD007
-    cause: geometry fail
-    description: translation is too high
+  - detection: w.position.x > float_parameter
+    code: TEST004
+    cause: the x position is too large
+    description: This is a test to test arbitrady topic types
 
-  - detection: q.data[0] > 50
-    code: FCD008
-    cause: array is not working
-    description: the multi array has failed
+  - detection: q.data[0] > float_parameter
+    code: TEST005
+    cause: the first element of the array is too high
+    description: This is a test to check arrays
