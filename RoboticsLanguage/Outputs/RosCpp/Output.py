@@ -117,10 +117,15 @@ def output(code, parameters):
   # ############ compile code #####################################################
   # if the flag compile is set then run catkin
   if parameters['globals']['compile']:
-    Utilities.logger.debug("Compiling with: `catkin build " + node_name_underscore +
-                           "` in folder " + deploy_path)
-    process = subprocess.Popen(['catkin', 'build', node_name_underscore], cwd=deploy_path)
+    if parameters['Outputs']['RosCpp']['useColcon']:
+      command = ['colcon', 'build', '--packages-select', node_name_underscore]
+    else:
+      command = ['catkin', 'build', node_name_underscore]
+
+    Utilities.logger.debug("Compiling with: `" + ' '.join(command) + "` in folder " + deploy_path + '/..')
+    process = subprocess.Popen(command, cwd=deploy_path +'/..')
     process.wait()
+
     if process.returncode > 0:
       Utilities.logger.error("Compilation failed!!!")
 

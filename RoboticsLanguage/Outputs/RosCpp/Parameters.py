@@ -23,10 +23,16 @@
 
 parameters = {
     'globalIncludes': set(),
-    'localIncludes': set()
+    'localIncludes': set(),
+    'useColcon': False
 }
 
 command_line_flags = {
     'globalIncludes': {'suppress': True},
-    'localIncludes': {'suppress': True}
+    'localIncludes': {'suppress': True},
+    'useColcon': {
+        'longFlag': 'use-colcon',
+        'noArgument': True,
+        'description': 'Use the colcon system instead of catkin'
+    }
 }
