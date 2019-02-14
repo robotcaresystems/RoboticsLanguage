@@ -1,9 +1,9 @@
 #
 #   This is the Robotics Language compiler
 #
-#   Parameters.py: Definition of the parameters for this package
+#   Language.py: Definition of the language for this package
 #
-#   Created on: June 22, 2017
+#   Created on: 11 February, 2019
 #       Author: Gabriel A. D. Lopes
 #      Licence: Apache 2.0
 #    Copyright: 2014-2017 Robot Care Systems BV, The Hague, The Netherlands. All rights reserved.
@@ -20,19 +20,4 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-
-parameters = {
-    'globalIncludes': set(),
-    'localIncludes': set(),
-    'useColcon': False
-}
-
-command_line_flags = {
-    'globalIncludes': {'suppress': True},
-    'localIncludes': {'suppress': True},
-    'useColcon': {
-        'longFlag': 'use-colcon',
-        'noArgument': True,
-        'description': 'Use the colcon system instead of catkin'
-    }
-}
+language = {}

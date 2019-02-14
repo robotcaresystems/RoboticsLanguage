@@ -1,0 +1,34 @@
+node(
+  name:'{{nodename}}',
+
+  definitions: block(
+
+    # the ROS Message mini-language
+    ROSMessage<{
+      name:Fault
+      std_msgs/String code
+      std_msgs/String cause
+      std_msgs/String description
+      }>,
+
+    {% for parameter in parameters %}
+    {{parameter.name}} in {{parameter.type}} = {{parameter.value}},
+    {% endfor %}
+
+    {% for topic in topics %}
+    {{topic.variable}} in Signals(rosType:'{{topic.type}}', rosTopic:'{{topic.name}}'),
+    {% endfor %}
+
+    {% for fault in faults %}
+    when( {{fault.detection}},
+      block(
+        fault.code = '{{fault.code}}',
+        fault.cause = '{{fault.cause}}',
+        fault.description = '{{fault.description}}'
+        )
+      ),
+    {% endfor %}
+
+    fault in Signals(RosType('Fault'), rosTopic:'{{fault_topic}}')
+    )
+  )

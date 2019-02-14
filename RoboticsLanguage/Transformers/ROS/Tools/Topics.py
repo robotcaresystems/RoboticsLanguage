@@ -89,7 +89,7 @@ def getFlow(signal, variable, code):
   return flow, usages, assignments, topic_name
 
 
-def setPublish(variable, flow, assignments):
+def setPublish(variable, flow, assignments, signal):
   # if flow is outgoing or bidirectional find all assignments and add a publishing function
   if flow in ['outgoing', 'bidirectional']:
     for variable_element in assignments:
@@ -102,14 +102,31 @@ def setPublish(variable, flow, assignments):
       if 'postRos2Cpp' not in assignment.attrib.keys():
         assignment.attrib['postRos2Cpp'] = ''
 
-      assignment.attrib['postRosCpp'] += ';' + variable + '_publisher.publish(' + variable + ');'
-      assignment.attrib['postRos2Cpp'] += ';' + variable + '_publisher->publish(' + variable + ');'
+      publish = True
 
+      # check if another assignment of the same variable with domains is performed next on this code block
+      # if so, then don't publish right away
+      for item in assignment.getparent().getchildren():
+        if variable in item.xpath('domain/variable/@name')[:1]:
+          if item is assignment:
+            publish = True
+          else:
+            publish = False
+
+      if publish:
+        assignment.attrib['postRosCpp'] += ';' + variable + '_publisher.publish(' + variable + ');'
+        assignment.attrib['postRos2Cpp'] += ';' + variable + '_publisher->publish(' + variable + ');'
+      else:
+        assignment.attrib['postRosCpp'] += ';'
+        assignment.attrib['postRos2Cpp'] += ';'
 
 def checkTypes(signal, variable, assignments, usages, code, parameters):
 
   # check if signal is using a default type instead of a ros type
   if signal.xpath('option[@name="rosType"]/string')[0].text == '':
+
+    # locally defined ros messages
+    local_definitions = code.xpath('//rosm:message/rosm:name/text()', namespaces={'rosm': 'rosm'})
 
     # Tell every assignment with this variable in the left side to use to data domain
     for element in assignments:
@@ -142,6 +159,18 @@ def checkTypes(signal, variable, assignments, usages, code, parameters):
       ros_2_type = 'std_msgs::msg::' + ros_type_mapping[topic_type.tag]
       cpp_type = cpp_type_mapping[topic_type.tag]
 
+    elif topic_type.tag == "RosType":
+      ros_type = topic_type.getchildren()[0].text
+      if ros_type in local_definitions:
+        node_name = Utilities.underscore(code.xpath('//node/option[@name="name"]/string/text()')[0])
+        ros_type = node_name + '::' + ros_type
+        ros_2_type = node_name + '::msg::' + ros_type
+        cpp_type = 'void'
+      else:
+        ros_type = ros_type.replace('/', '::')
+        ros_2_type = ros_type.replace('::', '::msg::')
+        cpp_type = 'void'
+
     else:
       # @REFACTOR just a placeholder for now
       ros_type = 'std_msgs::Empty'
@@ -170,7 +199,7 @@ def process(code, parameters):
     flow, usages, assignments, topic_name = getFlow(signal, variable, code)
 
     # if flow is outgoing or bidirectional add a publishing function to all assignments
-    setPublish(variable, flow, assignments)
+    setPublish(variable, flow, assignments, signal)
 
     # check types and make sure .data is added when needed
     code, parameters, ros_type, cpp_type, ros_2_type = checkTypes(signal, variable, assignments, usages, code, parameters)

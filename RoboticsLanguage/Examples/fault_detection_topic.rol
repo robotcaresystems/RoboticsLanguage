@@ -3,13 +3,24 @@ node(
 
   definitions: block(
 
-    x ∈ Signals(Reals, rosTopic:'/fault/x'),
-    y ∈ Signals(Reals, rosTopic:'/fault/y'),
-    z ∈ Signals(Reals, rosTopic:'/fault/z'),
-    w ∈ Signals(Reals, rosTopic:'/fault/w'),
+    # the ROS Message mini-language
+    ROSMessage<{
+      name:Fault
+      std_msgs/String code
+      std_msgs/String cause
+      std_msgs/String description
+      }>,
+
+    fault ∈ Signals(RosType('Fault'), rosTopic:'/fault'),
+
+    x ∈ Signals(Reals, rosTopic:'/x'),
 
     when( □[3,0](x > 0),
-        print('x > 0')
+      block(
+        fault.code = 'XYZ012',
+        fault.cause = 'x is larger then zero',
+        fault.description = 'the state variable has exceeded the value of zero. This can lead to problems'
+        )
       )
     )
   )

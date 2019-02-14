@@ -168,7 +168,7 @@ def default_item_func(parent):
     return 'item'
 
 
-def convert(obj, ids, attr_type, item_func, cdata, parent='root'):
+def convert(obj, ids, attr_type, item_func, cdata, parent='root', namespace=''):
     """Routes the elements of an object to the right function to convert them
     based on their data type"""
 
@@ -177,27 +177,27 @@ def convert(obj, ids, attr_type, item_func, cdata, parent='root'):
     item_name = item_func(parent)
 
     if isinstance(obj, numbers.Number) or type(obj) in (str, unicode):
-        return convert_kv(item_name, obj, attr_type, cdata)
+        return convert_kv(item_name, obj, attr_type, cdata, namespace=namespace)
 
     if hasattr(obj, 'isoformat'):
-        return convert_kv(item_name, obj.isoformat(), attr_type, cdata)
+        return convert_kv(item_name, obj.isoformat(), attr_type, cdata, namespace=namespace)
 
     if type(obj) == bool:
-        return convert_bool(item_name, obj, attr_type, cdata)
+        return convert_bool(item_name, obj, attr_type, cdata, namespace=namespace)
 
     if obj is None:
-        return convert_none(item_name, '', attr_type, cdata)
+        return convert_none(item_name, '', attr_type, cdata, namespace=namespace)
 
     if isinstance(obj, dict):
-        return convert_dict(obj, ids, parent, attr_type, item_func, cdata)
+        return convert_dict(obj, ids, parent, attr_type, item_func, cdata, namespace=namespace)
 
     if isinstance(obj, collections.Iterable):
-        return convert_list(obj, ids, parent, attr_type, item_func, cdata)
+        return convert_list(obj, ids, parent, attr_type, item_func, cdata, namespace=namespace)
 
     raise TypeError('Unsupported data type: %s (%s)' % (obj, type(obj).__name__))
 
 
-def convert_dict(obj, ids, parent, attr_type, item_func, cdata):
+def convert_dict(obj, ids, parent, attr_type, item_func, cdata, namespace=''):
     """Converts a dict into an XML string."""
     LOG.info('Inside convert_dict(): obj type is: "%s", obj="%s"' % (
         type(obj).__name__, unicode_me(obj))
@@ -208,8 +208,8 @@ def convert_dict(obj, ids, parent, attr_type, item_func, cdata):
     item_name = item_func(parent)
 
     for key, val in obj.items():
-        LOG.info('Looping inside convert_dict(): key="%s", val="%s", type(val)="%s"' % (
-            unicode_me(key), unicode_me(val), type(val).__name__)
+        LOG.info('Looping inside convert_dict(): key="%s%s", val="%s", type(val)="%s"' % (
+            unicode_me(namespace), unicode_me(key), unicode_me(val), type(val).__name__)
         )
 
         attr = {} if not ids else {'id': '%s' % (get_unique_id(parent)) }
@@ -217,37 +217,37 @@ def convert_dict(obj, ids, parent, attr_type, item_func, cdata):
         key, attr = make_valid_xml_name(key, attr)
 
         if isinstance(val, numbers.Number) or type(val) in (str, unicode):
-            addline(convert_kv(key, val, attr_type, attr, cdata))
+            addline(convert_kv(key, val, attr_type, attr, cdata, namespace=namespace))
 
         elif hasattr(val, 'isoformat'): # datetime
-            addline(convert_kv(key, val.isoformat(), attr_type, attr, cdata))
+            addline(convert_kv(key, val.isoformat(), attr_type, attr, cdata, namespace=namespace))
 
         elif type(val) == bool:
-            addline(convert_bool(key, val, attr_type, attr, cdata))
+            addline(convert_bool(key, val, attr_type, attr, cdata, namespace=namespace))
 
         elif isinstance(val, dict):
             if attr_type:
                 attr['type'] = get_xml_type(val)
-            addline('<%s%s>%s</%s>' % (
-                key, make_attrstring(attr),
-                convert_dict(val, ids, key, attr_type, item_func, cdata),
-                key
+            addline('<%s%s%s>%s</%s%s>' % (
+                namespace, key, make_attrstring(attr),
+                convert_dict(val, ids, key, attr_type, item_func, cdata, namespace=namespace),
+                namespace, key
                 )
             )
 
         elif isinstance(val, collections.Iterable):
             if attr_type:
                 attr['type'] = get_xml_type(val)
-            addline('<%s%s>%s</%s>' % (
-                key,
+            addline('<%s%s%s>%s</%s%s>' % (
+                namespace, key,
                 make_attrstring(attr),
-                convert_list(val, ids, key, attr_type, item_func, cdata),
-                key
+                convert_list(val, ids, key, attr_type, item_func, cdata, namespace=namespace),
+                namespace, key
                 )
             )
 
         elif val is None:
-            addline(convert_none(key, val, attr_type, attr, cdata))
+            addline(convert_none(key, val, attr_type, attr, cdata, namespace=namespace))
 
         else:
             raise TypeError('Unsupported data type: %s (%s)' % (
@@ -257,7 +257,7 @@ def convert_dict(obj, ids, parent, attr_type, item_func, cdata):
     return ''.join(output)
 
 
-def convert_list(items, ids, parent, attr_type, item_func, cdata):
+def convert_list(items, ids, parent, attr_type, item_func, cdata, namespace=''):
     """Converts a list into an XML string."""
     LOG.info('Inside convert_list()')
     output = []
@@ -274,48 +274,48 @@ def convert_list(items, ids, parent, attr_type, item_func, cdata):
         )
         attr = {} if not ids else { 'id': '%s_%s' % (this_id, i+1) }
         if isinstance(item, numbers.Number) or type(item) in (str, unicode):
-            addline(convert_kv(item_name, item, attr_type, attr, cdata))
+            addline(convert_kv(item_name, item, attr_type, attr, cdata, namespace=namespace))
 
         elif hasattr(item, 'isoformat'): # datetime
-            addline(convert_kv(item_name, item.isoformat(), attr_type, attr, cdata))
+            addline(convert_kv(item_name, item.isoformat(), attr_type, attr, cdata, namespace=namespace))
 
         elif type(item) == bool:
-            addline(convert_bool(item_name, item, attr_type, attr, cdata))
+            addline(convert_bool(item_name, item, attr_type, attr, cdata, namespace=namespace))
 
         elif isinstance(item, dict):
             if not attr_type:
-                addline('<%s>%s</%s>' % (
-                    item_name,
-                    convert_dict(item, ids, parent, attr_type, item_func, cdata),
-                    item_name,
+                addline('<%s%s>%s</%s%s>' % (
+                    namespace, item_name,
+                    convert_dict(item, ids, parent, attr_type, item_func, cdata, namespace=namespace),
+                    namespace, item_name,
                     )
                 )
             else:
-                addline('<%s type="dict">%s</%s>' % (
-                    item_name,
-                    convert_dict(item, ids, parent, attr_type, item_func, cdata),
-                    item_name,
+                addline('<%s%s type="dict">%s</%s%s>' % (
+                    namespace, item_name,
+                    convert_dict(item, ids, parent, attr_type, item_func, cdata, namespace=namespace),
+                    namespace, item_name,
                     )
                 )
 
         elif isinstance(item, collections.Iterable):
             if not attr_type:
-                addline('<%s %s>%s</%s>' % (
-                    item_name, make_attrstring(attr),
-                    convert_list(item, ids, item_name, attr_type, item_func, cdata),
-                    item_name,
+                addline('<%s%s %s>%s</%s%s>' % (
+                    namespace, item_name, make_attrstring(attr),
+                    convert_list(item, ids, item_name, attr_type, item_func, cdata, namespace=namespace),
+                    namespace, item_name,
                     )
                 )
             else:
-                addline('<%s type="list"%s>%s</%s>' % (
-                    item_name, make_attrstring(attr),
-                    convert_list(item, ids, item_name, attr_type, item_func, cdata),
-                    item_name,
+                addline('<%s%s type="list"%s>%s</%s%s>' % (
+                    namespace, item_name, make_attrstring(attr),
+                    convert_list(item, ids, item_name, attr_type, item_func, cdata, namespace=namespace),
+                    namespace, item_name,
                     )
                 )
 
         elif item is None:
-            addline(convert_none(item_name, None, attr_type, attr, cdata))
+            addline(convert_none(item_name, None, attr_type, attr, cdata, namespace=namespace))
 
         else:
             raise TypeError('Unsupported data type: %s (%s)' % (
@@ -324,7 +324,7 @@ def convert_list(items, ids, parent, attr_type, item_func, cdata):
     return ''.join(output)
 
 
-def convert_kv(key, val, attr_type, attr={}, cdata=False):
+def convert_kv(key, val, attr_type, attr={}, cdata=False, namespace=''):
     """Converts a number or string into an XML element"""
     LOG.info('Inside convert_kv(): key="%s", val="%s", type(val) is: "%s"' % (
         unicode_me(key), unicode_me(val), type(val).__name__)
@@ -335,14 +335,14 @@ def convert_kv(key, val, attr_type, attr={}, cdata=False):
     if attr_type:
         attr['type'] = get_xml_type(val)
     attrstring = make_attrstring(attr)
-    return '<%s%s>%s</%s>' % (
-        key, attrstring,
+    return '<%s%s%s>%s</%s%s>' % (
+        namespace, key, attrstring,
         wrap_cdata(val) if cdata == True else escape_xml(val),
-        key
+        namespace, key
     )
 
 
-def convert_bool(key, val, attr_type, attr={}, cdata=False):
+def convert_bool(key, val, attr_type, attr={}, cdata=False, namespace=''):
     """Converts a boolean into an XML element"""
     LOG.info('Inside convert_bool(): key="%s", val="%s", type(val) is: "%s"' % (
         unicode_me(key), unicode_me(val), type(val).__name__)
@@ -353,10 +353,10 @@ def convert_bool(key, val, attr_type, attr={}, cdata=False):
     if attr_type:
         attr['type'] = get_xml_type(val)
     attrstring = make_attrstring(attr)
-    return '<%s%s>%s</%s>' % (key, attrstring, unicode(val).lower(), key)
+    return '<%s%s%s>%s</%s%s>' % (namespace, key, attrstring, unicode(val).lower(), namespace, key)
 
 
-def convert_none(key, val, attr_type, attr={}, cdata=False):
+def convert_none(key, val, attr_type, attr={}, cdata=False, namespace=''):
     """Converts a null value into an XML element"""
     LOG.info('Inside convert_none(): key="%s"' % (unicode_me(key)))
 
@@ -365,11 +365,11 @@ def convert_none(key, val, attr_type, attr={}, cdata=False):
     if attr_type:
         attr['type'] = get_xml_type(val)
     attrstring = make_attrstring(attr)
-    return '<%s%s></%s>' % (key, attrstring, key)
+    return '<%s%s%s></%s%s>' % (namespace, key, attrstring, namespace, key)
 
 
-def dicttoxml(obj, root=True, custom_root='root', ids=False, attr_type=True,
-    item_func=default_item_func, cdata=False):
+def dicttoxml(obj, root=True, custom_root='root', ids=False, attr_type=False,
+    item_func=default_item_func, cdata=False, namespace=''):
     """Converts a python object into XML.
     Arguments:
     - root specifies whether the output is wrapped in an XML root element
@@ -386,17 +386,22 @@ def dicttoxml(obj, root=True, custom_root='root', ids=False, attr_type=True,
     - cdata specifies whether string values should be wrapped in CDATA sections.
       Default is False
     """
+
+    if namespace != '':
+      namespace_attribute = ' xmlns:{}="{}"'.format(namespace, namespace)
+      namespace += ':'
+      root = True
+    else:
+      namespace_attribute = ''
+
     LOG.info('Inside dicttoxml(): type(obj) is: "%s", obj="%s"' % (type(obj).__name__, unicode_me(obj)))
     output = []
     addline = output.append
-    if root == True:
+    if root:
         addline('<?xml version="1.0" encoding="UTF-8" ?>')
-        addline('<%s>%s</%s>' % (
-        custom_root,
-        convert(obj, ids, attr_type, item_func, cdata, parent=custom_root),
-        custom_root,
-        )
-    )
+        addline('<%s%s%s>%s</%s%s>' % (namespace, custom_root, namespace_attribute,
+          convert(obj, ids, attr_type, item_func, cdata, parent=custom_root, namespace=namespace),
+          namespace, custom_root))
     else:
-        addline(convert(obj, ids, attr_type, item_func, cdata, parent=''))
+        addline(convert(obj, ids, attr_type, item_func, cdata, parent='', namespace=namespace))
     return ''.join(output).encode('utf-8')

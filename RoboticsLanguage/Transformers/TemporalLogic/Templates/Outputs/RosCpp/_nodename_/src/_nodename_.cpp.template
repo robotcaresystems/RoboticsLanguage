@@ -267,13 +267,15 @@
     {% if parameters.globals.debug -%}
         ROS_INFO("Timer Callback: {{name}}");
     {% endif -%}
-    {% for signal in logic.attrib['temporalLogicVariables']|ensureList -%}
+    {% set elements = [] %}
+    {% for signal in logic.attrib['temporalLogicVariables']|split(',')|ensureList -%}
       {% if parameters|isDefined('Transformers/Base/variables/'+signal+'/operators/assign/post/Cpp') -%}
-        {% for element in parameters.Transformers.Base.variables[signal].operators.assign.post.Cpp -%}
-          {{element}};
-        {% endfor -%}
+        {{ elements.append(parameters.Transformers.Base.variables[signal].operators.assign.post.Cpp) }}
       {% endif -%}
     {% endfor -%}
+
+    {{elements|mergeManyOrdered|join(";\n")}};
+
   }
   {% endif %}
   {% endfor %}
