@@ -1,5 +1,10 @@
 ![](RoboticsLanguage/Documentation/Assets/rol-logo.png)
 
+## News
+
+ - We will be present at [IEEE IRC 2019](http://aws.robotcaresystems.com/IEEE-IRC-2019/) to give a day-long tutorial on the Robotics Language.
+ - We presented recently at the [AWS re:invent conference 2018](https://youtu.be/HAela66zov0?t=1692)
+
 # What is the language of Robotics?
 
 This is a very deep question with difficult answers. If robotics is meant to equal or even surpass human capabilities, then the language of robotics should be able to describe human behaviour, all the way from muscle activation to intelligence. Achieving this on a single programming language seems like an impossible task. This project proposes a new framework where multiple domain specific languages are used together to describe the behaviour of a robot. Specifically, the *Robotics Language (RoL)* is a high level robotics programming language that generates ROS c++ nodes, HTML interfaces, or other elements.
