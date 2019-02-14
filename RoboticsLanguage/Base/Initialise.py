@@ -55,6 +55,8 @@ def prepareParameters():
   parameters['Outputs'] = {}
   parameters['Transformers'] = {}
 
+  parameters['Wizards'] = Parameters.wizard
+
   command_line_flags = {}
 
   package_order = {}
@@ -110,16 +112,36 @@ def prepareParameters():
     try:
       parameters_module = __import__(module_name + '.Parameters', globals(), locals(), ['Parameters'])
 
-      # read parameters
-      parameters[name_split[1]][name_split[2]] = parameters_module.parameters
+      try:
+        # read parameters
+        parameters[name_split[1]][name_split[2]] = parameters_module.parameters
+      except Exception as e:
+        Utilities.logger.debug(e.__repr__())
+        pass
 
-      # read command_line_flags
-      command_line = parameters_module.command_line_flags
-      for key, value in command_line.iteritems():
-        command_line_flags[name_split[1] + ':' + name_split[2] + ':' + key] = value
+      try:
+        # read command_line_flags
+        command_line = parameters_module.command_line_flags
+        for key, value in command_line.iteritems():
+          command_line_flags[name_split[1] + ':' + name_split[2] + ':' + key] = value
+      except Exception as e:
+        Utilities.logger.debug(e.__repr__())
+        pass
+
+      try:
+        # read wizard
+        wizard = parameters_module.wizard
+        for key, value in wizard.iteritems():
+          parameters['Wizards'][name_split[1] + ':' + name_split[2] + ':' + key] = value
+      except Exception as e:
+        Utilities.logger.debug(e.__repr__())
+        pass
+
     except Exception as e:
       Utilities.logger.debug(e.__repr__())
       pass
+
+
 
   # add command line options
   parameters['command_line_flags'] = Utilities.mergeDictionaries(

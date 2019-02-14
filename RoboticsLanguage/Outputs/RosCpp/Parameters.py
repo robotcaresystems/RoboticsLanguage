@@ -19,12 +19,14 @@
 #   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
-
+import os
+from . import Tools
 
 parameters = {
     'globalIncludes': set(),
     'localIncludes': set(),
-    'useColcon': False
+    'useColcon': False,
+    'deploy':  os.path.expanduser('~') + '/catkin_ws/src/',
 }
 
 command_line_flags = {
@@ -34,5 +36,17 @@ command_line_flags = {
         'longFlag': 'use-colcon',
         'noArgument': True,
         'description': 'Use the colcon system instead of catkin'
+    },
+    'deploy': {
+        'longFlag': 'deploy-ros-cpp-path',
+        'description': 'The path where the generated ROS code is saved'
+    }
+}
+
+wizard = {
+    'deploy': {
+        'question': 'What is the folder of your ROS workspace?',
+        'showDefault': True,
+        'defaultFunction': Tools.findROSWorkspace,
     }
 }

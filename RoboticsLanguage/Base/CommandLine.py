@@ -406,6 +406,11 @@ def postCommandLineParser(parameters):
   return parameters
 
 
+def runWizard(parameters):
+
+  return parameters
+
+
 def ProcessArguments(command_line_parameters, parameters):
 
   # load cached command line flags or create if necessary
@@ -423,5 +428,8 @@ def ProcessArguments(command_line_parameters, parameters):
 
   # processes special generic flags
   parameters = postCommandLineParser(parameters)
+
+  # check if wizard must run
+  parameters = runWizard(parameters)
 
   return file_name, file_type, outputs, parameters

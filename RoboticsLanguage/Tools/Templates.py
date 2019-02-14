@@ -88,10 +88,7 @@ def templateEngine(code, parameters, output=None,
 
   # check the deploy folder for the code generated
   if deploy_path is None:
-    if parameters['developer']['stepName'] in parameters['globals']['deployOutputs'].keys():
-      deploy_path = parameters['globals']['deployOutputs'][parameters['developer']['stepName']]
-    else:
-      deploy_path = parameters['globals']['deploy']
+    deploy_path = Utilities.myOutputPath(parameters)
 
   # check for package dependencies
   package_parents = Utilities.getPackageOutputParents(parameters, output)

@@ -33,10 +33,6 @@ parameters = {
         'launch': False,
         'beautify': False,
         'verbose': 'none',
-        'deployOutputs': {
-            'RosCpp': os.path.expanduser('~') + '/catkin_ws/src/',
-            'Ros2Cpp': os.path.expanduser('~') + '/ros2_ws/src/'
-        },
         'deploy': os.path.expanduser('~') + '/deploy/',
         'plugins': os.path.expanduser('~') + '/.rol/plugins/',
         'RoboticsLanguagePath': os.path.abspath(os.path.dirname(__file__) + '/../') + '/',
@@ -242,14 +238,6 @@ command_line_flags = {
         'longFlag': 'deploy-path',
         'description': 'The generic path where the generated code is saved'
     },
-    'globals:deployOutputs:RosCpp': {
-        'longFlag': 'deploy-ros-cpp-path',
-        'description': 'The path where the generated ROS code is saved'
-    },
-    'globals:deployOutputs:Ros2Cpp': {
-        'longFlag': 'deploy-ros-2-cpp-path',
-        'description': 'The path where the generated ROS 2 code is saved'
-    },
     'globals:removeCache': {
         'longFlag': 'remove-cache',
         'noArgument': True,
@@ -314,4 +302,12 @@ command_line_flags = {
     'Information:software:maintainer:email': {'suppress': True},
     'Information:software:author:name': {'suppress': True},
     'Information:software:author:email': {'suppress': True}
+}
+
+wizard = {
+    'Information:user:name': {
+        'question': 'What is the user name?',
+        'showDefault': False,
+        'defaultFunction': lambda: 'john',
+    }
 }

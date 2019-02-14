@@ -469,8 +469,8 @@ def myPluginPath(parameters):
 
 
 def myOutputPath(parameters):
-  if parameters['developer']['stepName'] in parameters['globals']['deployOutputs'].keys():
-    return parameters['globals']['deployOutputs'][parameters['developer']['stepName']]
+  if 'deploy' in parameters['Outputs'][parameters['developer']['stepName']].keys():
+    return parameters['Outputs'][parameters['developer']['stepName']]['deploy']
   else:
     return parameters['globals']['deploy']
 

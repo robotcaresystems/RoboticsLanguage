@@ -46,11 +46,8 @@ def runPreparations(code, parameters):
       parameters['Outputs']['RosCpp']['globalIncludes'].add(library)
 
   # get the path to deploy the code
-  if 'RosCpp' in parameters['globals']['deployOutputs'].keys():
-    deploy_path = parameters['globals']['deployOutputs']['RosCpp']
-  else:
-    deploy_path = parameters['globals']['deploy']
-
+  deploy_path = Utilities.myOutputPath(parameters)
+  
   return code, parameters, node_name_underscore, deploy_path
 
 

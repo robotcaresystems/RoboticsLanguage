@@ -8,14 +8,19 @@
 #      Licence: license
 #    Copyright: copyright
 #
-
+import os
 
 parameters = {
     'globalIncludes': set(),
-    'localIncludes': set()
+    'localIncludes': set(),
+    'deploy': os.path.expanduser('~') + '/ros2_ws/src/'
 }
 
 command_line_flags = {
     'globalIncludes': {'suppress': True},
-    'localIncludes': {'suppress': True}
+    'localIncludes': {'suppress': True},
+    'deploy': {
+        'longFlag': 'deploy-ros-2-cpp-path',
+        'description': 'The path where the generated ROS 2 code is saved'
+    }
 }
