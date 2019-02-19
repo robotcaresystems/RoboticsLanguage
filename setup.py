@@ -26,7 +26,7 @@ path = os.path.abspath(os.path.dirname(__file__))
 result = [os.path.join(dp, f) for dp, dn, filenames in os.walk(path) for f in filenames]
 
 setup(name='RoboticsLanguage',
-      version='0.3.1',
+      version='0.3.2',
       description='The Robotics Language',
       url='http://github.com/robotcaresystems/roboticslanguage',
       author='Gabriel A. D. Lopes',
