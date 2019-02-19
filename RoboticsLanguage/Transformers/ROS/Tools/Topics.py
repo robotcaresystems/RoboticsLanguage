@@ -214,8 +214,9 @@ def process(code, parameters):
     ros2_include = '/'.join((lambda x: x[:-1] + [Utilities.camelCaseToUnderscore(x[-1])])(ros_2_type.split('::')))
 
     # add header file for msg
-    parameters['Outputs']['RosCpp']['globalIncludes'].add(ros_type.replace('::', '/') + '.h')
-    parameters['Outputs']['Ros2Cpp']['localIncludes'].add(ros2_include + '.hpp')
+    if ros_type not in ['ros::Time', 'ros::TimerEvent']:
+      parameters['Outputs']['RosCpp']['globalIncludes'].add(ros_type.replace('::', '/') + '.h')
+      parameters['Outputs']['Ros2Cpp']['localIncludes'].add(ros2_include + '.hpp')
 
     # save the topic definitions
     parameters['Transformers']['ROS']['topicDefinitions'].append({'variable': variable,
