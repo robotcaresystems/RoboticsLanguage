@@ -26,7 +26,7 @@ from iso639 import languages
 parameters = {
     'globals': {
         'version': False,
-        'output': ['RosCpp'],
+        'output': 'RosCpp',
         'input': '',
         'debug': False,
         'compile': False,

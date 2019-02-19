@@ -38,7 +38,10 @@ def parse(text, parameters):
   code, parameters = Parse.parse(rol_code, parameters)
 
   # add fault detection gui to the outputs
-  parameters['globals']['output'].append('FaultDetectionHeartbeat')
+  outputs = Utilities.ensureList(parameters['globals']['output'])
+  outputs.append('FaultDetectionHeartbeat')
+  parameters['globals']['output'] = outputs
+
 
 
   return code, parameters
