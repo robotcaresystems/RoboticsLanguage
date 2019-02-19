@@ -1,0 +1,13 @@
+
+nodename: watchdog
+
+fault_topic: /fault
+
+nodes:
+  - name: test
+    heartbeat: 0.25
+    fault: HA001
+
+  - name: other
+    heartbeat: 0.1
+    fault: HA002

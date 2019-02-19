@@ -100,8 +100,13 @@ def serialise(code, parameters, keywords, language, filters=default_template_eng
 
   except KeyError:
     # get the line and column numbers
-    line_number, column_number, line = Utilities.positionToLineColumn(
-        int(code.attrib['p']), parameters['text'])
+    if 'p' in code.keys():
+      line_number, column_number, line = Utilities.positionToLineColumn(
+          int(code.attrib['p']), parameters['text'])
+    else:
+      line_number = 0
+      column_number = 0
+      line = ''
 
     # create error message
     Utilities.logErrors(Utilities.errorMessage('Language semantic', 'Keyword \'' + code.tag + '\' not defined',

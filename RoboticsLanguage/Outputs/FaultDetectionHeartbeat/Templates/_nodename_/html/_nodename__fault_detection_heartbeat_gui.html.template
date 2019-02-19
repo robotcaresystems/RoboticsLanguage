@@ -52,10 +52,25 @@
   });
 
 
+  {% for node in parameters.Inputs.FaultDetectionHeartbeat.data.nodes %}
+  var node_{{node.name}} = new ROSLIB.Topic({
+    ros: ros,
+    name: '/heartbeat/{{node.name}}',
+    messageType: 'std_msgs/Int8',
+  });
+
+  node_{{node.name}}.subscribe(function(message) {
+    $('#icon_{{node.fault}}').removeClass('red');
+    $('#icon_{{node.fault}}').addClass('green');
+  });
+
+  {% endfor %}
+
+
   // connect to fault topic
   var topic_fault = new ROSLIB.Topic({
     ros: ros,
-    name: '{{parameters.Inputs.FaultDetectionTopics.data.fault_topic}}',
+    name: '{{parameters.Inputs.FaultDetectionHeartbeat.data.fault_topic}}',
     messageType: '{{parameters.node.name|underscore}}/Fault',
   });
 
@@ -72,16 +87,9 @@
     $('#last_' + message.code.data).html(utcDate);
 
     //update icon
-    $('#icon_' + message.code.data).removeClass('grey');
-    $('#icon_' + message.code.data).removeClass('outline');
+    $('#icon_' + message.code.data).removeClass('green');
     $('#icon_' + message.code.data).addClass('red');
 
-    // reset icon after 5 seconds
-    setTimeout(function() {
-      $('#icon_' + message.code.data).removeClass('red');
-      $('#icon_' + message.code.data).addClass('grey');
-      $('#icon_' + message.code.data).addClass('outline');
-    }, 5000)
   });
 
   </script>
@@ -114,69 +122,40 @@
     </div>
   </div>
 
-  <h2>Faults</h2>
+  <h2>Nodes</h2>
+
+<!-- {'data': {'fault_topic': '/fault',
+                                      'nodename': 'watchdog',
+                                      'nodes': [{'fault': 'HA001',
+                                                 'heartbeat': 0.25,
+                                                 'name': 'test'},
+                                                {'fault': 'HA002',
+                                                 'heartbeat': 0.1,
+                                                 'name': 'other'}]}, -->
 
   <table class="ui celled table">
     <thead>
       <tr><th></th>
       <th>Last occurence</th>
-      <th>Code</th>
-      <th>Detection</th>
-      <th>Cause</th>
-      <th>Description</th>
+      <th>Name</th>
+      <th>Fault code</th>
+      <th>Heartbeat (sec)</th>
     </tr></thead>
     <tbody>
-      {% for fault in parameters.Inputs.FaultDetectionTopics.data.faults %}
+
+
+      {% for node in parameters.Inputs.FaultDetectionHeartbeat.data.nodes %}
       <tr>
-        <td ><i id="icon_{{fault.code}}" class="grey outline circle icon"></i></td>
-        <td id="last_{{fault.code}}"> -- </td>
-        <td >{{fault.code}}</td>
-        <td >{{fault.detection}}</td>
-        <td >{{fault.cause}}</td>
-        <td >{{fault.description}}</td>
+        <td ><i id="icon_{{node.fault}}" class="red circle icon"></i></td>
+        <td id="last_{{node.fault}}"> -- </td>
+        <td >{{node.name}}</td>
+        <td >{{node.fault}}</td>
+        <td >{{node.heartbeat}}</td>
       </tr>
       {% endfor %}
     </tbody>
   </table>
 
-
-  <h2>Topics</h2>
-
-  <table class="ui celled table">
-    <thead>
-      <tr><th>Variable</th>
-      <th>Topic</th>
-      <th>Type</th>
-    </tr></thead>
-    <tbody>
-      {% for topic in parameters.Inputs.FaultDetectionTopics.data.topics %}
-      <tr>
-        <td >{{topic.variable}}</td>
-        <td >{{topic.name}}</td>
-        <td >{{topic.type}}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-
-  <h2>Parameters</h2>
-
-  <table class="ui celled table">
-    <thead>
-      <tr><th>Parameter</th>
-      <th>Value</th>
-      <th>Type</th>
-    </tr></thead>
-    <tbody>
-      {% for parameter in parameters.Inputs.FaultDetectionTopics.data.parameters %}
-      <tr>
-        <td >{{parameter.name}}</td>
-        <td >{{parameter.value}}</td>
-        <td >{{parameter.type}}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
 
   </div>
 
