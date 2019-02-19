@@ -22,17 +22,23 @@ import os
 from setuptools import setup, find_packages
 
 
-path = os.path.abspath(os.path.dirname(__file__))
+path = os.path.abspath(os.path.dirname(__file__))+'/RoboticsLanguage'
 result = [os.path.join(dp, f) for dp, dn, filenames in os.walk(path) for f in filenames]
 
+print result
+
 setup(name='RoboticsLanguage',
-      version='0.3.2',
+      version='0.3.4',
       description='The Robotics Language',
       url='http://github.com/robotcaresystems/roboticslanguage',
       author='Gabriel A. D. Lopes',
       author_email='g.lopes@rrcrobotics.com',
       license='Apache 2.0',
       packages=find_packages(),
+      include_package_data=True,
+      package_data={
+          'RoboticsLanguage': result
+      },
       scripts=['RoboticsLanguage/Scripts/rol',
                'RoboticsLanguage/Scripts/make/rol_make_examples',
                'RoboticsLanguage/Scripts/make/rol_make_documentation',
@@ -47,8 +53,4 @@ setup(name='RoboticsLanguage',
       install_requires=[
           'parsley', 'argparse', 'argcomplete', 'jinja2', 'dpath', 'coloredlogs', 'lxml', 'iso-639', 'funcy', 'dill', 'pygments', 'fso', 'pyyaml'
       ],
-      include_package_data=True,
-      package_data={
-          'RoboticsLanguage': result
-      },
       zip_safe=False)

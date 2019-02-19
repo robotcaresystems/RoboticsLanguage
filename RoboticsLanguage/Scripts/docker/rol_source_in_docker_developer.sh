@@ -13,6 +13,9 @@ pip install catkin_tools
 # install the Robotics Language
 pip install -e .
 
+# you can use the pip distribution instead
+# pip install --upgrade RoboticsLanguage
+
 # create the catkin workspace
 mkdir -p ~/catkin_ws/src
 cd ~/catkin_ws/

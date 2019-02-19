@@ -1,6 +1,6 @@
 *.pyc
 /.tags
-/RoboticsLanguage.egg-info
+RoboticsLanguage.egg-info
 *~
 .DS_Store
 .coverage
