@@ -1,3 +1,10 @@
+
+[![PyPI version fury.io](https://badge.fury.io/py/RoboticsLanguage.svg)](https://pypi.python.org/pypi/RoboticsLanguage/)
+[![PyPI license](https://img.shields.io/pypi/l/RoboticsLanguage.svg)](https://pypi.python.org/pypi/RoboticsLanguage/)
+[![PyPI pyversions](https://img.shields.io/pypi/pyversions/RoboticsLanguage.svg)](https://pypi.python.org/pypi/RoboticsLanguage/)
+
+
+
 ![](RoboticsLanguage/Documentation/Assets/rol-logo.png)
 
 ## News
