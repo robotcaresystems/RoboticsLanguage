@@ -29,8 +29,6 @@ from jinja2 import Environment, FileSystemLoader, TemplateError
 
 default_file_patterns = {}
 
-default_templates_path = 'Templates'
-
 default_ignore_files = {'.DS_Store'}
 
 default_template_engine_filters = {'tag': Utilities.tag,
@@ -78,7 +76,7 @@ def templateEngine(code, parameters, output=None,
                    ignore_files=default_ignore_files,
                    file_patterns=default_file_patterns,
                    filters=default_template_engine_filters,
-                   templates_path=default_templates_path,
+                   templates_path=None,
                    deploy_path=None):
   '''The template engine combines multiple template files from different modules to generate code.'''
 
@@ -97,8 +95,8 @@ def templateEngine(code, parameters, output=None,
   package_parents = Utilities.getPackageOutputParents(parameters, output)
 
   # look for all the templates
-  if not os.path.isdir(templates_path):
-    templates_paths = [parameters['manifesto'][parameters['developer']['stepGroup']][x]['path'] + '/' + templates_path for x in reversed(package_parents)]
+  if templates_path is None:
+    templates_paths = [parameters['manifesto'][parameters['developer']['stepGroup']][x]['path'] + '/Templates' for x in reversed(package_parents)]
 
   else:
     templates_paths = [templates_path]
