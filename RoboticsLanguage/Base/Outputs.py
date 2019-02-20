@@ -31,12 +31,13 @@ def prepareOutputs(parameters):
   return [{'data': outputs[x], 'name': x} for x in sorted(outputs, key=lambda k: outputs[k]['order'])]
 
 
-def Generate(outputs, code, parameters):
+def Generate(code, parameters):
   """Generates the outputs"""
+
+  outputs = parameters['globals']['output']
 
   # get a list of the outputs soted by order
   sorted_outputs = prepareOutputs(parameters)
-
 
   for output in map(lambda k: k['name'], sorted_outputs):
 
@@ -49,7 +50,8 @@ def Generate(outputs, code, parameters):
         parameters = Utilities.incrementCompilerStep(parameters, 'Outputs', output)
 
         # load the module
-        output_function = Utilities.importModule(parameters['manifesto']['Outputs'][output]['type'], 'Outputs', output, 'Output')
+        output_function = Utilities.importModule(
+            parameters['manifesto']['Outputs'][output]['type'], 'Outputs', output, 'Output')
 
         # apply transformations
         output_function.Output.output(code, parameters)

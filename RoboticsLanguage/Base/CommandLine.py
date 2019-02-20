@@ -252,14 +252,16 @@ def processCommandLineParameters(args, file_formats, parameters):
   # remove filename key
   parameters.pop('filename', None)
 
+  parameters['globals']['output'] = Utilities.ensureList(parameters['globals']['output'])
+
   # Set the total number of plugins being processed
   parameters['developer']['progressTotal'] = 1 + \
-      len(parameters['manifesto']['Transformers']) + len(Utilities.ensureList(parameters['globals']['output']))
+      len(parameters['manifesto']['Transformers']) + len(parameters['globals']['output'])
 
   if len(rol_files) == 0:
-    return None, None, Utilities.ensureList(parameters['globals']['output']), parameters
+    return None, None, parameters
   else:
-    return rol_files[0]['name'], rol_files[0]['type'], Utilities.ensureList(parameters['globals']['output']), parameters
+    return rol_files[0]['name'], rol_files[0]['type'], parameters
 
 
 # @NOTE for speed should we `try/catch` or check first?
@@ -419,9 +421,9 @@ def ProcessArguments(command_line_parameters, parameters):
   parameters = loadRemainingParameters(parameters)
 
   # process the parameters
-  file_name, file_type, outputs, parameters = processCommandLineParameters(args, file_formats, parameters)
+  file_name, file_type, parameters = processCommandLineParameters(args, file_formats, parameters)
 
   # processes special generic flags
   parameters = postCommandLineParser(parameters)
 
-  return file_name, file_type, outputs, parameters
+  return file_name, file_type, parameters
