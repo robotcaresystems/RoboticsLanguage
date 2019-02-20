@@ -56,8 +56,6 @@ def Apply(code, parameters):
 
         # apply transformations
         code, parameters = transform_function.Transform.transform(code, parameters)
-
-        print parameters['globals']['output']
         
         # show developer information
         Utilities.showDeveloperInformation(code, parameters)

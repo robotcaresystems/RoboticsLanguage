@@ -20,5 +20,4 @@ def transform(code, parameters):
     else:
       parameters['globals']['output'] = [parameters['globals']['output'], 'Developer']
 
-  print parameters['globals']['output']
   return code, parameters

@@ -1,0 +1,12 @@
+
+{% set addMessageFiles -%}
+{% for message in code.xpath('//rosm:message', namespaces={'rosm': 'rosm'}) -%}
+  {{code.xpath('.//rosm:name', namespaces={'rosm': 'rosm'})|first|text}}.msg
+{% endfor -%}
+{% endset -%}
+
+{% set generateMessages -%}
+{% endset -%}
+
+{% set catkinDepends -%}
+{% endset -%}
