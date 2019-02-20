@@ -25,6 +25,7 @@ from RoboticsLanguage.Tools import Templates
 
 import os
 import sys
+import autopep8
 import subprocess
 
 
@@ -78,30 +79,33 @@ def output(code, parameters):
 
         Utilities.logging.debug('Wrote file ' + folder + '/' + name + '.msg ...')
 
+  # ############ Indentation #####################################################
+  # Make sure indentation is respected
+  python_file = deploy_path + '/' + node_name_underscore + '/scripts/' + node_name_underscore + '.py'
 
-  # ############ beautify code #####################################################
-  # if the flag beautify is set then run uncrustify
+  # precess indentation marks
+  indent = 0
+  indent_step = 4
+  python_text = ''
+  with open(python_file, 'r') as file:
+    for line in file:
+      clean_line = line.strip()
+      if clean_line == '#>>':
+        indent = indent + indent_step
+        continue
+      if clean_line == '#<<':
+        indent = indent - indent_step
+        continue
+      python_text += ' '*indent + clean_line + '\n'
+
+  # beautify
   if parameters['globals']['beautify']:
-    try:
-      with open(os.devnull, 'w') as output_file:
-        list_of_python_files = ['scripts/' + node_name_underscore + '.py']
-        for file in list_of_python_files:
-          process = subprocess.Popen(['autopep8', '-i', deploy_path + '/' + node_name_underscore + '/scripts/' + node_name_underscore + '.py'],
-                                     cwd=deploy_path + '/' + node_name_underscore,
-                                     stdout=output_file,
-                                     stderr=subprocess.STDOUT)
-          process.wait()
-          if process.returncode > 0:
-            Utilities.logger.error("Error beautifying code. autopep8 has returned an error.")
-    except:
-      # open HTML in different platforms
-      if 'darwin' in sys.platform:
-        Utilities.logger.error(
-            "Error beautifying code. You may need to install autopep8:\n\n  brew install autopep8")
+    python_text = autopep8.fix_code(python_text)
 
-      if 'linux' in sys.platform:
-        Utilities.logger.error(
-            "Error beautifying code. You may need to install autopep8:\n\n  sudo apt install autopep8")
+  # save the main script
+  with open(python_file, 'w') as file:
+    file.write(python_text)
+
 
   # ############ compile code #####################################################
   # if the flag compile is set then run catkin

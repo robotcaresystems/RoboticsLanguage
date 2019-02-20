@@ -20,7 +20,9 @@ import rospy
 
 
 if __name__ == '__main__':
+  #>>
   try:
+    #>>
     rospy.init_node('{{parameters.node.name|underscore}}')
 
     <<<'definitions'|group>>>
@@ -39,6 +41,9 @@ if __name__ == '__main__':
 
     # finalise
     {{code|xpath('/node')|option('finalise')|serializedCode}}
-
+    #<<
   except rospy.exceptions.ROSInitException:
+    #>>
     sys.exit(0)
+    #<<
+#<<

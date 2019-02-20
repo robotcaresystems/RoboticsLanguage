@@ -211,7 +211,7 @@ language = {
     'if': {
         'output':
         {
-            'Python': 'if {{children[0]}}: \n{ {{children[1]}} }\n {% if children|length>2 %}else: \n{ {{children[2]}} }{% endif %}'
+            'Python': 'if {{children[0]}}:\n #>> \n {{children[1]}} \n #<< {% if children|length>2 %} else:  \n #>> \n {{children[2]}} \n #<< {% endif %}'
         }
     },
 
