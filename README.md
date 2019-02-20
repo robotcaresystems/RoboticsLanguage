@@ -2,7 +2,8 @@
 [![PyPI version fury.io](https://badge.fury.io/py/RoboticsLanguage.svg)](https://pypi.python.org/pypi/RoboticsLanguage/)
 [![PyPI license](https://img.shields.io/pypi/l/RoboticsLanguage.svg)](https://pypi.python.org/pypi/RoboticsLanguage/)
 [![PyPI pyversions](https://img.shields.io/pypi/pyversions/RoboticsLanguage.svg)](https://pypi.python.org/pypi/RoboticsLanguage/)
-
+[![GitHub license](https://img.shields.io/github/license/RobotCareSystems/RoboticsLanguage.js.svg)](https://github.com/RobotCareSystems/RoboticsLanguage.js/blob/master/LICENSE)
+[![GitHub release](https://img.shields.io/github/release/RobotCareSystems/RoboticsLanguage.js.svg)](https://GitHub.com/RobotCareSystems/RoboticsLanguage.js/releases/)
 
 
 ![](RoboticsLanguage/Documentation/Assets/rol-logo.png)
