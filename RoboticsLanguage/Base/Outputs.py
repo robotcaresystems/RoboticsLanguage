@@ -37,6 +37,7 @@ def Generate(outputs, code, parameters):
   # get a list of the outputs soted by order
   sorted_outputs = prepareOutputs(parameters)
 
+  print outputs
 
   for output in map(lambda k: k['name'], sorted_outputs):
 

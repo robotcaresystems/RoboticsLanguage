@@ -22,17 +22,15 @@
 
 
 parameters = {
-    'globalIncludes': set(),
-    'localIncludes': set(),
+    'Imports': set(),
     'useColcon': False
 }
 
 command_line_flags = {
-    'globalIncludes': {'suppress': True},
-    'localIncludes': {'suppress': True},
+    'Imports': {'suppress': True},
     'useColcon': {
-        'longFlag': 'use-colcon-cpp',
+        'longFlag': 'use-colcon-python',
         'noArgument': True,
-        'description': 'Use the colcon system instead of catkin in c++'
+        'description': 'Use the colcon system instead of catkin in python'
     }
 }

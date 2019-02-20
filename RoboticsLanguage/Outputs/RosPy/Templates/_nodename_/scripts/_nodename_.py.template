@@ -1,0 +1,44 @@
+<<<header->>>
+#!/usr/bin/env python
+#
+#    Node name: {{parameters.node.name}}
+#
+# Generated on: {{"%d %B, %Y"|todaysDate}}
+#       Author: {{parameters.Information.user.name}}
+#      Licence: {{parameters.Information.software.license}}
+#    Copyright: {{parameters.Information.software.copyright}}
+#
+#    THIS FILE WAS AUTOMATICALLY GENERATED USING THE ROBOTICS LANGUAGE
+#
+
+import sys
+import rospy
+<<<'imports'|group>>>
+
+
+<<<'functions'|group>>>
+
+
+if __name__ == '__main__':
+  try:
+    rospy.init_node('{{parameters.node.name|underscore}}')
+
+    <<<'definitions'|group>>>
+
+    # definitions
+    {{code|xpath('/node')|option('definitions')|serializedCode}}
+
+    <<<'initialise'|group>>>
+
+    # initialisation
+    {{code|xpath('/node')|option('initialise')|serializedCode}}
+
+    rospy.spin()
+
+    <<<'finalise'|group>>>
+
+    # finalise
+    {{code|xpath('/node')|option('finalise')|serializedCode}}
+
+  except rospy.exceptions.ROSInitException:
+    sys.exit(0)
