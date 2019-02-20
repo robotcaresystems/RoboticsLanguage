@@ -53,4 +53,18 @@ setup(name='RoboticsLanguage',
       install_requires=[
           'parsley', 'argparse', 'argcomplete', 'jinja2', 'dpath', 'coloredlogs', 'lxml', 'iso-639', 'funcy', 'dill', 'pygments', 'fso', 'pyyaml', 'autopep8'
       ],
+      classifiers=[
+            'Development Status :: 3 - Alpha',
+            'Environment :: Console',
+            'Environment :: Web Environment',
+            'Intended Audience :: Developers',
+            'Intended Audience :: Education',
+            'Intended Audience :: Science/Research',
+            'License :: OSI Approved :: Apache Software License',
+            'Operating System :: OS Independent',
+            'Programming Language :: Python :: 2.7',
+            'Topic :: Scientific/Engineering :: Robotics',
+            'Topic :: Software Development :: Code Generators',
+            'Topic :: Software Development :: Compilers'
+        ],
       zip_safe=False)
