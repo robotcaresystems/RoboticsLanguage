@@ -38,3 +38,9 @@ RUN echo 'source /home/roboticslanguage/catkin_ws/devel/setup.bash &> /dev/null'
 # set the development path
 RUN mkdir -p /home/roboticslanguage/.rol
 RUN echo 'globals:\n  deploy: /root/catkin_ws/src/deploy' > /home/roboticslanguage/.rol/parameters.yaml
+
+# copy examples
+RUN mkdir -p /home/roboticslanguage/examples
+WORKDIR /home/roboticslanguage/examples
+RUN rol --copy-examples-here
+WORKDIR /home/roboticslanguage
