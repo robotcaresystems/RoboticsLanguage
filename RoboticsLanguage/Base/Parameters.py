@@ -69,7 +69,8 @@ parameters = {
         'progressTotal': 10,
         'progressPercentage': 0,
         'progressStartTime': 0,
-        'showOutputDependency': False
+        'showOutputDependency': False,
+        'copyExamplesHere': False,
     },
 
     'symbols':
@@ -188,6 +189,12 @@ command_line_flags = {
         'longFlag': 'progress',
         'noArgument': True,
         'description': 'Shows progress.'
+    },
+    'developer:copyExamplesHere': {
+        'longFlag': 'copy-examples-here',
+        'noArgument': True,
+        'fileNotNeeded': True,
+        'description': 'Copies a set of examples into the current folder'
     },
     'globals:version': {
         'longFlag': 'version',
