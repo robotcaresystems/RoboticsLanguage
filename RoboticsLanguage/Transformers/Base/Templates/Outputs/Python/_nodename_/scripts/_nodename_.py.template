@@ -1,0 +1,14 @@
+
+{% set functions %}
+
+  {# FUNCTIONS #################################### #}
+  {% for function in code|xpaths('/node/option[@name="definitions"]//function_definition') -%}
+  {% set returns = function|xpaths('function_returns')|first|serializedCode -%}
+  {% set arguments = (function|xpaths('function_arguments/element')|serializedCode)+(function|xpaths('function_arguments/*/element/..')|serializedCode) -%}
+  def {{function|attribute('name')}}({% if arguments|length==0 %}{% else %}{{arguments|join(", ")}}{% endif %}):
+    #>>
+    {{function|xpaths('function_content')|first|serializedCode}};
+    #<<
+  {% endfor -%}
+
+{% endset %}

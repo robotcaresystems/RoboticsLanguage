@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #
 #   This is the Robotics Language compiler
 #
@@ -23,7 +24,8 @@
 
 parameters = {
     'Imports': set(),
-    'useColcon': False
+    'useColcon': False,
+    'showPythonIndentationMarks': False
 }
 
 command_line_flags = {
@@ -32,5 +34,10 @@ command_line_flags = {
         'longFlag': 'use-colcon-python',
         'noArgument': True,
         'description': 'Use the colcon system instead of catkin in python'
-    }
+    },
+    'showPythonIndentationMarks': {
+        'longFlag': 'show-python-indentation-marks',
+        'noArgument': True,
+        'description': 'Shows intermediate exported python script with indentation marks'
+    },
 }

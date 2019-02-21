@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #
 #   This is the Robotics Language compiler
 #
@@ -25,6 +26,7 @@ from RoboticsLanguage.Tools import Templates
 
 import os
 import sys
+import stat
 import autopep8
 import subprocess
 
@@ -83,6 +85,11 @@ def output(code, parameters):
   # Make sure indentation is respected
   python_file = deploy_path + '/' + node_name_underscore + '/scripts/' + node_name_underscore + '.py'
 
+  # show indentation marks
+  if parameters['Outputs']['RosPy']['showPythonIndentationMarks']:
+    with open(python_file, 'r') as file:
+      Utilities.printSource(file.read(), 'python', parameters)
+
   # precess indentation marks
   indent = 0
   indent_step = 4
@@ -106,6 +113,9 @@ def output(code, parameters):
   with open(python_file, 'w') as file:
     file.write(python_text)
 
+  # make sure the python script is executable
+  st = os.stat(python_file)
+  os.chmod(python_file, st.st_mode | stat.S_IEXEC)
 
   # ############ compile code #####################################################
   # if the flag compile is set then run catkin

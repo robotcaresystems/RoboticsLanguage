@@ -140,7 +140,7 @@ language = {
     'return': {
         'output':
         {
-            'Python': 'return {{children|join(", ")}}{% endif %}'
+            'Python': 'return {{children|join(", ")}}'
         },
     },
 
@@ -189,7 +189,7 @@ language = {
     'element': {
         'output':
         {
-            'Python': '{% if children[1]|length > 0 %}{{children[1]}} {{attribute(code.xpath("variable"),"name")}}{% endif %}'
+            'Python': '{{attribute(code.xpath("variable"),"name")}}'
         },
     },
 
