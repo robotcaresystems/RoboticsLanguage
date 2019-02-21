@@ -1,0 +1,26 @@
+
+{% set definitions %}
+{% for when in code.xpath('//when') %}
+when_last_{{when|attribute('whenId')}} = False
+{% endfor %}
+{% endset %}
+
+{% set functions %}
+{% for when in code.xpath('//when') %}
+  def when{{when|attribute('whenId')}}():
+    #>>
+    global when_last_{{when|attribute('whenId')}}
+
+    when_condition_{{when|attribute('whenId')}} = {{when.getchildren()[0]|serializedCode}}
+    when_run_{{when|attribute('whenId')}} = (when_last_{{when|attribute('whenId')}} != when_condition_{{when|attribute('whenId')}})
+    if when_run_{{when|attribute('whenId')}}:
+    #>>
+      when_last_{{when|attribute('whenId')}} = when_condition_{{when|attribute('whenId')}};
+      if when_condition_{{when|attribute('whenId')}}:
+      #>>
+        {{when.getchildren()[1]|serializedCode}}
+      #<<
+    #<<
+  #<<
+{% endfor %}
+{% endset %}
