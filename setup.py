@@ -63,7 +63,7 @@ setup(name='RoboticsLanguage',
             'License :: OSI Approved :: Apache Software License',
             'Operating System :: OS Independent',
             'Programming Language :: Python :: 2.7',
-            'Topic :: Scientific/Engineering :: Robotics',
+            'Topic :: Scientific/Engineering',
             'Topic :: Software Development :: Code Generators',
             'Topic :: Software Development :: Compilers'
         ],
