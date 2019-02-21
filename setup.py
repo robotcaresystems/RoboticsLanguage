@@ -28,7 +28,7 @@ result = [os.path.join(dp, f) for dp, dn, filenames in os.walk(path) for f in fi
 print result
 
 setup(name='RoboticsLanguage',
-      version='0.3.7',
+      version='0.3.8',
       description='The Robotics Language',
       url='http://github.com/robotcaresystems/roboticslanguage',
       author='Gabriel A. D. Lopes',
