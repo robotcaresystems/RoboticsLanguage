@@ -23,6 +23,7 @@
 import os
 import sys
 import yaml
+import shutil
 import argparse
 import dpath.util
 import argcomplete
@@ -404,6 +405,17 @@ def postCommandLineParser(parameters):
     for package in parameters['manifesto']['Outputs']:
       if 'parent' in parameters['manifesto']['Outputs'][package].keys():
         print parameters['manifesto']['Outputs'][package]['parent'] + ' <- ' + package
+
+  # Copy examples here
+  if parameters['developer']['copyExamplesHere']:
+    from_path = parameters['globals']['RoboticsLanguagePath'] + 'Examples'
+    here_path = os.getcwd()
+
+    for root, dirs, files in os.walk(from_path):
+      for file in files:
+        if file.endswith('.rol'):
+          print 'copying: ' + root + '/' + file + ' -> ' + here_path + '/' + file
+          shutil.copy(root + '/' + file, here_path + '/' + file)
 
   return parameters
 
