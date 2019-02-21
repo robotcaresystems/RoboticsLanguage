@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<<<header->>>
+<package>
+  <name>{{parameters.node.name|underscore}}</name>
+  <version>{{parameters.Information.software.version}}</version>
+  <description>{{parameters.Information.software.description}}</description>
+  <maintainer email="{{parameters.Information.software.maintainer.email}}">{{parameters.Information.software.maintainer.name}}</maintainer>
+  <license>{{parameters.Information.software.license}}</license>
+  <url type="website">{{parameters.Information.software.url}}</url>
+  <author email="{{parameters.Information.software.author.email}}">{{parameters.Information.software.author.name}}</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>rospy</build_depend>
+  <build_depend>std_msgs</build_depend>
+  {% if code.xpath('//rosm:message', namespaces={'rosm': 'rosm'})|length > 0 %}
+  <build_depend>message_generation</build_depend>
+  {% endif %}
+  <<<'build_depend'|group>>>
+
+  <run_depend>rospy</run_depend>
+  <run_depend>std_msgs</run_depend>
+  <<<'run_depend'|group>>>
+  {% if code.xpath('//rosm:message', namespaces={'rosm': 'rosm'})|length > 0 %}
+  <run_depend>message_runtime</run_depend>
+  {% endif %}
+
+</package>

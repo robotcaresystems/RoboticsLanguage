@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #
 #   This is the Robotics Language compiler
 #
@@ -22,17 +23,21 @@
 
 
 parameters = {
-    'globalIncludes': set(),
-    'localIncludes': set(),
-    'useColcon': False
+    'Imports': set(),
+    'useColcon': False,
+    'showPythonIndentationMarks': False
 }
 
 command_line_flags = {
-    'globalIncludes': {'suppress': True},
-    'localIncludes': {'suppress': True},
+    'Imports': {'suppress': True},
     'useColcon': {
-        'longFlag': 'use-colcon-cpp',
+        'longFlag': 'use-colcon-python',
         'noArgument': True,
-        'description': 'Use the colcon system instead of catkin in c++'
-    }
+        'description': 'Use the colcon system instead of catkin in python'
+    },
+    'showPythonIndentationMarks': {
+        'longFlag': 'show-python-indentation-marks',
+        'noArgument': True,
+        'description': 'Shows intermediate exported python script with indentation marks'
+    },
 }

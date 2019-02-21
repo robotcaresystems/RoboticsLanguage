@@ -26,7 +26,7 @@ from Tools import Topics, Types, RosMessage
 def transform(code, parameters):
 
   # make sure RosCpp is part of the output
-  if any(x in parameters['globals']['output'] for x in ['RosCpp', 'HTMLGUI', 'Ros2Cpp']):
+  if any(x in parameters['globals']['output'] for x in ['RosCpp', 'HTMLGUI', 'Ros2Cpp', 'RosPy']):
 
     # Types
     code, parameters = Types.process(code, parameters)
