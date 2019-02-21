@@ -189,7 +189,7 @@ language = {
     'element': {
         'output':
         {
-            'Python': '{{attribute(code.xpath("variable"),"name")}}'
+            'Python': '{% if parentTag in ["assign", "function_arguments"]  %}{{attribute(code.xpath("variable"),"name")}}{% endif %}'
         },
     },
 
@@ -211,7 +211,7 @@ language = {
     'if': {
         'output':
         {
-            'Python': 'if {{children[0]}}:\n #>> \n {{children[1]}} \n #<< {% if children|length>2 %} else:  \n #>> \n {{children[2]}} \n #<< {% endif %}'
+            'Python': 'if {{children[0]}}:\n #>> \n {{children[1]}} \n #<<\n {% if children|length>2 %} else:  \n #>> \n {{children[2]}} \n #<< \n {% endif %}'
         }
     },
 

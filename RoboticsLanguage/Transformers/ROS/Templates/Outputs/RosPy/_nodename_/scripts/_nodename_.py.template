@@ -45,7 +45,6 @@ from {{parameters.node.name|underscore}} import {{code.xpath('.//rosm:name', nam
     {% for topic in parameters.Transformers.ROS.topicDefinitions -%}
     {# CALLBACK #################################### #}
       {% if topic.flow == 'incoming' or topic.flow == 'bidirectional' -%}
-      # ******************************* signal_{{topic.variable}}_callback ************************************************
      def signal_{{topic.variable}}_callback(signal_{{topic.variable}}_message):
      #>>
         global {{topic.variable}}
