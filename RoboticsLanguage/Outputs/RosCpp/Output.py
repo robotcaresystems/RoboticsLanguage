@@ -25,6 +25,7 @@ from RoboticsLanguage.Tools import Templates
 
 import os
 import sys
+import shlex
 import subprocess
 
 
@@ -132,8 +133,16 @@ def output(code, parameters):
   # ############ run code #####################################################
   # if the flag launch is set then launch the node
   if parameters['globals']['launch']:
-    Utilities.logger.debug("launching: `roslaunch " + node_name_underscore + " " + node_name_underscore + '.launch`')
-    process = subprocess.Popen(['roslaunch', node_name_underscore, node_name_underscore + '.launch'])
+
+    # # check if package is in the ros path
+    package_location = (deploy_path + '/' + node_name_underscore).replace('//', '/')
+    if package_location not in os.environ['ROS_PACKAGE_PATH']:
+      os.environ['ROS_PACKAGE_PATH'] += ':' + package_location
+
+    command = 'roslaunch '+ node_name_underscore + ' ' + node_name_underscore + '.launch'
+
+    Utilities.logger.debug("launching: `" + command + '`')
+    process = subprocess.Popen(shlex.split(command))
     process.wait()
 
   return 0
