@@ -1,0 +1,124 @@
+
+{% set imports %}
+
+{% if code.xpath('//di:root', namespaces={'di':'di'})|length > 0 %}
+
+import os
+import sys
+import cv2
+import numpy as np
+try:
+  #>>
+  import tensorflow as tf
+  #<<
+except ImportError:
+  #>>
+  print("Unable to import TensorFlow. Is it installed?")
+  sys.exit(1)
+  #<<
+from cv_bridge import CvBridge, CvBridgeError
+
+{% endif %}
+
+{% endset %}
+
+{% set classes %}
+
+{% for network in code.xpath('//di:root', namespaces={'di':'di'}) %}
+
+class DeepInference{{network.xpath('.//di:name', namespaces={'di':'di'})[0]|text|camelCase}}:
+  #>>
+  def __init__(self):
+    #>>
+
+    # setup open cv
+    self._cv_bridge = CvBridge()
+
+    # load tensorflow graph
+    self._graph = tf.get_default_graph()
+    self._model = tf.keras.models.load_model("{{network.xpath('.//di:network_model', namespaces={'di':'di'})[0]|text}}")
+
+    # for all network inputs, allocate input data
+    self._input_data = {
+        'input_1': None
+    }
+
+    # for all network outputs, allocate output data
+    self._output_data = {
+        'output_1': None
+    }
+  #<<
+  def DeepInference(self, input):
+    #>>
+    self.preProcessing(input)
+
+    self.inference()
+
+    return self.postProcessing()
+  #<<
+
+  def preProcessing(self, image):
+    #>>
+    # pre-processing
+    try:
+      #>>
+      # convert from ros message to data
+      data = self._cv_bridge.imgmsg_to_cv2(image, '64FC{{network.xpath('.//di:network_input_channels', namespaces={'di':'di'})[0]|text}}')
+
+      # convert to network input
+      self._input_data['input_1'] = np.reshape(data, ({{network.xpath('.//di:network_input_channels', namespaces={'di':'di'})[0]|text}}, {{network.xpath('.//di:network_input_size/di:item', namespaces={'di':'di'})[0]|text}}, {{network.xpath('.//di:network_input_size/di:item', namespaces={'di':'di'})[1]|text}}));
+    #<<
+    except CvBridgeError as e:
+      #>>
+      # raise warning otherwise
+      rospy.logwarn(e)
+    #<<
+  #<<
+
+  def inference(self):
+    #>>
+    # perform inference
+    with self._graph.as_default():
+      #>>
+      self._output_data['output_1'] = self._model.predict(self._input_data['input_1'])
+    #<<
+  #<<
+
+
+  def postProcessing(self):
+    #>>
+    # select highest probability
+    probability = np.max(self._output_data['output_1'])
+
+    # post-processing
+    label = np.argmax(self._output_data['output_1'])
+
+    return probability, label
+  #<<
+
+#<<
+{% endfor %}
+
+{% endset %}
+
+{% set functions %}
+
+{% endset %}
+
+{% set definitions %}
+
+{% endset %}
+
+{% set initialise %}
+
+{% for network in code.xpath('//di:root', namespaces={'di':'di'}) %}
+
+{{network.xpath('.//di:name', namespaces={'di':'di'})[0]|text}} = DeepInference{{network.xpath('.//di:name', namespaces={'di':'di'})[0]|text|camelCase}}()
+
+{% endfor %}
+
+{% endset %}
+
+{% set finalise %}
+
+{% endset %}

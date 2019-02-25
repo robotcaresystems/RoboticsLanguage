@@ -1,0 +1,7 @@
+node(
+  name:'example Deep Inference',
+
+  initialise: block(
+    print('DeepInference')
+  )
+)

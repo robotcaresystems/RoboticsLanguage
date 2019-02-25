@@ -75,7 +75,7 @@ def getFlow(signal, variable, code):
 
   # look for assignments:
   assignments = code.xpath(
-      '//assign/variable[@name="' + variable + '" and count(preceding-sibling::*)=0]|//assign/domain[count(preceding-sibling::*)=0]/variable[@name="' + variable + '" and  count(preceding-sibling::*)=0]')
+      '//assign/variable[@name="' + variable + '" and count(preceding-sibling::*)=0]|//assign/domain[count(preceding-sibling::*)=0]/variable[@name="' + variable + '" and  count(preceding-sibling::*)=0]|//assign/set[count(preceding-sibling::*)=0]/variable[@name="' + variable + '"]')
   assigned = len(assignments) > 0
 
   # find all instances of the variable except of its definitions
