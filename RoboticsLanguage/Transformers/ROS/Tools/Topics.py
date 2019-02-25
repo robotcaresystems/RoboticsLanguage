@@ -202,7 +202,7 @@ def checkTypes(signal, variable, assignments, usages, code, parameters):
   else:
     ros_type = signal.xpath('option[@name="rosType"]/string')[0].text.replace('/', '::')
     ros_2_type = signal.xpath('option[@name="rosType"]/string')[0].text.replace('/', '::msg::')
-    ros_py_type = signal.xpath('option[@name="rosType"]/string')[0].text.replace('/', '.')
+    ros_py_type = signal.xpath('option[@name="rosType"]/string')[0].text.replace('/', '.msg.')
     cpp_type = ros_type
 
   parameters['Outputs']['RosPy']['Imports'].add('.'.join(ros_py_type.split('.')[:-1]))
