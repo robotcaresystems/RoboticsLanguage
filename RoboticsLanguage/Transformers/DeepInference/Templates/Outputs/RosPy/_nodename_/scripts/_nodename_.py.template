@@ -36,7 +36,7 @@ class DeepInference{{network.xpath('.//di:name', namespaces={'di':'di'})[0]|text
 
     # load tensorflow graph
     self._graph = tf.get_default_graph()
-    self._model = tf.keras.models.load_model("{{network.xpath('.//di:network_model', namespaces={'di':'di'})[0]|text}}")
+    self._model = tf.keras.models.load_model(os.path.expanduser("{{network.xpath('.//di:network_model', namespaces={'di':'di'})[0]|text}}"))
 
     # for all network inputs, allocate input data
     self._input_data = {

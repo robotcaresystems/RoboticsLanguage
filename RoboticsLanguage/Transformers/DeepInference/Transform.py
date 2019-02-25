@@ -10,17 +10,6 @@
 #
 
 
-from RoboticsLanguage.Base import Utilities
-
 def transform(code, parameters):
-  namespaces = {'namespaces':{'di': 'di'}}
-
-  for network in code.xpath('//di:root', **namespaces):
-
-    name = network.xpath('//di:name', **namespaces)[0].text
-    
-
-
-
 
   return code, parameters

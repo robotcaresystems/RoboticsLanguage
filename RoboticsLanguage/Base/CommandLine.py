@@ -413,9 +413,8 @@ def postCommandLineParser(parameters):
 
     for root, dirs, files in os.walk(from_path):
       for file in files:
-        if file.endswith('.rol'):
-          print 'copying: ' + root + '/' + file + ' -> ' + here_path + '/' + file
-          shutil.copy(root + '/' + file, here_path + '/' + file)
+        print 'copying: ' + root + '/' + file + ' -> ' + here_path + '/' + file
+        shutil.copy(root + '/' + file, here_path + '/' + file)
 
   return parameters
 
