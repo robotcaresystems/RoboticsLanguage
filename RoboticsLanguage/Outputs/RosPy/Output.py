@@ -135,6 +135,12 @@ def output(code, parameters):
   # ############ run code #####################################################
   # if the flag launch is set then launch the node
   if parameters['globals']['launch']:
+
+    # check if package is in the ros path
+    package_location = (deploy_path + '/' + node_name_underscore).replace('//', '/')
+    if package_location not in os.environ['ROS_PACKAGE_PATH']:
+      os.environ['ROS_PACKAGE_PATH'] += ':' + package_location
+
     Utilities.logger.debug("launching: `roslaunch " + node_name_underscore + " " + node_name_underscore + '.launch`')
     process = subprocess.Popen(['roslaunch', node_name_underscore, node_name_underscore + '.launch'])
     process.wait()
