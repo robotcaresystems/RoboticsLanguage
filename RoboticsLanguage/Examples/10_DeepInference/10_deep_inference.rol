@@ -1,0 +1,21 @@
+node(
+  name:'example deep inference',
+
+  definitions: block(
+
+    DeepInference<{
+      name: my_network
+      input_type: 'sensor_msgs/Image'
+      output_type: ['std_msgs/Float', 'std_msgs/Int64']
+      network_input_channels: 1
+      network_input_size:  [28, 28]
+      network_model: '~/models/mnist.h5'
+    }>,
+
+    input ∈ Signals(rosType:'sensor_msgs/Image', rosTopic:'/input', onNew: { output_probability, output_label} = my_network.DeepInference(input)),
+
+    output_probability ∈ Signals(rosType:'std_msgs/Float' , rosTopic:'/output_probability'),
+
+    output_label ∈ Signals(rosType:'std_msgs/Int64' , rosTopic:'/output_label')
+  )
+)
