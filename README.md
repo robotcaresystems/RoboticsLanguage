@@ -13,7 +13,7 @@
 
 This is a very deep question with difficult answers. If robotics is meant to equal or even surpass human capabilities, then the language of robotics should be able to describe human behaviour, all the way from muscle activation to intelligence. Achieving this on a single programming language seems like an impossible task. This project proposes a new framework where multiple domain specific languages are used together to describe the behaviour of a robot. Specifically, the *Robotics Language (RoL)* is a high level robotics programming language that generates ROS c++ nodes, HTML interfaces, or other elements.
 
-[Domain Specific Languages](https://en.wikipedia.org/wiki/Domain-specific_language) *are computer languages specialised to a particular application domain*. Such languages use the minimum information required to describe a particular concept for a domain, thus present an **abstraction** of information. This project uses the concept of **mini-languages** to abstract programming by combining multiple domain specific languages in a single file.  
+[Domain Specific Languages](https://en.wikipedia.org/wiki/Domain-specific_language) *are computer languages specialised to a particular application domain*. Such languages use the minimum information required to describe a particular concept for a domain, thus present an **abstraction** of information. This project uses the concept of **mini-languages** to abstract programming by combining multiple domain specific languages in a single file.
 
 
 
@@ -157,10 +157,34 @@ source ~/catkin_ws/devel/setup.bash
 
 ## Docker image
 
-You can test the robotics language using a docker environment. First make sure the Robotics Language is installed
+You can test the robotics language using a docker environment. It comes completely preinstalled with the latest version of the Robotics Language.
 
+get the docker:
 ```shell
-sudo -H pip install -e .
+docker pull roboticslanguage/rol
+```
+
+Create a folder to share files between docker and your system:
+```shell
+mkdir -p /RoL/docker_catkin_ws
+```
+
+Add easy launch commands by copying the lines below into your `~/.bashrc`:
+```shell
+# where is your base RoL folder
+export ROL_PATH=$HOME/RoL/
+
+# alias to run robotics language docker
+alias rol_docker='docker run -it --rm \
+  --name="rol_docker" \
+  -v "${ROL_PATH:?}/docker_catkin_ws:/home/roboticslanguage/catkin_ws/" \
+  --workdir /home/roboticslanguage/examples \
+  --net=host \
+  --add-host rol_docker:127.0.0.1 \
+  --hostname=rol_docker \
+  roboticslanguage/rol'
+# alias to attach to an existing rol_docker
+alias rol_docker_attach='docker exec -it -e "COLUMNS=$COLUMNS" -e "LINES=$LINES" rol_docker bash'
 ```
 
 Next start the docker image
@@ -169,12 +193,17 @@ Next start the docker image
 rol_docker
 ```
 
-You can open another shell by repeating the previous command as many times as you want.
+You can open another shell by running `rol_docker_attach`.
+
+For the first time, setup the user rights in the shared folder:
+```shell
+sudo chown roboticslanguage ~/catkin_ws
+```
 
 Once in the docker, everything is configured. You can compile the example:
 
 ```shell
-rol RoboticsLanguage/Examples/helloworld.rol -c
+rol 1_helloworld.rol -c
 ```
 
 Make sure to source for the first time:
@@ -209,11 +238,11 @@ The Robotics Language is developed by Robot Care Systems B.V. (http://www.robotc
        alt="rosin_logo" height="60" >
 </a>
 
-Supported by ROSIN - ROS-Industrial Quality-Assured Robot Software Components.  
+Supported by ROSIN - ROS-Industrial Quality-Assured Robot Software Components.
 More information: <a href="http://rosin-project.eu">rosin-project.eu</a>
 
 <img src="http://rosin-project.eu/wp-content/uploads/rosin_eu_flag.jpg"
-     alt="eu_flag" height="45" align="left" >  
+     alt="eu_flag" height="45" align="left" >
 
-This project has received funding from the European Union’s Horizon 2020  
+This project has received funding from the European Union’s Horizon 2020
 research and innovation programme under grant agreement no. 732287.
