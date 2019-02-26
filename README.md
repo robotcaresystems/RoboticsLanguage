@@ -190,6 +190,7 @@ alias rol_docker_attach='docker exec -it -e "COLUMNS=$COLUMNS" -e "LINES=$LINES"
 Next start the docker image
 
 ```shell
+source ~/.bashrc
 rol_docker
 ```
 
