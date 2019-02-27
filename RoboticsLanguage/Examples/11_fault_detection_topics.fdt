@@ -1,0 +1,41 @@
+nodename: example fault detection topics
+
+parameters:
+  float_parameter: 5.6
+  integer_parameter: 2
+  string_parameter: hello
+
+fault_topic: /fault
+
+topics:
+  x: /test/integer std_msgs/Int8
+  y: /test/float std_msgs/Float32
+  z: /test/string std_msgs/String
+  w: /test/struct geometry_msgs/Pose
+  q: /test/array std_msgs/Float32MultiArray
+
+faults:
+  - detection: always(3,1,x.data > integer_parameter)
+    code: TEST001
+    cause: integer variable has saturated
+    description: This is a test to see if temporal logic is working
+
+  - detection: y.data > float_parameter and x.data < 0
+    code: TEST002
+    cause: float value has saturated
+    description: This is a test to check is simple logic is working
+
+  - detection: z.data == string_parameter
+    code: TEST003
+    cause: the string does not match
+    description: This is a test to check strings
+
+  - detection: w.position.x > float_parameter
+    code: TEST004
+    cause: the x position is too large
+    description: This is a test to test arbitrady topic types
+
+  - detection: q.data[0] > float_parameter
+    code: TEST005
+    cause: the first element of the array is too high
+    description: This is a test to check arrays

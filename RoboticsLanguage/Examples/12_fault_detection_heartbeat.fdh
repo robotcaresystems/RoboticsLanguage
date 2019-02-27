@@ -1,0 +1,15 @@
+
+nodename: watchdog
+
+fault_topic: /fault
+
+nodes:
+  - name: supervisor
+    heartbeat: 1
+    startup_time: 3
+    fault: HA001
+
+  - name: navigator
+    heartbeat: 2
+    startup_time: 5
+    fault: HA002
