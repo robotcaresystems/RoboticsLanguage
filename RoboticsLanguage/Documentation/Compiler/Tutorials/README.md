@@ -2,7 +2,7 @@
 
 ## Basic Tutorials
 
-
+- [Commands line examples](CommandLineExamples/README.md)
 
 ## Advanced Tutorials
 
