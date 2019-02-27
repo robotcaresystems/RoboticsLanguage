@@ -30,6 +30,9 @@ RUN python2 -m pip install --ignore-installed --upgrade tensorflow==1.10.1
 # install h5 file reader
 RUN pip install h5py
 
+# install ros bridge server
+RUN apt install -y ros-kinetic-rosbridge-server
+
 # Create roboticslanguage user and add it to sudoers
 RUN adduser --disabled-password --gecos "" roboticslanguage
 RUN echo 'roboticslanguage:me' | chpasswd
