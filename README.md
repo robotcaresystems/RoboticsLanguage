@@ -150,7 +150,7 @@ rol RoboticsLanguage/Examples/1_hello_world.rol
 This will create a ROS node in the folder `~/deploy`. If you have installed the catkin workspace at `~/catkin_ws` then you can supply the path to the compiler and compile and launch the node directly:
 
 ```shell
-rol --deploy-path ~/catkin_ws/src/ RoboticsLanguage/Examples/helloworld.rol -c -l
+rol --deploy-path ~/catkin_ws/src/ RoboticsLanguage/Examples/1_hello_world.rol -c -l
 ```
 
 **Note:** if you don't have a catkin workspace make sure to run:
@@ -217,7 +217,7 @@ sudo chown $(whoami):$(whoami) ~/catkin_ws
 Once in the docker, everything is configured. You can compile the example:
 
 ```shell
-rol 1_helloworld.rol -c
+rol 1_hello_world.rol -c
 ```
 
 Make sure to source for the first time:
@@ -229,7 +229,7 @@ source ~/catkin_ws/devel/setup.bash
 Now you are ready to launch:
 
 ```shell
-rol RoboticsLanguage/Examples/helloworld.rol -l
+rol RoboticsLanguage/Examples/1_hello_world.rol -l
 ```
 
 ## Work in progress
