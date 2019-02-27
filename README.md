@@ -175,8 +175,15 @@ Add easy launch commands by copying the lines below into your `~/.bashrc`:
 export ROL_PATH=$HOME/RoL/
 
 # alias to run robotics language docker
-alias rol_docker='docker run -it --rm \
+alias rol_docker='xhost +local:docker; \
+  docker run -it --rm \
   --name="rol_docker" \
+  --env=DISPLAY \
+  --env=XDG_RUNTIME_DIR \
+  --env=QT_X11_NO_MITSHM=1 \
+  --device=/dev/dri:/dev/dri \
+  -v /tmp/.X11-unix:/tmp/.X11-unix:rw \
+  -v /etc/localtime:/etc/localtime:ro \
   -v "${ROL_PATH:?}/docker_catkin_ws:/home/roboticslanguage/catkin_ws/" \
   --workdir /home/roboticslanguage/examples \
   --net=host \
