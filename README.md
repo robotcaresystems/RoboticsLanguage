@@ -1,5 +1,6 @@
 
-[![PyPI version fury.io](https://badge.fury.io/py/RoboticsLanguage.svg)](https://pypi.python.org/pypi/RoboticsLanguage/) [![GitHub license](https://img.shields.io/github/license/robotcaresystems/RoboticsLanguage.svg)](https://github.com/robotcaresystems/RoboticsLanguage/blob/master/LICENSE) [![PyPI pyversions](https://img.shields.io/pypi/pyversions/RoboticsLanguage.svg)](https://pypi.python.org/pypi/RoboticsLanguage/) ![Docker Build Status](https://img.shields.io/docker/build/roboticslanguage/rol.svg)
+[![PyPI version fury.io](https://badge.fury.io/py/RoboticsLanguage.svg)](https://pypi.python.org/pypi/RoboticsLanguage/) [![GitHub license](https://img.shields.io/github/license/robotcaresystems/RoboticsLanguage.svg)](https://github.com/robotcaresystems/RoboticsLanguage/blob/master/LICENSE) [![PyPI pyversions](https://img.shields.io/pypi/pyversions/RoboticsLanguage.svg)](https://pypi.python.org/pypi/RoboticsLanguage/)
+<!-- ![Docker Build Status](https://img.shields.io/docker/build/roboticslanguage/rol.svg) -->
 
 
 ![](RoboticsLanguage/Documentation/Assets/rol-logo.png)
@@ -117,7 +118,18 @@ The RoL is in practice an **open compiler** where users can develop their own la
 
 ## Install
 
-If you are a user run:
+The best way to install is using `pip`:
+
+```shell
+pip install RoboticsLanguage
+```
+
+To install this version in github, first `git clone`:
+```shell
+git clone https://github.com/robotcaresystems/RoboticsLanguage.git
+```
+
+Next, if you are a user run:
 ```shell
 pip install .
 ```
@@ -127,17 +139,18 @@ If you are a developer run:
 pip install -e .
 ```
 
+
 ## Examples
 You can try the RoL compiler by testing the examples in the folder `RoboticsLanguage/Examples`:
 
 ```shell
-rol RoboticsLanguage/Examples/helloworld.rol
+rol RoboticsLanguage/Examples/1_hello_world.rol
 ```
 
 This will create a ROS node in the folder `~/deploy`. If you have installed the catkin workspace at `~/catkin_ws` then you can supply the path to the compiler and compile and launch the node directly:
 
 ```shell
-rol --deploy-path ~/catkin_ws/src/deploy/ RoboticsLanguage/Examples/helloworld.rol -c -l
+rol --deploy-path ~/catkin_ws/src/ RoboticsLanguage/Examples/helloworld.rol -c -l
 ```
 
 **Note:** if you don't have a catkin workspace make sure to run:
