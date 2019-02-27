@@ -198,7 +198,7 @@ You can open another shell by running `rol_docker_attach`.
 
 For the first time, setup the user rights in the shared folder:
 ```shell
-sudo chown roboticslanguage ~/catkin_ws
+sudo chown $(whoami):$(whoami) ~/catkin_ws
 ```
 
 Once in the docker, everything is configured. You can compile the example:
