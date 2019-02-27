@@ -179,7 +179,7 @@ docker pull roboticslanguage/rol
 
 Create a folder to share files between docker and your system:
 ```shell
-mkdir -p /RoL/docker_catkin_ws
+mkdir -p ~/RoL/docker_catkin_ws
 ```
 
 Add easy launch commands by copying the lines below into your `~/.bashrc`:

@@ -21,9 +21,6 @@ RUN echo 'deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main' |
 RUN apt update
 RUN apt install -y google-chrome-stable
 
-# install Robotics Language
-RUN pip install --upgrade RoboticsLanguage
-
 # install tensor flow
 RUN python2 -m pip install --ignore-installed --upgrade tensorflow==1.10.1
 
@@ -32,6 +29,9 @@ RUN pip install h5py
 
 # install ros bridge server
 RUN apt install -y ros-kinetic-rosbridge-server
+
+# install Robotics Language
+RUN pip install --upgrade RoboticsLanguage
 
 # Create roboticslanguage user and add it to sudoers
 RUN adduser --disabled-password --gecos "" roboticslanguage
