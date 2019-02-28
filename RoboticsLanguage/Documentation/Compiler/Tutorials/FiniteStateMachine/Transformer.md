@@ -10,7 +10,7 @@ In the second part we inject c++ code that implements the finite state machine.
 Start by creating a new transformer:
 
 ```bash
-rol --create-transformer-template "My Finite State Machine" -o Developer
+rol --create-transformer-template "My Finite State Machine"
 ```
 
 
@@ -55,19 +55,24 @@ We will implement this function to search and annotate the abstract syntax tree.
 You can check if the new transformer is working correctly by running:
 
 ```bash
-rol ~/.rol/plugins/Transformers/MyFiniteStateMachine/Examples/MyFiniteStateMachine.rol --remove-cache -v info
+rol ~/.rol/plugins/Transformers/MyFiniteStateMachine/Examples/MyFiniteStateMachine.rol -v info
 ```
 
-The flag `--remove-cache` is important to make `rol` find the new package. You can also type
+Note: sometimes when editing plugins it is useful to use the flag `--remove-cache`. This cleans `rol`s cache, to make sure the most updated code is running:
 
 ```bash
-rol --info --remove-cache
+rol --remove-cache
 ```
 
-To make sure your new package is installed:
+
+To make sure your new package is installed type:
+
+```bash
+rol --info
+```
 
 ```
-The Robotics Language version: 0.2
+The Robotics Language version: 0.3
 Transformers:
   MyFiniteStateMachine (0.0.0) *
   ...
@@ -88,22 +93,25 @@ Consider the following finite state machine definition:
 This does not represent a deterministic finite state machine since the transition `start` can lead to two different states for the same initial state. The XML representation output by the [parser](Parser.md) is:
 
 ```xml
-<mfsm:machine xmlns:mfsm="mfsm">
-   <mfsm:name>machine</mfsm:name>
-   <mfsm:initial>idle</mfsm:initial>
-   <mfsm:transitions>
-     <mfsm:transition>
-       <mfsm:label>start</mfsm:label>
-       <mfsm:begin>idle</mfsm:begin>
-       <mfsm:end>walk</mfsm:end>
-     </mfsm:transition>
-     <mfsm:transition>
-       <mfsm:label>start</mfsm:label>
-       <mfsm:begin>idle</mfsm:begin>
-       <mfsm:end>run</mfsm:end>
-     </mfsm:transition>
-   </mfsm:transitions>
- </mfsm:machine>
+<node p="174">
+  <option p="37" name="name">
+    <string p="37">my finite state machine</string>
+  </option>
+  <option p="173" name="definitions">
+    <mfsm:machine xmlns:mfsm="mfsm">
+      <mfsm:name>test</mfsm:name>
+      <mfsm:initial>idle</mfsm:initial>
+      <mfsm:transition name="start">
+        <mfsm:state>idle</mfsm:state>
+        <mfsm:state>walk</mfsm:state>
+      </mfsm:transition>
+      <mfsm:transition name="start">
+        <mfsm:state>idle</mfsm:state>
+        <mfsm:state>run</mfsm:state>
+      </mfsm:transition>
+    </mfsm:machine>
+  </option>
+</node>
 ```
 
 
@@ -121,15 +129,14 @@ Next, for each machine look for each **local** transition (notice the `.//` at t
 .//mfsm:transition
 ```
 
-Now we want to get the names of the `begin` and `label` elements for each transition. This can be done using the following xpath expression:
+Now we want to get the names of the start state and the name of the transition elements for each transition. This can be done using the following python expression:
 
-```xpath
-.//*[self::mfsm:begin or self::mfsm:label]/text()
+```python
+pair = [transition.getchildren()[0].text, transition.attrib['name']]
 ```
 
-This will look for each element of the `<mfsm:transition>` tag and will return the elements that match either `begin` or `label`. For the found  elements return their content using `text()`.
 
-Now we can write the `transform` function in `Transform.py`:
+We can write the `transform` function in `Transform.py`:
 
 ```python
 def transform(code, parameters):
@@ -147,7 +154,7 @@ def transform(code, parameters):
     for transition in machine.xpath('.//mfsm:transition', **namespace):
 
       # extract state/transition pair
-      pair = transition.xpath('.//*[self::mfsm:begin or self::mfsm:label]/text()', **namespace)
+      pair = [transition.getchildren()[0].text, transition.attrib['name']]
 
       # check if pairs already exist
       if pair in pairs:
@@ -157,21 +164,13 @@ def transform(code, parameters):
         pairs.append(pair)
 
   return code, parameters
-
 ```
 
 In the previous example a simple error message is printed. This behaviour can be improved by creating an [error handling function]().
 
 ## Generating code using Templates
 
-When creating a new transformer package `rol` traverses all the output template files looking for special tags. For example the file [`RoboticsLanguage/Outputs/RosCpp/Templates/_nodename_/src/_nodename_.cpp`](https://github.com/robotcaresystems/RoboticsLanguage/blob/development/RoboticsLanguage/Outputs/RosCpp/Templates/_nodename_/src/_nodename_.cpp.template) contains special tags as `<<<'initialise'|group>>>` or `<<<'functions'|group>>>`. These tags represent locations where transformers can inject code. After creating the transformer using
-
-
-```bash
-rol --create-transformer-template "My Finite State Machine" -o Developer
-```
-
-the file `~/.rol/plugins/Transformers/MyFiniteStateMachine/Templates/Outputs/RosCpp/_nodename_/src/_nodename_.cpp.template` is created with the contents:
+When creating a new transformer package `rol` traverses all the output template files looking for special tags. For example the file [`RoboticsLanguage/Outputs/RosCpp/Templates/_nodename_/src/_nodename_.cpp`](https://github.com/robotcaresystems/RoboticsLanguage/blob/development/RoboticsLanguage/Outputs/RosCpp/Templates/_nodename_/src/_nodename_.cpp.template) contains special tags as `<<<'initialise'|group>>>` or `<<<'functions'|group>>>`. These tags represent locations where transformers can inject code. After creating the transformer plugin the file `~/.rol/plugins/Transformers/MyFiniteStateMachine/Templates/Outputs/RosCpp/_nodename_/src/_nodename_.cpp.template` is created with the contents:
 
 ```jinja
 
@@ -194,10 +193,10 @@ By modifying these files on can inject code into the source files generated by t
 
 We start by editing the template file header file for the node: `~/.rol/plugins/Transformers/MyFiniteStateMachine/Templates/Outputs/RosCpp/_nodename_/include/_nodename_/_nodename_.h.template`
 
-We assume we have a C++ finite state library that implements the machinery required for finite state machines. See e.g. [FiniteStateMachine.h](https://github.com/robotcaresystems/RoboticsLanguage/blob/development/RoboticsLanguage/Transformers/FiniteStateMachine/Templates/Outputs/RosCpp/_nodename_/include/_nodename_/FiniteStateMachine.h)
+We assume we have a C++ finite state library that implements the machinery required for finite state machines. See e.g. [FiniteStateMachine.hpp](https://github.com/robotcaresystems/RoboticsLanguage/blob/development/RoboticsLanguage/Transformers/FiniteStateMachine/Templates/Outputs/RosCpp/_nodename_/include/_nodename_/FiniteStateMachine.hpp)
 
 In this file we:
- - Include the header file for `FiniteStateMachine.h`
+ - Include the header file for `FiniteStateMachine.hpp`
  - Instantiate the `FiniteStateMachine` class for each machine found on the code.
 
 ```jinja
@@ -205,7 +204,7 @@ In this file we:
 
 {% if code|xpaths('//mfsm:machine', {'mfsm':'mfsm'})|length > 0 %}
 //Finite state machine library
-#include "FiniteStateMachine.h"
+#include "FiniteStateMachine.hpp"
 {% endif %}
 
 {% endset %}
@@ -239,7 +238,7 @@ generates the elements of c++ code in the header file:
 
 ```cpp
 //Finite state machine library
-#include "FiniteStateMachine.h"
+#include "FiniteStateMachine.hpp"
 
 ...
 
@@ -264,8 +263,10 @@ Now that the header file definitions are established we initialise the class in 
     // Definitions for Finite State Machine "{{machine_name}}"
 
     // Transitions
-  {% for transition in machine|xpaths('mfsm:transitions/mfsm:transition', {'mfsm':'mfsm'}) -%}
-    {{machine_name}}.addTransition("{{transition|xpath('mfsm:label/text()', {'mfsm':'mfsm'})}}","{{transition|xpath('mfsm:begin/text()', {'mfsm':'mfsm'})}}","{{transition|xpath('mfsm:end/text()', {'mfsm':'mfsm'})}}");
+  {% for transition in machine|xpaths('.//mfsm:transition', {'mfsm':'mfsm'}) -%}
+    {{machine_name}}.addTransition("{{transition|attribute('name')}}",
+                                   "{{transition.getchildren()[0]|text}}",
+                                   "{{transition.getchildren()[1]|text}}");
   {% endfor -%}
 
     // Initial state
@@ -282,22 +283,25 @@ In the template above, for each machine `//mfsm:machine` iterate over the transi
 The example
 
 ```xml
-<mfsm:machine xmlns:mfsm="mfsm">
-  <mfsm:name>machine</mfsm:name>
-  <mfsm:initial>idle</mfsm:initial>
-  <mfsm:transitions>
-    <mfsm:transition>
-      <mfsm:label>start</mfsm:label>
-      <mfsm:begin>idle</mfsm:begin>
-      <mfsm:end>running</mfsm:end>
-    </mfsm:transition>
-    <mfsm:transition>
-      <mfsm:label>stop</mfsm:label>
-      <mfsm:begin>running</mfsm:begin>
-      <mfsm:end>idle</mfsm:end>
-    </mfsm:transition>
-  </mfsm:transitions>
-</mfsm:machine>
+<node p="174">
+  <option p="37" name="name">
+    <string p="37">my finite state machine</string>
+  </option>
+  <option p="173" name="definitions">
+    <mfsm:machine xmlns:mfsm="mfsm">
+      <mfsm:name>machine</mfsm:name>
+      <mfsm:initial>idle</mfsm:initial>
+      <mfsm:transition name="start">
+        <mfsm:state>idle</mfsm:state>
+        <mfsm:state>running</mfsm:state>
+      </mfsm:transition>
+      <mfsm:transition name="stop">
+        <mfsm:state>running</mfsm:state>
+        <mfsm:state>idle</mfsm:state>
+      </mfsm:transition>
+    </mfsm:machine>
+  </option>
+</node>
 ```
 
 results in the c++ code element:
