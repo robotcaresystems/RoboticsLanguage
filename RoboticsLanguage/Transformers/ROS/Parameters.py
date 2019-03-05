@@ -22,7 +22,11 @@
 
 
 parameters = {
-    'addingNewMessages': False
+    'addingNewMessages': False,
+    'topicDefinitions': [],
+    'buildDependencies': set(),
+    'runDependencies': set(),
+    'messageDependencies': set(),
 }
 
 command_line_flags = {

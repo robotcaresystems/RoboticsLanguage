@@ -6,7 +6,7 @@ parameters:
   string_parameter: hello
 
 fault_topic: /fault
-fault_type: rrc_msgs/Fault
+# fault_type: your_own_definition/Fault
 
 topics:
   x: /test/integer std_msgs/Int8

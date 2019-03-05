@@ -27,6 +27,10 @@ def parse(text, parameters):
   with open(Utilities.myPluginPath(parameters) + '/Support/fault_detection_heartbeat.rol.template', 'r') as file:
     template = Template(file.read())
 
+  # add filters to template
+  template.globals['underscore'] = Utilities.underscore
+  template.globals['camelCase'] = Utilities.camelCase
+
   # render the template with the data
   rol_code = template.render(**text_dictionary)
 

@@ -6,7 +6,7 @@
 {% endfor %}
 
 {% for message in code.xpath('//rosm:message', namespaces={'rosm': 'rosm'}) -%}
-#include <{{parameters.node.name|underscore}}/{{code.xpath('.//rosm:name', namespaces={'rosm': 'rosm'})|first|text}}.h>
+#include <{{parameters.node.name|underscore}}/{{message.xpath('.//rosm:name', namespaces={'rosm': 'rosm'})|first|text}}.h>
 {% endfor -%}
 
 {% endset %}

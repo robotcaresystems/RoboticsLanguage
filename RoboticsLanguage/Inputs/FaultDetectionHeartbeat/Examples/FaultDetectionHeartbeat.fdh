@@ -1,8 +1,8 @@
 
-nodename: watchdog
+nodename: examples fault detection heartbeat
 
 fault_topic: /fault
-fault_type: rrc_msgs/Fault
+# fault_type: your_own_definition/Fault
 
 nodes:
   - name: supervisor

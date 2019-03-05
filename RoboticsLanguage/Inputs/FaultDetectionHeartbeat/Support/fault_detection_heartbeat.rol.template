@@ -3,6 +3,7 @@ node(
 
   definitions: block(
 
+    {% if fault_type is not defined %}
       # the ROS Message mini-language
       ROSMessage<{
         name:Fault
@@ -10,42 +11,42 @@ node(
         std_msgs/String cause
         std_msgs/String description
         }>,
+    {% endif %}
 
 
 
       {% for node in nodes %}
 
-      define checkFault_{{node.name}}(last_expected in Cpp<{const ros::TimerEvent&}>):
+      define checkFault_{{underscore(node.name)}}(last_expected in Cpp<{const ros::TimerEvent&}>):
         block(
             fault.code = '{{node.fault}}',
             fault.cause = 'heartbeat {{node.name}} timeout',
             fault.description = 'Node {{node.name}} heartbeat has stopped for longer than {{node.heartbeat}} seconds.'
           ),
 
-      {{node.name}} in Signals(rosType:'std_msgs/Int8',
+      {{underscore(node.name)}} in Signals(rosType:'std_msgs/Int8',
                                rosTopic:'/heartbeat/{{node.name}}',
                                rosFlow:'incoming',
                                onNew:block(
-                                  timer_{{node.name}}.setPeriod(Cpp<{ros::Duration({{node.heartbeat}})}>),
-                                  timer_{{node.name}}.start()
+                                  timer_{{underscore(node.name)}}.setPeriod(Cpp<{ros::Duration({{node.heartbeat}})}>),
+                                  timer_{{underscore(node.name)}}.start()
                                  )
                                 ),
 
 
-      Cpp<{ros::Timer timer_{{node.name}} }>,
+      Cpp<{ros::Timer timer_{{underscore(node.name)}} }>,
 
 
       {% endfor %}
 
-      fault in Signals(RosType('Fault'), rosTopic:'{{fault_topic}}')
-
+    fault in Signals({% if fault_type is defined %}RosType('{{fault_type}}'){% else %}RosType('Fault'){% endif %}, rosTopic:'{{fault_topic}}')
       ),
 
       initialise: block(
 
         {% for node in nodes %}
 
-        Cpp<{timer_{{node.name}} = nh_.createTimer(ros::Duration({{node.startup_time}}), &{{nodename|title}}Class::checkFault_{{node.name}}, this, true)}>,
+        Cpp<{timer_{{underscore(node.name)}} = nh_.createTimer(ros::Duration({{node.startup_time}}), &{{camelCase(nodename)}}Class::checkFault_{{underscore(node.name)}}, this, true)}>,
 
         {% endfor %}
           print("Heartbeat monitor running.")
