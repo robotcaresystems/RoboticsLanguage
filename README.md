@@ -117,7 +117,7 @@ The RoL is in practice an **open compiler** where users can develop their own la
 
 
 - Tutorials
-  - [IEEE IRC 2019](Tutorials/IEEE-IRC-2019/README.md)
+  - [IEEE IRC 2019](RoboticsLanguage/Documentation/Tutorials/IEEE-IRC-2019/README.md)
 
 ## Install
 
