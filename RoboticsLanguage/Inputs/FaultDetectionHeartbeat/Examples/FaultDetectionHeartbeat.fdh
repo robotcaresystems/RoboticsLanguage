@@ -2,6 +2,7 @@
 nodename: watchdog
 
 fault_topic: /fault
+fault_type: rrc_msgs/Fault
 
 nodes:
   - name: supervisor

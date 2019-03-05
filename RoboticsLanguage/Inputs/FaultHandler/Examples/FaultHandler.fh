@@ -1,0 +1,46 @@
+nodename: Fault handler
+
+parameters:
+  float_parameter: 5.6
+  integer_parameter: 2
+  string_parameter: hello
+
+failure_topic: /failure
+
+topics:
+  x: /test/integer std_msgs/Int8
+  y: /test/float std_msgs/Float32
+  z: /test/string std_msgs/String
+  w: /test/struct geometry_msgs/Pose
+  q: /test/array std_msgs/Float32MultiArray
+
+nodes:
+    - name: /supervisor
+      fault: HA001
+      retry: 3
+      timeout: 5
+      failure: FA001
+
+    - name: /navigator
+      fault: HA002
+      retry: 3
+      timeout: 5
+      failure: FA002
+
+    - name: /test
+      fault: HA002
+      retry: 3
+      timeout: 5
+      conditions:
+        - if: x > 0
+          then:
+            failure: FA002
+        - if: state == "navigation"
+          then:
+            if: x < 1
+            then:
+              action:
+            else:
+              if: y < 1
+              then: FA002b
+              else: FA002c

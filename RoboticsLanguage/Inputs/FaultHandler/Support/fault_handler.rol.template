@@ -1,0 +1,34 @@
+node(
+  name:'{{nodename}}',
+
+  definitions: block(
+
+    # the ROS Message mini-language
+    ROSMessage<{
+      name:Failure
+      std_msgs/String code
+      std_msgs/String cause
+      std_msgs/String description
+      }>,
+
+    {% for parameter in parameters %}
+    {{parameter.name}} in {{parameter.type}} = {{parameter.value}},
+    {% endfor %}
+
+    {% for topic in topics %}
+    {{topic.variable}} in Signals(rosType:'{{topic.type}}', rosTopic:'{{topic.name}}'),
+    {% endfor %}
+
+    {% for failure in failures %}
+    when( {{failure.detection}},
+      block(
+        failure.code = '{{failure.code}}',
+        failure.cause = '{{failure.cause}}',
+        failure.description = '{{failure.description}}'
+        )
+      ),
+    {% endfor %}
+
+    failure in Signals(RosType('Failure'), rosTopic:'{{failure_topic}}')
+    )
+  )
