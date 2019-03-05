@@ -1,7 +1,9 @@
 
 
 
-# Tutorial resented at IEEE IRC 2019
+# Tutorial presented at IEEE IRC 2019
+
+PDF slides:
 
 - [Part I - Background](IEEE-IRC-Part-I.pdf)
 - [Part II - The Robotics Language](IEEE-IRC-Part-II.pdf)
@@ -9,5 +11,7 @@
 - [Part IV - The rol compiler](IEEE-IRC-Part-IV.pdf)
 
 The last part followed the `rol` tutorial on finite state machines:
-  - [Creating an abstraction language](Compiler/Tutorials/FiniteStateMachine/Parser.md)
-  - [Transformer for a language](Compiler/Tutorials/FiniteStateMachine/Transformer.md)
+  - [Creating an abstraction language](../../Compiler/Tutorials/FiniteStateMachine/Parser.md)
+  - [Transformer for a language](../../Compiler/Tutorials/FiniteStateMachine/Transformer.md)
+
+**Node:** Videos are coming soon!

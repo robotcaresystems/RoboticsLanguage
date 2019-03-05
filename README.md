@@ -7,14 +7,14 @@
 
 ## News
 
- - We will be present at [IEEE IRC 2019](http://aws.robotcaresystems.com/IEEE-IRC-2019/) to give a day-long tutorial on the Robotics Language.
+ - We present a tutorial at [IEEE IRC 2019](http://aws.robotcaresystems.com/IEEE-IRC-2019/). [Slides are available here](RoboticsLanguage/Documentation/Tutorials/IEEE-IRC-2019/README.md).
  - We presented recently at the [AWS re:invent conference 2018](https://youtu.be/HAela66zov0?t=1692)
 
 # What is the language of Robotics?
 
 This is a very deep question with difficult answers. If robotics is meant to equal or even surpass human capabilities, then the language of robotics should be able to describe human behaviour, all the way from muscle activation to intelligence. Achieving this on a single programming language seems like an impossible task. This project proposes a new framework where multiple domain specific languages are used together to describe the behaviour of a robot. Specifically, the *Robotics Language (RoL)* is a high level robotics programming language that generates ROS c++ nodes, HTML interfaces, or other elements.
 
-[Domain Specific Languages](https://en.wikipedia.org/wiki/Domain-specific_language) *are computer languages specialised to a particular application domain*. Such languages use the minimum information required to describe a particular concept for a domain, thus present an **abstraction** of information. This project uses the concept of **mini-languages** to abstract programming by combining multiple domain specific languages in a single file.
+[Domain Specific Languages](https://en.wikipedia.org/wiki/Domain-specific_language) *are computer languages specialised to a particular application domain*. Such languages use the minimum information required to describe a particular concept for a domain, thus present an **abstraction** of information. This project uses the concept of **abstraction languages** to simplify programming by combining multiple domain specific languages in a single file.
 
 
 
@@ -35,7 +35,7 @@ node(
 )
 ```
 
-The power of the RoL is in its ability to integrate mini-languages to build code abstractions.
+The power of the RoL is in its ability to integrate mini-abstraction languages:
 
 ```coffeescript
 # A finite state machine
@@ -115,6 +115,9 @@ The RoL is in practice an **open compiler** where users can develop their own la
   - [Tutorials](RoboticsLanguage/Documentation/Compiler/Tutorials/README.md)
   - [Reference](RoboticsLanguage/Documentation/Compiler/Reference/README.md)
 
+
+- Tutorials
+  - [IEEE IRC 2019](Tutorials/IEEE-IRC-2019/README.md)
 
 ## Install
 
