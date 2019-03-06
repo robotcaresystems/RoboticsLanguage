@@ -1,11 +1,18 @@
 nodename: Fault handler
 
+fault_topic: /fault
+fault_type: rrc_msgs/Fault
+
+failure_topic: /failure
+failure_type: rrc_msgs/Failure
+
+action_topic: /action
+action_type: rrc_msgs/Action
+
 parameters:
   float_parameter: 5.6
   integer_parameter: 2
   string_parameter: hello
-
-failure_topic: /failure
 
 topics:
   x: /test/integer std_msgs/Int8
@@ -40,7 +47,11 @@ nodes:
             if: x < 1
             then:
               action:
+                topic: restart_navigation
+                script: restart_navigation
             else:
               if: y < 1
-              then: FA002b
-              else: FA002c
+              then:
+                failure: FA002c
+              else:
+                fault: FA002c
