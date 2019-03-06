@@ -1,4 +1,4 @@
-FROM osrf/ros2:crystal-desktop
+FROM osrf/ros:crystal-desktop
 
 # install pip
 RUN curl -O https://bootstrap.pypa.io/get-pip.py && python get-pip.py
@@ -8,8 +8,8 @@ RUN pip install --upgrade pip
 # Update package list
 RUN apt update
 
-# Install several useful packages
-#RUN apt install -y python-catkin-tools python-catkin-lint
+# install the Tools
+RUN pip3 install -U colcon-common-extensions
 RUN apt install -y xterm git sudo build-essential
 RUN apt install -y apt-utils curl nano cmake python ssh bash-completion iputils-ping
 RUN apt install -y python-argcomplete
@@ -43,19 +43,28 @@ RUN echo "roboticslanguage ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers #roboticslang
 USER roboticslanguage
 WORKDIR /home/roboticslanguage
 
-# create the catkin workspace
-#RUN mkdir -p /home/roboticslanguage/catkin_ws/src
+RUN echo '"\eOA": history-search-backward\n"\eOB": history-search-forward\n"\e[A": history-search-backward\n"\e[B": history-search-forward\n' > /home/roboticslanguage/.inputrc
+
+
 
 # make sure .bashrc loads ros
 #RUN echo 'source /opt/ros/kinetic/setup.bash' >> /home/roboticslanguage/.bashrc
 #RUN echo 'source /home/roboticslanguage/catkin_ws/devel/setup.bash &> /dev/null' >> /home/roboticslanguage/.bashrc
 
+# create the catkin workspace
+RUN mkdir -p /home/roboticslanguage/ros2_ws/src
 
-RUN echo '"\eOA": history-search-backward\n"\eOB": history-search-forward\n"\e[A": history-search-backward\n"\e[B": history-search-forward\n' > /home/roboticslanguage/.inputrc
+# make sure .bashrc loads ros
+RUN echo 'source /opt/ros/crystal/setup.bash' >> /home/roboticslanguage/.bashrc
+
+RUN echo 'source /home/roboticslanguage/ros2_ws/install/setup.bash' >> /home/roboticslanguage/.bashrc
+
+
 
 # set the development path
 RUN mkdir -p /home/roboticslanguage/.rol
-#RUN echo 'globals:\n  deploy: /home/roboticslanguage/catkin_ws/src/' > /home/roboticslanguage/.rol/parameters.yaml
+RUN echo 'globals:\n  deploy: /root/ros2_ws/src/deploy\n  output: "Ros2Cpp"' > /home/roboticslanguage/.rol/parameters.yaml
+
 
 # copy examples
 RUN mkdir -p /home/roboticslanguage/examples
