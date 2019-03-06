@@ -47,11 +47,13 @@ nodes:
             if: x < 1
             then:
               action:
-                topic: restart_navigation
+                topic:
                 script: restart_navigation
             else:
               if: y < 1
               then:
-                failure: FA002c
+                action:
+                  failure: FA002c
               else:
-                fault: FA002c
+                action:
+                  fault: FA002c
