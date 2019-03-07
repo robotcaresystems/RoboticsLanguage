@@ -2,26 +2,26 @@
 
 - [x] Parsing command line arguments
 - [x] Package structure
-- [-] RoL Language
+- [x] RoL Language
   - [x] infix
   - [x] prefix
   - [x] postfix
   - [x] bracket
-  - [ ] custom
+  - [x] custom
 - [x] Caching
   - [x] functionality
   - [x] Refresh cache
   - [x] Use decorators
-- [-] Mini languages
+- [x] Mini languages
   - [x] RoL
-  - [ ] RoLXML
+  - [x] RoLXML
 - [x] generalise template engine: files with pattern `_file_.tex` are replaced using dictionary `{'file':'desired_name'}`
 - [ ] Localisation
   - [-]   Language
   - [ ]   Compiler
 - [ ] transformer preprocessor
   - [x] explicitly fill in all optional arguments
-  - [ ] function definition list
+  - [x] function definition list
 - [ ] semantic checking:
   - [ ] check that function prototypes are correct
   - [x] check variables types
@@ -51,8 +51,8 @@
   - [ ] service
   - [ ] timer
   - [ ] parameters
-- [ ] Docker
+- [-] Docker
   - [ ] Match .rol files, deploy folder in docker to user definitions
-  - [ ] Register docker image
+  - [x] Register docker image
 - [ ] Plugin
-  - [-] Finite state machines
+  - [x] Finite state machines
