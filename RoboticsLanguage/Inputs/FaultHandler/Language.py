@@ -24,7 +24,7 @@ language = {
     },
     '{fh}node': {
         'output': {
-            'Cpp': 'void node_{{tag}}_callback()'
+            'Cpp': 'void node_{{text}}_callback(){ {{children|join("\n")}} }'
         }
     },
     '{fh}action': {'output': {'Cpp': ''}},
