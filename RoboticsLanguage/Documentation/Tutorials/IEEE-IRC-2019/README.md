@@ -10,6 +10,9 @@ PDF slides:
 - [Part III - Tools](IEEE-IRC-Part-III.pdf)
 - [Part IV - The rol compiler](IEEE-IRC-Part-IV.pdf)
 
+Demonstration of the `rol` compiler:
+ - [Command line examples](../../Compiler/Tutorials/CommandLineExamples/README.md)
+
 The last part followed the `rol` tutorial on finite state machines:
   - [Creating an abstraction language](../../Compiler/Tutorials/FiniteStateMachine/Parser.md)
   - [Transformer for a language](../../Compiler/Tutorials/FiniteStateMachine/Transformer.md)
