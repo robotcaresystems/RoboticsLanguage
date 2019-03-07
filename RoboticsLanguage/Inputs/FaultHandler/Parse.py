@@ -25,6 +25,7 @@ import copy
 from jinja2 import Template
 from RoboticsLanguage.Base import Utilities
 from RoboticsLanguage.Inputs.RoL import Parse
+from RoboticsLanguage.Tools import DictionaryToXML
 
 
 def getType(value):
@@ -63,6 +64,9 @@ def parse(text, parameters):
 
   # save the data in the parameters to be used by the GUI
   parameters['Inputs']['FaultHandler']['data'] = discriptive_dictionary
+
+  # extract code
+  discriptive_dictionary['nodes_xml'] = DictionaryToXML.dicttoxml(text_dictionary['nodes'], namespace='fh')
 
   # open template file
   with open(Utilities.myPluginPath(parameters) + '/Support/fault_handler.rol.template', 'r') as file:

@@ -26,21 +26,23 @@ import sys
 
 # @REFACTOR same code in inputs/RoL/Parse.py. However, it is specific to RoL, so add to Utilities?
 # @TODO generalise when RoL parameters become dictionaries
+
+
 def nodeParametersToDictionary(xml):
-  return {'node': { key:value.text for (key, value) in Utilities.optionalArguments(xml).iteritems() } }
+  return {'node': {key: value.text for (key, value) in Utilities.optionalArguments(xml).iteritems()}}
 
 
 def parse(text, parameters):
 
   try:
     # create XML object from xml string
-    parsed_xml = etree.fromstring(text)
+    parsed_xml = etree.fromstring(text.replace('<?xml version="1.0" encoding="UTF-8" ?>', '').strip())
 
   except etree.XMLSyntaxError as error:
-    Utilities.logErrors(Utilities.formatLxmlErrorMessage(error,text = text),parameters)
+    Utilities.logErrors(Utilities.formatLxmlErrorMessage(error, text=text), parameters)
     sys.exit(1)
 
   # If the node has parameters, then add them to the global parameters dictionary
-  parameters = Utilities.mergeDictionaries(nodeParametersToDictionary(parsed_xml),parameters)
+  parameters = Utilities.mergeDictionaries(nodeParametersToDictionary(parsed_xml), parameters)
 
   return parsed_xml, parameters
