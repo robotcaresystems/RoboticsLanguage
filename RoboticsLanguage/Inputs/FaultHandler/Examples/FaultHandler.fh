@@ -17,24 +17,24 @@ topics:
 
 nodes:
     - name: /supervisor
-      on_fault: HA001
-        action:
-          script:
-            - restart /supervisor
-            - fault_detection_heartbeat /supervisor reset
-          retry: 3
-          timeout: 5
-          on_fail:
-            failure: FA001
-      on_fault: HA001
-        action:
-          script:
-            - restart /supervisor
-            - fault_detection_heartbeat /supervisor reset
-          retry: 3
-          timeout: 5
-          on_fail:
-            failure: FA001
+        on_fault: HA001
+          action:
+            script:
+              - restart /supervisor
+              - fault_detection_heartbeat /supervisor reset
+            retry: 3
+            timeout: 5
+            on_fail:
+              failure: FA001
+        on_fault: HA001
+          action:
+            script:
+              - restart /supervisor
+              - fault_detection_heartbeat /supervisor reset
+            retry: 3
+            timeout: 5
+            on_fail:
+              failure: FA001
 
 
     - name: /test
