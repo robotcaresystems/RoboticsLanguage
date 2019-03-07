@@ -75,6 +75,9 @@ def parse(text, parameters):
   if parameters['Inputs']['FaultHandler']['showRol']:
     Utilities.printSource(rol_code, 'coffeescript', parameters)
 
+  if parameters['Inputs']['FaultHandler']['showYAML']:
+    Utilities.printParameters(discriptive_dictionary, parameters)
+
   # parse generated rol code
   code, parameters = Parse.parse(rol_code, parameters)
 

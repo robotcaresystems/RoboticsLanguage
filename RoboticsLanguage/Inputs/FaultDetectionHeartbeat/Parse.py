@@ -38,6 +38,9 @@ def parse(text, parameters):
   if parameters['Inputs']['FaultDetectionHeartbeat']['showRol']:
     Utilities.printSource(rol_code, 'coffeescript', parameters)
 
+  if parameters['Inputs']['FaultDetectionHeartbeat']['showYAML']:
+    Utilities.printParameters(text_dictionary, parameters)
+
   # parse generated rol code
   code, parameters = Parse.parse(rol_code, parameters)
 

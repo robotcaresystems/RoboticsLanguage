@@ -31,4 +31,8 @@ parameters = {
 
 command_line_flags = {
     'addingNewMessages': {'suppress': True},
+    'topicDefinitions': {'suppress': True},
+    'buildDependencies': {'suppress': True},
+    'runDependencies': {'suppress': True},
+    'messageDependencies': {'suppress': True},
 }

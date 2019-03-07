@@ -1,20 +1,14 @@
 nodename: Fault handler
 
-fault_topic: /fault
-fault_type: rrc_msgs/Fault
-
-failure_topic: /failure
-failure_type: rrc_msgs/Failure
-
-action_topic: /action
-action_type: rrc_msgs/Action
-
 parameters:
   float_parameter: 5.6
   integer_parameter: 2
   string_parameter: hello
 
 topics:
+  fault: /fault rrc_msgs/Fault
+  failure: /failure rrc_msgs/Failure
+  action: /action rrc_msgs/Action
   x: /test/integer std_msgs/Int8
   y: /test/float std_msgs/Float32
   z: /test/string std_msgs/String
@@ -23,21 +17,28 @@ topics:
 
 nodes:
     - name: /supervisor
-      fault: HA001
-      retry: 3
-      timeout: 5
-      failure: FA001
+      on_fault: HA001
+        action:
+          script:
+            - restart /supervisor
+            - fault_detection_heartbeat /supervisor reset
+          retry: 3
+          timeout: 5
+          on_fail:
+            failure: FA001
+      on_fault: HA001
+        action:
+          script:
+            - restart /supervisor
+            - fault_detection_heartbeat /supervisor reset
+          retry: 3
+          timeout: 5
+          on_fail:
+            failure: FA001
 
-    - name: /navigator
-      fault: HA002
-      retry: 3
-      timeout: 5
-      failure: FA002
 
     - name: /test
-      fault: HA002
-      retry: 3
-      timeout: 5
+      on_fault: HA002
       conditions:
         - if: x > 0
           then:
@@ -47,7 +48,7 @@ nodes:
             if: x < 1
             then:
               action:
-                topic:
+                command: x = 3
                 script: restart_navigation
             else:
               if: y < 1
