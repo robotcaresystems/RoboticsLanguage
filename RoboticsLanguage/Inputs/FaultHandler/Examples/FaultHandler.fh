@@ -16,27 +16,26 @@ topics:
   q: /test/array std_msgs/Float32MultiArray
 
 nodes:
-    - node:
-      name: /supervisor
+    - node: /supervisor
       faults:
         - on_fault: HA001
-            action:
-              script:
-                - terminator /supervisor
-                - fault_detection_heartbeat /supervisor reset
-              retry: 3
-              timeout: 5
-              on_fail:
-                failure: FA001
+          action:
+            script:
+              - terminator /supervisor
+              - fault_detection_heartbeat /supervisor reset
+            retry: 3
+            timeout: 5
+            on_fail:
+              failure: FA001
         - on_fault: HA001
-            action:
-              script:
-                - restart /supervisor
-                - fault_detection_heartbeat /supervisor reset
-              retry: 3
-              timeout: 5
-              on_fail:
-                failure: FA001
+          action:
+            script:
+              - restart /supervisor
+              - fault_detection_heartbeat /supervisor reset
+            retry: 3
+            timeout: 5
+            on_fail:
+              failure: FA001
 
 
     - name: /test
