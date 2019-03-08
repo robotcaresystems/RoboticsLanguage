@@ -9,5 +9,3 @@
 #    Copyright: {{parameters.Information.software.copyright}}
 #
 #   {{parameters.Information.software.longLicense|wordwrap(wrapstring='\n#   ')}}
-#
-#   {{parameters.Information.software.longLicense|wordwrap(wrapstring='\n#   ')}}
