@@ -1,1 +1,0 @@
-# Fault Tolerance system Documentation
