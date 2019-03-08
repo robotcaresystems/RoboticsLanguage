@@ -60,8 +60,8 @@
   });
 
   node_{{node.name}}.subscribe(function(message) {
-    $('#icon_{{node.fault}}').removeClass('red');
-    $('#icon_{{node.fault}}').addClass('green');
+    $('#icon_{{parameters.Inputs.FaultDetectionHeartbeat.data.fault_prefix}}{{node.name}}').removeClass('red');
+    $('#icon_{{parameters.Inputs.FaultDetectionHeartbeat.data.fault_prefix}}{{node.name}}').addClass('green');
   });
 
   {% endfor %}
@@ -71,7 +71,7 @@
   var topic_fault = new ROSLIB.Topic({
     ros: ros,
     name: '{{parameters.Inputs.FaultDetectionHeartbeat.data.fault_topic}}',
-    messageType: '{{parameters.node.name|underscore}}/Fault',
+    messageType: '{{parameters.Inputs.FaultDetectionHeartbeat.data.fault_type}}',
   });
 
   // subscribe function
@@ -80,15 +80,15 @@
     var utcDate = new Date(Date.now());
 
     // add fault to history
-    s = $('#history').html() + '[' + utcDate.toUTCString() + '] ' + message.code.data + ' - ' + message.cause.data + '\n';
+    s = $('#history').html() + '[' + utcDate.toUTCString() + '] ' + message.code + ' - ' + message.cause + '\n';
     $('#history').html(s);
 
     // update last occurance field in faults table
-    $('#last_' + message.code.data).html(utcDate);
+    $('#last_' + message.code).html(utcDate);
 
     //update icon
-    $('#icon_' + message.code.data).removeClass('green');
-    $('#icon_' + message.code.data).addClass('red');
+    $('#icon_' + message.code).removeClass('green');
+    $('#icon_' + message.code).addClass('red');
 
   });
 
@@ -137,8 +137,8 @@
 
       {% for node in parameters.Inputs.FaultDetectionHeartbeat.data.nodes %}
       <tr>
-        <td ><i id="icon_{{node.fault}}" class="red circle icon"></i></td>
-        <td id="last_{{node.fault}}"> -- </td>
+        <td ><i id="icon_{{parameters.Inputs.FaultDetectionHeartbeat.data.fault_prefix}}{{node.name}}" class="red circle icon"></i></td>
+        <td id="last_{{parameters.Inputs.FaultDetectionHeartbeat.data.fault_prefix}}{{node.name}}"> -- </td>
         <td >{{node.name}}</td>
         <td >{{parameters.Inputs.FaultDetectionHeartbeat.data.fault_prefix}}{{node.name}}</td>
         <td >{{node.heartbeat}}</td>

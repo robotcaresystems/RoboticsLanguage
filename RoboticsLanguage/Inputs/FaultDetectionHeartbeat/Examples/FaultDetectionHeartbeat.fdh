@@ -2,8 +2,7 @@
 nodename: examples fault detection heartbeat
 
 fault_topic: /fault
-# fault_type: your_own_definition/Fault
-fault_type: rrc_msgs/Fault
+fault_type: example_fault_tolerance_system/Fault
 
 fault_prefix: hb_
 
