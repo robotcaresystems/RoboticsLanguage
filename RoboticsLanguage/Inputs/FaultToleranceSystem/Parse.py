@@ -32,4 +32,7 @@ def parse(text, parameters):
     Utilities.logErrors(Utilities.formatLxmlErrorMessage(error, text = text),parameters)
     sys.exit(1)
 
+  # Force output to be Fault Tolerace system
+  parameters['globals']['output'] = 'FaultToleranceSystem'
+
   return code, parameters

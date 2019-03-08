@@ -15,51 +15,43 @@ topics:
   w: /test/struct geometry_msgs/Pose
   q: /test/array std_msgs/Float32MultiArray
 
-nodes:
-    - node: supervisor
-      faults:
-        - on_fault: HA001
-          action:
-            script:
-              - terminator /supervisor
-              - fault_detection_heartbeat /supervisor reset
-            retry: 3
-            timeout: 5
-            on_fail:
-              failure: FA001
-        - on_fault: HA001
-          action:
-            script:
-              - restart /supervisor
-              - fault_detection_heartbeat /supervisor reset
-            retry: 3
-            timeout: 5
-            on_fail:
-              failure: FA001
+faults:
+    - fault: hb_supervisor
+      action:
+        script:
+          - terminator /supervisor
+          - fault_detection_heartbeat /supervisor reset
+      retry: 3
+      timeout: 5
+      on_fail:
+        failure: fa_supervisor
 
-
-    - name: test
-      on_fault: HA002
-      conditions:
-        - if:
-            condition: x > 0
-            then:
-              failure: FA002
-        - if:
-            condition: state == "navigation"
-            then:
-              if:
-                condition: x < 1
-                then:
-                  action:
-                    command: x = 3
-                    script: restart_navigation
-                else:
-                  if:
-                    condition: y < 1
-                    then:
-                      action:
-                        failure: FA002c
-                    else:
-                      action:
-                        fault: FA002c
+    - fault: hb_navigator
+      retry: 3
+      timeout: 5
+      on_fail:
+        failure: fa_navigator
+      action:
+        conditions:
+          - if:
+              condition: x > 0
+              then:
+                failure: FA002
+          - if:
+              condition: state == "navigation"
+              then:
+                if:
+                  condition: x < 1
+                  then:
+                    action:
+                      command: x = 3
+                      script: restart_navigation
+                  else:
+                    if:
+                      condition: y < 1
+                      then:
+                        action:
+                          failure: FA002c
+                      else:
+                        action:
+                          fault: FA002c

@@ -1,0 +1,7 @@
+node(
+  name:'example Fault Tolerance system',
+
+  initialise: block(
+    print('FaultToleranceSystem')
+  )
+)

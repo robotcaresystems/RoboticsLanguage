@@ -9,17 +9,32 @@
 #    Copyright: copyright
 #
 
-from RoboticsLanguage.Base.Types import arguments, optional, returns
+from RoboticsLanguage.Base.Types import arguments, returns
 
 
 language = {
-  '{fts}word': {
-    'definition': {
-      arguments: arguments('anything'),
-      returns: returns('nothing')
+    '{fts}fault_handler': {
+        'definition': {arguments: arguments('anything'), returns: returns('nothing')},
+        'output': {'Cpp': '', 'Python': ''}
     },
-    'output': {
-      'RosCpp': 'ROS_INFO("{{text}}")'
-    }
-  }
+    '{fts}fault_detection_topics': {
+        'definition': {arguments: arguments('anything'), returns: returns('nothing')},
+        'output': {'Cpp': '', 'Python': ''}
+    },
+    '{fts}failure_handler': {
+        'definition': {arguments: arguments('anything'), returns: returns('nothing')},
+        'output': {'Cpp': '', 'Python': ''}
+    },
+    '{fts}name': {
+        'definition': {arguments: arguments('anything'), returns: returns('nothing')},
+        'output': {'Cpp': '', 'Python': ''}
+    },
+    '{fts}fault_detection_processes': {
+        'definition': {arguments: arguments('anything'), returns: returns('nothing')},
+        'output': {'Cpp': '', 'Python': ''}
+    },
+    '{fts}fault_detection_heartbeat': {
+        'definition': {arguments: arguments('anything'), returns: returns('nothing')},
+        'output': {'Cpp': '', 'Python': ''}
+    },
 }

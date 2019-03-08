@@ -1,0 +1,49 @@
+<<<header->>>
+cmake_minimum_required(VERSION 2.8.3)
+project({{parameters.node.name|underscore }})
+
+## Find catkin and any catkin packages
+find_package(catkin REQUIRED COMPONENTS
+    message_generation
+    std_msgs
+    <<<'findPackage'|group>>>
+)
+
+add_message_files(
+  FILES
+  Fault.msg
+  Failure.msg
+  <<<'addMessageFiles'|group>>>
+)
+
+generate_messages(
+   DEPENDENCIES
+   std_msgs
+   <<<'generateMessages'|group>>>
+)
+
+## Declare a catkin package
+catkin_package(
+  CATKIN_DEPENDS
+    message_runtime
+    std_msgs
+    <<<'catkinDepends'|group>>>
+)
+
+###########
+## Build ##
+###########
+
+## Specify additional locations of header files
+## Your package locations should be listed before other locations
+include_directories(
+  ${catkin_INCLUDE_DIRS}
+  <<<'includeDirectories'|group>>>
+)
+
+install(DIRECTORY
+          launch
+        DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+)
+
+<<<'extras'|group>>>
