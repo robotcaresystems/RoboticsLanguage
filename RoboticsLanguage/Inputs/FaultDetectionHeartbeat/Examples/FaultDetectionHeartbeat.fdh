@@ -3,14 +3,15 @@ nodename: examples fault detection heartbeat
 
 fault_topic: /fault
 # fault_type: your_own_definition/Fault
+fault_type: rrc_msgs/Fault
+
+fault_prefix: hb_
 
 nodes:
   - name: supervisor
     heartbeat: 1
     startup_time: 3
-    fault: HA001
 
   - name: navigator
     heartbeat: 2
     startup_time: 5
-    fault: HA002

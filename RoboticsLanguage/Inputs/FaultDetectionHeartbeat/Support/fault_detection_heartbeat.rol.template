@@ -19,7 +19,7 @@ node(
 
       define checkFault_{{underscore(node.name)}}(last_expected in Cpp<{const ros::TimerEvent&}>):
         block(
-            fault.code = '{{node.fault}}',
+            fault.code = '{{fault_prefix}}{{node.name}}',
             fault.cause = 'heartbeat {{node.name}} timeout',
             fault.description = 'Node {{node.name}} heartbeat has stopped for longer than {{node.heartbeat}} seconds.'
           ),

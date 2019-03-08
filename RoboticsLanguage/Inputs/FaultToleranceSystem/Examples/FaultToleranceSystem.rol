@@ -1,0 +1,8 @@
+node(
+  name:'example Fault Tolerance system',
+
+  initialise: block(
+    # the Fault Tolerance system mini-language
+    FaultToleranceSystem<{  word: Hello  }>
+  )
+)

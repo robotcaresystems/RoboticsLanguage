@@ -124,15 +124,6 @@
 
   <h2>Nodes</h2>
 
-<!-- {'data': {'fault_topic': '/fault',
-                                      'nodename': 'watchdog',
-                                      'nodes': [{'fault': 'HA001',
-                                                 'heartbeat': 0.25,
-                                                 'name': 'test'},
-                                                {'fault': 'HA002',
-                                                 'heartbeat': 0.1,
-                                                 'name': 'other'}]}, -->
-
   <table class="ui celled table">
     <thead>
       <tr><th></th>
@@ -149,7 +140,7 @@
         <td ><i id="icon_{{node.fault}}" class="red circle icon"></i></td>
         <td id="last_{{node.fault}}"> -- </td>
         <td >{{node.name}}</td>
-        <td >{{node.fault}}</td>
+        <td >{{parameters.Inputs.FaultDetectionHeartbeat.data.fault_prefix}}{{node.name}}</td>
         <td >{{node.heartbeat}}</td>
       </tr>
       {% endfor %}
