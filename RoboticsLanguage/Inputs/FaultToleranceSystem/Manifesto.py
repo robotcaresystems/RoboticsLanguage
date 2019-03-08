@@ -12,7 +12,7 @@ manifesto = {
   'packageName': 'Fault Tolerance system',
   'packageShortName': 'FaultToleranceSystem',
   'fileFormat': 'fts',
-  'version': '0.0.0',
+  'version': '0.0.1',
 
   'information': {
     'author':

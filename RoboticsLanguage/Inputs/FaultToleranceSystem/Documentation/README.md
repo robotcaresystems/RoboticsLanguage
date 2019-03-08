@@ -52,3 +52,17 @@ Running the following shell command will create a ros node that launches all the
 ```shell
 rol FaultToleranceSystems.fts --compile
 ```
+
+To test you can use:
+
+```shell
+rol FaultToleranceSystems.fts --launch
+```
+
+
+
+For deployment in the robot you should use the resulting launch file, e.g.:
+
+```shell
+roslaunch example_fault_tolerance_system example_fault_tolerance_system.launch
+```

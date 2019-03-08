@@ -11,30 +11,16 @@
 
 from RoboticsLanguage.Base.Types import arguments, returns
 
+default = {
+    'definition': {arguments: arguments('anything'), returns: returns('nothing')},
+    'output': {'Cpp': '', 'Python': ''}
+}
 
 language = {
-    '{fts}fault_handler': {
-        'definition': {arguments: arguments('anything'), returns: returns('nothing')},
-        'output': {'Cpp': '', 'Python': ''}
-    },
-    '{fts}fault_detection_topics': {
-        'definition': {arguments: arguments('anything'), returns: returns('nothing')},
-        'output': {'Cpp': '', 'Python': ''}
-    },
-    '{fts}failure_handler': {
-        'definition': {arguments: arguments('anything'), returns: returns('nothing')},
-        'output': {'Cpp': '', 'Python': ''}
-    },
-    '{fts}name': {
-        'definition': {arguments: arguments('anything'), returns: returns('nothing')},
-        'output': {'Cpp': '', 'Python': ''}
-    },
-    '{fts}fault_detection_processes': {
-        'definition': {arguments: arguments('anything'), returns: returns('nothing')},
-        'output': {'Cpp': '', 'Python': ''}
-    },
-    '{fts}fault_detection_heartbeat': {
-        'definition': {arguments: arguments('anything'), returns: returns('nothing')},
-        'output': {'Cpp': '', 'Python': ''}
-    },
+    '{fts}name': default,
+    '{fts}fault_handler': default,
+    '{fts}failure_handler': default,
+    '{fts}fault_detection_topics': default,
+    '{fts}fault_detection_processes': default,
+    '{fts}fault_detection_heartbeat': default,
 }
