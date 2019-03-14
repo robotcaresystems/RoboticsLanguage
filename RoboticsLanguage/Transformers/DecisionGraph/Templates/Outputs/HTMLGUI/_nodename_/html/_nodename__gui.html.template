@@ -74,21 +74,23 @@
 
   {% for graph in parameters.Transformers.DecisionGraph.graphs %}
 
-  <div class="title">
-    <i class="dropdown icon"></i> {{graph}}
-  </div>
-  <div class="content">
-    <div id="dg_{{graph}}"></div>
-  </div>
-</div>
+      <div class="title">
+        <i class="dropdown icon"></i> {{graph}}
+      </div>
+      <div class="content hidden">
+        <div id="dg_{{graph}}"></div>
+      </div>
+    {% endfor -%}
+    </div>
     <style type="text/css">
+    {% for graph in parameters.Transformers.DecisionGraph.graphs %}
         #dg_{{graph}} {
           width: 550px;
           height: 400px;
         }
+        {% endfor -%}
       </style>
 
-  {% endfor -%}
 
 {% endif %}
 

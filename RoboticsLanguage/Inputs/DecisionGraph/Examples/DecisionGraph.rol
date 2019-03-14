@@ -25,7 +25,7 @@ node(
       return(True),
 
     # the Decision Graph mini-language
-    my_graph = DecisionGraph<{
+    DecisionGraph<{
 
       # name of the decision graph
       name:my_graph;
@@ -51,7 +51,37 @@ node(
       node1 -> node2;
       node3 -> node4;
 
-        }>
+        }>,
+
+
+        # the Decision Graph mini-language
+        DecisionGraph<{
+
+          # name of the decision graph
+          name:ok;
+
+          # beginning of the decision graph
+          initial:z;
+
+          # a decision based on the boolean function "z" which needs to be defined
+          z -T-> x
+                     -F-> y;
+
+
+          # a decision based on the boolean expression inside the parenthesis. A function is created automatically
+          y|x>0| -T-> z
+                          -F-> w;
+
+          # a switch function based on the variable "x"
+          w|x| -|1|-> a
+                     -|2|-> x
+                     -|3|-> z;
+
+          # a sequence of functions
+          x -> a;
+
+            }>
+
 
   )
 )
