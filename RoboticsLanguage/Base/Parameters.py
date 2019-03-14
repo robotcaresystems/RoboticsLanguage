@@ -82,6 +82,8 @@ parameters = {
 
     'errors': [],
 
+    'parsing': {'position':0},
+
     'Information':
     {
         'user':
@@ -292,6 +294,7 @@ command_line_flags = {
     'globals:loadOrder': {'suppress': True},
     'globals:skipCopyFiles': {'suppress': True},
     'globals:skipTemplateFiles': {'suppress': True},
+    'parsing:position': {'suppress': True},
     'symbols:functions': {'suppress': True},
     'symbols:variables': {'suppress': True},
     'symbols:types': {'suppress': True},

@@ -184,7 +184,10 @@ def parse(text, parameters):
 
   except parsley.ParseError as error:
     # with Error.exception(parameters, stop=True)
-    Utilities.logErrors(Utilities.formatParsleyErrorMessage(error), parameters)
+    try:
+      Utilities.logErrors(Utilities.formatParsleyErrorMessage(error), parameters)
+    except:
+      pass
     sys.exit(1)
 
   try:

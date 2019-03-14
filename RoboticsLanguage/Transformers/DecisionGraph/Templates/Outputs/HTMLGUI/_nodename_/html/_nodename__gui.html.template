@@ -1,0 +1,95 @@
+
+{% set head %}
+{% if code|xpaths('//dg:DecisionGraph', {'dg':'dg'})|length > 0 %}
+<!-- VisJS for easy diagrams -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.css" />
+{% endif %}
+{% endset %}
+
+
+{% set afterLoad %}
+
+{% for graph in parameters.Transformers.DecisionGraph.graphs %}
+  // create an array with nodes
+  var nodes_{{graph}} = new vis.DataSet([
+  {% for node in parameters.Transformers.DecisionGraph.graphs[graph].nodes %}
+    {id: {{parameters.Transformers.DecisionGraph.graphs[graph].nodes[node].id}},
+    label: '{{parameters.Transformers.DecisionGraph.graphs[graph].nodes[node].label|default(node)}}',
+    {% if parameters.Transformers.DecisionGraph.graphs[graph].nodes[node].type=='function'%}
+    shape: 'box',
+    color: {background:'rgb(200,200,255)',
+     border:'black',highlight:{background:'rgb(220,220,255)',border:'black'},hover:{background:'rgb(220,220,255)',border:'blue'}}},
+     {%else%}
+     color: {background:'rgb(200,255,200)',
+      border:'black',highlight:{background:'rgb(220,255,220)',border:'black'},hover:{background:'rgb(220,255,220)',border:'blue'}}},
+         {% endif %}
+
+  {% endfor %}
+
+  ]);
+
+  // create an array with edges
+  var edges_{{graph}} = new vis.DataSet([
+    {% for arc in parameters.Transformers.DecisionGraph.graphs[graph].arcs -%}
+    {from: {{arc.from}},
+     to: {{arc.to}},
+     label: '{{arc.label|replace("'", "\\\'")}}',
+     arrows:'to',
+     color:'black'
+    },
+    {% endfor -%}
+  ]);
+
+  // create a network
+  var container_{{graph}} = document.getElementById('dg_{{graph}}');
+  var data_{{graph}} = {
+    nodes: nodes_{{graph}},
+    edges: edges_{{graph}}
+  };
+  var options_{{graph}} = {};
+
+  var network_{{graph}} = new vis.Network(container_{{graph}}, data_{{graph}}, options_{{graph}});
+  network_{{graph}}.setSize(550,400);
+  network_{{graph}}.moveTo({position: {x: 550, y: 400}});
+  network_{{graph}}.fit();
+
+
+  $('#decision_graph_accordion').accordion({exclusive: false});
+
+  {% endfor %}
+
+{% endset %}
+
+
+{% set body %}
+
+{% if code|xpaths('//dg:DecisionGraph', {'dg':'dg'})|length > 0 %}
+
+  <h1>Decision Graphs</h1>
+
+
+    <div class="ui styled accordion" id="decision_graph_accordion">
+
+
+  {% for graph in parameters.Transformers.DecisionGraph.graphs %}
+
+  <div class="title">
+    <i class="dropdown icon"></i> {{graph}}
+  </div>
+  <div class="content">
+    <div id="dg_{{graph}}"></div>
+  </div>
+</div>
+    <style type="text/css">
+        #dg_{{graph}} {
+          width: 550px;
+          height: 400px;
+        }
+      </style>
+
+  {% endfor -%}
+
+{% endif %}
+
+{% endset %}
