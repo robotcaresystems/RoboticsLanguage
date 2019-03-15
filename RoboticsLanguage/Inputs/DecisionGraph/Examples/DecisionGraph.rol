@@ -1,7 +1,7 @@
 node(
   name:'example Decision Graph',
 
-  initialise: block(
+  definitions: block(
 
     x in Signals(Reals, rosTopic:'/decision_graph/test'),
 
@@ -83,5 +83,9 @@ node(
             }>
 
 
-  )
+  ),
+
+  initialise:
+    block(
+      )
 )

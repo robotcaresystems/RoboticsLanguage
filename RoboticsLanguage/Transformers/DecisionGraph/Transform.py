@@ -13,6 +13,5 @@
 from RoboticsLanguage.Base import Utilities
 
 def transform(code, parameters):
-  Utilities.logging.info("Transforming Decision Graph...")
 
   return code, parameters
