@@ -68,6 +68,8 @@ def parse(text, parameters):
 
   name = code.xpath('//dg:DecisionGraph/dg:name/text()', **namespace)[0]
 
+  prefix = 'dg_' + name + '_'
+
   functions = etree.SubElement(code, '{dg}functions')
 
   arcs = []
@@ -93,7 +95,7 @@ def parse(text, parameters):
           {'begin': node.attrib['name'], 'end': false_node[0].attrib['name'], 'label': 'false'})
 
     # function definitions
-    function_definition = etree.SubElement(functions, 'function_definition', attrib={'name': node.attrib['name']})
+    function_definition = etree.SubElement(functions, 'function_definition', attrib={'name': prefix + node.attrib['name']})
     function_content = etree.SubElement(function_definition, 'function_content')
     if_statement = etree.SubElement(function_content, 'if')
 
@@ -103,8 +105,13 @@ def parse(text, parameters):
     else:
       etree.SubElement(if_statement, 'function', attrib={'name': node.attrib['name']})
 
-    etree.SubElement(if_statement, 'function', attrib={'name': true_node[0].attrib['name']})
-    etree.SubElement(if_statement, 'function', attrib={'name': false_node[0].attrib['name']})
+    block_true = etree.SubElement(if_statement, 'block')
+    etree.SubElement(block_true, 'function', attrib={'name': true_node[0].attrib['name']})
+    etree.SubElement(block_true, 'function', attrib={'name': prefix + true_node[0].attrib['name']})
+
+    block_false = etree.SubElement(if_statement, 'block')
+    etree.SubElement(block_false, 'function', attrib={'name': false_node[0].attrib['name']})
+    etree.SubElement(block_false, 'function', attrib={'name': prefix + false_node[0].attrib['name']})
 
   # switches
   for node in code.xpath('//dg:switch', **namespace):
@@ -114,6 +121,16 @@ def parse(text, parameters):
     for case in node.xpath('.//dg:case', **namespace):
       arcs.append({'begin': node.attrib['name'], 'end': case.xpath('.//dg:node/@name', namespaces={
                   'dg': 'dg'})[0], 'label': case.xpath('.//dg:expression/@text', **namespace)[0]})
+
+    # # function definitions
+    # function_definition = etree.SubElement(functions, 'function_definition', attrib={'name': prefix + node.attrib['name']})
+    # function_content = etree.SubElement(function_definition, 'function_content')
+    # if_statement = etree.SubElement(function_content, 'if')
+    #
+    # rol_code, rol_parameters = RoL.parse('expression(' + expression[0].text + ')', parameters)
+    # if_statement.insert(0, rol_code.getchildren()[0])
+
+
 
   # sequences
   for node in code.xpath('//dg:sequence', **namespace):
@@ -125,9 +142,10 @@ def parse(text, parameters):
     arcs.append({'begin': node.attrib['name'], 'end': sequence_to})
 
     # function definitions
-    function_definition = etree.SubElement(functions, 'function_definition', attrib={'name': node.attrib['name']})
+    function_definition = etree.SubElement(functions, 'function_definition', attrib={'name': prefix + node.attrib['name']})
     function_content = etree.SubElement(function_definition, 'function_content')
     etree.SubElement(function_content, 'function', attrib={'name': sequence_to})
+    etree.SubElement(function_content, 'function', attrib={'name': prefix + sequence_to})
     etree.SubElement(function_content, 'return')
 
 
