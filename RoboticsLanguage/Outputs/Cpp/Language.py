@@ -218,13 +218,13 @@ language = {
     'switch': {
         'output':
         {
-            'Cpp': '{{children||join(" else ")}}'
+            'Cpp': '{{children[1:]|join(" else ")}}'
         }
     },
     'case': {
         'output':
         {
-            'Cpp': ' if ({{code.getparent().getchildren()[0].attrib[language]}} == {{children[0]}}) { {{children[1]}} }'
+            'Cpp': ' if ({{code.getparent().getchildren()[0].attrib[language]}} == {{children[0]}}) { {{children[1]}}; }'
         }
     },
 
