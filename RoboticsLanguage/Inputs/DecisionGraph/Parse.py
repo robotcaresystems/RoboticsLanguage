@@ -76,8 +76,16 @@ def parse(text, parameters):
 
   arcs_counter = 1
 
+  # # add extra topic for publishing arcs
+  rol_code, rol_parameters = RoL.parse('expression(dg_' + name + '_publisher in Signals(Integers,rosTopic:"/temporary"))', parameters)
+
+  functions.insert(0, rol_code.getchildren()[0])
+
   # decisions
   for node in code.xpath('//dg:decision', **namespace):
+
+    arc_true = None
+    arc_false = None
 
     # parameter definitions
     nodes[node.attrib['name']]['type'] = 'decision'
@@ -90,6 +98,7 @@ def parse(text, parameters):
     if len(true_node) > 0:
       arcs.append(
           {'begin': node.attrib['name'], 'end': true_node[0].attrib['name'], 'label': 'true', 'id':arcs_counter})
+      arc_true = arcs_counter
       arcs_counter = arcs_counter + 1
 
 
@@ -97,6 +106,7 @@ def parse(text, parameters):
     if len(false_node) > 0:
       arcs.append(
           {'begin': node.attrib['name'], 'end': false_node[0].attrib['name'], 'label': 'false', 'id':arcs_counter})
+      arc_false = arcs_counter
       arcs_counter = arcs_counter + 1
 
     # function definitions
@@ -111,9 +121,13 @@ def parse(text, parameters):
       etree.SubElement(if_statement, 'function', attrib={'name': node.attrib['name']})
 
     block_true = etree.SubElement(if_statement, 'block')
+    rol_code, rol_parameters = RoL.parse('expression(' + prefix + 'publisher = ' + str(arc_true) + ')', parameters)
+    block_true.insert(0, rol_code.getchildren()[0])
     etree.SubElement(block_true, 'function', attrib={'name': prefix + true_node[0].attrib['name']})
 
     block_false = etree.SubElement(if_statement, 'block')
+    rol_code, rol_parameters = RoL.parse('expression(' + prefix + 'publisher = ' + str(arc_false) + ')', parameters)
+    block_false.insert(0, rol_code.getchildren()[0])
     etree.SubElement(block_false, 'function', attrib={'name': prefix + false_node[0].attrib['name']})
 
     nodes[node.attrib['name']]['definition'] = function_definition
@@ -149,6 +163,8 @@ def parse(text, parameters):
       case_statement.insert(0, rol_code.getchildren()[0])
 
       block_case = etree.SubElement(case_statement, 'block')
+      rol_code, rol_parameters = RoL.parse('expression(' + prefix + 'publisher = ' + str(arcs_counter - 1) + ')', parameters)
+      block_case.insert(0, rol_code.getchildren()[0])
       etree.SubElement(block_case, 'function', attrib={'name': prefix + function_to})
 
     nodes[node.attrib['name']]['definition'] = function_definition
@@ -168,6 +184,8 @@ def parse(text, parameters):
     # function definitions
     function_definition = etree.SubElement(functions, 'function_definition', attrib={'name': prefix + node.attrib['name']})
     function_content = etree.SubElement(function_definition, 'function_content')
+    rol_code, rol_parameters = RoL.parse('expression(' + prefix + 'publisher = ' + str(arcs_counter - 1) + ')', parameters)
+    function_content.insert(0, rol_code.getchildren()[0])
     etree.SubElement(function_content, 'function', attrib={'name': node.attrib['name']})
     etree.SubElement(function_content, 'function', attrib={'name': prefix + sequence_to})
 

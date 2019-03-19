@@ -11,9 +11,9 @@
 manifesto = {
   'packageName': 'Decision Graph',
   'packageShortName': 'DecisionGraph',
-  'order': 100,
+  'order': 9,
   'version': '0.0.0',
-  
+
   'information': {
     'author':
     {

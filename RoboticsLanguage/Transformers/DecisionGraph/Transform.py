@@ -8,26 +8,33 @@
 #      Licence: license
 #    Copyright: Robot Care Systems BV
 #
-
+import copy
 from lxml import etree
 from RoboticsLanguage.Base import Utilities
 from RoboticsLanguage.Inputs.RoL import Parse as RoL
 
 
 def transform(code, parameters):
-  namespace = {'namespaces': {'dg': 'dg'}}
-
-  for graph in code.xpath('//dg:DecisionGraph', **namespace):
-    name = graph.xpath('//dg:name/text()', **namespace)[0]
-
-    node_name = Utilities.underscore(code.xpath(
-        '/node/option[@name="name"]/string')[0].text)
+  try:
+    namespace = {'namespaces': {'dg': 'dg'}}
 
     definitions = code.xpath('/node/option[@name="definitions"]/block')[0]
 
-    rol_code, rol_parameters = RoL.parse(
-        'expression(dg_' + name + '_publisher in Signals(Integers,rosTopic:"/' + node_name + '/' + name + '"))', parameters)
+    node_name = Utilities.underscore(code.xpath('/node/option[@name="name"]/string')[0].text)
 
-    definitions.insert(0, rol_code.getchildren()[0])
+    # add a topic to publish progress
+    for graph in code.xpath('//dg:DecisionGraph/dg:functions', **namespace):
+
+      name = graph.xpath('//dg:name/text()', **namespace)[0]
+
+      ros_topic = graph.xpath('.//Signals/option[@name="rosTopic"]/string')[0]
+
+      ros_topic.text = '/decision_graphs/' + node_name + '/' + name
+
+      map(lambda x: definitions.insert(0, x), copy.deepcopy(graph.getchildren()))
+
+      graph.getparent().remove(graph)
+  except Exception as e:
+    print e
 
   return code, parameters

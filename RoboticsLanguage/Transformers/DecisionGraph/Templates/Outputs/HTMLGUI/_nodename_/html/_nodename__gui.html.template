@@ -12,27 +12,48 @@
 var dg_nodes_{{graph}} = 0;
 var dg_edges_{{graph}} = 0;
 var dg_network_{{graph}} = 0;
-
-var dg_{{graph}}_subscriber = new ROSLIB.Topic({
- ros: ros,
- name: '/decision_graphs/{{parameters.node.name|underscore}}/{{graph}}',
- messageType: 'std_msgs/Int32',
-});
-
-// subscribe function
-dg_{{graph}}_subscriber.subscribe(function(message) {
-  console.log(message);
-  dg_edges_{{graph}}.update([{id: message.data, color: {color: 'red'}}]);
-});
-
+var dg_animation_{{graph}} = [ {% for arc in parameters.Transformers.DecisionGraph.graphs[graph].arcs -%}0,{% endfor %} ];
+;
 {% endfor %}
-
 {% endset %}
 
 
 {% set afterLoad %}
 
 {% for graph in parameters.Transformers.DecisionGraph.graphs %}
+  // subscribe to topic
+  var dg_{{graph}}_subscriber = 0;
+   dg_{{graph}}_subscriber = new ROSLIB.Topic({
+   ros: ros,
+   name: '/decision_graphs/{{parameters.node.name|underscore}}/{{graph}}',
+   messageType: 'std_msgs/Int32',
+  });
+
+  // subscribe function
+  dg_{{graph}}_subscriber.subscribe(function(message) {
+    console.log(message);
+    dg_edges_{{graph}}.update([{id: message.data, color: {color: 'rgb(255,0,0)'}}]);
+    dg_animation_{{graph}}[message.data - 1] = 255;
+
+  });
+
+  window.setInterval(function(){
+    for (i = 0; i < {{parameters.Transformers.DecisionGraph.graphs[graph].arcs|length}}; i++) {
+      dg_animation_{{graph}}[i] -= 3;
+      if (dg_animation_{{graph}}[i] < 0)
+      {
+        dg_animation_{{graph}}[i] = 0;
+      }
+    };
+
+    dg_edges_{{graph}}.update([
+    {% for i in range(parameters.Transformers.DecisionGraph.graphs[graph].arcs|length) -%}
+    {id: {{i+1}}, color: {color: 'rgb('+ dg_animation_{{graph}}[{{i}}] +',0,0)'}},
+    {% endfor %}
+    ]);
+
+  }, 100);
+
   // create an array with nodes
   dg_nodes_{{graph}} = new vis.DataSet([
   {% for node in parameters.Transformers.DecisionGraph.graphs[graph].nodes %}
