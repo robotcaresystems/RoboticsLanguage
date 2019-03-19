@@ -1,0 +1,57 @@
+node(
+  name:'example Decision Graph',
+
+  definitions: block(
+
+    x in Signals(Integers, rosTopic:'/decision_graph/test', onNew:dg_my_graph_condition1()),
+
+    define condition1() -> Booleans:
+      return(x == 0),
+
+    define node1():
+      print('node 1'),
+
+    define node2():
+      print('node 2'),
+
+    define node3():
+      print('node 3'),
+
+    define node4():
+      print('node 4'),
+
+    # the Decision Graph mini-language
+    DecisionGraph<{
+
+      # name of the decision graph
+      name:my_graph;
+
+      # beginning of the decision graph
+      initial:condition1;
+
+      # a decision based on the boolean function "condition1" which needs to be defined
+      condition1 -T-> node1
+                 -F-> condition2;
+
+
+      # a decision based on the boolean expression inside the parenthesis. A function is created automatically
+      condition2|x<0| -T-> node3
+                      -F-> switch1;
+
+      # a switch function based on the variable "x"
+      switch1|x| -|1|-> node2
+                 -|2|-> node1
+                 -|3|-> node3;
+
+      # a sequence of functions
+      node1 -> node2;
+      node3 -> node4;
+
+        }>
+
+  ),
+
+  initialise:
+    block(
+      )
+)

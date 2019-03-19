@@ -89,7 +89,8 @@ def serialise(code, parameters, keywords, language, filters=default_template_eng
           text=Utilities.text(code),
           tag=code.tag,
           parameters=parameters,
-          code=code)
+          code=code,
+          language=language)
 
       # save text in attribute
       code.attrib[language] = snippet
