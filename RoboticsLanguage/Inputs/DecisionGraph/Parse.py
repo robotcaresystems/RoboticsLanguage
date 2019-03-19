@@ -16,7 +16,7 @@ from RoboticsLanguage.Base import Utilities
 from RoboticsLanguage.Inputs.RoL import Parse as RoL
 
 grammar_definition = """
-name = <letter ( letter | '_' | digit )*>
+name = <letter ( letter | '_' | '.' | digit )*>
 
 end = ';' wws
 
@@ -74,6 +74,8 @@ def parse(text, parameters):
 
   arcs = []
 
+  arcs_counter = 1
+
   # decisions
   for node in code.xpath('//dg:decision', **namespace):
 
@@ -87,12 +89,15 @@ def parse(text, parameters):
     true_node = node.xpath('.//dg:true', **namespace)
     if len(true_node) > 0:
       arcs.append(
-          {'begin': node.attrib['name'], 'end': true_node[0].attrib['name'], 'label': 'true'})
+          {'begin': node.attrib['name'], 'end': true_node[0].attrib['name'], 'label': 'true', 'id':arcs_counter})
+      arcs_counter = arcs_counter + 1
+
 
     false_node = node.xpath('.//dg:false', **namespace)
     if len(false_node) > 0:
       arcs.append(
-          {'begin': node.attrib['name'], 'end': false_node[0].attrib['name'], 'label': 'false'})
+          {'begin': node.attrib['name'], 'end': false_node[0].attrib['name'], 'label': 'false', 'id':arcs_counter})
+      arcs_counter = arcs_counter + 1
 
     # function definitions
     function_definition = etree.SubElement(functions, 'function_definition', attrib={'name': prefix + node.attrib['name']})
@@ -106,29 +111,47 @@ def parse(text, parameters):
       etree.SubElement(if_statement, 'function', attrib={'name': node.attrib['name']})
 
     block_true = etree.SubElement(if_statement, 'block')
-    etree.SubElement(block_true, 'function', attrib={'name': true_node[0].attrib['name']})
     etree.SubElement(block_true, 'function', attrib={'name': prefix + true_node[0].attrib['name']})
 
     block_false = etree.SubElement(if_statement, 'block')
-    etree.SubElement(block_false, 'function', attrib={'name': false_node[0].attrib['name']})
     etree.SubElement(block_false, 'function', attrib={'name': prefix + false_node[0].attrib['name']})
+
+    nodes[node.attrib['name']]['definition'] = function_definition
+
 
   # switches
   for node in code.xpath('//dg:switch', **namespace):
+
+    # parameters
     nodes[node.attrib['name']]['type'] = 'switch'
     expression = node.xpath('.//dg:expression', **namespace)
     nodes[node.attrib['name']]['expression'] = expression[0].text
-    for case in node.xpath('.//dg:case', **namespace):
-      arcs.append({'begin': node.attrib['name'], 'end': case.xpath('.//dg:node/@name', namespaces={
-                  'dg': 'dg'})[0], 'label': case.xpath('.//dg:expression/@text', **namespace)[0]})
 
-    # # function definitions
-    # function_definition = etree.SubElement(functions, 'function_definition', attrib={'name': prefix + node.attrib['name']})
-    # function_content = etree.SubElement(function_definition, 'function_content')
-    # if_statement = etree.SubElement(function_content, 'if')
-    #
-    # rol_code, rol_parameters = RoL.parse('expression(' + expression[0].text + ')', parameters)
-    # if_statement.insert(0, rol_code.getchildren()[0])
+    # code
+    function_definition = etree.SubElement(functions, 'function_definition', attrib={'name': prefix + node.attrib['name']})
+    function_content = etree.SubElement(function_definition, 'function_content')
+    switch_statement = etree.SubElement(function_content, 'switch')
+
+    rol_code, rol_parameters = RoL.parse('expression(' + expression[0].text + ')', parameters)
+    switch_statement.insert(0, rol_code.getchildren()[0])
+
+    for case in node.xpath('.//dg:case', **namespace):
+
+      function_to = case.xpath('.//dg:node/@name', namespaces={'dg': 'dg'})[0]
+
+      arcs.append({'begin': node.attrib['name'], 'end': function_to, 'label': case.xpath('.//dg:expression/@text', **namespace)[0], 'id':arcs_counter})
+      arcs_counter = arcs_counter + 1
+
+      case_expression = case.xpath('.//dg:expression', **namespace)
+      case_statement = etree.SubElement(switch_statement, 'case')
+      rol_code, rol_parameters = RoL.parse('expression(' + case_expression[0].text + ')', parameters)
+
+      case_statement.insert(0, rol_code.getchildren()[0])
+
+      block_case = etree.SubElement(case_statement, 'block')
+      etree.SubElement(block_case, 'function', attrib={'name': prefix + function_to})
+
+    nodes[node.attrib['name']]['definition'] = function_definition
 
 
 
@@ -139,18 +162,30 @@ def parse(text, parameters):
     sequence_to = node.xpath('.//dg:to/@name', **namespace)[0]
 
     # parameters definitions
-    arcs.append({'begin': node.attrib['name'], 'end': sequence_to})
+    arcs.append({'begin': node.attrib['name'], 'end': sequence_to, 'id':arcs_counter})
+    arcs_counter = arcs_counter + 1
 
     # function definitions
     function_definition = etree.SubElement(functions, 'function_definition', attrib={'name': prefix + node.attrib['name']})
     function_content = etree.SubElement(function_definition, 'function_content')
-    etree.SubElement(function_content, 'function', attrib={'name': sequence_to})
+    etree.SubElement(function_content, 'function', attrib={'name': node.attrib['name']})
     etree.SubElement(function_content, 'function', attrib={'name': prefix + sequence_to})
-    etree.SubElement(function_content, 'return')
+
+    nodes[node.attrib['name']]['definition'] = function_definition
 
 
-  # add unique to nodes and arcs
-  map(lambda (x, y): x.update({'id': y}), zip(arcs, range(len(arcs))))
+  # add functions for terminal branches
+  for element in nodes:
+    if 'definition' not in nodes[element].keys():
+      function_definition = etree.SubElement(functions, 'function_definition', attrib={'name': prefix + element})
+      function_content = etree.SubElement(function_definition, 'function_content')
+      etree.SubElement(function_content, 'function', attrib={'name': element})
+
+      nodes[element]['definition'] = function_definition
+
+
+  # add unique id's to nodes and arcs
+  # map(lambda (x, y): x.update({'id': y}), zip(arcs, range(len(arcs))))
   map(lambda (x, y): x.update({'id': y}), zip(
       nodes.itervalues(), range(len(nodes))))
 
@@ -161,13 +196,6 @@ def parse(text, parameters):
   parameters['Transformers']['DecisionGraph']['graphs'][name] = {}
   parameters['Transformers']['DecisionGraph']['graphs'][name]['nodes'] = nodes
   parameters['Transformers']['DecisionGraph']['graphs'][name]['arcs'] = arcs
-
-  # # replace the inside of the 'expression' tags with RoL code
-  # for expression in code.xpath('//dg:expression', **namespace):
-  #
-  #   print expression.text
-  #   # RoL.parse(expression.text, parameters)
-
 
 
   return code, parameters

@@ -3,26 +3,22 @@ node(
 
   definitions: block(
 
-    x in Signals(Reals, rosTopic:'/decision_graph/test'),
+    x in Signals(Integers, rosTopic:'/decision_graph/test', onNew:dg_my_graph_condition1()),
 
-    define condition1():
-      return(True),
+    define condition1() -> Booleans:
+      return(x == 0),
 
     define node1():
       print('node 1'),
-      return(True),
 
     define node2():
       print('node 2'),
-      return(True),
 
     define node3():
       print('node 3'),
-      return(True),
 
     define node4():
       print('node 4'),
-      return(True),
 
     # the Decision Graph mini-language
     DecisionGraph<{
@@ -39,49 +35,19 @@ node(
 
 
       # a decision based on the boolean expression inside the parenthesis. A function is created automatically
-      condition2|x>0| -T-> node3
+      condition2|x<0| -T-> node3
                       -F-> switch1;
 
       # a switch function based on the variable "x"
-      switch1|x| -|'a'|-> node2
-                 -|'b'|-> node1
-                 -|'c'|-> node3;
+      switch1|x| -|1|-> node2
+                 -|2|-> node1
+                 -|3|-> node3;
 
       # a sequence of functions
       node1 -> node2;
       node3 -> node4;
 
-        }>,
-
-
-        # the Decision Graph mini-language
-        DecisionGraph<{
-
-          # name of the decision graph
-          name:ok;
-
-          # beginning of the decision graph
-          initial:z;
-
-          # a decision based on the boolean function "z" which needs to be defined
-          z -T-> x
-                     -F-> y;
-
-
-          # a decision based on the boolean expression inside the parenthesis. A function is created automatically
-          y|x>0| -T-> z
-                          -F-> w;
-
-          # a switch function based on the variable "x"
-          w|x| -|1|-> a
-                     -|2|-> x
-                     -|3|-> z;
-
-          # a sequence of functions
-          x -> a;
-
-            }>
-
+        }>
 
   ),
 

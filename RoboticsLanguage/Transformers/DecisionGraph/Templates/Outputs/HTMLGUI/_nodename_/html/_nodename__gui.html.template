@@ -7,12 +7,34 @@
 {% endif %}
 {% endset %}
 
+{% set beforeLoad %}
+{% for graph in parameters.Transformers.DecisionGraph.graphs %}
+var dg_nodes_{{graph}} = 0;
+var dg_edges_{{graph}} = 0;
+var dg_network_{{graph}} = 0;
+
+var dg_{{graph}}_subscriber = new ROSLIB.Topic({
+ ros: ros,
+ name: '/decision_graphs/{{parameters.node.name|underscore}}/{{graph}}',
+ messageType: 'std_msgs/Int32',
+});
+
+// subscribe function
+dg_{{graph}}_subscriber.subscribe(function(message) {
+  console.log(message);
+  dg_edges_{{graph}}.update([{id: message.data, color: {color: 'red'}}]);
+});
+
+{% endfor %}
+
+{% endset %}
+
 
 {% set afterLoad %}
 
 {% for graph in parameters.Transformers.DecisionGraph.graphs %}
   // create an array with nodes
-  var nodes_{{graph}} = new vis.DataSet([
+  dg_nodes_{{graph}} = new vis.DataSet([
   {% for node in parameters.Transformers.DecisionGraph.graphs[graph].nodes %}
     {id: {{parameters.Transformers.DecisionGraph.graphs[graph].nodes[node].id}},
     label: '{{parameters.Transformers.DecisionGraph.graphs[graph].nodes[node].label|default(node)}}',
@@ -30,9 +52,10 @@
   ]);
 
   // create an array with edges
-  var edges_{{graph}} = new vis.DataSet([
+  dg_edges_{{graph}} = new vis.DataSet([
     {% for arc in parameters.Transformers.DecisionGraph.graphs[graph].arcs -%}
-    {from: {{arc.from}},
+    {id: {{arc.id}},
+     from: {{arc.from}},
      to: {{arc.to}},
      label: '{{arc.label|replace("'", "\\\'")}}',
      arrows:'to',
@@ -42,17 +65,17 @@
   ]);
 
   // create a network
-  var container_{{graph}} = document.getElementById('dg_{{graph}}');
-  var data_{{graph}} = {
-    nodes: nodes_{{graph}},
-    edges: edges_{{graph}}
+  var dg_container_{{graph}} = document.getElementById('dg_{{graph}}');
+  var dg_data_{{graph}} = {
+    nodes: dg_nodes_{{graph}},
+    edges: dg_edges_{{graph}}
   };
-  var options_{{graph}} = {};
+  var dg_options_{{graph}} = {};
 
-  var network_{{graph}} = new vis.Network(container_{{graph}}, data_{{graph}}, options_{{graph}});
-  network_{{graph}}.setSize(550,400);
-  network_{{graph}}.moveTo({position: {x: 550, y: 400}});
-  network_{{graph}}.fit();
+  dg_network_{{graph}} = new vis.Network(dg_container_{{graph}}, dg_data_{{graph}}, dg_options_{{graph}});
+  dg_network_{{graph}}.setSize(550,400);
+  dg_network_{{graph}}.moveTo({position: {x: 550, y: 400}});
+  dg_network_{{graph}}.fit();
 
 
   $('#decision_graph_accordion').accordion({exclusive: false});
