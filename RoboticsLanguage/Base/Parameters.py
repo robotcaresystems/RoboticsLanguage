@@ -82,7 +82,8 @@ parameters = {
 
     'errors': [],
 
-    'parsing': {'position':0},
+    'parsing': {'position':0,
+                'grammars':{}},
 
     'Information':
     {
@@ -295,6 +296,7 @@ command_line_flags = {
     'globals:skipCopyFiles': {'suppress': True},
     'globals:skipTemplateFiles': {'suppress': True},
     'parsing:position': {'suppress': True},
+    'parsing:grammars': {'suppress': True},
     'symbols:functions': {'suppress': True},
     'symbols:variables': {'suppress': True},
     'symbols:types': {'suppress': True},
