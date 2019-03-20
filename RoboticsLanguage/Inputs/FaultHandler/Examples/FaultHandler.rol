@@ -10,21 +10,15 @@ node(name:"Example Fault Handler",
       - fault: hb_supervisor
         retry: 3
         timeout: 5
-        action: fix_supervisor()
+        action: terminator = "/supervisor"
         on_fail: failure.code = "fl_supervisor"
 
       - fault: hb_navigator
         retry: 5
         timeout: 10
-        action: fix_navigator()
+        action: terminator = "/navigator"
         on_fail: failure.code = "fl_navigator"
-    }>,
-
-
-    define fix_supervisor():
-      print('fix supervisor'),
-
-    define fix_navigator():
-      print('fix navigator')
+    }>
+    
   )
 )
