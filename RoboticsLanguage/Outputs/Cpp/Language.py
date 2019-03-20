@@ -140,7 +140,7 @@ language = {
     'return': {
         'output':
         {
-            'Cpp': '{% if children|length==1 %}return {{children|first}}{% else %}return std::make_tuple({{children|join(", ")}}){% endif %}'
+            'Cpp': 'return {% if children|length==1 %}{{children|first}}{% elif children|length > 1 %}std::make_tuple({{children|join(", ")}}){% endif %}'
         },
     },
 
@@ -214,6 +214,20 @@ language = {
             'Cpp': 'if({{children[0]}})\n{ {{children[1]}}; }\n {% if children|length>2 %}else \n{ {{children[2]}}; }{% endif %}'
         }
     },
+
+    'switch': {
+        'output':
+        {
+            'Cpp': '{{children[1:]|join(" else ")}}'
+        }
+    },
+    'case': {
+        'output':
+        {
+            'Cpp': ' if ({{code.getparent().getchildren()[0].attrib[language]}} == {{children[0]}}) { {{children[1]}}; }'
+        }
+    },
+
 
     'print': {
         'output':
