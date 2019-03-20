@@ -11,7 +11,7 @@
 manifesto = {
   'packageName': 'Failure Handler',
   'packageShortName': 'FailureHandler',
-  'fileFormat': 'fh',
+  'fileFormat': 'flh',
   'version': '0.0.0',
 
   'information': {

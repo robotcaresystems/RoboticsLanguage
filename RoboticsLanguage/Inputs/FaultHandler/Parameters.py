@@ -22,7 +22,8 @@
 
 parameters = {
     'showRol': False,
-    'showYAML': False
+    'showYAML': False,
+    'showXML': False
 }
 
 command_line_flags = {
@@ -35,5 +36,10 @@ command_line_flags = {
         'longFlag': 'show-fault-handler-yaml',
         'noArgument': True,
         'description': 'Shows intermediate yaml code parsed by the fault handler template'
+    },
+    'showXML': {
+        'longFlag': 'show-fault-handler-xml',
+        'noArgument': True,
+        'description': 'Shows intermediate XML code parsed by the fault handler template'
     }
 }

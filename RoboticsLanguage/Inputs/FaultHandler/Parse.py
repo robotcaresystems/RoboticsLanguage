@@ -19,12 +19,12 @@
 #   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
-
 import yaml
 import copy
+from lxml import etree
 from jinja2 import Template
 from RoboticsLanguage.Base import Utilities
-from RoboticsLanguage.Inputs.RoL import Parse
+from RoboticsLanguage.Inputs.RoL import Parse as RoL
 from RoboticsLanguage.Tools import DictionaryToXML
 
 
@@ -62,11 +62,17 @@ def parse(text, parameters):
   # convert into more descriptive dictionary
   discriptive_dictionary = convertParameters(text_dictionary)
 
+  if parameters['Inputs']['FaultHandler']['showYAML']:
+    Utilities.printParameters(discriptive_dictionary, parameters)
+
   # save the data in the parameters to be used by the GUI
   parameters['Inputs']['FaultHandler']['data'] = discriptive_dictionary
 
   # extract code
-  discriptive_dictionary['nodes_xml'] = DictionaryToXML.dicttoxml(text_dictionary['nodes'], namespace='fh')
+  discriptive_dictionary['nodes_xml'] = DictionaryToXML.dicttoxml(text_dictionary['faults'], namespace='fh')
+
+  if parameters['Inputs']['FaultHandler']['showXML']:
+    Utilities.printCode(etree.fromstring(discriptive_dictionary['nodes_xml']), parameters)
 
   # open template file
   with open(Utilities.myPluginPath(parameters) + '/Support/fault_handler.rol.template', 'r') as file:
@@ -79,11 +85,9 @@ def parse(text, parameters):
   if parameters['Inputs']['FaultHandler']['showRol']:
     Utilities.printSource(rol_code, 'coffeescript', parameters)
 
-  if parameters['Inputs']['FaultHandler']['showYAML']:
-    Utilities.printParameters(discriptive_dictionary, parameters)
 
   # parse generated rol code
-  code, parameters = Parse.parse(rol_code, parameters)
+  code, parameters = RoL.parse(rol_code, parameters)
 
   # add fault detection gui to the outputs
   outputs = Utilities.ensureList(parameters['globals']['output'])
