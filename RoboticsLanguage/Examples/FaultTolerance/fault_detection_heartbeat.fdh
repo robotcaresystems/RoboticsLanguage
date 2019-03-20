@@ -1,8 +1,8 @@
 
-nodename: examples fault detection heartbeat
+nodename: example fault detection heartbeat
 
 fault_topic: /fault
-fault_type: example_fault_tolerance_system/Fault
+fault_type: example_fault_messages/fault
 
 reset_topic: /reset
 reset_type:  std_msgs/Strings

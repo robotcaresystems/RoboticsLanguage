@@ -1,8 +1,0 @@
-node(
-  name:'example Failure Handler',
-
-  initialise: block(
-    # the Failure Handler mini-language
-    FailureHandler<{  word: Hello  }>
-  )
-)
