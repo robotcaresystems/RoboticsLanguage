@@ -21,38 +21,9 @@
 #   limitations under the License.
 import os
 import yaml
-import copy
-from lxml import etree
 from jinja2 import Template
 from RoboticsLanguage.Base import Utilities
 from RoboticsLanguage.Inputs.RoL import Parse as RoL
-from RoboticsLanguage.Tools import DictionaryToXML
-
-
-# def getType(value):
-#   mapping = {'str': 'Strings', 'int': 'Integers', 'float': 'Reals', 'bool': 'Booleans'}
-#
-#   return mapping[filter(lambda x: type(value) is x, [bool, int, float, str])[0].__name__]
-#
-#
-# def convertParameters(input):
-#   output = copy.copy(input)
-#
-#   # extract parameters
-#   output['parameters'] = []
-#   for key, value in input['parameters'].iteritems():
-#     type = getType(value)
-#     if type == 'Strings':
-#       value = '"' + value + '"'
-#     output['parameters'].append({'name': key, 'type': getType(value), 'value': value})
-#
-#   # extract topics
-#   output['topics'] = []
-#   for key, value in input['topics'].iteritems():
-#     [name, type] = value.split(' ')
-#     output['topics'].append({'variable': key, 'type': type, 'name': name})
-#
-#   return output
 
 
 def parse(text, parameters):
@@ -86,47 +57,5 @@ def parse(text, parameters):
 
   if parameters['Inputs']['FaultHandler']['showXML']:
     Utilities.printCode(code, parameters)
-
-
-  # code = etree.fromstring('<hello></hello>')
-
-  # # convert into more descriptive dictionary
-  # discriptive_dictionary = convertParameters(text_dictionary)
-
-  # if parameters['Inputs']['FaultHandler']['showYAML']:
-  #   Utilities.printParameters(discriptive_dictionary, parameters)
-
-
-  # code = etree.fromstring(DictionaryToXML.dicttoxml(text_dictionary, namespace='fth'))
-  #
-  # if parameters['Inputs']['FaultHandler']['showXML']:
-  #   Utilities.printCode(code, parameters)
-
-
-  # # extract code
-  # discriptive_dictionary['nodes_xml'] = DictionaryToXML.dicttoxml(text_dictionary['faults'], namespace='fh')
-  #
-  # if parameters['Inputs']['FaultHandler']['showXML']:
-  #   Utilities.printCode(etree.fromstring(discriptive_dictionary['nodes_xml']), parameters)
-  #
-  # # open template file
-  # with open(Utilities.myPluginPath(parameters) + '/Support/fault_handler.rol.template', 'r') as file:
-  #   template = Template(file.read())
-  #
-  # # render the template with the data
-  # rol_code = template.render(**discriptive_dictionary)
-  #
-  # # print intermediate rol code is requested
-  # if parameters['Inputs']['FaultHandler']['showRol']:
-  #   Utilities.printSource(rol_code, 'coffeescript', parameters)
-  #
-  #
-  # # parse generated rol code
-  # code, parameters = RoL.parse(rol_code, parameters)
-  #
-  # # add fault detection gui to the outputs
-  # outputs = Utilities.ensureList(parameters['globals']['output'])
-  # outputs.append('FaultHandler')
-  # parameters['globals']['output'] = outputs
 
   return code, parameters
