@@ -27,12 +27,19 @@ def parse(text, parameters):
   with open(Utilities.myPluginPath(parameters) + '/Support/fault_detection_heartbeat.rol.template', 'r') as file:
     template = Template(file.read())
 
+  # add filters to template
+  template.globals['underscore'] = Utilities.underscore
+  template.globals['camelCase'] = Utilities.camelCase
+
   # render the template with the data
   rol_code = template.render(**text_dictionary)
 
   # print intermediate rol code is requested
   if parameters['Inputs']['FaultDetectionHeartbeat']['showRol']:
     Utilities.printSource(rol_code, 'coffeescript', parameters)
+
+  if parameters['Inputs']['FaultDetectionHeartbeat']['showYAML']:
+    Utilities.printParameters(text_dictionary, parameters)
 
   # parse generated rol code
   code, parameters = Parse.parse(rol_code, parameters)

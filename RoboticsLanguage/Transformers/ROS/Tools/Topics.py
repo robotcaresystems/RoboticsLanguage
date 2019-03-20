@@ -136,7 +136,10 @@ def setPublish(variable, flow, assignments, signal):
         assignment.attrib['postRos2Cpp'] += ';'
         assignment.attrib['postRosPy'] += '\n'
 
+
 def checkTypes(signal, variable, assignments, usages, code, parameters):
+
+  node_name = ''
 
   # check if signal is using a default type instead of a ros type
   if signal.xpath('option[@name="rosType"]/string')[0].text == '':
@@ -207,13 +210,16 @@ def checkTypes(signal, variable, assignments, usages, code, parameters):
 
   parameters['Outputs']['RosPy']['Imports'].add('.'.join(ros_py_type.split('.')[:-1]))
 
+  # add ros package dependencies
+  if node_name != ros_type.split('::')[0]:
+    parameters['Transformers']['ROS']['buildDependencies'].add(ros_type.split('::')[0])
+    parameters['Transformers']['ROS']['runDependencies'].add(ros_type.split('::')[0])
+
   return code, parameters, ros_type, cpp_type, ros_2_type, ros_py_type
 
 
 def process(code, parameters):
   '''Processes all the ROS topics in the RoL code'''
-
-  parameters['Transformers']['ROS']['topicDefinitions'] = []
 
   # for each signal in definitions with rostopic
   for signal in code.xpath('/node/option[@name="definitions"]/*//element/Signals/option[@name="rosTopic"]/string[text()!=""]/../..'):

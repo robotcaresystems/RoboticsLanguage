@@ -1,0 +1,7 @@
+node(
+  name:'example Fault Detection Processes',
+
+  initialise: block(
+    print('FaultDetectionProcesses')
+  )
+)

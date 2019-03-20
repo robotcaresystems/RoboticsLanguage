@@ -1,0 +1,7 @@
+node(
+  name:'example Failure Handle',
+
+  initialise: block(
+    print('FailureHandle')
+  )
+)

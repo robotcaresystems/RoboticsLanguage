@@ -1,7 +1,0 @@
-node(
-  name:'example Fault Detection Heartbeat',
-
-  initialise: block(
-    print('FaultDetectionHeartbeat')
-  )
-)
