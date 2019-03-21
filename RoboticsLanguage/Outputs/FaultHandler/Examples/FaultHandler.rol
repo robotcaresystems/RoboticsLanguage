@@ -1,7 +1,0 @@
-node(
-  name:'example Fault Handler',
-
-  initialise: block(
-    print('FaultHandler')
-  )
-)

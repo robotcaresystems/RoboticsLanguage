@@ -55,6 +55,15 @@ def output(code, parameters):
   # if the flag launch is set then launch the node
   if parameters['globals']['launch']:
 
+    # open HTML in different platforms
+    if 'darwin' in sys.platform:
+      launch_command = 'open'
+
+    if 'linux' in sys.platform:
+      launch_command = 'xdg-open'
+
+    subprocess.Popen([launch_command, parameters['globals']['deploy'] + node_name_underscore + '/html/' + node_name_underscore + '_gui.html'])
+
     # # check if package is in the ros path
     package_location = (deploy_path + '/' + node_name_underscore).replace('//', '/')
     if package_location not in os.environ['ROS_PACKAGE_PATH']:
@@ -65,5 +74,6 @@ def output(code, parameters):
     Utilities.logger.debug("launching: `" + command + '`')
     process = subprocess.Popen(shlex.split(command))
     process.wait()
+
 
   return 0
