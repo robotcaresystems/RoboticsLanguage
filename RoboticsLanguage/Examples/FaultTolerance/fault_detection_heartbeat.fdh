@@ -5,7 +5,7 @@ fault_topic: /fault
 fault_type: example_fault_messages/fault
 
 reset_topic: /reset
-reset_type:  std_msgs/Strings
+reset_type:  std_msgs/String
 
 fault_prefix: hb_
 
