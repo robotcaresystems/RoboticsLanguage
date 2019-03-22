@@ -31,3 +31,11 @@ compilegui:
 	rol fault_handler.rol -co HTMLGUI RosCpp
 	rol failure_handler.rol -co HTMLGUI RosCpp
 	rol fault_tolerance_system.fts -co HTMLGUI RosCpp
+
+compile:
+	rol messages.rol -c
+	rol fault_detection_topics.fdt -c
+	rol fault_detection_heartbeat.fdh -c
+	rol fault_handler.rol -c
+	rol failure_handler.rol -c
+	rol fault_tolerance_system.fts -c

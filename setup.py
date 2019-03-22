@@ -22,14 +22,68 @@ import os
 from setuptools import setup, find_packages
 
 
+long_description = """
+The Robotics Language (RoL) is an open extensible domain-specific (or model-based) language for robotics. RoL is an abstraction on top of ROS to efficiently and quickly develop ROS applications using a mathematics-centred language. RoL generates ROS c++ nodes, HTML interfaces, or any other elements.
+
+The base RoL language has a structure similar to standard high-level programming languages
+
+```coffeescript
+# A simple topic echo node
+node(
+  name:'example echo',
+
+  definitions: block(
+    # the input signal
+    echo_in in Signals(Strings, rosTopic:'/echo/in', onNew: echo_out = echo_in ),
+
+    # the echo signal
+    echo_out in Signals(Strings, rosTopic:'/echo/out')
+  )
+)
+```
+
+The power of the RoL is in its ability to integrate mini-abstraction languages:
+
+```coffeescript
+# A finite state machine
+node(
+  name:'example state machine',
+
+  definitions: block(
+
+    # a mini-language: code is defined within `<{ }>`
+    FiniteStateMachine<{
+
+      name:machine
+      initial:idle
+
+      (idle)-start->(running)-stop->(idle)
+      (running)-error->(fault)-reset->(idle)
+      (idle)-calibration->(calibrate)-reset->(idle)
+
+    }>,
+
+    # the start signal
+    start in Signals(Empty, rosTopic:'/start', onNew: machine.fire('start')),
+
+    # the stop signal
+    stop in Signals(Empty, rosTopic:'/stop', onNew: machine.fire('stop'))
+
+  )
+)
+```
+The RoL is in practice an open compiler where users can develop their own languages by means of plug-ins. The RoL is programmed in python and uses XML as the internal abstract syntax tree.
+"""
+
 path = os.path.abspath(os.path.dirname(__file__))+'/RoboticsLanguage'
 result = [os.path.join(dp, f) for dp, dn, filenames in os.walk(path) for f in filenames]
 
-print result
 
 setup(name='RoboticsLanguage',
       version='0.3.14',
       description='The Robotics Language',
+      long_description=long_description,
+      long_description_content_type='text/markdown',
       url='http://github.com/robotcaresystems/roboticslanguage',
       author='Gabriel A. D. Lopes',
       author_email='g.lopes@rrcrobotics.com',
