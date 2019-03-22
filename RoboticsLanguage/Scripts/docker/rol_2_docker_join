@@ -1,3 +1,0 @@
-#!/bin/bash
-
-docker exec -i -t RoboticsLanguage2 /bin/bash

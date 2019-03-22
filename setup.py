@@ -97,12 +97,10 @@ setup(name='RoboticsLanguage',
                'RoboticsLanguage/Scripts/make/rol_make_examples',
                'RoboticsLanguage/Scripts/make/rol_make_documentation',
                'RoboticsLanguage/Scripts/tests/rol_run_tests',
-               'RoboticsLanguage/Scripts/docker/rol_docker_join',
-               'RoboticsLanguage/Scripts/docker/rol_docker_start',
-               'RoboticsLanguage/Scripts/docker/rol_docker',
-               'RoboticsLanguage/Scripts/docker/rol_2_docker_join',
-               'RoboticsLanguage/Scripts/docker/rol_2_docker_start',
-               'RoboticsLanguage/Scripts/docker/rol_2_docker'
+               'RoboticsLanguage/Scripts/docker/ros1/rol_docker',
+               'RoboticsLanguage/Scripts/docker/ros1/rol_docker_development',
+               'RoboticsLanguage/Scripts/docker/ros2/rol2_docker',
+               'RoboticsLanguage/Scripts/docker/ros2/rol2_docker_development',
                ],
       install_requires=[
           'parsley', 'argparse', 'argcomplete', 'jinja2', 'dpath', 'coloredlogs', 'lxml', 'iso-639', 'funcy', 'dill', 'pygments', 'fso', 'pyyaml', 'autopep8'
