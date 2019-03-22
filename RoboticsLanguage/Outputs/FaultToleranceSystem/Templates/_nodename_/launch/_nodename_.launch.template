@@ -11,14 +11,17 @@
 -->
 <launch>
 
+  <node name="rosbag" args="record /fault /failure" pkg="rosbag" type="rosbag" output="screen" respawn>
+
   {% for node in code.getchildren() %}
-    {% if node.tag != '{fts}:name' %}
+    {% if node.tag != '{fts}name' %}
         <node name="{{node|text}}"
               pkg="{{node|text}}"
               type="{{node|text}}"
-              output="screen">
+              output="screen" respawn>
         </node>
     {% endif %}
   {% endfor %}
+
 
 </launch>
