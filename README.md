@@ -119,13 +119,14 @@ The RoL is in practice an **open compiler** where users can develop their own la
 - Tutorials
   - [IEEE IRC 2019](RoboticsLanguage/Documentation/Tutorials/IEEE-IRC-2019/README.md)
 
-## Install
+## Install using pip
 
 The best way to install is using `pip`:
 
 ```shell
 pip install RoboticsLanguage
 ```
+## Install using github
 
 To install this version in github, first `git clone`:
 ```shell
@@ -141,41 +142,43 @@ If you are a developer run:
 ```shell
 pip install -e .
 ```
+## Docker image scripts
 
-
-## Examples
-You can try the RoL compiler by testing the examples in the folder `RoboticsLanguage/Examples`:
-
-```shell
-rol RoboticsLanguage/Examples/1_hello_world.rol
-```
-
-This will create a ROS node in the folder `~/deploy`. If you have installed the catkin workspace at `~/catkin_ws` then you can supply the path to the compiler and compile and launch the node directly:
+To use the predefined docker scripts first install using pip:
 
 ```shell
-rol --deploy-path ~/catkin_ws/src/ RoboticsLanguage/Examples/1_hello_world.rol -c -l
+pip install RoboticsLanguage
 ```
 
-**Note:** if you don't have a catkin workspace make sure to run:
+Next, if you are a ROS1 user run in the shell:
 
 ```shell
-mkdir -p ~/catkin_ws/src
-cd ~/catkin_ws
-catkin init
+rol_docker
 ```
 
-After compiling the rol package for the first time make sure to source it:
+If you are a developer of the Robotics Language run in the shell:
 
 ```shell
-source ~/catkin_ws/devel/setup.bash
+rol_docker_development
+```
+
+For ROS2 use:
+
+```shell
+rol2_docker
+```
+
+or:
+
+```shell
+rol2_docker_development
 ```
 
 
-## Docker image
+## Docker image "by hand"
 
-You can test the robotics language using a docker environment. It comes completely preinstalled with the latest version of the Robotics Language.
 
-get the docker:
+Get the docker image:
 ```shell
 docker pull roboticslanguage/rol
 ```
@@ -239,7 +242,47 @@ source ~/catkin_ws/devel/setup.bash
 Now you are ready to launch:
 
 ```shell
-rol RoboticsLanguage/Examples/1_hello_world.rol -l
+rol 1_hello_world.rol -l
+```
+
+## Examples without docker
+
+The following command will copy a collenction of examples into the current folder:
+```shell
+rol --copy-examples-here
+```
+
+Next try the examples:
+
+```shell
+rol 1_hello_world.rol -c
+```
+
+Make sure to source for the first time:
+
+```shell
+source ~/catkin_ws/devel/setup.bash
+```
+
+Now you are ready to launch:
+
+```shell
+rol 1_hello_world.rol -l
+```
+
+
+**Note:** if you are not using the docker images and you don't have a catkin workspace make sure to run:
+
+```shell
+mkdir -p ~/catkin_ws/src
+cd ~/catkin_ws
+catkin init
+```
+
+After compiling the rol package for the first time make sure to source it:
+
+```shell
+source ~/catkin_ws/devel/setup.bash
 ```
 
 ## Work in progress
