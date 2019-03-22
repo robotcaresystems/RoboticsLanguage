@@ -19,15 +19,30 @@
 #   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
-import dpath.util
-from RoboticsLanguage.Base import Utilities
 
 
 def process(code, parameters):
   '''Processes all the ROS types in the RoL code'''
 
-  # Utilities.printCode(code.xpath('//element/RosType/string/text()'))
+  packages = []
+  message_dependency = []
 
+  # find dependencies for locally defined messages
+  for dependency in code.xpath('//rosm:message/rosm:definition/text()', namespaces={'rosm': 'rosm'}):
+    for line in dependency.split('\n'):
 
+      if len(line) > 0 and line.lstrip()[0] != '#':
+        if len(line.split('/')) > 1:
+          packages.append(line.split('/')[0])
+          message_dependency.append(line.split('/')[0])
+
+  for ros_type in code.xpath('//RosType/string/text()'):
+    if len(ros_type.split('/')) > 1:
+      packages.append(ros_type.split('/')[0])
+
+  # add message generation dependencies
+  map(lambda x: parameters['Transformers']['ROS']['messageDependencies'].add(x), message_dependency)
+  map(lambda x: parameters['Transformers']['ROS']['buildDependencies'].add(x), packages)
+  map(lambda x: parameters['Transformers']['ROS']['runDependencies'].add(x), packages)
 
   return code, parameters

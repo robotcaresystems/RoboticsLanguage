@@ -6,6 +6,7 @@ parameters:
   string_parameter: hello
 
 fault_topic: /fault
+fault_type: example_fault_tolerance_system/Fault
 
 topics:
   x: /test/integer std_msgs/Int8

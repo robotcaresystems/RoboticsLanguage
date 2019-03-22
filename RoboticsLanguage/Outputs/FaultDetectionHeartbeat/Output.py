@@ -28,8 +28,6 @@ def output(code, parameters):
     sys.exit(1)
 
 
-  print parameters['globals']['deploy'] + node_name_underscore + '/html/' + node_name_underscore + '_fault_detection_heartbeat_gui.html'
-
   # ############ launching code #####################################################
   # if the flag launch is set then launch the node
   if parameters['globals']['launch']:

@@ -1,0 +1,12 @@
+node(name:"Example Failure Handler",
+  definitions: block(
+
+    failure in Signals(rosTopic:'/failure', rosType:'example_fault_messages/failure', onNew:failure_handler()),
+
+    define failure_handler():
+      switch(failure.code,
+        case('fl_supervisor', print('shutdown because of Supervisor')),
+        case('fl_navigator', print('shutdown because of Navigator'))
+        )
+  )
+)

@@ -170,13 +170,17 @@ def parse(text, parameters):
     print(grammar)
 
   # @NOTE could not pickle the language itself to cache. Is there a way to solve this?
-  # create the grammar
-  language = parsley.makeGrammar(grammar, {'xml': Utilities.xml,
+  # create the grammar or load cached
+  if 'RoL' in parameters['parsing']['grammars'].keys():
+    language = parameters['parsing']['grammars']['RoL']
+  else:
+    language = parsley.makeGrammar(grammar, {'xml': Utilities.xml,
                                            'xmlAttributes': Utilities.xmlAttributes,
                                            'xmlFunctionDefinition': lambda x, y, z, w, k: Utilities.xmlFunctionDefinition(parameters, x, y, z, w, k),
                                            'xmlVariable': lambda x, y: Utilities.xmlVariable(parameters, x, y),
                                            'xmlFunction': lambda x, y, z: Utilities.xmlFunction(parameters, x, y, z),
                                            'xmlMiniLanguage': lambda x, y, z: Utilities.xmlMiniLanguage(parameters, x, y, z)})
+    parameters['parsing']['grammars']['RoL'] = language
 
   try:
     # parse the text against the grammar
@@ -184,7 +188,10 @@ def parse(text, parameters):
 
   except parsley.ParseError as error:
     # with Error.exception(parameters, stop=True)
-    Utilities.logErrors(Utilities.formatParsleyErrorMessage(error), parameters)
+    try:
+      Utilities.logErrors(Utilities.formatParsleyErrorMessage(error), parameters)
+    except:
+      pass
     sys.exit(1)
 
   try:
