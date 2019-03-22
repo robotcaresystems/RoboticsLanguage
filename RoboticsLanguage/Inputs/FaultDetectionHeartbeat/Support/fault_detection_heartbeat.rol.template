@@ -54,6 +54,6 @@ node(
     Cpp<{timer_{{underscore(node.name)}} = nh_.createTimer(ros::Duration({{node.startup_time}}), &{{camelCase(nodename)}}Class::checkFault_{{underscore(node.name)}}, this, true)}>,
 
     {% endfor %}
-      print("Heartbeat monitor running.")
+      print("Fault Detection Heartbeat running.")
     )
   )

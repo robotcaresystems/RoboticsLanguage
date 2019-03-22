@@ -11,14 +11,17 @@
 -->
 <launch>
 
-  <node name="rosbag" args="record /fault /failure" pkg="rosbag" type="rosbag" output="screen" respawn>
+
+
+  <node pkg="rosbag" name="rosbag" type="record" args="{{code.xpath('//fts:fault_topic/text()', namespaces={'fts':'fts'})[0]}} {{code.xpath('//fts:failure_topic/text()', namespaces={'fts':'fts'})[0]}}" output="screen" respawn="true">
+  </node>
 
   {% for node in code.getchildren() %}
-    {% if node.tag != '{fts}name' %}
+    {% if node.tag not in ['{fts}name', '{fts}fault_topic', '{fts}failure_topic' ] %}
         <node name="{{node|text}}"
               pkg="{{node|text}}"
               type="{{node|text}}"
-              output="screen" respawn>
+              output="screen" respawn="true">
         </node>
     {% endif %}
   {% endfor %}
