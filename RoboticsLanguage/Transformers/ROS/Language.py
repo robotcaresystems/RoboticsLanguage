@@ -33,13 +33,28 @@ language = {
          'returns': returns('rosType')}
     },
 
+    'RosClass': {
+        'definition':  {
+            'arguments': arguments('none'),
+            'returns': returns('rosClass'),
+            'optional': {
+                'class': optional('string', ''),
+                'package': optional('string', ''),
+                'namespace': optional('string', ''),
+                'arguments': optional('set', []),
+            },
+        }
+    },
+
     'Signals': {
         'definition': {
             'optional': {
                 'rosTopic': optional('string', ''),
                 'rosType': optional('string', ''),
-                'rosFlow': optional('string', '')
+                'rosFlow': optional('string', ''),
+                'rosQueueSize': optional('integer', 1),
+                'rosTransportHints': optional('string', '')
             },
         },
-    },
+    }
 }
