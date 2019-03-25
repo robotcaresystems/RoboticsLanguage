@@ -35,6 +35,6 @@ def transform(code, parameters):
 
       graph.getparent().remove(graph)
   except Exception as e:
-    print e
+    pass
 
   return code, parameters
