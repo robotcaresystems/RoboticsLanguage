@@ -18,8 +18,7 @@ default = {
 
 language = {
     '{fts}name': default,
-    '{fts}fault_topic': default,
-    '{fts}failure_topic': default,
+    '{fts}log_topics': default,
     '{fts}fault_handler': default,
     '{fts}failure_handler': default,
     '{fts}fault_detection_topics': default,

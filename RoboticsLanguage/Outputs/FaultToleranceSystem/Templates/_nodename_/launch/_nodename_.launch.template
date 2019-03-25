@@ -12,9 +12,10 @@
 <launch>
 
 
-
-  <node pkg="rosbag" name="rosbag" type="record" args="{{code.xpath('//fts:fault_topic/text()', namespaces={'fts':'fts'})[0]}} {{code.xpath('//fts:failure_topic/text()', namespaces={'fts':'fts'})[0]}}" output="screen" respawn="true">
+{% if code.xpath('//fts:log_topics', namespaces={'fts':'fts'})|length > 0  %}
+  <node pkg="rosbag" name="rosbag" type="record" args="{{code.xpath('//fts:log_topics/text()', namespaces={'fts':'fts'})[0]}}" output="screen" respawn="true">
   </node>
+{% endif %}
 
   {% for node in code.getchildren() %}
     {% if node.tag not in ['{fts}name', '{fts}fault_topic', '{fts}failure_topic' ] %}
@@ -25,6 +26,5 @@
         </node>
     {% endif %}
   {% endfor %}
-
 
 </launch>
