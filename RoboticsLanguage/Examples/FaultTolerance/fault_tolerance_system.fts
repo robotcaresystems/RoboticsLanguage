@@ -2,8 +2,7 @@
 name: example_fault_tolerance_system
 
 # topics
-fault_topic: /fault
-failure_topic: /failure
+log_topicc: /fault /failure
 
 # names of the nodes
 fault_detection_topics: example_fault_detection_topics
