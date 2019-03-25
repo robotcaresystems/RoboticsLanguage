@@ -23,6 +23,13 @@
 
 
 
+{% set classInitialisation %}
+{% for item in code.xpath('//element/RosClass') %}
+, {{item.getparent().getchildren()[0]|serializedCode}}({{item.xpath('./option[@name="arguments"]/set')[0].getchildren()|map('serializedCode')|join(',')}})
+{% endfor %}
+{% endset %}
+
+
 
 {% set functions %}
   {# ROS TOPICS #################################### #}
