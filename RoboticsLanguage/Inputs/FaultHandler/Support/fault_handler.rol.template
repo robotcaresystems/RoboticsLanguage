@@ -9,7 +9,7 @@ define fault_{{item.fault}}():
     if(Cpp<{ ros::Time::now() - time_{{item.fault}} < ros::Duration({{item.timeout}})}>,
       block(
         counter_{{item.fault}} = counter_{{item.fault}} + 1,
-        if (counter_{{item.fault}} == {{item.retry}},
+        if (counter_{{item.fault}} > {{item.retry}},
           block(
             {{item.on_fail}},
             counter_{{item.fault}} = 0

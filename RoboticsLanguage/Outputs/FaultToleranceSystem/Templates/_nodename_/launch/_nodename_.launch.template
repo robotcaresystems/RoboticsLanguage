@@ -11,12 +11,18 @@
 -->
 <launch>
 
+
+{% if code.xpath('//fts:log_topics', namespaces={'fts':'fts'})|length > 0  %}
+  <node pkg="rosbag" name="rosbag" type="record" args="{{code.xpath('//fts:log_topics/text()', namespaces={'fts':'fts'})[0]}}" output="screen" respawn="true">
+  </node>
+{% endif %}
+
   {% for node in code.getchildren() %}
-    {% if node.tag != '{fts}:name' %}
+    {% if node.tag not in ['{fts}name', '{fts}log_topics'] %}
         <node name="{{node|text}}"
               pkg="{{node|text}}"
               type="{{node|text}}"
-              output="screen">
+              output="screen" respawn="true">
         </node>
     {% endif %}
   {% endfor %}
