@@ -12,4 +12,4 @@
   - [Reference](Compiler/Reference/README.md)
 
 - Tutorials
-  - [IEEE IRC 2019](Tutorials/IEEE-IRC-2019/README.md)
+  - [IEEE IRC 2019](../../Documentation/Tutorials/IEEE-IRC-2019/README.md)
