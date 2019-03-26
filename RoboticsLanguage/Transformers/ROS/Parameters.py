@@ -27,6 +27,7 @@ parameters = {
     'buildDependencies': set(),
     'runDependencies': set(),
     'messageDependencies': set(),
+    'distribution': ''
 }
 
 command_line_flags = {
@@ -35,4 +36,5 @@ command_line_flags = {
     'buildDependencies': {'suppress': True},
     'runDependencies': {'suppress': True},
     'messageDependencies': {'suppress': True},
+    'distribution': {'suppress': True},
 }
