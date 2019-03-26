@@ -215,7 +215,19 @@ def checkTypes(signal, variable, assignments, usages, code, parameters):
     parameters['Transformers']['ROS']['buildDependencies'].add(ros_type.split('::')[0])
     parameters['Transformers']['ROS']['runDependencies'].add(ros_type.split('::')[0])
 
-  return code, parameters, ros_type, cpp_type, ros_2_type, ros_py_type
+  queue_size = signal.xpath('option[@name="rosQueueSize"]/integer/text()|option[@name="rosQueueSize"]/natural/text()')[0]
+
+  transport_hints_code = signal.xpath('option[@name="rosTransportHints"]')
+
+  transport_hints = ''
+  if len(transport_hints_code[0].xpath('./string')) > 0:
+    # transport hints are passed as a string
+    transport_hints = transport_hints_code[0].xpath('./string/text()')[0]
+  elif len(transport_hints_code[0].xpath('./vector')) > 0:
+    # transport hints are passes as a list
+    transport_hints = '.'.join(map(lambda x: x.strip() if x.strip()[-1] == ')' else x.strip() + '()', transport_hints_code[0].xpath('./vector/string/text()')))
+
+  return code, parameters, ros_type, cpp_type, ros_2_type, ros_py_type, queue_size, transport_hints
 
 
 def process(code, parameters):
@@ -234,7 +246,7 @@ def process(code, parameters):
     setPublish(variable, flow, assignments, signal)
 
     # check types and make sure .data is added when needed
-    code, parameters, ros_type, cpp_type, ros_2_type, ros_py_type = checkTypes(signal, variable, assignments, usages, code, parameters)
+    code, parameters, ros_type, cpp_type, ros_2_type, ros_py_type, queue_size, transport_hints = checkTypes(signal, variable, assignments, usages, code, parameters)
 
     # Save the variable name on the `Signals` tag. Helps simplifying code
     signal.attrib['ROSvariable'] = variable
@@ -257,6 +269,9 @@ def process(code, parameters):
                                                                   'ros_py_type': ros_py_type,
                                                                   'cpp_type': cpp_type,
                                                                   'topic_name': topic_name,
-                                                                  'flow': flow})
+                                                                  'flow': flow,
+                                                                  'queue_size': queue_size,
+                                                                  'transport_hints': transport_hints
+                                                                  })
 
   return code, parameters

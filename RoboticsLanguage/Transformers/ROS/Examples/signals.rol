@@ -34,7 +34,7 @@ node(
     # All options
     p ∈ Signals(Reals,
       rosTopic:'/test/p',
-      rosFlow:'outgoing',
+      rosFlow:'incoming',
       rosQueueSize:5,
       rosTransportHints:['unreliable','reliable', 'maxDatagramSize(1000)', 'tcpNoDelay']
     )
