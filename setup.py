@@ -80,7 +80,7 @@ result = [os.path.join(dp, f) for dp, dn, filenames in os.walk(path) for f in fi
 
 
 setup(name='RoboticsLanguage',
-      version='0.3.14',
+      version='0.3.15',
       description='The Robotics Language',
       long_description=long_description,
       long_description_content_type='text/markdown',
