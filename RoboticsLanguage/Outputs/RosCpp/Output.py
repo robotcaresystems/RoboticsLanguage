@@ -130,6 +130,16 @@ def output(code, parameters):
     if process.returncode > 0:
       Utilities.logger.error("Compilation failed!!!")
 
+  # ############ edit code #####################################################
+  # if the flag edit is set then open in editor
+  if parameters['globals']['edit'] and parameters['globals']['editor'] != '':
+    command = parameters['globals']['editor'] + ' ' + deploy_path + '/' + node_name_underscore
+
+    Utilities.logger.debug("editing: `" + command + '`')
+    process = subprocess.Popen(shlex.split(command))
+    process.wait()
+
+
   # ############ run code #####################################################
   # if the flag launch is set then launch the node
   if parameters['globals']['launch']:
