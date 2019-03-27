@@ -76,44 +76,78 @@ def output(code, parameters):
   messages = code.xpath('//rosm:message', **namespace)
 
   if len(messages) > 0:
-    folder =  Utilities.myOutputPath(parameters) + '/' + node_name_underscore + '/msg'
+    folder = Utilities.myOutputPath(parameters) + '/' + node_name_underscore + '/msg'
     Utilities.createFolder(folder)
 
     for message in messages:
       name = message.xpath('.//rosm:name', **namespace)[0].text
-      definition =  message.xpath('.//rosm:definition', **namespace)[0].text
+      definition = message.xpath('.//rosm:definition', **namespace)[0].text
 
       with open(folder + '/' + name + '.msg', 'w') as file:
         file.write(definition)
 
         Utilities.logging.debug('Wrote file ' + folder + '/' + name + '.msg ...')
 
-
   # ############ beautify code #####################################################
   # if the flag beautify is set then run uncrustify
   if parameters['globals']['beautify']:
-    try:
-      with open(os.devnull, 'w') as output_file:
-        list_of_cpp_files = ['src/' + node_name_underscore + '.cpp',
-                             'include/' + node_name_underscore + '/' + node_name_underscore + '.h']
-        for file in list_of_cpp_files:
-          process = subprocess.Popen(['uncrustify', '-c',  unicode(Utilities.myPluginPath(parameters) + '/Resources/uncrustify.cfg'),
-                                      file,  '--replace', '--no-backup'],
-                                     cwd=deploy_path + '/' + node_name_underscore,
-                                     stdout=output_file,
-                                     stderr=subprocess.STDOUT)
-          process.wait()
-          if process.returncode > 0:
-            Utilities.logger.error("Error beautifying code. Uncrustify has returned an error.")
-    except:
-      # open HTML in different platforms
-      if 'darwin' in sys.platform:
-        Utilities.logger.error(
-            "Error beautifying code. You may need to install uncrustify:\n\n  brew install uncrustify")
+    with open(os.devnull, 'w') as output_file:
+      list_of_cpp_files = ['src/' + node_name_underscore + '.cpp',
+                           'include/' + node_name_underscore + '/' + node_name_underscore + '.h']
 
-      if 'linux' in sys.platform:
-        Utilities.logger.error(
-            "Error beautifying code. You may need to install uncrustify:\n\n  sudo apt install uncrustify")
+      for file in list_of_cpp_files:
+        if parameters['globals']['beautifyEngine'] == 'uncrustify':
+          try:
+            process = subprocess.Popen(['uncrustify', '-c',  unicode(Utilities.myPluginPath(parameters) + '/Resources/uncrustify.cfg'),
+                                        file,  '--replace', '--no-backup'],
+                                       cwd=deploy_path + '/' + node_name_underscore,
+                                       stdout=output_file,
+                                       stderr=subprocess.STDOUT)
+            process.wait()
+            if process.returncode > 0:
+              Utilities.logger.error("Error beautifying code. Uncrustify has returned an error.")
+          except:
+            # open HTML in different platforms
+            if 'darwin' in sys.platform:
+              Utilities.logger.error(
+                  "Error beautifying code. You may need to install uncrustify:\n\n  brew install uncrustify")
+
+            if 'linux' in sys.platform:
+              Utilities.logger.error(
+                  "Error beautifying code. You may need to install uncrustify:\n\n  sudo apt install uncrustify")
+
+        if parameters['globals']['beautifyEngine'] == 'clang-format':
+
+            command = 'clang-format ' + file
+
+            with open(deploy_path + '/' + node_name_underscore + '/' + file + '.beautify', 'w') as current_file:
+              process = subprocess.Popen(shlex.split(command),
+                                         cwd=deploy_path + '/' + node_name_underscore,
+                                         stdout=current_file,
+                                         stderr=subprocess.STDOUT)
+              process.wait()
+
+            if process.returncode > 0:
+              Utilities.logger.error("Error beautifying code [1]. clang-format has returned an error.")
+            else:
+              command = 'rm {0}'.format(file)
+              process = subprocess.Popen(shlex.split(command),
+                                         cwd=deploy_path + '/' + node_name_underscore,
+                                         stdout=output_file,
+                                         stderr=subprocess.STDOUT)
+              process.wait()
+              if process.returncode > 0:
+                Utilities.logger.error("Error beautifying code [2]. clang-format has returned an error.")
+              command = 'mv {0}.beautify {0}'.format(file)
+
+              process = subprocess.Popen(shlex.split(command),
+                                         cwd=deploy_path + '/' + node_name_underscore,
+                                         stdout=output_file,
+                                         stderr=subprocess.STDOUT)
+              process.wait()
+
+              if process.returncode > 0:
+                Utilities.logger.error("Error beautifying code [3]. clang-format has returned an error.")
 
   # ############ compile code #####################################################
   # if the flag compile is set then run catkin
@@ -124,7 +158,7 @@ def output(code, parameters):
       command = ['catkin', 'build', node_name_underscore]
 
     Utilities.logger.debug("Compiling with: `" + ' '.join(command) + "` in folder " + deploy_path + '/..')
-    process = subprocess.Popen(command, cwd=deploy_path +'/..')
+    process = subprocess.Popen(command, cwd=deploy_path + '/..')
     process.wait()
 
     if process.returncode > 0:
@@ -139,7 +173,6 @@ def output(code, parameters):
     process = subprocess.Popen(shlex.split(command))
     process.wait()
 
-
   # ############ run code #####################################################
   # if the flag launch is set then launch the node
   if parameters['globals']['launch']:
@@ -149,7 +182,7 @@ def output(code, parameters):
     if package_location not in os.environ['ROS_PACKAGE_PATH']:
       os.environ['ROS_PACKAGE_PATH'] += ':' + package_location
 
-    command = 'roslaunch '+ node_name_underscore + ' ' + node_name_underscore + '.launch'
+    command = 'roslaunch ' + node_name_underscore + ' ' + node_name_underscore + '.launch'
 
     Utilities.logger.debug("launching: `" + command + '`')
     process = subprocess.Popen(shlex.split(command))

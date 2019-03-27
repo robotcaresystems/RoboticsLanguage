@@ -32,6 +32,7 @@ parameters = {
         'compile': False,
         'launch': False,
         'beautify': False,
+        'beautifyEngine': '',
         'edit': False,
         'editor': '',
         'verbose': 'none',
@@ -261,6 +262,11 @@ command_line_flags = {
         'longFlag': 'use-editor',
         'description': 'Chooses editor'
     },
+    'globals:beautifyEngine': {
+        'flag': 'B',
+        'longFlag': 'use-beautifier',
+        'description': 'Chooses beautifier engine'
+    },
     'globals:deploy': {
         'longFlag': 'deploy-path',
         'description': 'The generic path where the generated code is saved'
@@ -274,6 +280,7 @@ command_line_flags = {
         'description': 'The path where the generated ROS 2 code is saved'
     },
     'globals:removeCache': {
+        'flag': 'r',
         'longFlag': 'remove-cache',
         'noArgument': True,
         'fileNotNeeded': True,
