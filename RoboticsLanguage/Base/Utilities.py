@@ -562,6 +562,10 @@ def underscore(text):
   return text.replace('/', '_').replace(' ', '_').replace('.', '_').lower()
 
 
+def dashes(text):
+  return text.replace('/', '-').replace(' ', '-').replace('.', '-').replace('_', '-').lower()
+
+
 def underscoreFullCaps(text):
   return text.replace('/', '_').replace(' ', '_').replace('.', '_').upper()
 
