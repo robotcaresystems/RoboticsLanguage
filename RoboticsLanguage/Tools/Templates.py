@@ -265,7 +265,7 @@ def templateEngine(code, parameters, output=None,
         new_package_file = open(files_to_process[file]['deploy_path'], 'w')
         new_package_file.write(result)
         new_package_file.close()
-        Utilities.logging.debug('Wrote file ' + files_to_process[file]['deploy_path'] + ' ...')
+        Utilities.logging.debug(files_to_process[file]['full_path'] + ' -> ' + files_to_process[file]['deploy_path'] + ' ...')
 
       except OSError as e:
         # with Error.exception(parameters, stop=True)
