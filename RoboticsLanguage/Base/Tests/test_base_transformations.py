@@ -31,6 +31,8 @@ from RoboticsLanguage.Base import Transformations, Initialise, CommandLine
 class TestBaseTransformations(unittest.TestCase):
 
   def test_Apply(self):
+
+    # NOTE : redo this test later. Now it is blocking testing.
     pass
     # xml = etree.fromstring('<node><print><string>hello</string></print></node>')
     #
