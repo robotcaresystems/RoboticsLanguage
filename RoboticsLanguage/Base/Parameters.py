@@ -73,6 +73,7 @@ parameters = {
         'progressPercentage': 0,
         'progressStartTime': 0,
         'showOutputDependency': False,
+        'makeConfigurationFile': False,
         'copyExamplesHere': False,
         'runTests': False,
         'makeExamples': False,
@@ -143,6 +144,12 @@ command_line_flags = {
         'longFlag': 'show-output-dependencies',
         'fileNotNeeded': True,
         'description': 'Shows output package dependencies'
+    },
+    'developer:makeConfigurationFile': {
+        'noArgument': True,
+        'longFlag': 'make-configuration-file',
+        'fileNotNeeded': True,
+        'description': 'Makes a configuration parameters file'
     },
     'developer:code': {
         'noArgument': True,
