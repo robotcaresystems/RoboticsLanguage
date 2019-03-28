@@ -23,6 +23,7 @@
 import os
 import sys
 import yaml
+import copy
 import shutil
 import argparse
 import dpath.util
@@ -399,6 +400,29 @@ def postCommandLineParser(parameters):
         print('Path: ' + package['path'])
         print('Information:')
         Utilities.printParameters(package['information'])
+
+  # generate configuration script
+  if parameters['developer']['makeConfigurationFile']:
+
+    data = parameters['command_line_flags']
+
+    filtered = filter(lambda x: x[0:11]=='Information' or 'suppress' not in data[x].keys() or data[x]['suppress'] != True, data.iterkeys())
+
+    commands = { x : dpath.util.get(parameters, x.replace(':','/')) for x in filtered }
+
+    commands_dictionary = Utilities.unflatDictionary(commands, ':')
+
+    try:
+      Utilities.createFolder(os.path.expanduser('~/.rol'))
+
+      with open(os.path.expanduser('~/.rol/parameters.yaml.template'), 'w') as output:
+        yaml.dump(commands_dictionary, output, default_flow_style=False)
+
+      print 'Created the file "~/.rol/parameters.yaml.template".'
+      print 'Please modify this file and rename it to "~/.rol/parameters.yaml"'
+    except Exception as e:
+      print 'Error creating configuration file!'
+      print e
 
   # Outputs dependency
   if parameters['developer']['showOutputDependency']:
