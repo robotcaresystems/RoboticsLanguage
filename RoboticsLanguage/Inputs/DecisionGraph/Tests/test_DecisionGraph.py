@@ -10,7 +10,7 @@
 #
 
 import unittest
-from RoboticsLanguage.Inputs.DecisionGraph import Transform
+from RoboticsLanguage.Inputs.DecisionGraph import Parse
 
 class TestDecisionGraph(unittest.TestCase):
 

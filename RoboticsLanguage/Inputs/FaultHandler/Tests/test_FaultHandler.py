@@ -10,7 +10,7 @@
 #
 
 import unittest
-from RoboticsLanguage.Inputs.FaultHandler import Transform
+from RoboticsLanguage.Inputs.FaultHandler import Parse
 
 class TestFaultHandler(unittest.TestCase):
 

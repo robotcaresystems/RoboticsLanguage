@@ -10,7 +10,7 @@
 #
 
 import unittest
-from RoboticsLanguage.Inputs.DeepInference import Transform
+from RoboticsLanguage.Inputs.DeepInference import Parse
 
 class TestDeepInference(unittest.TestCase):
 

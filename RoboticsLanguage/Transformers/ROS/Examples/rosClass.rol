@@ -1,6 +1,11 @@
 node(name:"example import ros class",
   definitions: block(
 
+    example_class in RosClass(class:'ExampleClass',
+                              package:'example_class',
+                              namespace:'example_class',
+                              arguments:{2}),
+
     set_integer in Signals(Integers, rosTopic:'/example_import_class/set', onNew:
       block(
         example_class.set(set_integer),
@@ -8,11 +13,8 @@ node(name:"example import ros class",
         print('number = ', get_integer)
       )
     ),
-    get_integer in Signals(Integers, rosTopic:'/example_import_class/get'),
 
-    example_class in RosClass(class:'ExampleClass',
-                              package:'example_class',
-                              namespace:'example_class',
-                              arguments:{2})
+    get_integer in Signals(Integers, rosTopic:'/example_import_class/get')
+
   )
 )

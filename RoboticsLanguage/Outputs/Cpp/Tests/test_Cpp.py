@@ -10,7 +10,7 @@
 #
 
 import unittest
-from RoboticsLanguage.Outputs.Cpp import Transform
+from RoboticsLanguage.Outputs.Cpp import Output
 
 class TestCpp(unittest.TestCase):
 

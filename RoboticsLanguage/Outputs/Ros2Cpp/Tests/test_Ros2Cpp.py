@@ -10,7 +10,7 @@
 #
 
 import unittest
-from RoboticsLanguage.Outputs.Ros2Cpp import Transform
+from RoboticsLanguage.Outputs.Ros2Cpp import Output
 
 class TestRos2Cpp(unittest.TestCase):
 

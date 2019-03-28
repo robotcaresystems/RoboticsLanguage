@@ -10,7 +10,7 @@
 #
 
 import unittest
-from RoboticsLanguage.Inputs.FiniteStateMachine import Transform
+from RoboticsLanguage.Inputs.FiniteStateMachine import Parse
 
 class TestFiniteStateMachine(unittest.TestCase):
 
