@@ -1,0 +1,12 @@
+library(name:"example ros class",
+  definitions: block(
+
+    value in Reals,
+
+    define set(x in Reals):
+      block(value = x),
+
+    define get() -> Reals:
+      return(value)
+  )
+)

@@ -1,0 +1,22 @@
+node(name:'Example fault messages',
+
+  definitions: block(
+
+    ROSMessage<{
+      name: fault
+      string code
+      string cause
+      string description
+      time time
+      }>,
+
+    ROSMessage<{
+      name: failure
+      string code
+      string cause
+      string description
+      time time
+      }>
+
+    )
+  )

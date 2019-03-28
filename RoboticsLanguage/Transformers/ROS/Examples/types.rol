@@ -1,5 +1,5 @@
 node(
-  name:"example types",
+  name:"example types 2",
 
   definitions:block(
 
