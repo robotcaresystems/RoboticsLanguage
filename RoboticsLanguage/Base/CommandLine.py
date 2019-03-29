@@ -436,10 +436,15 @@ def postCommandLineParser(parameters):
     from_path = parameters['globals']['RoboticsLanguagePath'] + 'Examples'
     here_path = os.getcwd()
 
-    for root, dirs, files in os.walk(from_path):
-      for file in files:
-        print 'copying: ' + root + '/' + file + ' -> ' + here_path + '/' + file
-        shutil.copy(root + '/' + file, here_path + '/' + file)
+    # copytree workaround to ignore existing folders and maintain folder structure. slightly adjusted from here:
+    # https://stackoverflow.com/questions/1868714/how-do-i-copy-an-entire-directory-of-files-into-an-existing-directory-using-pyth
+    for item in os.listdir(from_path):
+      s = os.path.join(from_path, item)
+      d = os.path.join(here_path, item)
+      if os.path.isdir(s):
+        shutil.copytree(s, d)
+      else:
+        shutil.copy2(s, d)
 
   return parameters
 
