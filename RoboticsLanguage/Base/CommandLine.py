@@ -275,6 +275,7 @@ def getTemplateTextForOutputPackage(parameters, keyword, package):
   else:
     raise
 
+
 def loadRemainingParameters(parameters):
 
   language = {}
@@ -403,23 +404,23 @@ def postCommandLineParser(parameters):
 
   # generate configuration script
   if parameters['developer']['makeConfigurationFile']:
-
     data = parameters['command_line_flags']
-
-    filtered = filter(lambda x: x[0:11]=='Information' or 'suppress' not in data[x].keys() or data[x]['suppress'] != True, data.iterkeys())
-
-    commands = { x : dpath.util.get(parameters, x.replace(':','/')) for x in filtered }
-
+    filtered = filter(lambda x: x[0:11] == 'Information' or 'suppress' not in data[x].keys() or data[x]['suppress'] is not True, data.iterkeys())
+    commands = {x: dpath.util.get(parameters, x.replace(':', '/')) for x in filtered}
     commands_dictionary = Utilities.unflatDictionary(commands, ':')
+    commands_dictionary['developer']['makeConfigurationFile'] = False
 
     try:
       Utilities.createFolder(os.path.expanduser('~/.rol'))
-
-      with open(os.path.expanduser('~/.rol/parameters.yaml.template'), 'w') as output:
-        yaml.dump(commands_dictionary, output, default_flow_style=False)
-
-      print 'Created the file "~/.rol/parameters.yaml.template".'
-      print 'Please modify this file and rename it to "~/.rol/parameters.yaml"'
+      if os.path.isfile(os.path.expanduser('~/.rol/parameters.yaml')):
+        with open(os.path.expanduser('~/.rol/parameters.yaml.template'), 'w') as output:
+          yaml.dump(commands_dictionary, output, default_flow_style=False)
+        print 'Created the file "~/.rol/parameters.yaml.template".'
+        print 'Please modify this file and rename it to "~/.rol/parameters.yaml"'
+      else:
+        with open(os.path.expanduser('~/.rol/parameters.yaml'), 'w') as output:
+          yaml.dump(commands_dictionary, output, default_flow_style=False)
+        print 'Created the file "~/.rol/parameters.yaml".'
     except Exception as e:
       print 'Error creating configuration file!'
       print e

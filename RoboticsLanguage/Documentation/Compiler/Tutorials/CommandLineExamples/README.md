@@ -18,9 +18,19 @@ Show information about a specific package
 rol --info-packages ROS
 ```
 
+### Initial configuration
+
+
+Creates a sample configuration file. This file should be edited to match your preferences
+```shell
+rol --make-configuration-file
+```
+
 Removes the copiler cache. Very useful when developping plugins, or when something does not work as expected.
 ```shell
 rol --remove-cache
+# or
+rol -r
 ```
 
 
@@ -82,11 +92,11 @@ rol 1_hello_world.rol --verbose debug
 # or
 rol 1_hello_world.rol -v debug
 ```
-Show code at step 5 and stop the compiler
+Show code at step 5 and stop the compiler at that step
 ```shell
-rol 1_hello_world.rol --show-code --show-step 5 --show-stop
+rol 1_hello_world.rol --show-code --show-stop --show-step 5
 # or
-rol 1_hello_world.rol -xs5 --show-stop
+rol 1_hello_world.rol -xSs5
 ```
 
 Skip the transformer `ROS`
