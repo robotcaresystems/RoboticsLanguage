@@ -116,6 +116,7 @@ def templateEngine(code, parameters, output=None,
 
           # extracts full and relative paths
           file_full_path = os.path.join(root, file)
+          permissions = os.stat(file_full_path)
           file_relative_path = Utilities.replaceFirst(file_full_path, templates_path, '')
           file_deploy_path = Utilities.replaceLast(Utilities.replaceFirst(file_full_path, templates_path, deploy_path), '.template', '')
 
@@ -125,6 +126,7 @@ def templateEngine(code, parameters, output=None,
 
           # save it
           files_to_process[file_relative_path] = {
+              'permissions': permissions,
               'full_path': file_full_path,
               'deploy_path': file_deploy_path,
               'includes': [], 'header': [], 'elements': []}
@@ -262,9 +264,14 @@ def templateEngine(code, parameters, output=None,
         Utilities.createFolderForFile(files_to_process[file]['deploy_path'])
 
         # write files
-        new_package_file = open(files_to_process[file]['deploy_path'], 'w')
-        new_package_file.write(result)
-        new_package_file.close()
+        with open(files_to_process[file]['deploy_path'], 'w') as new_package_file:
+          new_package_file.write(result)
+
+        # apply permissions
+        os.chmod(files_to_process[file]['deploy_path'], files_to_process[file]['permissions'].st_mode)
+        os.chown(files_to_process[file]['deploy_path'], files_to_process[file]['permissions'].st_uid,
+                                                        files_to_process[file]['permissions'].st_gid)
+
         Utilities.logging.debug(files_to_process[file]['full_path'] + ' -> ' + files_to_process[file]['deploy_path'] + ' ...')
 
       except OSError as e:
