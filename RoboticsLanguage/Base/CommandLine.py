@@ -242,7 +242,7 @@ def processCommandLineParameters(args, file_formats, parameters):
   # 4. list of yaml files passed as arguments
   # 5. command line parameters
   for parameter_file in parameter_files:
-    parameters = Utilities.mergeDictionaries(yaml.load(parameter_file['file']), parameters)
+    parameters = Utilities.mergeDictionaries(yaml.safe_load(parameter_file['file']), parameters)
 
   # merge the command line flags
   parameters = Utilities.mergeDictionaries(command_line_parameters, parameters)
