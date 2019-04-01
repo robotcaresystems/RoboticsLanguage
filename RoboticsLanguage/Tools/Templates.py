@@ -20,7 +20,6 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 import os
-from shutil import copy
 from pygments import highlight
 from RoboticsLanguage.Base import Utilities
 from pygments.lexers import get_lexer_for_filename
@@ -284,7 +283,7 @@ def templateEngine(code, parameters, output=None,
         Utilities.createFolderForFile(new_files_to_copy[i])
 
         # copy files
-        copy(files_to_copy[i], new_files_to_copy[i])
+        Utilities.copyWithPermissions(files_to_copy[i], new_files_to_copy[i])
         Utilities.logging.debug('Copied file ' + new_files_to_copy[i] + '...')
 
       except OSError as e:
