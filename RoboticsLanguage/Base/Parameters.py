@@ -32,6 +32,7 @@ parameters = {
         'compile': False,
         'launch': False,
         'beautify': False,
+        'beautifyEngine': '',
         'edit': False,
         'editor': '',
         'verbose': 'none',
@@ -72,6 +73,7 @@ parameters = {
         'progressPercentage': 0,
         'progressStartTime': 0,
         'showOutputDependency': False,
+        'makeConfigurationFile': False,
         'copyExamplesHere': False,
     },
 
@@ -141,6 +143,12 @@ command_line_flags = {
         'fileNotNeeded': True,
         'description': 'Shows output package dependencies'
     },
+    'developer:makeConfigurationFile': {
+        'noArgument': True,
+        'longFlag': 'make-configuration-file',
+        'fileNotNeeded': True,
+        'description': 'Makes a configuration parameters file'
+    },
     'developer:code': {
         'noArgument': True,
         'flag': 'x',
@@ -171,6 +179,7 @@ command_line_flags = {
         'description': 'Prints parameters or code for a specific compiler step'
     },
     'developer:stop': {
+        'flag': 'S',
         'longFlag': 'show-stop',
         'noArgument': True,
         'description': 'Stops the compiler after the step defined by \'--show-step\''
@@ -261,6 +270,11 @@ command_line_flags = {
         'longFlag': 'use-editor',
         'description': 'Chooses editor'
     },
+    'globals:beautifyEngine': {
+        'flag': 'B',
+        'longFlag': 'use-beautifier',
+        'description': 'Chooses beautifier engine'
+    },
     'globals:deploy': {
         'longFlag': 'deploy-path',
         'description': 'The generic path where the generated code is saved'
@@ -274,6 +288,7 @@ command_line_flags = {
         'description': 'The path where the generated ROS 2 code is saved'
     },
     'globals:removeCache': {
+        'flag': 'r',
         'longFlag': 'remove-cache',
         'noArgument': True,
         'fileNotNeeded': True,

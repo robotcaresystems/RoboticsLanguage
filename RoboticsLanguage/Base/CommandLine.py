@@ -23,6 +23,7 @@
 import os
 import sys
 import yaml
+import copy
 import shutil
 import argparse
 import dpath.util
@@ -241,7 +242,7 @@ def processCommandLineParameters(args, file_formats, parameters):
   # 4. list of yaml files passed as arguments
   # 5. command line parameters
   for parameter_file in parameter_files:
-    parameters = Utilities.mergeDictionaries(yaml.load(parameter_file['file']), parameters)
+    parameters = Utilities.mergeDictionaries(yaml.safe_load(parameter_file['file']), parameters)
 
   # merge the command line flags
   parameters = Utilities.mergeDictionaries(command_line_parameters, parameters)
@@ -273,6 +274,7 @@ def getTemplateTextForOutputPackage(parameters, keyword, package):
     return getTemplateTextForOutputPackage(parameters, keyword, parameters['manifesto']['Outputs'][package]['parent'])
   else:
     raise
+
 
 def loadRemainingParameters(parameters):
 
@@ -400,6 +402,29 @@ def postCommandLineParser(parameters):
         print('Information:')
         Utilities.printParameters(package['information'])
 
+  # generate configuration script
+  if parameters['developer']['makeConfigurationFile']:
+    data = parameters['command_line_flags']
+    filtered = filter(lambda x: x[0:11] == 'Information' or 'suppress' not in data[x].keys() or data[x]['suppress'] is not True, data.iterkeys())
+    commands = {x: dpath.util.get(parameters, x.replace(':', '/')) for x in filtered}
+    commands_dictionary = Utilities.unflatDictionary(commands, ':')
+    commands_dictionary['developer']['makeConfigurationFile'] = False
+
+    try:
+      Utilities.createFolder(os.path.expanduser('~/.rol'))
+      if os.path.isfile(os.path.expanduser('~/.rol/parameters.yaml')):
+        with open(os.path.expanduser('~/.rol/parameters.yaml.template'), 'w') as output:
+          yaml.dump(commands_dictionary, output, default_flow_style=False)
+        print 'Created the file "~/.rol/parameters.yaml.template".'
+        print 'Please modify this file and rename it to "~/.rol/parameters.yaml"'
+      else:
+        with open(os.path.expanduser('~/.rol/parameters.yaml'), 'w') as output:
+          yaml.dump(commands_dictionary, output, default_flow_style=False)
+        print 'Created the file "~/.rol/parameters.yaml".'
+    except Exception as e:
+      print 'Error creating configuration file!'
+      print e
+
   # Outputs dependency
   if parameters['developer']['showOutputDependency']:
     for package in parameters['manifesto']['Outputs']:
@@ -411,10 +436,15 @@ def postCommandLineParser(parameters):
     from_path = parameters['globals']['RoboticsLanguagePath'] + 'Examples'
     here_path = os.getcwd()
 
-    for root, dirs, files in os.walk(from_path):
-      for file in files:
-        print 'copying: ' + root + '/' + file + ' -> ' + here_path + '/' + file
-        shutil.copy(root + '/' + file, here_path + '/' + file)
+    # copytree workaround to ignore existing folders and maintain folder structure. slightly adjusted from here:
+    # https://stackoverflow.com/questions/1868714/how-do-i-copy-an-entire-directory-of-files-into-an-existing-directory-using-pyth
+    for item in os.listdir(from_path):
+      s = os.path.join(from_path, item)
+      d = os.path.join(here_path, item)
+      if os.path.isdir(s):
+        shutil.copytree(s, d)
+      else:
+        shutil.copy2(s, d)
 
   return parameters
 
