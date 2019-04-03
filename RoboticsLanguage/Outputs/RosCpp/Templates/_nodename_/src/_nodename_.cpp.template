@@ -11,7 +11,7 @@
  *
  */
 
-#include "{{parameters.node.name|underscore}}/{{parameters.node.name|underscore}}.h"
+#include "{{parameters.node.name|underscore}}/{{parameters.node.name|underscore}}.hpp"
 
 /***************************************************************************************
 *       {{parameters.node.name|camelCase}}Class Definition
