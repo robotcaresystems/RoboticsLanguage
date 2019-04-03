@@ -1,0 +1,24 @@
+
+{% set classInitialisation %}
+
+{% endset %}
+
+{% set initialise %}
+
+{% endset %}
+
+{% set finalise %}
+
+{% endset %}
+
+{% set beforeSpin %}
+
+{% endset %}
+
+{% set afterSpin %}
+
+{% endset %}
+
+{% set functions %}
+
+{% endset %}

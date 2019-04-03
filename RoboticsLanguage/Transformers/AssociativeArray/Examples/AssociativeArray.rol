@@ -1,0 +1,14 @@
+node(
+  name:'example Associative Array',
+
+  definitions: x in AssociativeArray,
+
+  initialise: block(
+    x = {a:'d', b:2, c:{a:'d', b:2, c:{1,2,3}}},
+    print(x),
+
+    x['c', 'a'] = 3,
+    print(x)
+
+  )
+)
