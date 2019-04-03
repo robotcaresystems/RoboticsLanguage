@@ -252,6 +252,28 @@ language = {
             'usage': 'node(\n  name:"hello world",\n  initialise(print("hello world"))\n)'
         }
     },
+    'library': {
+        'definition': {
+            'arguments': arguments('anything'),
+            'optional': {
+                'name': optional('string', 'unnamed'),
+                'initialise': optional('anything', None),
+                'finalise': optional('anything', None),
+                'definitions': optional('anything', None),
+            },
+            'returns': returns('node')
+        },
+        'localisation':
+        {
+            'pt': 'biblioteca',
+        },
+        'documentation':
+        {
+            'title': 'A software library',
+            'description': 'This implements a standard library object. Needs to be included by a node to run',
+            'usage': 'library(\n  name:"hello world",\n  initialise(print("hello world"))\n)'
+        }
+    },
     'print': {
         'definition': {
             'arguments': arguments('(string | real)+'),
