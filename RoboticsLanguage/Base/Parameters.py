@@ -181,6 +181,7 @@ command_line_flags = {
         'description': 'Prints parameters or code for a specific compiler step'
     },
     'developer:stop': {
+        'flag': 'S',
         'longFlag': 'show-stop',
         'noArgument': True,
         'description': 'Stops the compiler after the step defined by \'--show-step\''
