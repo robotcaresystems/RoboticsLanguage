@@ -5,7 +5,16 @@
 #include <{{item}}.h>
 {% endfor %}
 
+{% for message in code.xpath('//rosm:message', namespaces={'rosm': 'rosm'}) -%}
+#include <{{parameters.node.name|underscore}}/{{message.xpath('.//rosm:name', namespaces={'rosm': 'rosm'})|first|text}}.h>
+{% endfor -%}
+
+{% for item in code.xpath('//element/RosClass') %}
+#include <{{item.xpath('./option[@name="package"]/string/text()')[0]}}/{{item.xpath('./option[@name="package"]/string/text()')[0]}}.h>
+{% endfor %}
+
 {% endset %}
+
 
 
 {% set definitions %}

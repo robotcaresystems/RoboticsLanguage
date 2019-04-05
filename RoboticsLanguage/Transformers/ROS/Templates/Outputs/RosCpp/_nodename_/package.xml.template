@@ -1,0 +1,18 @@
+
+{% set build_depend -%}
+{% for dependency in parameters.Transformers.ROS.buildDependencies -%}
+    <build_depend>{{dependency}}</build_depend>
+{% endfor -%}
+  {% if code.xpath('//rosm:message', namespaces={'rosm': 'rosm'})|length > 0 -%}
+  <build_depend>message_generation</build_depend>
+  {% endif -%}
+{% endset -%}
+
+{% set run_depend -%}
+  {% for dependency in parameters.Transformers.ROS.buildDependencies -%}
+      <run_depend>{{dependency}}</run_depend>
+  {% endfor -%}
+  {% if code.xpath('//rosm:message', namespaces={'rosm': 'rosm'})|length > 0 -%}
+  <run_depend>message_runtime</run_depend>
+  {% endif -%}
+{% endset -%}

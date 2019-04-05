@@ -39,7 +39,7 @@ def processTemporalOperators(code, parameters, logic_id_counter):
 
     # find all the variables inside the temporal logic operator that affect
     # its behaviour
-    all_variables = logic.xpath('.//variable/@name')
+    all_variables = logic.xpath('.//variable[not(ancestor::domain)]/@name|.//domain/variable[count(preceding-sibling::*)=0]/@name')
 
     # also find all signal dependencies of cascated temporal logic
     # operators

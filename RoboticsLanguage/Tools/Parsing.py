@@ -30,10 +30,10 @@ def xml(tag, content=[], attributes={}, text='', namespace=''):
     code = etree.Element(tag, attributes)
   else:
     # create element with namespace
-    code = etree.Element('{' + namespace + '}' + tag, attributes, nsmap={namespace: namespace})
+    code = etree.Element('{' + namespace + '}' + str(tag), attributes, nsmap={namespace: namespace})
 
   # add text
-  code.text = text
+  code.text = str(text)
 
   # append content (make sure to deep copy elements, in case there is re-use)
   [code.insert(0, x) for x in reversed(Utilities.ensureList(content))]

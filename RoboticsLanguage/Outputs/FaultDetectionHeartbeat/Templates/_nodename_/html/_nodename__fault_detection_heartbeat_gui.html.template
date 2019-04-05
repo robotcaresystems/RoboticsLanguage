@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<<<header->>>
+<!--
+ * Node name: {{parameters.node.name}}
+ *
+ * Generated on: {{"%d %B, %Y"|todaysDate}}
+ *       Author: {{parameters.Information.user.name}}
+ *      Licence: {{parameters.Information.software.license}}
+ *    Copyright: {{parameters.Information.software.copyright}}
+ *
+ *    THIS FILE WAS AUTOMATICALLY GENERATED USING THE ROBOTICS LANGUAGE
+ -->
+<html>
+
+<head>
+  <meta charset="utf-8" />
+
+  <!-- Ros bridge -->
+  <script type="text/javascript" src="https://static.robotwebtools.org/roslibjs/current/roslib.min.js"></script>
+
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+
+  <!-- semantic UI -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.13/semantic.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.13/semantic.min.css"/>
+
+  <script type="text/javascript">
+
+  // Connecting to ROS
+  // -----------------
+  var ros = new ROSLIB.Ros({
+    url: 'ws://localhost:9090' // this is the standard rosbridge port
+  });
+
+  ros.on('connection', function() {
+    console.log('Connected to websocket server.');
+  });
+
+  // Displays a message in case conection failed
+  ros.on('error', function(error) {
+    $('#ros_bridge').transition('show');
+    $('#ros_bridge_header').html('Error connecting to websocket server: ' + error);
+    console.log('Error connecting to websocket server: ', error);
+  });
+
+  // Displays a message when connection ends
+  ros.on('close', function() {
+    $('#ros_bridge').transition('show');
+    $('#ros_bridge_header').html('Connection to websocket server closed!');
+    console.log('Connection to websocket server closed.');
+  });
+
+
+  {% for node in parameters.Inputs.FaultDetectionHeartbeat.data.nodes %}
+  var node_{{node.name}} = new ROSLIB.Topic({
+    ros: ros,
+    name: '/heartbeat/{{node.name}}',
+    messageType: 'std_msgs/Int8',
+  });
+
+  node_{{node.name}}.subscribe(function(message) {
+    $('#icon_{{parameters.Inputs.FaultDetectionHeartbeat.data.fault_prefix}}{{node.name}}').removeClass('red');
+    $('#icon_{{parameters.Inputs.FaultDetectionHeartbeat.data.fault_prefix}}{{node.name}}').addClass('green');
+  });
+
+  {% endfor %}
+
+
+  // connect to fault topic
+  var topic_fault = new ROSLIB.Topic({
+    ros: ros,
+    name: '{{parameters.Inputs.FaultDetectionHeartbeat.data.fault_topic}}',
+    messageType: '{{parameters.Inputs.FaultDetectionHeartbeat.data.fault_type}}',
+  });
+
+  // subscribe function
+  topic_fault.subscribe(function(message) {
+
+    var utcDate = new Date(Date.now());
+
+    // add fault to history
+    s = $('#history').html() + '[' + utcDate.toUTCString() + '] ' + message.code + ' - ' + message.cause + '\n';
+    $('#history').html(s);
+
+    // update last occurance field in faults table
+    $('#last_' + message.code).html(utcDate);
+
+    //update icon
+    $('#icon_' + message.code).removeClass('green');
+    $('#icon_' + message.code).addClass('red');
+
+  });
+
+  </script>
+
+
+</head>
+
+<!-- THIS IS THE HTML PART -->
+<body>
+  <div class="ui container">
+  <h1> {{parameters.node.name}} </h1>
+
+  <!-- This part is hidden from view unless there is an error connecting to rosbridge.
+    Please do not change this part -->
+  <div class="ui icon error big message hidden" id="ros_bridge">
+    <div class="content">
+      <div class="header" id="ros_bridge_header"></div>
+      <p id="ros_bridge_text">Please make sure that you run
+      "<code>roslaunch rosbridge_server
+      rosbridge_websocket.launch</code>" in the terminal. Then
+      refresh this page.</p>
+    </div>
+  </div>
+
+  <h2>Fault history</h2>
+
+  <div class="ui form">
+    <div class="field">
+      <textarea id="history"></textarea>
+    </div>
+  </div>
+
+  <h2>Nodes</h2>
+
+  <table class="ui celled table">
+    <thead>
+      <tr><th></th>
+      <th>Last occurence</th>
+      <th>Name</th>
+      <th>Fault code</th>
+      <th>Heartbeat (sec)</th>
+    </tr></thead>
+    <tbody>
+
+
+      {% for node in parameters.Inputs.FaultDetectionHeartbeat.data.nodes %}
+      <tr>
+        <td ><i id="icon_{{parameters.Inputs.FaultDetectionHeartbeat.data.fault_prefix}}{{node.name}}" class="red circle icon"></i></td>
+        <td id="last_{{parameters.Inputs.FaultDetectionHeartbeat.data.fault_prefix}}{{node.name}}"> -- </td>
+        <td >{{node.name}}</td>
+        <td >{{parameters.Inputs.FaultDetectionHeartbeat.data.fault_prefix}}{{node.name}}</td>
+        <td >{{node.heartbeat}}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+
+  </div>
+
+</body>
+
+</html>

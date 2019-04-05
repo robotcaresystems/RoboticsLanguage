@@ -34,6 +34,14 @@ language = {
     },
 
 
+    'RosClass': {
+        'output':
+        {
+            'RosCpp': '{{code.xpath(\'./option[@name="namespace"]/string/text()\')[0]}}::{{code.xpath(\'./option[@name="class"]/string/text()\')[0]}}'
+        },
+    },
+
+
     'print': {
         'output':
         {

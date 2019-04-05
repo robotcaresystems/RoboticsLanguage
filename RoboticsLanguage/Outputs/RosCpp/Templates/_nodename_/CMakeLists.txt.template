@@ -5,11 +5,13 @@ project({{parameters.node.name|underscore }})
 ## Find catkin and any catkin packages
 find_package(catkin REQUIRED COMPONENTS
     roscpp
-    std_msgs
+    {% if parameters.Transformers.ROS.addingNewMessages -%}
+    message_generation
+    {% endif -%}
     <<<'findPackage'|group>>>
 )
 
-{% if parameters.Transformers.ROS.addingNewMessages %}
+{% if parameters.Transformers.ROS.addingNewMessages -%}
 add_message_files(
   FILES
   <<<'addMessageFiles'|group>>>
@@ -17,10 +19,9 @@ add_message_files(
 
 generate_messages(
    DEPENDENCIES
-   std_msgs
    <<<'generateMessages'|group>>>
 )
-{% endif %}
+{% endif -%}
 
 
 ## Declare a catkin package
@@ -28,7 +29,9 @@ catkin_package(
   INCLUDE_DIRS include
   CATKIN_DEPENDS
     roscpp
-    std_msgs
+    {% if parameters.Transformers.ROS.addingNewMessages -%}
+    message_runtime
+    {% endif -%}
     <<<'catkinDepends'|group>>>
 )
 

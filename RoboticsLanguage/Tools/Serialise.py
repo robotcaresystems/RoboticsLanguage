@@ -22,26 +22,28 @@
 from RoboticsLanguage.Base import Utilities
 from jinja2 import Template, TemplateError
 
-default_template_engine_filters = {'todaysDate': Utilities.todaysDate,
+default_template_engine_filters = {
+                                   'tag': Utilities.tag,
+                                   'text': Utilities.text,
                                    'dpath': Utilities.path,
                                    'xpath': Utilities.xpath,
                                    'dpaths': Utilities.paths,
                                    'xpaths': Utilities.xpaths,
-                                   'children': Utilities.children,
                                    'parent': Utilities.parent,
-                                   'isDefined': Utilities.isDefined,
-                                   'ensureList': Utilities.ensureList,
-                                   'text': Utilities.text,
-                                   'tag': Utilities.tag,
                                    'unique': Utilities.unique,
-                                   'attributes': Utilities.attributes,
-                                   'attribute': Utilities.attribute,
+                                   'dashes': Utilities.dashes,
                                    'option': Utilities.option,
-                                   'optionalArguments': Utilities.optionalArguments,
+                                   'children': Utilities.children,
                                    'initials': Utilities.initials,
-                                   'underscore': Utilities.underscore,
                                    'fullCaps': Utilities.fullCaps,
+                                   'isDefined': Utilities.isDefined,
                                    'camelCase': Utilities.camelCase,
+                                   'attribute': Utilities.attribute,
+                                   'todaysDate': Utilities.todaysDate,
+                                   'ensureList': Utilities.ensureList,
+                                   'attributes': Utilities.attributes,
+                                   'underscore': Utilities.underscore,
+                                   'optionalArguments': Utilities.optionalArguments,
                                    'underscoreFullCaps': Utilities.underscoreFullCaps,
                                    'sortListCodeByAttribute': Utilities.sortListCodeByAttribute
                                    }
@@ -89,7 +91,8 @@ def serialise(code, parameters, keywords, language, filters=default_template_eng
           text=Utilities.text(code),
           tag=code.tag,
           parameters=parameters,
-          code=code)
+          code=code,
+          language=language)
 
       # save text in attribute
       code.attrib[language] = snippet
@@ -100,8 +103,13 @@ def serialise(code, parameters, keywords, language, filters=default_template_eng
 
   except KeyError:
     # get the line and column numbers
-    line_number, column_number, line = Utilities.positionToLineColumn(
-        int(code.attrib['p']), parameters['text'])
+    if 'p' in code.keys():
+      line_number, column_number, line = Utilities.positionToLineColumn(
+          int(code.attrib['p']), parameters['text'])
+    else:
+      line_number = 0
+      column_number = 0
+      line = ''
 
     # create error message
     Utilities.logErrors(Utilities.errorMessage('Language semantic', 'Keyword \'' + code.tag + '\' not defined',

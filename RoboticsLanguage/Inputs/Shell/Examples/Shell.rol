@@ -1,0 +1,23 @@
+node(
+  name:'example Shell',
+
+  definitions: result ∈ Strings,
+
+  initialise: block(
+    # the Shell mini-language
+    result = Shell<{
+
+#/bin/bash
+STR="Hello World!"
+echo $STR
+echo 'expression(regular)->"A complicated"' | sed 's/\([^(]*\)(\([^)]*\))->\"\([^\"]*\)\"/\3 \2 \1/g'
+
+        }>,
+
+    print('Got back: ', result),
+
+    result = Shell<{ for x in {1..5}; do sleep 1; echo $x; done }>,
+
+    print('Got back: ', result)
+  )
+)

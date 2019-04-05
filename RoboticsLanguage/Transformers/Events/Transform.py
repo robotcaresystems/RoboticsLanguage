@@ -25,7 +25,7 @@ def transform(code, parameters):
     when.attrib['whenId'] = str(when_counter)
 
     # look for all variable dependencies on the arguments
-    variables = list(set(when.getchildren()[0].xpath('.//variable/@name')))
+    variables = list(set(when.getchildren()[0].xpath('.//variable[not(ancestor::domain)]/@name|.//domain/variable[count(preceding-sibling::*)=0]/@name')))
 
     # also check for first element
     if when.getchildren()[0].tag == 'variable':
@@ -33,8 +33,12 @@ def transform(code, parameters):
 
     for variable in variables:
       new_parameters = {}
+      # c++
       dpath.util.new(new_parameters, 'Transformers/Base/variables/' + variable +
                      '/operators/assign/post/Cpp', ['when' + str(when_counter) + '()'])
+      # python
+      dpath.util.new(new_parameters, 'Transformers/Base/variables/' + variable +
+                     '/operators/assign/post/Python', ['when' + str(when_counter) + '()'])
       dpath.util.merge(parameters, new_parameters)
 
   return code, parameters

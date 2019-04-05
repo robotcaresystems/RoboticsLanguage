@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<<<header->>>
+<!--
+ * Node name: {{parameters.node.name}}
+ *
+ * Generated on: {{"%d %B, %Y"|todaysDate}}
+ *       Author: {{parameters.Information.user.name}}
+ *      Licence: {{parameters.Information.software.license}}
+ *    Copyright: {{parameters.Information.software.copyright}}
+ *
+ *    THIS FILE WAS AUTOMATICALLY GENERATED USING THE ROBOTICS LANGUAGE
+ -->
+<html>
+
+<head>
+  <meta charset="utf-8" />
+
+  <!-- Ros bridge -->
+  <script type="text/javascript" src="https://static.robotwebtools.org/roslibjs/current/roslib.min.js"></script>
+
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+
+  <!-- semantic UI -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.13/semantic.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.13/semantic.min.css"/>
+
+  <script type="text/javascript">
+
+  // Connecting to ROS
+  // -----------------
+  var ros = new ROSLIB.Ros({
+    url: 'ws://localhost:9090' // this is the standard rosbridge port
+  });
+
+  ros.on('connection', function() {
+    console.log('Connected to websocket server.');
+  });
+
+  // Displays a message in case conection failed
+  ros.on('error', function(error) {
+    $('#ros_bridge').transition('show');
+    $('#ros_bridge_header').html('Error connecting to websocket server: ' + error);
+    console.log('Error connecting to websocket server: ', error);
+  });
+
+  // Displays a message when connection ends
+  ros.on('close', function() {
+    $('#ros_bridge').transition('show');
+    $('#ros_bridge_header').html('Connection to websocket server closed!');
+    console.log('Connection to websocket server closed.');
+  });
+
+
+  // connect to fault topic
+  var topic_fault = new ROSLIB.Topic({
+    ros: ros,
+    name: '{{parameters.Inputs.FaultDetectionTopics.data.fault_topic}}',
+    messageType: '{{parameters.Inputs.FaultDetectionTopics.data.fault_type}}',
+  });
+
+  // subscribe function
+  topic_fault.subscribe(function(message) {
+
+    console.log(message);
+
+    var utcDate = new Date(Date.now());
+
+    // add fault to history
+    s = $('#history').html() + '[' + utcDate.toUTCString() + '] ' + message.code + ' - ' + message.cause + '\n';
+    $('#history').html(s);
+
+    // update last occurance field in faults table
+    $('#last_' + message.code).html(utcDate);
+
+    //update icon
+    $('#icon_' + message.code).removeClass('grey');
+    $('#icon_' + message.code).removeClass('outline');
+    $('#icon_' + message.code).addClass('red');
+
+    // reset icon after 5 seconds
+    setTimeout(function() {
+      $('#icon_' + message.code).removeClass('red');
+      $('#icon_' + message.code).addClass('grey');
+      $('#icon_' + message.code).addClass('outline');
+    }, 5000)
+  });
+
+  </script>
+
+
+</head>
+
+<!-- THIS IS THE HTML PART -->
+<body>
+  <div class="ui container">
+  <h1> {{parameters.node.name}} </h1>
+
+  <!-- This part is hidden from view unless there is an error connecting to rosbridge.
+    Please do not change this part -->
+  <div class="ui icon error big message hidden" id="ros_bridge">
+    <div class="content">
+      <div class="header" id="ros_bridge_header"></div>
+      <p id="ros_bridge_text">Please make sure that you run
+      "<code>roslaunch rosbridge_server
+      rosbridge_websocket.launch</code>" in the terminal. Then
+      refresh this page.</p>
+    </div>
+  </div>
+
+  <h2>Fault history</h2>
+
+  <div class="ui form">
+    <div class="field">
+      <textarea id="history"></textarea>
+    </div>
+  </div>
+
+  <h2>Faults</h2>
+
+  <table class="ui celled table">
+    <thead>
+      <tr><th></th>
+      <th>Last occurence</th>
+      <th>Code</th>
+      <th>Detection</th>
+      <th>Cause</th>
+      <th>Description</th>
+    </tr></thead>
+    <tbody>
+      {% for fault in parameters.Inputs.FaultDetectionTopics.data.faults %}
+      <tr>
+        <td ><i id="icon_{{fault.code}}" class="grey outline circle icon"></i></td>
+        <td id="last_{{fault.code}}"> -- </td>
+        <td >{{fault.code}}</td>
+        <td >{{fault.detection}}</td>
+        <td >{{fault.cause}}</td>
+        <td >{{fault.description}}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+
+  <h2>Topics</h2>
+
+  <table class="ui celled table">
+    <thead>
+      <tr><th>Variable</th>
+      <th>Topic</th>
+      <th>Type</th>
+    </tr></thead>
+    <tbody>
+      {% for topic in parameters.Inputs.FaultDetectionTopics.data.topics %}
+      <tr>
+        <td >{{topic.variable}}</td>
+        <td >{{topic.name}}</td>
+        <td >{{topic.type}}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <h2>Parameters</h2>
+
+  <table class="ui celled table">
+    <thead>
+      <tr><th>Parameter</th>
+      <th>Value</th>
+      <th>Type</th>
+    </tr></thead>
+    <tbody>
+      {% for parameter in parameters.Inputs.FaultDetectionTopics.data.parameters %}
+      <tr>
+        <td >{{parameter.name}}</td>
+        <td >{{parameter.value}}</td>
+        <td >{{parameter.type}}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  </div>
+
+</body>
+
+</html>

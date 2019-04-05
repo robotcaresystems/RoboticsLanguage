@@ -1,0 +1,27 @@
+
+{% set addMessageFiles -%}
+{% for message in code.xpath('//rosm:message', namespaces={'rosm': 'rosm'}) -%}
+  {{message.xpath('.//rosm:name', namespaces={'rosm': 'rosm'})|first|text}}.msg
+{% endfor -%}
+{% endset -%}
+
+{% set generateMessages -%}
+{% for dependency in parameters.Transformers.ROS.messageDependencies -%}
+    {{dependency}}
+{% endfor -%}
+{% endset -%}
+
+
+{% set findPackage -%}
+{% for dependency in parameters.Transformers.ROS.buildDependencies -%}
+    {{dependency}}
+{% endfor -%}
+{% endset -%}
+
+
+
+{% set catkinDepends -%}
+{% for dependency in parameters.Transformers.ROS.buildDependencies -%}
+    {{dependency}}
+{% endfor -%}
+{% endset -%}

@@ -20,7 +20,7 @@ node(
 
     # Reals
     k ∈ ℝ = 1.3,
-    l ∈ ℝ(bits:23),
+    l ∈ ℝ(bits:32),
     m ∈ ℝ(bits:64),
 
     # Booleans
