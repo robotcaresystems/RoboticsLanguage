@@ -37,8 +37,8 @@ from lxml import etree
 from funcy import decorator
 from pygments import highlight
 from shutil import copy, rmtree
-from pygments.lexers import PythonLexer, XmlLexer
 from pygments.formatters import Terminal256Formatter
+from pygments.lexers import PythonLexer, XmlLexer, get_lexer_by_name
 from jinja2 import Environment, FileSystemLoader, Template, TemplateSyntaxError, TemplateAssertionError, TemplateError
 
 # -------------------------------------------------------------------------------------------------
@@ -52,6 +52,12 @@ sys.setdefaultencoding('utf-8')
 # -------------------------------------------------------------------------------------------------
 #  Helping functions
 # -------------------------------------------------------------------------------------------------
+
+def printSource(text, language, parameters=None, style='monokai'):
+  if parameters is not None and parameters['globals']['noColours']:
+    print(text)
+  else:
+    print(highlight(text, get_lexer_by_name(language), Terminal256Formatter(style=Terminal256Formatter().style)))
 
 
 def printCode(code, parameters=None, style='monokai'):
@@ -394,6 +400,16 @@ def progressDone(parameters):
   sys.stdout.flush()
 
 
+def checkQueryNamespaces(text):
+  '''Looks for namespace references in the query text and add them explicitely to xpath'''
+  namespaces = {'namespaces': {}}
+  name = re.split('([a-zA-Z0-9]+):[a-zA-Z0-9]+', text)
+  if name is not None:
+    namespaces['namespaces'] = {value: value for value in name[1::2]}
+
+  return text, namespaces
+
+
 def showDeveloperInformation(code, parameters):
 
   if parameters['developer']['progress']:
@@ -412,7 +428,8 @@ def showDeveloperInformation(code, parameters):
     # show developer information for specific xml code
     if parameters['developer']['codePath'] is not '' and code is not None:
       try:
-        printCode(code.xpath(parameters['developer']['codePath']), parameters)
+        query, namespaces = checkQueryNamespaces(parameters['developer']['codePath'])
+        printCode(code.xpath(query, **namespaces), parameters)
       except:
         logger.warning(
             "The path'" + parameters['developer']['codePath'] + "' is not present in the code")
@@ -449,6 +466,14 @@ def removeCache(cache_path='/.rol/cache'):
 
 def myPluginPath(parameters):
   return parameters['manifesto'][parameters['developer']['stepGroup']][parameters['developer']['stepName']]['path']
+
+
+def myOutputPath(parameters):
+  if parameters['developer']['stepName'] in parameters['globals']['deployOutputs'].keys():
+    return parameters['globals']['deployOutputs'][parameters['developer']['stepName']]
+  else:
+    return parameters['globals']['deploy']
+
 
 
 def getPackageOutputParents(parameters, package):
@@ -537,6 +562,10 @@ def underscore(text):
   return text.replace('/', '_').replace(' ', '_').replace('.', '_').lower()
 
 
+def dashes(text):
+  return text.replace('/', '-').replace(' ', '-').replace('.', '-').replace('_', '-').lower()
+
+
 def underscoreFullCaps(text):
   return text.replace('/', '_').replace(' ', '_').replace('.', '_').upper()
 
@@ -570,6 +599,36 @@ def initials(text):
 # -------------------------------------------------------------------------------------------------
 #  List utilities
 # -------------------------------------------------------------------------------------------------
+
+def mergeManyOrdered(list_of_lists):
+  """Non-optimized generalization of mergeOrdered"""
+  return reduce(mergeOrdered, list_of_lists)
+
+
+def mergeOrdered(a, b):
+  """Merges two lists, while keeping the order of the elements and trying to find
+  minimum number of repetitions. E.g.:
+  a = [0,1,3,8,9]
+  b = [1,2,4,5,8,9]
+  mergeOrdered(a, b) -> [0, 1, 2, 4, 5, 3, 8, 9]
+  """
+  c = []
+  while len(a) > 0 and len(b) > 0:
+    if a[0] == b[0]:
+      c.append(a.pop(0))
+      b.pop(0)
+    elif a[0] in b and b[0] not in a:
+      c.append(b.pop(0))
+    elif a[0] not in b and b[0] in a:
+      c.append(a.pop(0))
+    else:
+      if len(a) > len(b):
+        c.append(a.pop(0))
+      else:
+        c.append(b.pop(0))
+
+  return c + a + b
+
 
 def ensureList(a):
   if isinstance(a, list):
@@ -621,6 +680,11 @@ def createFolderForFile(filename):
   createFolder(os.path.dirname(filename))
 
 
+def copyWithPermissions(source, destination):
+    permissions = os.stat(source)
+    copy(source, destination)
+    os.chown(destination, permissions.st_uid, permissions.st_gid)
+    os.chmod(destination, permissions.st_mode)
 # -------------------------------------------------------------------------------------------------
 #  XML utilities used in parsers
 # -------------------------------------------------------------------------------------------------
@@ -683,6 +747,7 @@ def xmlVariable(parameters, name, position=0):
 def xmlMiniLanguage(parameters, key, text, position):
   '''Calls a different parser to process inline mini languages'''
   try:
+    parameters['parsing']['position'] = position
     code, parameters = importModule(parameters['manifesto']['Inputs'][key]['type'], 'Inputs', key, 'Parse').Parse.parse(text, parameters)
     result = etree.tostring(code)
     return result

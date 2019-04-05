@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<<<header->>>
+<!--
+ * Node name: {{parameters.node.name}}
+ *
+ * Generated on: {{"%d %B, %Y"|todaysDate}}
+ *       Author: {{parameters.Information.user.name}}
+ *      Licence: {{parameters.Information.software.license}}
+ *    Copyright: {{parameters.Information.software.copyright}}
+ *
+ *    THIS FILE WAS AUTOMATICALLY GENERATED USING THE ROBOTICS LANGUAGE
+ -->
+<html>
+
+<head>
+  <meta charset="utf-8" />
+
+  <!-- Ros bridge -->
+  <script type="text/javascript" src="https://static.robotwebtools.org/roslibjs/current/roslib.min.js"></script>
+
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+
+  <!-- semantic UI -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.13/semantic.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.13/semantic.min.css"/>
+
+  <script type="text/javascript">
+
+  // Connecting to ROS
+  // -----------------
+  var ros = new ROSLIB.Ros({
+    url: 'ws://localhost:9090' // this is the standard rosbridge port
+  });
+
+  ros.on('connection', function() {
+    console.log('Connected to websocket server.');
+  });
+
+  // Displays a message in case conection failed
+  ros.on('error', function(error) {
+    $('#ros_bridge').transition('show');
+    $('#ros_bridge_header').html('Error connecting to websocket server: ' + error);
+    console.log('Error connecting to websocket server: ', error);
+  });
+
+  // Displays a message when connection ends
+  ros.on('close', function() {
+    $('#ros_bridge').transition('show');
+    $('#ros_bridge_header').html('Connection to websocket server closed!');
+    console.log('Connection to websocket server closed.');
+  });
+
+
+  // connect to fault topic
+  var topic_fault = new ROSLIB.Topic({
+    ros: ros,
+    name: '/fault',
+    messageType: '{{parameters.node.name|underscore}}/Fault',
+  });
+
+  // subscribe function
+  topic_fault.subscribe(function(message) {
+
+    var utcDate = new Date(Date.now());
+
+    // add fault to history
+    s = $('#history_fault').html() + '[' + utcDate.toUTCString() + '] ' + message.code.data + ' - ' + message.cause.data + '\n';
+    $('#history_fault').html(s);
+
+  });
+
+
+
+  // connect to failure topic
+  var topic_failure = new ROSLIB.Topic({
+    ros: ros,
+    name: '/failure',
+    messageType: '{{parameters.node.name|underscore}}/Failure',
+  });
+
+  // subscribe function
+  topic_failure.subscribe(function(message) {
+
+    var utcDate = new Date(Date.now());
+
+    // add failure to history
+    s = $('#history_failure').html() + '[' + utcDate.toUTCString() + '] ' + message.code.data + ' - ' + message.cause.data + '\n';
+    $('#history_failure').html(s);
+
+  });
+
+
+  </script>
+
+
+</head>
+
+<!-- THIS IS THE HTML PART -->
+<body>
+  <div class="ui container">
+    <h1> {{parameters.node.name}} </h1>
+
+    <!-- This part is hidden from view unless there is an error connecting to rosbridge.
+      Please do not change this part -->
+    <div class="ui icon error big message hidden" id="ros_bridge">
+      <div class="content">
+        <div class="header" id="ros_bridge_header"></div>
+        <p id="ros_bridge_text">Please make sure that you run
+        "<code>roslaunch rosbridge_server
+        rosbridge_websocket.launch</code>" in the terminal. Then
+        refresh this page.</p>
+      </div>
+    </div>
+
+
+    <div class="ui two column  grid">
+      <div class="column">
+
+        <h2>Fault history</h2>
+
+        <div class="ui form">
+          <div class="field">
+            <textarea id="history_fault"></textarea>
+          </div>
+        </div>
+
+        <h2>Detection GUIs</h2>
+        <button class="ui teal button"><i class="external alternate icon"></i> topics</button>
+        <button class="ui teal button"><i class="external alternate icon"></i> heartbeat</button>
+        <button class="ui teal button"><i class="external alternate icon"></i> processes</button>
+
+      </div>
+      <div class="column">
+
+        <h2>Failure history</h2>
+
+        <div class="ui form">
+          <div class="field">
+            <textarea id="history_failure"></textarea>
+          </div>
+        </div>
+        <h2>Handling GUIs</h2>
+        <button class="ui blue button"><i class="external alternate icon"></i> faults</button>
+        <button class="ui red button"><i class="external alternate icon"></i> failures</button>
+
+      </div>
+    </div>
+
+
+
+
+
+    </div>
+
+  </div>
+
+</body>
+
+</html>

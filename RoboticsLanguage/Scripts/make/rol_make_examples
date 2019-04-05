@@ -36,7 +36,7 @@ if __name__ == "__main__":
     # if call(['rol', path+name] + command_line_parameters):
     #   return sys.exit(1)
 
-  compile(path + '/Examples/', 'helloworld.rol')
+  compile(path + '/Examples/', '1_hello_world.rol')
 
   compile(path + '/Transformers/Base/Examples/', 'functions.rol')
   compile(path + '/Transformers/Base/Examples/', 'precedence.rol')

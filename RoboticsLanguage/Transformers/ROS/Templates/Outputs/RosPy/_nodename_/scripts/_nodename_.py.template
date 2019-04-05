@@ -1,0 +1,97 @@
+
+{% set imports %}
+{% for item in parameters.Outputs.RosPy.Imports -%}
+import {{item}}
+{% endfor -%}
+{% for item in code.xpath('//element/RosType/string/text()') %}
+import {{item}}
+{% endfor %}
+{% for message in code.xpath('//rosm:message', namespaces={'rosm': 'rosm'}) -%}
+from {{parameters.node.name|underscore}} import {{code.xpath('.//rosm:name', namespaces={'rosm': 'rosm'})|first|text}}
+{% endfor -%}
+{% endset %}
+
+
+
+{% set initialise %}
+
+    {# ROS TOPICS #################################### #}
+    {% if parameters.Transformers.ROS.topicDefinitions|length > 0 -%}
+    # ROS topics
+      {% for topic in parameters.Transformers.ROS.topicDefinitions -%}
+    # signal {{topic.variable}}
+      {# PUBLISHER #################################### #}
+        {% if topic.flow == 'outgoing' or topic.flow == 'bidirectional' -%}
+    {{topic.variable}}_publisher = rospy.Publisher("{{topic.topic_name}}",{{topic.ros_py_type}}, queue_size = 10)
+        {% endif -%}
+
+        {# SUBSCRIBER #################################### #}
+        {% if topic.flow == 'incoming' or topic.flow == 'bidirectional' -%}
+    rospy.Subscriber("{{topic.topic_name}}", {{topic.ros_py_type}}, signal_{{topic.variable}}_callback)
+        {% endif -%}
+
+      {% endfor %}
+    {% endif -%}
+
+{% endset %}
+
+
+
+
+{% set functions %}
+  {# ROS TOPICS #################################### #}
+  {% if parameters.Transformers.ROS.topicDefinitions|length > 0 -%}
+    # Callbacks for signals
+    {% for topic in parameters.Transformers.ROS.topicDefinitions -%}
+    {# CALLBACK #################################### #}
+      {% if topic.flow == 'incoming' or topic.flow == 'bidirectional' -%}
+     def signal_{{topic.variable}}_callback(signal_{{topic.variable}}_message):
+     #>>
+        global {{topic.variable}}
+
+       {# Get serialised code #}
+       {% set onChange = code|xpath('//Signals[@ROSvariable="' + topic.variable + '"]')|option('onChange')|serializedCode %}
+       {% set onNew = code|xpath('//Signals[@ROSvariable="' + topic.variable + '"]')|option('onNew')|serializedCode %}
+
+       {% if onChange|length > 0 -%}
+       # remember the last value for the topic
+       {{topic.ros_py_type}} signal_{{topic.variable}}_previous = {{topic.variable}}
+       {% endif -%}
+
+       {% if parameters|isDefined('Transformers/Base/variables/' + topic.variable + '/operators/assign/pre/Cpp') %}
+       # run  pre-processing instructions
+         {% for instructions in parameters.Transformers.Base.variables[topic.variable].operators.assign.pre.Cpp %}
+         {{instructions}}
+         {% endfor %}
+       {% endif %}
+
+       # Cache a copy of this signal inside the code
+       {{topic.variable}} = signal_{{topic.variable}}_message
+
+       {% if parameters|isDefined('Transformers/Base/variables/' + topic.variable + '/operators/assign/post/Cpp') %}
+       # run post-processing instructions
+         {% for instructions in parameters.Transformers.Base.variables[topic.variable].operators.assign.post.Cpp %}
+         {{instructions}}
+         {% endfor %}
+       {% endif %}
+
+       {% if onChange|length > 0 -%}
+       if signal_{{topic.variable}}_previous.data != signal_{{topic.variable}}_message.data:
+         #>>
+
+          # on change
+         {{onChange}}
+       #<<
+       {% endif -%}
+
+       # on new
+       {{onNew}}
+       #<<
+      {% endif -%}
+
+
+
+    {% endfor -%}
+  {% endif -%}
+
+{% endset %}

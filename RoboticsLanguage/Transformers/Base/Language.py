@@ -416,6 +416,22 @@ language = {
 
     },
 
+    'switch': {
+        'definition': {
+            'arguments': arguments('anything case*'),
+            'returns': returns('none')
+        },
+
+    },
+
+    'case': {
+        'definition': {
+            'arguments': arguments('boolean anything'),
+            'returns': returns('case')
+        },
+    },
+
+
     'part': {
         'definition': {
             'arguments': arguments('anything'),

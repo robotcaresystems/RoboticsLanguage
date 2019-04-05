@@ -1,0 +1,8 @@
+node(
+  name:'example Fault Detection Processes',
+
+  initialise: block(
+    # the Fault Detection Processes mini-language
+    FaultDetectionProcesses<{  word: Hello  }>
+  )
+)

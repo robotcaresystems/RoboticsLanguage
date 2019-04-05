@@ -1,0 +1,24 @@
+
+{% set findPackage %}
+
+{% endset %}
+
+{% set addMessageFiles %}
+
+{% endset %}
+
+{% set generateMessages %}
+
+{% endset %}
+
+{% set catkinDepends %}
+
+{% endset %}
+
+{% set includeDirectories %}
+
+{% endset %}
+
+{% set extras %}
+
+{% endset %}

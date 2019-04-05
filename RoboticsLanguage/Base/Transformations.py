@@ -56,7 +56,7 @@ def Apply(code, parameters):
 
         # apply transformations
         code, parameters = transform_function.Transform.transform(code, parameters)
-
+        
         # show developer information
         Utilities.showDeveloperInformation(code, parameters)
 

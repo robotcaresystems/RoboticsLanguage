@@ -20,38 +20,41 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 import os
-from shutil import copy
+from pygments import highlight
 from RoboticsLanguage.Base import Utilities
+from pygments.lexers import get_lexer_for_filename
+from pygments.formatters import Terminal256Formatter
 from jinja2 import Environment, FileSystemLoader, TemplateError
-
-default_templates_path = 'Templates'
-
-default_ignore_files = {'.DS_Store'}
 
 default_file_patterns = {}
 
-default_template_engine_filters = {'todaysDate': Utilities.todaysDate,
+default_ignore_files = {'.DS_Store'}
+
+default_template_engine_filters = {'tag': Utilities.tag,
+                                   'text': Utilities.text,
                                    'dpath': Utilities.path,
                                    'xpath': Utilities.xpath,
                                    'dpaths': Utilities.paths,
                                    'xpaths': Utilities.xpaths,
-                                   'children': Utilities.children,
                                    'parent': Utilities.parent,
-                                   'isDefined': Utilities.isDefined,
-                                   'ensureList': Utilities.ensureList,
-                                   'text': Utilities.text,
-                                   'tag': Utilities.tag,
                                    'unique': Utilities.unique,
-                                   'attributes': Utilities.attributes,
-                                   'attribute': Utilities.attribute,
                                    'option': Utilities.option,
-                                   'optionalArguments': Utilities.optionalArguments,
+                                   'dashes': Utilities.dashes,
+                                   'children': Utilities.children,
                                    'initials': Utilities.initials,
-                                   'underscore': Utilities.underscore,
                                    'fullCaps': Utilities.fullCaps,
+                                   'isDefined': Utilities.isDefined,
+                                   'attribute': Utilities.attribute,
                                    'camelCase': Utilities.camelCase,
+                                   'todaysDate': Utilities.todaysDate,
+                                   'ensureList': Utilities.ensureList,
+                                   'attributes': Utilities.attributes,
+                                   'underscore': Utilities.underscore,
+                                   'mergeManyOrdered': Utilities.mergeManyOrdered,
+                                   'optionalArguments': Utilities.optionalArguments,
                                    'underscoreFullCaps': Utilities.underscoreFullCaps,
-                                   'sortListCodeByAttribute': Utilities.sortListCodeByAttribute
+                                   'sortListCodeByAttribute': Utilities.sortListCodeByAttribute,
+                                   'split': lambda x, y: x.split(y)
                                    }
 
 delimeters = {'block_start_string': '<%%',
@@ -73,7 +76,7 @@ def templateEngine(code, parameters, output=None,
                    ignore_files=default_ignore_files,
                    file_patterns=default_file_patterns,
                    filters=default_template_engine_filters,
-                   templates_path=default_templates_path,
+                   templates_path=None,
                    deploy_path=None):
   '''The template engine combines multiple template files from different modules to generate code.'''
 
@@ -92,8 +95,8 @@ def templateEngine(code, parameters, output=None,
   package_parents = Utilities.getPackageOutputParents(parameters, output)
 
   # look for all the templates
-  if not os.path.isdir(templates_path):
-    templates_paths = [parameters['manifesto'][parameters['developer']['stepGroup']][x]['path'] + '/' + templates_path for x in reversed(package_parents)]
+  if templates_path is None:
+    templates_paths = [parameters['manifesto'][parameters['developer']['stepGroup']][x]['path'] + '/Templates' for x in reversed(package_parents)]
 
   else:
     templates_paths = [templates_path]
@@ -113,6 +116,7 @@ def templateEngine(code, parameters, output=None,
 
           # extracts full and relative paths
           file_full_path = os.path.join(root, file)
+          permissions = os.stat(file_full_path)
           file_relative_path = Utilities.replaceFirst(file_full_path, templates_path, '')
           file_deploy_path = Utilities.replaceLast(Utilities.replaceFirst(file_full_path, templates_path, deploy_path), '.template', '')
 
@@ -122,6 +126,7 @@ def templateEngine(code, parameters, output=None,
 
           # save it
           files_to_process[file_relative_path] = {
+              'permissions': permissions,
               'full_path': file_full_path,
               'deploy_path': file_deploy_path,
               'includes': [], 'header': [], 'elements': []}
@@ -212,12 +217,25 @@ def templateEngine(code, parameters, output=None,
 
         # debug
         if parameters['developer']['intermediateTemplates']:
-          print '====== File: ' + file + ' -> ' + files_to_process[file]['deploy_path'] + ' ==========================='
-          print render
-          print '============================================================'
+          if not parameters['globals']['noColours']:
+            print Utilities.color.BOLD
+            print Utilities.color.YELLOW
+          print '=============================================================================='
+          print 'File: ' + file
+          print 'Full path:' + files_to_process[file]['full_path']
+          print 'Deploy path:' + files_to_process[file]['deploy_path']
+          print '------------------------------------------------------------------------------'
+          if not parameters['globals']['noColours']:
+            print Utilities.color.END
+            try:
+              print(highlight(render, get_lexer_for_filename(files_to_process[file]['deploy_path']),Terminal256Formatter(style=Terminal256Formatter().style)))
+            except:
+              print(render)
+          else:
+            print(render)
 
         # create a new environment that includes all the plugin template code
-        preprocessed_environment = Environment(loader=FileSystemLoader('/'), trim_blocks=True, lstrip_blocks=True)
+        preprocessed_environment = Environment(loader=FileSystemLoader('/'), trim_blocks=True, lstrip_blocks=True, finalize=lambda x: x if x is not None else '')
 
         # add filter that collects serialized code for this output
         filters['serializedCode'] = lambda x: Utilities.allAttribute(x, output)
@@ -246,10 +264,15 @@ def templateEngine(code, parameters, output=None,
         Utilities.createFolderForFile(files_to_process[file]['deploy_path'])
 
         # write files
-        new_package_file = open(files_to_process[file]['deploy_path'], 'w')
-        new_package_file.write(result)
-        new_package_file.close()
-        Utilities.logging.debug('Wrote file ' + files_to_process[file]['deploy_path'] + ' ...')
+        with open(files_to_process[file]['deploy_path'], 'w') as new_package_file:
+          new_package_file.write(result)
+
+        # apply permissions
+        os.chmod(files_to_process[file]['deploy_path'], files_to_process[file]['permissions'].st_mode)
+        os.chown(files_to_process[file]['deploy_path'], files_to_process[file]['permissions'].st_uid,
+                                                        files_to_process[file]['permissions'].st_gid)
+
+        Utilities.logging.debug(files_to_process[file]['full_path'] + ' -> ' + files_to_process[file]['deploy_path'] + ' ...')
 
       except OSError as e:
         # with Error.exception(parameters, stop=True)
@@ -267,7 +290,7 @@ def templateEngine(code, parameters, output=None,
         Utilities.createFolderForFile(new_files_to_copy[i])
 
         # copy files
-        copy(files_to_copy[i], new_files_to_copy[i])
+        Utilities.copyWithPermissions(files_to_copy[i], new_files_to_copy[i])
         Utilities.logging.debug('Copied file ' + new_files_to_copy[i] + '...')
 
       except OSError as e:

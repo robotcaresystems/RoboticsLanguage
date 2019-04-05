@@ -23,6 +23,8 @@
 import os
 import sys
 import yaml
+import copy
+import shutil
 import argparse
 import dpath.util
 import argcomplete
@@ -240,7 +242,7 @@ def processCommandLineParameters(args, file_formats, parameters):
   # 4. list of yaml files passed as arguments
   # 5. command line parameters
   for parameter_file in parameter_files:
-    parameters = Utilities.mergeDictionaries(yaml.load(parameter_file['file']), parameters)
+    parameters = Utilities.mergeDictionaries(yaml.safe_load(parameter_file['file']), parameters)
 
   # merge the command line flags
   parameters = Utilities.mergeDictionaries(command_line_parameters, parameters)
@@ -252,14 +254,16 @@ def processCommandLineParameters(args, file_formats, parameters):
   # remove filename key
   parameters.pop('filename', None)
 
+  parameters['globals']['output'] = Utilities.ensureList(parameters['globals']['output'])
+
   # Set the total number of plugins being processed
   parameters['developer']['progressTotal'] = 1 + \
-      len(parameters['manifesto']['Transformers']) + len(Utilities.ensureList(parameters['globals']['output']))
+      len(parameters['manifesto']['Transformers']) + len(parameters['globals']['output'])
 
   if len(rol_files) == 0:
-    return None, None, Utilities.ensureList(parameters['globals']['output']), parameters
+    return None, None, parameters
   else:
-    return rol_files[0]['name'], rol_files[0]['type'], Utilities.ensureList(parameters['globals']['output']), parameters
+    return rol_files[0]['name'], rol_files[0]['type'], parameters
 
 
 # @NOTE for speed should we `try/catch` or check first?
@@ -270,6 +274,7 @@ def getTemplateTextForOutputPackage(parameters, keyword, package):
     return getTemplateTextForOutputPackage(parameters, keyword, parameters['manifesto']['Outputs'][package]['parent'])
   else:
     raise
+
 
 def loadRemainingParameters(parameters):
 
@@ -397,11 +402,49 @@ def postCommandLineParser(parameters):
         print('Information:')
         Utilities.printParameters(package['information'])
 
+  # generate configuration script
+  if parameters['developer']['makeConfigurationFile']:
+    data = parameters['command_line_flags']
+    filtered = filter(lambda x: x[0:11] == 'Information' or 'suppress' not in data[x].keys() or data[x]['suppress'] is not True, data.iterkeys())
+    commands = {x: dpath.util.get(parameters, x.replace(':', '/')) for x in filtered}
+    commands_dictionary = Utilities.unflatDictionary(commands, ':')
+    commands_dictionary['developer']['makeConfigurationFile'] = False
+
+    try:
+      Utilities.createFolder(os.path.expanduser('~/.rol'))
+      if os.path.isfile(os.path.expanduser('~/.rol/parameters.yaml')):
+        with open(os.path.expanduser('~/.rol/parameters.yaml.template'), 'w') as output:
+          yaml.dump(commands_dictionary, output, default_flow_style=False)
+        print 'Created the file "~/.rol/parameters.yaml.template".'
+        print 'Please modify this file and rename it to "~/.rol/parameters.yaml"'
+      else:
+        with open(os.path.expanduser('~/.rol/parameters.yaml'), 'w') as output:
+          yaml.dump(commands_dictionary, output, default_flow_style=False)
+        print 'Created the file "~/.rol/parameters.yaml".'
+    except Exception as e:
+      print 'Error creating configuration file!'
+      print e
+
   # Outputs dependency
   if parameters['developer']['showOutputDependency']:
     for package in parameters['manifesto']['Outputs']:
       if 'parent' in parameters['manifesto']['Outputs'][package].keys():
         print parameters['manifesto']['Outputs'][package]['parent'] + ' <- ' + package
+
+  # Copy examples here
+  if parameters['developer']['copyExamplesHere']:
+    from_path = parameters['globals']['RoboticsLanguagePath'] + 'Examples'
+    here_path = os.getcwd()
+
+    # copytree workaround to ignore existing folders and maintain folder structure. slightly adjusted from here:
+    # https://stackoverflow.com/questions/1868714/how-do-i-copy-an-entire-directory-of-files-into-an-existing-directory-using-pyth
+    for item in os.listdir(from_path):
+      s = os.path.join(from_path, item)
+      d = os.path.join(here_path, item)
+      if os.path.isdir(s):
+        shutil.copytree(s, d)
+      else:
+        shutil.copy2(s, d)
 
   return parameters
 
@@ -419,9 +462,9 @@ def ProcessArguments(command_line_parameters, parameters):
   parameters = loadRemainingParameters(parameters)
 
   # process the parameters
-  file_name, file_type, outputs, parameters = processCommandLineParameters(args, file_formats, parameters)
+  file_name, file_type, parameters = processCommandLineParameters(args, file_formats, parameters)
 
   # processes special generic flags
   parameters = postCommandLineParser(parameters)
 
-  return file_name, file_type, outputs, parameters
+  return file_name, file_type, parameters
