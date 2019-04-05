@@ -75,10 +75,15 @@ def parse(text, parameters):
   if parameters['Inputs']['FaultDetectionTopics']['showRol']:
     Utilities.printSource(rol_code, 'coffeescript', parameters)
 
+  if parameters['Inputs']['FaultDetectionTopics']['showYAML']:
+    Utilities.printParameters(discriptive_dictionary, parameters)
+
   # parse generated rol code
   code, parameters = Parse.parse(rol_code, parameters)
 
   # add fault detection gui to the outputs
-  parameters['globals']['output'].append('FaultDetectionTopics')
+  outputs = Utilities.ensureList(parameters['globals']['output'])
+  outputs.append('FaultDetectionTopics')
+  parameters['globals']['output'] = outputs
 
   return code, parameters

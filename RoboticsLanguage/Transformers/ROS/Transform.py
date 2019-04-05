@@ -19,14 +19,17 @@
 #   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
-
-from Tools import Topics, Types, RosMessage
+from rospkg import distro
+from Tools import Topics, Types, RosMessage, RosClass
 
 
 def transform(code, parameters):
 
+  # save ros distribution value
+  parameters['Transformers']['ROS']['distribution'] = distro.current_distro_codename()
+
   # make sure RosCpp is part of the output
-  if any(x in parameters['globals']['output'] for x in ['RosCpp', 'HTMLGUI', 'Ros2Cpp']):
+  if any(x in parameters['globals']['output'] for x in ['RosCpp', 'HTMLGUI', 'Ros2Cpp', 'RosPy']):
 
     # Types
     code, parameters = Types.process(code, parameters)
@@ -36,5 +39,8 @@ def transform(code, parameters):
 
     # Ros messages
     code, parameters = RosMessage.process(code, parameters)
+
+    # Ros classes
+    code, parameters = RosClass.process(code, parameters)
 
   return code, parameters

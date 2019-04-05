@@ -3,14 +3,6 @@ node(
 
   definitions: block(
 
-    # the ROS Message mini-language
-    ROSMessage<{
-      name:Fault
-      std_msgs/String code
-      std_msgs/String cause
-      std_msgs/String description
-      }>,
-
     {% for parameter in parameters %}
     {{parameter.name}} in {{parameter.type}} = {{parameter.value}},
     {% endfor %}
@@ -24,11 +16,12 @@ node(
       block(
         fault.code = '{{fault.code}}',
         fault.cause = '{{fault.cause}}',
-        fault.description = '{{fault.description}}'
+        fault.description = '{{fault.description}}',
+        fault.time = Cpp<{ros::Time::now()}>
         )
       ),
     {% endfor %}
 
-    fault in Signals(RosType('Fault'), rosTopic:'{{fault_topic}}')
+    fault in Signals(rosType:'{{fault_type}}', rosTopic:'{{fault_topic}}')
     )
   )

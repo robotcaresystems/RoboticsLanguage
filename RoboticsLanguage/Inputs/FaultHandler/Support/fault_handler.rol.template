@@ -1,0 +1,31 @@
+{% for item in text -%}
+
+counter_{{item.fault}} in Integers = 0,
+Cpp<{ ros::Time time_{{item.fault}} = ros::Time::now() }>,
+
+define fault_{{item.fault}}():
+  block(
+    {{item.action}},
+    if(Cpp<{ ros::Time::now() - time_{{item.fault}} < ros::Duration({{item.timeout}})}>,
+      block(
+        counter_{{item.fault}} = counter_{{item.fault}} + 1,
+        if (counter_{{item.fault}} > {{item.retry}},
+          block(
+            {{item.on_fail}},
+            counter_{{item.fault}} = 0
+            )
+          )
+      ),
+      counter_{{item.fault}} = 1
+    ),
+    time_{{item.fault}} = Cpp<{ ros::Time::now() }>
+  ),
+{% endfor -%}
+
+define FaultHandler():
+  switch(fault.code,
+    {% for item in text -%}
+      case('{{item.fault}}', fault_{{item.fault}}())
+      {% if loop.index < loop.length %},{% endif %}
+    {% endfor -%}
+  )

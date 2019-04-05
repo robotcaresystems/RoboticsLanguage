@@ -56,31 +56,33 @@
   var topic_fault = new ROSLIB.Topic({
     ros: ros,
     name: '{{parameters.Inputs.FaultDetectionTopics.data.fault_topic}}',
-    messageType: '{{parameters.node.name|underscore}}/Fault',
+    messageType: '{{parameters.Inputs.FaultDetectionTopics.data.fault_type}}',
   });
 
   // subscribe function
   topic_fault.subscribe(function(message) {
 
+    console.log(message);
+
     var utcDate = new Date(Date.now());
 
     // add fault to history
-    s = $('#history').html() + '[' + utcDate.toUTCString() + '] ' + message.code.data + ' - ' + message.cause.data + '\n';
+    s = $('#history').html() + '[' + utcDate.toUTCString() + '] ' + message.code + ' - ' + message.cause + '\n';
     $('#history').html(s);
 
     // update last occurance field in faults table
-    $('#last_' + message.code.data).html(utcDate);
+    $('#last_' + message.code).html(utcDate);
 
     //update icon
-    $('#icon_' + message.code.data).removeClass('grey');
-    $('#icon_' + message.code.data).removeClass('outline');
-    $('#icon_' + message.code.data).addClass('red');
+    $('#icon_' + message.code).removeClass('grey');
+    $('#icon_' + message.code).removeClass('outline');
+    $('#icon_' + message.code).addClass('red');
 
     // reset icon after 5 seconds
     setTimeout(function() {
-      $('#icon_' + message.code.data).removeClass('red');
-      $('#icon_' + message.code.data).addClass('grey');
-      $('#icon_' + message.code.data).addClass('outline');
+      $('#icon_' + message.code).removeClass('red');
+      $('#icon_' + message.code).addClass('grey');
+      $('#icon_' + message.code).addClass('outline');
     }, 5000)
   });
 
@@ -93,6 +95,18 @@
 <body>
   <div class="ui container">
   <h1> {{parameters.node.name}} </h1>
+
+  <!-- This part is hidden from view unless there is an error connecting to rosbridge.
+    Please do not change this part -->
+  <div class="ui icon error big message hidden" id="ros_bridge">
+    <div class="content">
+      <div class="header" id="ros_bridge_header"></div>
+      <p id="ros_bridge_text">Please make sure that you run
+      "<code>roslaunch rosbridge_server
+      rosbridge_websocket.launch</code>" in the terminal. Then
+      refresh this page.</p>
+    </div>
+  </div>
 
   <h2>Fault history</h2>
 

@@ -1,0 +1,4 @@
+clang
+%cpp -std=c++11
+-Iinclude
+-I/opt/ros/{{parameters.Transformers.ROS.distribution}}/include

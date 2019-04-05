@@ -562,6 +562,10 @@ def underscore(text):
   return text.replace('/', '_').replace(' ', '_').replace('.', '_').lower()
 
 
+def dashes(text):
+  return text.replace('/', '-').replace(' ', '-').replace('.', '-').replace('_', '-').lower()
+
+
 def underscoreFullCaps(text):
   return text.replace('/', '_').replace(' ', '_').replace('.', '_').upper()
 
@@ -676,6 +680,11 @@ def createFolderForFile(filename):
   createFolder(os.path.dirname(filename))
 
 
+def copyWithPermissions(source, destination):
+    permissions = os.stat(source)
+    copy(source, destination)
+    os.chown(destination, permissions.st_uid, permissions.st_gid)
+    os.chmod(destination, permissions.st_mode)
 # -------------------------------------------------------------------------------------------------
 #  XML utilities used in parsers
 # -------------------------------------------------------------------------------------------------
@@ -738,6 +747,7 @@ def xmlVariable(parameters, name, position=0):
 def xmlMiniLanguage(parameters, key, text, position):
   '''Calls a different parser to process inline mini languages'''
   try:
+    parameters['parsing']['position'] = position
     code, parameters = importModule(parameters['manifesto']['Inputs'][key]['type'], 'Inputs', key, 'Parse').Parse.parse(text, parameters)
     result = etree.tostring(code)
     return result

@@ -1,0 +1,19 @@
+#!/usr/bin/env python
+
+
+<<<'definitions'|group>>>
+
+# definitions
+{{code|xpath('/node')|option('definitions')|serializedCode}}
+
+
+<<<'initialise'|group>>>
+
+# initialisation
+{{code|xpath('/node')|option('initialise')|serializedCode}}
+
+
+<<<'finalise'|group>>>
+
+# finalise
+{{code|xpath('/node')|option('finalise')|serializedCode}}

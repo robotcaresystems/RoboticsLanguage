@@ -22,9 +22,19 @@
 
 
 parameters = {
-    'addingNewMessages': False
+    'addingNewMessages': False,
+    'topicDefinitions': [],
+    'buildDependencies': set(),
+    'runDependencies': set(),
+    'messageDependencies': set(),
+    'distribution': ''
 }
 
 command_line_flags = {
     'addingNewMessages': {'suppress': True},
+    'topicDefinitions': {'suppress': True},
+    'buildDependencies': {'suppress': True},
+    'runDependencies': {'suppress': True},
+    'messageDependencies': {'suppress': True},
+    'distribution': {'suppress': True},
 }

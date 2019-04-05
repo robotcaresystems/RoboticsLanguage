@@ -41,7 +41,7 @@ To parse the language defined above we use the [Python library Parsley](https://
 We start by creating an input plugin for RoL where the parsing will happen. To achieve that we can use `rol` in command line to generate a template:
 
 ```bash
-rol --create-input-template "My Finite State Machine" -o Developer
+rol --create-input-template "My Finite State Machine"
 ```
 
 `rol` should return the message `Created Inputs plugin "MyFiniteStateMachine" in folder ~/.rol/plugins/Inputs/MyFiniteStateMachine`.
@@ -70,16 +70,20 @@ You can now open the folder `~/.rol/plugins/Inputs/MyFiniteStateMachine` with yo
 Open the file `Parse.py` and you will notice that there is already a language defined. We will modify this language to fit our needs. You can compile the example by typing:
 
 ```bash
-rol ~/.rol/plugins/Inputs/MyFiniteStateMachine/Examples/MyFiniteStateMachine.rol --remove-cache -c
+rol ~/.rol/plugins/Inputs/MyFiniteStateMachine/Examples/MyFiniteStateMachine.rol  -c
 ```
 
-The flag `--remove-cache` is important to make `rol` find the new package. You can also type
+Note: sometimes when editing plugins it is useful to use the flag `--remove-cache`. This cleans `rol`s cache, to make sure the most updated code is running:
 
 ```bash
-rol --info --remove-cache
+rol --remove-cache
 ```
 
-To make sure your package is installed:
+You can check if your package is installed by typing
+
+```bash
+rol --info
+```
 
 ```
 The Robotics Language version: 0.2
@@ -311,6 +315,15 @@ machine = ws name:n ws initial:i (ws transition)*:t ws -> xml('machine',[n, i] +
 """
 ```
 
+Make sure to update the `makeGrammar` function with the `copy` function:
+
+```python
+import copy
+
+# make the grammar
+grammar = makeGrammar(grammar_definition, {'xml': Parsing.xmlNamespace('mfsm'), 'copy': copy.copy})
+```
+
 We are ready to test the new grammar. Update the file `test.rol` to read:
 
 ```coffeescript
@@ -413,3 +426,7 @@ The more compact the representation the more rigid it might become. For example 
   ```
 
 There exists a tradeoff between compactness and complexity. It is up to the developer to decide what is better suited for each problem.
+
+
+
+### [Go to next Finite State Machines tutorial - 2. Searching the abstract syntax tree and generating code elements](Transformer.md)

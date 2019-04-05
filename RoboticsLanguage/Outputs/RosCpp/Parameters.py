@@ -33,7 +33,7 @@ command_line_flags = {
     'globalIncludes': {'suppress': True},
     'localIncludes': {'suppress': True},
     'useColcon': {
-        'longFlag': 'use-colcon',
+        'longFlag': 'use-colcon-cpp',
         'noArgument': True,
         'description': 'Use the colcon system instead of catkin'
     },

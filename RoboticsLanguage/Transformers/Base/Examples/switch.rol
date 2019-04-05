@@ -1,0 +1,14 @@
+node(
+  name:"example switch",
+  definitions:
+      x ∈ ℤ = 1,
+
+
+  initialise:
+    switch(x,
+      case(1, print('yes')),
+      case(2, print('no')),
+      case(3, print('definitely not')
+    )
+  )
+)

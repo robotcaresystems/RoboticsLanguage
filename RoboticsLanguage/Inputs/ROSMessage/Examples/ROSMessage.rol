@@ -1,7 +1,8 @@
 node(
   name:'example ROS Message',
 
-  initialise: block(
+  definitions: block(
+
     # the ROS Message mini-language
     ROSMessage<{
 

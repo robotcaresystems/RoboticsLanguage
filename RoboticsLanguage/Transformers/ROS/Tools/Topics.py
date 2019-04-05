@@ -52,6 +52,20 @@ cpp_type_mapping = {
     'Strings': 'string',
 }
 
+python_type_mapping = {
+    'Booleans': 'bool',
+    'Reals32': 'float',
+    'Reals64': 'float',
+    'Integers8': 'int',
+    'Integers16': 'int',
+    'Integers32': 'int',
+    'Integers64': 'int',
+    'Naturals8': 'int',
+    'Naturals16': 'int',
+    'Naturals32': 'int',
+    'Naturals64': 'int',
+    'Strings': 'str',
+}
 
 def getFlow(signal, variable, code):
 
@@ -61,7 +75,7 @@ def getFlow(signal, variable, code):
 
   # look for assignments:
   assignments = code.xpath(
-      '//assign/variable[@name="' + variable + '" and count(preceding-sibling::*)=0]|//assign/domain[count(preceding-sibling::*)=0]/variable[@name="' + variable + '" and  count(preceding-sibling::*)=0]')
+      '//assign/variable[@name="' + variable + '" and count(preceding-sibling::*)=0]|//assign/domain[count(preceding-sibling::*)=0]/variable[@name="' + variable + '" and  count(preceding-sibling::*)=0]|//assign/set[count(preceding-sibling::*)=0]/variable[@name="' + variable + '"]')
   assigned = len(assignments) > 0
 
   # find all instances of the variable except of its definitions
@@ -95,12 +109,12 @@ def setPublish(variable, flow, assignments, signal):
     for variable_element in assignments:
       assignment = Utilities.getFirstParent(variable_element, 'assign')
 
-      # if 'postCpp' not in assignment.attrib.keys():
-      #   assignment.attrib['postCpp'] = ''
       if 'postRosCpp' not in assignment.attrib.keys():
         assignment.attrib['postRosCpp'] = ''
       if 'postRos2Cpp' not in assignment.attrib.keys():
         assignment.attrib['postRos2Cpp'] = ''
+      if 'postRosPy' not in assignment.attrib.keys():
+        assignment.attrib['postRosPy'] = ''
 
       publish = True
 
@@ -116,11 +130,16 @@ def setPublish(variable, flow, assignments, signal):
       if publish:
         assignment.attrib['postRosCpp'] += ';' + variable + '_publisher.publish(' + variable + ');'
         assignment.attrib['postRos2Cpp'] += ';' + variable + '_publisher->publish(' + variable + ');'
+        assignment.attrib['postRosPy'] += '\n' + variable + '_publisher.publish(' + variable + ')'
       else:
         assignment.attrib['postRosCpp'] += ';'
         assignment.attrib['postRos2Cpp'] += ';'
+        assignment.attrib['postRosPy'] += '\n'
+
 
 def checkTypes(signal, variable, assignments, usages, code, parameters):
+
+  node_name = ''
 
   # check if signal is using a default type instead of a ros type
   if signal.xpath('option[@name="rosType"]/string')[0].text == '':
@@ -131,11 +150,13 @@ def checkTypes(signal, variable, assignments, usages, code, parameters):
     # Tell every assignment with this variable in the left side to use to data domain
     for element in assignments:
       Utilities.getFirstParent(element, 'assign').attrib['preAssignCpp'] = '.data'
+      Utilities.getFirstParent(element, 'assign').attrib['preAssignPython'] = '.data'
 
     # Tell all usages not with a domain parent to use data domain
     for use in usages:
       # if use.getparent().tag != 'domain':
       use.attrib['returnDomainCpp'] = '.data'
+      use.attrib['returnDomainPython'] = '.data'
 
     # get the type of the signal
     topic_type = signal.getchildren()[0]
@@ -152,42 +173,53 @@ def checkTypes(signal, variable, assignments, usages, code, parameters):
 
       ros_type = 'std_msgs::' + ros_type_mapping[topic_type.tag + bits]
       ros_2_type = 'std_msgs::msg::' + ros_type_mapping[topic_type.tag + bits]
+      ros_py_type = 'std_msgs.msg.' + ros_type_mapping[topic_type.tag + bits]
       cpp_type = cpp_type_mapping[topic_type.tag + bits]
 
     elif topic_type.tag in ['Booleans', 'Strings']:
       ros_type = 'std_msgs::' + ros_type_mapping[topic_type.tag]
       ros_2_type = 'std_msgs::msg::' + ros_type_mapping[topic_type.tag]
+      ros_py_type = 'std_msgs.msg.' + ros_type_mapping[topic_type.tag]
       cpp_type = cpp_type_mapping[topic_type.tag]
 
     elif topic_type.tag == "RosType":
       ros_type = topic_type.getchildren()[0].text
       if ros_type in local_definitions:
         node_name = Utilities.underscore(code.xpath('//node/option[@name="name"]/string/text()')[0])
-        ros_type = node_name + '::' + ros_type
         ros_2_type = node_name + '::msg::' + ros_type
+        ros_py_type = node_name + '.msg.' + ros_type
         cpp_type = 'void'
+        ros_type = node_name + '::' + ros_type
       else:
         ros_type = ros_type.replace('/', '::')
         ros_2_type = ros_type.replace('::', '::msg::')
+        ros_py_type = ros_type.replace('::', '.')
         cpp_type = 'void'
 
     else:
       # @REFACTOR just a placeholder for now
       ros_type = 'std_msgs::Empty'
       ros_2_type = 'std_msgs::msg::Empty'
+      ros_py_type = 'std_msgs.msg.Empty'
       cpp_type = 'int'
   else:
     ros_type = signal.xpath('option[@name="rosType"]/string')[0].text.replace('/', '::')
     ros_2_type = signal.xpath('option[@name="rosType"]/string')[0].text.replace('/', '::msg::')
+    ros_py_type = signal.xpath('option[@name="rosType"]/string')[0].text.replace('/', '.msg.')
     cpp_type = ros_type
 
-  return code, parameters, ros_type, cpp_type, ros_2_type
+  parameters['Outputs']['RosPy']['Imports'].add('.'.join(ros_py_type.split('.')[:-1]))
+
+  # add ros package dependencies
+  if node_name != ros_type.split('::')[0]:
+    parameters['Transformers']['ROS']['buildDependencies'].add(ros_type.split('::')[0])
+    parameters['Transformers']['ROS']['runDependencies'].add(ros_type.split('::')[0])
+
+  return code, parameters, ros_type, cpp_type, ros_2_type, ros_py_type
 
 
 def process(code, parameters):
   '''Processes all the ROS topics in the RoL code'''
-
-  parameters['Transformers']['ROS']['topicDefinitions'] = []
 
   # for each signal in definitions with rostopic
   for signal in code.xpath('/node/option[@name="definitions"]/*//element/Signals/option[@name="rosTopic"]/string[text()!=""]/../..'):
@@ -202,25 +234,27 @@ def process(code, parameters):
     setPublish(variable, flow, assignments, signal)
 
     # check types and make sure .data is added when needed
-    code, parameters, ros_type, cpp_type, ros_2_type = checkTypes(signal, variable, assignments, usages, code, parameters)
+    code, parameters, ros_type, cpp_type, ros_2_type, ros_py_type = checkTypes(signal, variable, assignments, usages, code, parameters)
 
     # Save the variable name on the `Signals` tag. Helps simplifying code
     signal.attrib['ROSvariable'] = variable
 
     # save type in base/variables
-    parameters['Transformers']['Base']['variables'][variable]['type'] = {'RosCpp': ros_type, 'Ros2Cpp': ros_2_type}
+    parameters['Transformers']['Base']['variables'][variable]['type'] = {'RosCpp': ros_type, 'Ros2Cpp': ros_2_type, 'RosPy': ros_py_type, }
 
     # header file name for ros2
     ros2_include = '/'.join((lambda x: x[:-1] + [Utilities.camelCaseToUnderscore(x[-1])])(ros_2_type.split('::')))
 
     # add header file for msg
-    parameters['Outputs']['RosCpp']['globalIncludes'].add(ros_type.replace('::', '/') + '.h')
-    parameters['Outputs']['Ros2Cpp']['localIncludes'].add(ros2_include + '.hpp')
+    if ros_type not in ['ros::Time', 'ros::TimerEvent']:
+      parameters['Outputs']['RosCpp']['globalIncludes'].add(ros_type.replace('::', '/') + '.h')
+      parameters['Outputs']['Ros2Cpp']['localIncludes'].add(ros2_include + '.hpp')
 
     # save the topic definitions
     parameters['Transformers']['ROS']['topicDefinitions'].append({'variable': variable,
                                                                   'ros_type': ros_type,
                                                                   'ros_2_type': ros_2_type,
+                                                                  'ros_py_type': ros_py_type,
                                                                   'cpp_type': cpp_type,
                                                                   'topic_name': topic_name,
                                                                   'flow': flow})

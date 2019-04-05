@@ -1,0 +1,8 @@
+node(
+  name:'example Deep Inference',
+
+  initialise: block(
+    # the Deep Inference mini-language
+    DeepInference<{  word: Hello  }>
+  )
+)

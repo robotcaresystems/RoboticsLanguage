@@ -87,7 +87,7 @@ class TestBaseCommandLine(unittest.TestCase):
       args.filename[2].name = '/tmp/RoL/test2.yaml'
 
       # process the parameters
-      filename, filetype, outputs, parameters = CommandLine.processCommandLineParameters(args, file_formats, parameters)
+      filename, filetype, parameters = CommandLine.processCommandLineParameters(args, file_formats, parameters)
 
       # check filename
       self.assertEqual(filename, '/tmp/RoL/test.rol')
@@ -96,7 +96,7 @@ class TestBaseCommandLine(unittest.TestCase):
       self.assertEqual(filetype, 'rol')
 
       # check list of outputs
-      self.assertEqual(outputs, ['RoLXML'])
+      self.assertEqual(parameters['globals']['output'], ['RoLXML'])
 
       # check parameters
       self.assertEqual(parameters['testing']['parameterA'], 1)
