@@ -52,7 +52,7 @@ language = {
                 'rosTopic': optional('string', ''),
                 'rosType': optional('string', ''),
                 'rosFlow': optional('string', ''),
-                'rosQueueSize': optional('integer', 1),
+                'rosQueueSize': optional('integer', 10),
                 'rosTransportHints': optional('string', '')
             },
         },
