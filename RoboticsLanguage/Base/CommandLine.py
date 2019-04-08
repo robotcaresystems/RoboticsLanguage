@@ -450,6 +450,9 @@ def postCommandLineParser(parameters):
   # Unit testing
   if parameters['developer']['runTests']:
     from unittest import defaultTestLoader, TextTestRunner
+    import cloudpickle
+    with open('/tmp/parameters.dill', 'wb') as file:
+      cloudpickle.dump(parameters, file)
 
     suite = defaultTestLoader.discover(parameters['globals']['RoboticsLanguagePath'], 'test_*.py')
     TextTestRunner(verbosity=2).run(suite)
