@@ -8,12 +8,12 @@
     /* signal {{topic.variable}} */
       {# PUBLISHER #################################### #}
         {% if topic.flow == 'outgoing' or topic.flow == 'bidirectional' -%}
-    {{topic.variable}}_publisher = nh_.advertise<{{topic.ros_type}}>("{{topic.topic_name}}",10);
+    {{topic.variable}}_publisher = nh_.advertise<{{topic.ros_type}}>("{{topic.topic_name}}", {{topic.queue_size}});
         {% endif -%}
 
-        {# SUBSCRIBER #################################### #}
+        {# SUBSCRIBER #################################### #} 
         {% if topic.flow == 'incoming' or topic.flow == 'bidirectional' -%}
-    {{topic.variable}}_subscriber = nh_.subscribe("{{topic.topic_name}}", 10, &{{parameters.node.name|camelCase}}Class::signal_{{topic.variable}}_callback, this);
+    {{topic.variable}}_subscriber = nh_.subscribe("{{topic.topic_name}}", {{topic.queue_size}}, &{{parameters.node.name|camelCase}}Class::signal_{{topic.variable}}_callback, this {% if topic.transport_hints != ''%}, ros::TransportHints().{{topic.transport_hints}}{% endif %});
         {% endif -%}
 
       {% endfor %}
