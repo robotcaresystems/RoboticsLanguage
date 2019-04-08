@@ -29,7 +29,16 @@ node(
         print(w),
         z = w
       )
+    ),
+
+    # All options
+    p ∈ Signals(Reals,
+      rosTopic:'/test/p',
+      rosFlow:'incoming',
+      rosQueueSize:5,
+      rosTransportHints:['unreliable','reliable', 'maxDatagramSize(1000)', 'tcpNoDelay']
     )
+
   ),
 
   initialise: print('Starting node.')
