@@ -23,11 +23,12 @@
 import os
 import sys
 import yaml
-import copy
+import glob
 import shutil
 import argparse
 import dpath.util
 import argcomplete
+from copy import copy
 from . import Utilities
 from . import Parameters
 
@@ -446,10 +447,50 @@ def postCommandLineParser(parameters):
       else:
         shutil.copy2(s, d)
 
+  # Unit testing
+  if parameters['developer']['runTests']:
+    from unittest import defaultTestLoader, TextTestRunner
+
+    # save the parameters into a file to pass to the unit tests
+    import cloudpickle
+    with open('/tmp/parameters.pickle', 'wb') as file:
+      cloudpickle.dump(parameters, file)
+
+    # look for all the tests and run them
+    suite = defaultTestLoader.discover(parameters['globals']['RoboticsLanguagePath'], 'test_*.py')
+    TextTestRunner(verbosity=2).run(suite)
+
+    # remove the parameters file
+    os.remove('/tmp/parameters.pickle')
+
+    sys.exit(1)
+
+  # make examples
+  if parameters['developer']['makeExamples']:
+    import subprocess
+
+    command_line_arguments = copy(parameters['commandLineParameters'])
+
+    command_line_arguments.remove('--make-examples')
+
+    list_commands = []
+
+    for name in glob.glob(parameters['globals']['RoboticsLanguagePath'] + '/*/*/Examples/*.*'):
+      list_commands.append([command_line_arguments[0], name] + command_line_arguments[1:])
+
+    for command, index in zip(list_commands, range(len(list_commands))):
+      print '[' + str(index + 1) + '/' + str(len(list_commands)) + '] ' + command[1]
+      process = subprocess.Popen(command)
+      process.wait()
+
+    sys.exit(1)
+
   return parameters
 
 
 def ProcessArguments(command_line_parameters, parameters):
+
+  parameters['commandLineParameters'] = command_line_parameters
 
   # load cached command line flags or create if necessary
   flags, arguments, file_package_name, file_formats = prepareCommandLineArguments(parameters)

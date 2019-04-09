@@ -26,7 +26,7 @@ import sys
 if __name__ == "__main__":
 
   # initialise compiler, and check if it should remove the cache
-  parameters = Initialise.Initialise('--remove-cache' in sys.argv)
+  parameters = Initialise.Initialise('--remove-cache' in sys.argv or '-r' in sys.argv)
 
   # process command line arguments
   file_name , file_type, parameters = CommandLine.ProcessArguments(sys.argv, parameters)

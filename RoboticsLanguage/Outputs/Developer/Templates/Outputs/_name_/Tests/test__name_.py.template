@@ -12,7 +12,7 @@
 #
 
 import unittest
-from RoboticsLanguage.{{parameters.Outputs.Developer.Info.type}}.{{parameters.Outputs.Developer.Info.name|camelCase}} import Transform
+from RoboticsLanguage.{{parameters.Outputs.Developer.Info.type}}.{{parameters.Outputs.Developer.Info.name|camelCase}} import Output
 
 class Test{{parameters.Outputs.Developer.Info.name|camelCase}}(unittest.TestCase):
 

@@ -1,5 +1,5 @@
 node(
-  name:'temporal logic test example',
+  name:'example temporal logic 3',
 
   definitions: block(
 

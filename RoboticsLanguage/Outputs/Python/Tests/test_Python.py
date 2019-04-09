@@ -10,7 +10,7 @@
 #
 
 import unittest
-from RoboticsLanguage.Outputs.Python import Transform
+from RoboticsLanguage.Outputs.Python import Output
 
 class TestPython(unittest.TestCase):
 

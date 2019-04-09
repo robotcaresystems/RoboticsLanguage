@@ -1075,9 +1075,11 @@ def CreateBracketGrammar(definitions):
   text = '\n# Bracket operators\n'
 
   for key, value in bracket.iteritems():
-    text += key + ' = \'' + value['bracket']['open'] + '\' wws ' + value['bracket']['arguments'] + \
+    text += key + ' = ( \'' + value['bracket']['open'] + '\' wws ' + value['bracket']['arguments'] + \
         ':a wws \'' + value['bracket']['close'] + \
-        '\' -> xml(\'' + key + '\',a,self.input.position)\n'
+        '\' -> xml(\'' + key + '\',a,self.input.position)\n      | \'' + value['bracket']['open'] + \
+        '\' wws \'' + value['bracket']['close'] + \
+        '\' -> xml(\'' + key + '\',\'\',self.input.position)\n      )\n'
 
   return text, bracket.keys()
 

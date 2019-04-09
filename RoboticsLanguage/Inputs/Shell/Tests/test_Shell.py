@@ -10,7 +10,7 @@
 #
 
 import unittest
-from RoboticsLanguage.Inputs.Shell import Transform
+from RoboticsLanguage.Inputs.Shell import Parse
 
 class TestShell(unittest.TestCase):
 

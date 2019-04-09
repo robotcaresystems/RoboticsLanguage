@@ -15,42 +15,43 @@ node(
     s in Strings = "Hello",
 
     # a function with a single argument
-    define testB(x ∈ ℝ) -> ℝ:
+    define functionA(x ∈ ℝ) -> ℝ:
       return(x+1),
 
     # a function that does not return
-    define testC(x ∈ Strings):
+    define FunctionB(x ∈ Strings):
       print(x),
 
     # a function with optional arguments
-    define test_1(x ∈ ℤ, y ∈ ℤ, z ∈ ℤ = 1) -> ℤ:
+    define functionC(x ∈ ℤ, y ∈ ℤ, z ∈ ℤ = 1) -> ℤ:
       return(x+y+z),
 
     # a function without arguments and no return
-    define testD():
+    define functionD():
       block(
         print("Test D"),
         print("Works")
       ),
 
     # a function that returns multiple parameters
-    define testE(x ∈ ℤ, y ∈ ℤ) -> (ℤ, ℤ):
+    define functionE(x ∈ ℤ, y ∈ ℤ) -> (ℤ, ℤ):
       return(y,x)
   ),
 
   initialise: block(
 
-    x = test_1(x,y,z),
-    x = test_1(x,y),
 
-    testB(3),
+    functionA(3),
 
-    testC(s),
-    testC("Test C"),
+    FunctionB(s),
+    FunctionB("Test C"),
 
-    testD(),
+    x = functionC(x,y,z),
+    x = functionC(x,y),
 
-    {x, y} = testE(1,2),
+    functionD(),
+
+    {x, y} = functionE(1,2),
 
     print(x),
     print(y)

@@ -75,6 +75,8 @@ parameters = {
         'showOutputDependency': False,
         'makeConfigurationFile': False,
         'copyExamplesHere': False,
+        'runTests': False,
+        'makeExamples': False,
     },
 
     'symbols':
@@ -209,6 +211,18 @@ command_line_flags = {
         'noArgument': True,
         'fileNotNeeded': True,
         'description': 'Copies a set of examples into the current folder'
+    },
+    'developer:runTests': {
+        'longFlag': 'run-tests',
+        'noArgument': True,
+        'fileNotNeeded': True,
+        'description': 'Runs unit tests for compiler and plugins'
+    },
+    'developer:makeExamples': {
+        'longFlag': 'make-examples',
+        'noArgument': True,
+        'fileNotNeeded': True,
+        'description': 'Makes all examples in plugins'
     },
     'globals:version': {
         'longFlag': 'version',

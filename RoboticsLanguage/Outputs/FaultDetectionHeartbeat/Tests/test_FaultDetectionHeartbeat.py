@@ -10,7 +10,7 @@
 #
 
 import unittest
-from RoboticsLanguage.Outputs.FaultDetectionHeartbeat import Transform
+from RoboticsLanguage.Outputs.FaultDetectionHeartbeat import Output
 
 class TestFaultDetectionHeartbeat(unittest.TestCase):
 

@@ -10,7 +10,7 @@
 #
 
 import unittest
-from RoboticsLanguage.Inputs.ROSMessage import Transform
+from RoboticsLanguage.Inputs.ROSMessage import Parse
 
 class TestROSMessage(unittest.TestCase):
 
