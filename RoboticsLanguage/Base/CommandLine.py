@@ -450,19 +450,33 @@ def postCommandLineParser(parameters):
   # Unit testing
   if parameters['developer']['runTests']:
     from unittest import defaultTestLoader, TextTestRunner
+    import coverage
 
     # save the parameters into a file to pass to the unit tests
     import cloudpickle
     with open('/tmp/parameters.pickle', 'wb') as file:
       cloudpickle.dump(parameters, file)
 
+    # coverage
+    if parameters['developer']['coverage']:
+      cov = coverage.Coverage(omit=['*/lib/python*', '*Tests/test_*', '*__init__.py'])
+      cov.start()
+
     # look for all the tests and run them
     suite = defaultTestLoader.discover(parameters['globals']['RoboticsLanguagePath'], 'test_*.py')
     TextTestRunner(verbosity=2).run(suite)
 
+    # coverage
+    if parameters['developer']['coverage']:
+      cov.stop()
+      cov.save()
+      cov.html_report(directory=parameters['developer']['coverageFolder'], ignore_errors=True)
+      print('Coverage report is: ' + parameters['developer']['coverageFolder'] + '/index.html')
+
     # remove the parameters file
     os.remove('/tmp/parameters.pickle')
 
+    # done
     sys.exit(1)
 
   # make examples
