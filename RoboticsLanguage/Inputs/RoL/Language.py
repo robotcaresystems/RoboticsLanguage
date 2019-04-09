@@ -53,6 +53,15 @@ language = {
         },
     },
 
+    'assign': {
+        'input': {
+            'RoL': {
+                'infix': {'key': '=',
+                          'order': 100}
+            }
+        },
+    },
+
     'Booleans': {
         'input':
         {

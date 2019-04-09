@@ -10,7 +10,7 @@
 #
 
 import unittest
-from RoboticsLanguage.Inputs.FaultDetectionTopics import Transform
+from RoboticsLanguage.Inputs.FaultDetectionTopics import Parse
 
 class TestFaultDetectionTopics(unittest.TestCase):
 

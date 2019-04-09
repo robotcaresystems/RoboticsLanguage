@@ -1,5 +1,5 @@
 node(
-  name:'rcs temporal logic example',
+  name:'example temporal logic 1',
   rate:25,
 
   definitions: block(

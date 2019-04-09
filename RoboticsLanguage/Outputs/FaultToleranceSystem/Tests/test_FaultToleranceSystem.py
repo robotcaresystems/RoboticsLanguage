@@ -10,7 +10,7 @@
 #
 
 import unittest
-from RoboticsLanguage.Outputs.FaultToleranceSystem import Transform
+from RoboticsLanguage.Outputs.FaultToleranceSystem import Output
 
 class TestFaultToleranceSystem(unittest.TestCase):
 

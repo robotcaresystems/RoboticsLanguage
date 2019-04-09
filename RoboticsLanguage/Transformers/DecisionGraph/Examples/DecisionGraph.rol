@@ -1,7 +1,0 @@
-node(
-  name:'example Decision Graph',
-
-  initialise: block(
-    print('DecisionGraph')
-  )
-)

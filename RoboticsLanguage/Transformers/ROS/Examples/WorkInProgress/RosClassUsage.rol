@@ -1,0 +1,20 @@
+node(name:"example ros class usage",
+  definitions: block(
+
+    example_ros_class in RosClass(class:'ExampleRosClassClass',
+                              package:'example_ros_class',
+                              namespace:'example_ros_class',
+                              arguments:{}),
+
+    set_integer in Signals(Integers, rosTopic:'/example_import_class/set', onNew:
+      block(
+        example_ros_class.set(set_integer),
+        get_integer = example_ros_class.get(),
+        print('number = ', get_integer)
+      )
+    ),
+
+    get_integer in Signals(Integers, rosTopic:'/example_import_class/get')
+
+  )
+)

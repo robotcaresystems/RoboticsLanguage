@@ -71,6 +71,10 @@ parameters = {
         'showOutputDependency': False,
         'makeConfigurationFile': False,
         'copyExamplesHere': False,
+        'runTests': False,
+        'coverage': False,
+        'coverageFolder': os.path.expanduser('~') + '/.rol/coverage',
+        'makeExamples': False,
     },
 
     'symbols':
@@ -205,6 +209,29 @@ command_line_flags = {
         'noArgument': True,
         'fileNotNeeded': True,
         'description': 'Copies a set of examples into the current folder'
+    },
+    'developer:runTests': {
+        'longFlag': 'run-tests',
+        'noArgument': True,
+        'fileNotNeeded': True,
+        'description': 'Runs unit tests for compiler and plugins'
+    },
+    'developer:coverage': {
+        'longFlag': 'coverage',
+        'noArgument': True,
+        'fileNotNeeded': True,
+        'description': 'Runs coverage together with the unit tests for compiler and plugins'
+    },
+    'developer:coverageFolder': {
+        'longFlag': 'coverage-folder',
+        'fileNotNeeded': True,
+        'description': 'Folder where coverage report is saved'
+    },
+    'developer:makeExamples': {
+        'longFlag': 'make-examples',
+        'noArgument': True,
+        'fileNotNeeded': True,
+        'description': 'Makes all examples in plugins'
     },
     'globals:version': {
         'longFlag': 'version',

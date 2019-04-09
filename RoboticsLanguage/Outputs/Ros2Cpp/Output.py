@@ -63,7 +63,7 @@ def output(code, parameters):
     try:
       with open(os.devnull, 'w') as output_file:
         list_of_cpp_files = ['src/' + node_name_underscore + '.cpp',
-                             'include/' + node_name_underscore + '/' + node_name_underscore + '.h']
+                             'include/' + node_name_underscore + '/' + node_name_underscore + '.hpp']
         for file in list_of_cpp_files:
           process = subprocess.Popen(['uncrustify', '-c',  unicode(Utilities.myPluginPath(parameters) + '/Resources/uncrustify.cfg'),
                                       file,  '--replace', '--no-backup'],

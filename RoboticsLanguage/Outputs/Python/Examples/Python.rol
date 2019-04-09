@@ -1,7 +1,0 @@
-node(
-  name:'example Python',
-
-  initialise: block(
-    print('Python')
-  )
-)

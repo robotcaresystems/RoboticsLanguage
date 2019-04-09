@@ -90,7 +90,7 @@ def output(code, parameters):
   if parameters['globals']['beautify']:
     with open(os.devnull, 'w') as output_file:
       list_of_cpp_files = ['src/' + node_name_underscore + '.cpp',
-                           'include/' + node_name_underscore + '/' + node_name_underscore + '.h']
+                           'include/' + node_name_underscore + '/' + node_name_underscore + '.hpp']
 
       for file in list_of_cpp_files:
         if parameters['globals']['beautifyEngine'] == 'uncrustify':

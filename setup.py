@@ -80,7 +80,7 @@ result = [os.path.join(dp, f) for dp, dn, filenames in os.walk(path) for f in fi
 
 
 setup(name='RoboticsLanguage',
-      version='0.3.18',
+      version='0.3.19',
       description='The Robotics Language',
       long_description=long_description,
       long_description_content_type='text/markdown',
@@ -94,16 +94,14 @@ setup(name='RoboticsLanguage',
           'RoboticsLanguage': result
       },
       scripts=['RoboticsLanguage/Scripts/rol',
-               'RoboticsLanguage/Scripts/make/rol_make_examples',
                'RoboticsLanguage/Scripts/make/rol_make_documentation',
-               'RoboticsLanguage/Scripts/tests/rol_run_tests',
                'RoboticsLanguage/Scripts/docker/ros1/rol_docker',
                'RoboticsLanguage/Scripts/docker/ros1/rol_docker_development',
                'RoboticsLanguage/Scripts/docker/ros2/rol2_docker',
                'RoboticsLanguage/Scripts/docker/ros2/rol2_docker_development',
                ],
       install_requires=[
-          'parsley', 'argparse', 'argcomplete', 'jinja2', 'dpath', 'coloredlogs', 'lxml', 'iso-639', 'funcy', 'dill', 'pygments', 'fso', 'pyyaml', 'autopep8'
+          'parsley', 'argparse', 'argcomplete', 'jinja2', 'dpath', 'coloredlogs', 'lxml', 'iso-639', 'funcy', 'dill', 'pygments', 'fso', 'pyyaml', 'autopep8', 'cloudpickle', 'coverage'
       ],
       classifiers=[
             'Development Status :: 3 - Alpha',
