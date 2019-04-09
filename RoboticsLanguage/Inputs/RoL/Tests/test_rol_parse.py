@@ -30,7 +30,7 @@ from RoboticsLanguage.Transformers.Base import Language as base_language
 from RoboticsLanguage.Base import Utilities, Initialise, CommandLine
 
 
-with open('/tmp/parameters.dill', 'rb') as file:
+with open('/tmp/parameters.pickle', 'rb') as file:
   parameters = cloudpickle.load(file)
 
 # =================================================================================================
@@ -50,10 +50,6 @@ def check(self, text, result):
 
 
 class TestRolParse(unittest.TestCase):
-
-  # def __init__(self):
-  #   with open('/tmp/parameters.dill', 'rb') as file:
-  #     self.parameters = cloudpickle.load(file)
 
   # -------------------------------------------------------------------------------------------------
   #  Functional composition

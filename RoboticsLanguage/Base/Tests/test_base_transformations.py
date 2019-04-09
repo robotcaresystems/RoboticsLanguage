@@ -20,8 +20,9 @@
 #   limitations under the License.
 
 import unittest
+import cloudpickle
 from lxml import etree
-from RoboticsLanguage.Base import Transformations, Initialise, CommandLine
+from RoboticsLanguage.Base import Transformations
 
 
 # =================================================================================================
@@ -32,24 +33,17 @@ class TestBaseTransformations(unittest.TestCase):
 
   def test_Apply(self):
 
-    # NOTE : redo this test later. Now it is blocking testing.
-    pass
-    # xml = etree.fromstring('<node><print><string>hello</string></print></node>')
-    #
-    # # initialise compiler
-    # parameters = Initialise.Initialise(False)
-    #
-    # # load partial parameters
-    # parameters = CommandLine.loadRemainingParameters(parameters)
-    #
-    # # load all parameters after the command line parser
-    # parameters = CommandLine.postCommandLineParser(parameters)
-    #
-    #
-    # xml_code, parameters = Transformations.Apply(xml, parameters)
-    #
-    # self.assertEqual(etree.tostring(xml_code),
-    #                  '<node><print RosCpp="ROS_INFO_STREAM(&quot;hello&quot;)"><string RosCpp="&quot;hello&quot;">hello</string><option name="level" RosCpp="&quot;info&quot;"><string RosCpp="&quot;info&quot;">info</string></option></print><option name="name" RosCpp="&quot;unnamed&quot;"><string RosCpp="&quot;unnamed&quot;">unnamed</string></option><option name="rate" RosCpp="25"><real RosCpp="25">25</real></option><option name="initialise" RosCpp=""/><option name="definitions" RosCpp=""/><option name="finalise" RosCpp=""/><option name="cachedComputation" RosCpp=""/></node>')
+    xml = etree.fromstring('<node><print><string>hello</string></print></node>')
+
+    # load parameters
+    with open('/tmp/parameters.pickle', 'rb') as file:
+      parameters = cloudpickle.load(file)
+
+    # apply transformations
+    xml_code, parameters = Transformations.Apply(xml, parameters)
+
+    self.assertEqual(etree.tostring(xml_code),
+                     '<node><print RosCpp="ROS_INFO_STREAM(&quot;hello&quot;)"><string RosCpp="&quot;hello&quot;">hello</string><option name="level" RosCpp="&quot;info&quot;"><string RosCpp="&quot;info&quot;">info</string></option></print><option name="name" RosCpp="&quot;unnamed&quot;"><string RosCpp="&quot;unnamed&quot;">unnamed</string></option><option name="rate" RosCpp="25"><real RosCpp="25">25</real></option><option name="initialise" RosCpp=""/><option name="definitions" RosCpp=""/><option name="finalise" RosCpp=""/><option name="cachedComputation" RosCpp=""/></node>')
 
 
 if __name__ == '__main__':

@@ -25,10 +25,6 @@ from lxml import etree
 from RoboticsLanguage.Base import Utilities
 
 
-def cache_some_string():
-  return 'hello'
-
-
 # =================================================================================================
 #  Base Utilities
 # =================================================================================================

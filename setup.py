@@ -103,7 +103,7 @@ setup(name='RoboticsLanguage',
                'RoboticsLanguage/Scripts/docker/ros2/rol2_docker_development',
                ],
       install_requires=[
-          'parsley', 'argparse', 'argcomplete', 'jinja2', 'dpath', 'coloredlogs', 'lxml', 'iso-639', 'funcy', 'dill', 'pygments', 'fso', 'pyyaml', 'autopep8'
+          'parsley', 'argparse', 'argcomplete', 'jinja2', 'dpath', 'coloredlogs', 'lxml', 'iso-639', 'funcy', 'dill', 'pygments', 'fso', 'pyyaml', 'autopep8', 'cloudpickle'
       ],
       classifiers=[
             'Development Status :: 3 - Alpha',
