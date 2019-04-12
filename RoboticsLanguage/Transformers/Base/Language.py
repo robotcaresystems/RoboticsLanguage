@@ -270,6 +270,22 @@ language = {
     },
 
 
+    'import': {
+        'definition': {
+            'arguments': arguments('none'),
+            'optional': {},
+            'returns': returns('none')
+        },
+        'localisation':
+        {
+            'pt': 'importar',
+        },
+        'documentation':
+        {
+        }
+    },
+
+
     'assign': {
         'definition': {
             'arguments': arguments('(real real | string string | element real | element string)'),

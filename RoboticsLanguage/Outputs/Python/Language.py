@@ -236,6 +236,43 @@ language = {
         },
     },
 
+    'import': {
+        'output':
+        {
+            'Python': '{{options["definitions"]}}',
+        },
+    },
+
+    'include': {
+        'output':
+        {
+            'Python': '',
+        },
+    },
+
+    'namespace': {
+        'output':
+        {
+            'Python': '{{children|join(".")}}'
+        },
+    },
+
+    'arguments': {
+        'output':
+        {
+            'Python': '({{children|join(", ")}})'
+        },
+    },
+
+
+    'instantiate': {
+        'output':
+        {
+            'Python': '{{children[0]}} = {{children[1]}}{% if children|length > 2 %}{{children[2]}}{% endif %}'
+        },
+    },
+
+
     'domain': {
         'output':
         {

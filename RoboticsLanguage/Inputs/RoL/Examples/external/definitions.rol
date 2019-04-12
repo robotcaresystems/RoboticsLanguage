@@ -1,0 +1,19 @@
+# some variables
+i1 in Integers = 1,
+i2 in Integers = 2,
+i3 in Integers = 3,
+i4 in Integers = 4,
+i5 in Integers = 5,
+i6 in Integers = 6,
+
+r1 in Reals = 0.1,
+r2 in Reals = 0.2,
+r3 in Reals = 0.3,
+r4 in Reals = 0.4,
+r5 in Reals = 0.5,
+r6 in Reals = 0.6,
+r7 in Reals = 0.7,
+
+b1 in Booleans = true,
+b2 in Booleans = true,
+b3 in Booleans = true

@@ -42,11 +42,18 @@ def CreateFunctionList(code, parameters):
   parameters['Transformers']['Base']['functions'] = {}
 
   for function in code.xpath('/node/option[@name="definitions"]/*//function_definition'):
-    parameters['Transformers']['Base']['functions'][function.attrib['name']] = {'definition': function }
+    parameters['Transformers']['Base']['functions'][function.attrib['name']] = {'definition': function}
 
   return code, parameters
 
 
+def CreateImportList(code, parameters):
+  parameters['Transformers']['Base']['imports'] = []
+
+  for imports in code.xpath('//import'):
+    parameters['Transformers']['Base']['imports'].append(imports)
+
+  return code, parameters
 
 
 def transform(code, parameters):
@@ -60,5 +67,6 @@ def transform(code, parameters):
 
   code, parameters = CreateFunctionList(code, parameters)
 
+  code, parameters = CreateImportList(code, parameters)
 
   return code, parameters

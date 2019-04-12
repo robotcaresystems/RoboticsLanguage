@@ -1,0 +1,75 @@
+node(name:'example import',
+  definitions: block(
+
+    # A header only standard c++ library
+    # The classes LinearAlgebra and IntegerAlgebra
+    # are instantiated for this file
+    import(header:'external/headerOnly.hpp',
+           definitions: block(
+             instantiate(linear_algebra, LinearAlgebra, arguments(1,2)),
+             instantiate(integer_algebra, namespace(space, IntegerAlgebra))
+             )
+          ),
+
+    # A standard c++ file to be included
+    # The classes Statistics and Logic
+    # are instantiated for this file
+    import(source:'external/library.cpp',
+           header:'external/library.hpp',
+           definitions: block(
+             instantiate(statistics,Statistics),
+             instantiate(logic,namespace(spaceLibrary,Logic))
+            )
+          ),
+
+    # a system library, with a header
+    import(systemLibrary:'libc', header:'libc.h'),
+
+    # importing another rol file
+    include('external/definitions.rol')
+
+    ),
+
+    initialise: block(
+
+
+      #######################################
+      # functions defined in header only file
+
+      # bare functions
+      i1 = addIntegers(i2, i3),
+      i1 = subtractIntegers(i2, i3),
+
+      # a class
+      r7 = linear_algebra.inner3(r1,r2,r3,r4,r5,r6),
+
+      # a namespace
+      r1 = space.addDoubles(r2,r3),
+      r1 = space.subtractDoubles(r2,r3),
+
+      # a class inside a namespace
+      r7 = integer_algebra.inner3(r1,r2,r3,r4,r5,r6),
+
+      #######################################
+      # functions defined in the C++ file
+
+      # bare functions
+      i1 = multiplyIntegers(i2, i3),
+      i1 = divideIntegers(i2, i3),
+
+      # a class
+      r4 = statistics.mean(r1,r2,r3),
+
+      # a namespace
+      r1 = spaceLibrary.multiplyDoubles(r2,r3),
+      r1 = spaceLibrary.divideDoubles(r2,r3),
+
+      # a class inside a namespace
+      b3 = logic.andOperation(b1,b2),
+
+      #######################################
+      # functions defined in system library
+      printf("hello world!")
+
+    )
+)

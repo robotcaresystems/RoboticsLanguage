@@ -189,9 +189,45 @@ language = {
     'element': {
         'output':
         {
-            'Cpp': '{% if children[1]|length > 0 %}{{children[1]}} {{attribute(code.xpath("variable"),"name")}}{% endif %}'
+            'Cpp': '{% if children[1]|length > 0 %}{{children[1]}} {{children[0]}}{% endif %}'
         },
     },
+
+    'import': {
+        'output':
+        {
+            'Cpp': '{{options["definitions"]}}',
+        },
+    },
+
+    'include': {
+        'output':
+        {
+            'Cpp': '',
+        },
+    },
+
+    'namespace': {
+        'output':
+        {
+            'Cpp': '{{children|join("::")}}'
+        },
+    },
+
+    'arguments': {
+        'output':
+        {
+            'Cpp': '({{children|join(", ")}})'
+        },
+    },
+
+    'instantiate': {
+        'output':
+        {
+            'Cpp': '{{children[1]}} {{children[0]}}{% if children|length > 2 %}{{children[2]}}{% endif %}'
+        },
+    },
+
 
     'block': {
         'output':
