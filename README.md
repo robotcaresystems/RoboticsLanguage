@@ -7,7 +7,7 @@
 
 ## News
 
- - We presented a tutorial at [IEEE IRC 2019](http://aws.robotcaresystems.com/IEEE-IRC-2019/). [Slides are available here](Documentation/Tutorials/IEEE-IRC-2019/README.md).
+ - We presented a tutorial at [IEEE IRC 2019](http://irc.asia.edu.tw/2019/). [Slides are available here](Documentation/Tutorials/IEEE-IRC-2019/README.md).
  - We presented recently at the [AWS re:invent conference 2018](https://youtu.be/HAela66zov0?t=1692)
 
 # What is the language of Robotics?
