@@ -30,6 +30,7 @@ import pprint
 import hashlib
 import logging
 import inspect
+import textwrap
 import datetime
 import dpath.util
 import coloredlogs
@@ -542,6 +543,10 @@ def paths(dictionary, dictionary_path):
 # -------------------------------------------------------------------------------------------------
 
 
+def textWrapBox(text):
+  return '\\n'.join(textwrap.wrap(text, int(13.9231 - 0.0769231 * len(text) + 0.846154 * len(text.split(' ')))))
+
+
 def replaceLast(string, source, destination):
   return source.join(string.split(source)[0:-1])+destination+string.split(source)[-1]
 
@@ -590,6 +595,11 @@ all_cap_re = re.compile('([a-z0-9])([A-Z])')
 def camelCaseToUnderscore(name):
     s1 = first_cap_re.sub(r'\1_\2', name)
     return all_cap_re.sub(r'\1_\2', s1).lower()
+
+
+def unCamelCase(name):
+    s1 = first_cap_re.sub(r'\1 \2', name)
+    return all_cap_re.sub(r'\1 \2', s1).lower()
 
 
 def initials(text):
