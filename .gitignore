@@ -7,3 +7,4 @@ RoboticsLanguage.egg-info
 htmlcov
 dist
 build
+.ccls*
