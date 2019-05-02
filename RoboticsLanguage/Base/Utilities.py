@@ -330,11 +330,11 @@ def cache_function(function):
 # -------------------------------------------------------------------------------------------------
 
 
-# Create a logger object.
+# install colours in the logger
 coloredlogs.install(fmt='%(levelname)s: %(message)s', level='WARN')
 
 
-# install colours in the logger
+# set the logger level
 def setLoggerLevel(level):
   coloredlogs.install(fmt='%(levelname)s: %(message)s', level=level.upper())
 
