@@ -18,7 +18,7 @@ from RoboticsLanguage.Base import Utilities
 
 
 def parse(text, parameters):
-  Utilities.logging.info("Parsing {{parameters.Outputs.Developer.create.InputsJSON}} language...")
+  Utilities.logger.info("Parsing {{parameters.Outputs.Developer.create.InputsJSON}} language...")
 
   # parse JSON into dictionary
   text_dictionary = json.loads(text)

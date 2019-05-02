@@ -53,7 +53,7 @@ def output(code, parameters):
   # ############ generate code #####################################################
   # check if node tag is present
   if len(code.xpath('/node')) < 1:
-    Utilities.logging.warning('No `node` element found. ROS Python will not generate code!')
+    Utilities.logger.warning('No `node` element found. ROS Python will not generate code!')
     return
 
   # preprocess the code to provide information for templares
@@ -79,7 +79,7 @@ def output(code, parameters):
       with open(folder + '/' + name + '.msg', 'w') as file:
         file.write(definition)
 
-        Utilities.logging.debug('Wrote file ' + folder + '/' + name + '.msg ...')
+        Utilities.logger.debug('Wrote file ' + folder + '/' + name + '.msg ...')
 
   # ############ Indentation #####################################################
   # Make sure indentation is respected

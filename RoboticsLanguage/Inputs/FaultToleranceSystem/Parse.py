@@ -16,7 +16,7 @@ from RoboticsLanguage.Base import Utilities
 
 
 def parse(text, parameters):
-  Utilities.logging.info("Parsing Fault Tolerance system language...")
+  Utilities.logger.info("Parsing Fault Tolerance system language...")
 
   # parse JSON into dictionary
   text_dictionary = yaml.safe_load(text)

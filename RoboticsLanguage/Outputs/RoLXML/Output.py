@@ -50,6 +50,6 @@ def output(code, parameters):
   with open(parameters['globals']['deploy'] + '/' + node_name_underscore + '.xml', 'w') as xml_file:
     xml_file.write('<?xml version="1.0"?>\n' + etree.tostring(xml_copy, pretty_print=True))
 
-    Utilities.logging.debug('Wrote file '+parameters['globals']['deploy'] + '/' + node_name_underscore + '.xml...')
+    Utilities.logger.debug('Wrote file '+parameters['globals']['deploy'] + '/' + node_name_underscore + '.xml...')
 
   return 0

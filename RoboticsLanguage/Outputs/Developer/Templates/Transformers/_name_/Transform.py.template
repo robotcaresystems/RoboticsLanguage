@@ -15,6 +15,6 @@
 from RoboticsLanguage.Base import Utilities
 
 def transform(code, parameters):
-  Utilities.logging.info("Transforming {{parameters.Outputs.Developer.create.Transformers}}...")
+  Utilities.logger.info("Transforming {{parameters.Outputs.Developer.create.Transformers}}...")
 
   return code, parameters

@@ -50,7 +50,7 @@ def output(code, parameters):
   # ############ generate code #####################################################
   # check if node tag is present
   if len(code.xpath('/node')) < 1:
-    Utilities.logging.warning('No `node` element found. ROS C++ will not generate code!')
+    Utilities.logger.warning('No `node` element found. ROS C++ will not generate code!')
     return
 
   # preprocess the code to provide information for templares

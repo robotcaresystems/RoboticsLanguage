@@ -272,7 +272,7 @@ def templateEngine(code, parameters, output=None,
         os.chown(files_to_process[file]['deploy_path'], files_to_process[file]['permissions'].st_uid,
                                                         files_to_process[file]['permissions'].st_gid)
 
-        Utilities.logging.debug(files_to_process[file]['full_path'] + ' -> ' + files_to_process[file]['deploy_path'] + ' ...')
+        Utilities.logger.debug(files_to_process[file]['full_path'] + ' -> ' + files_to_process[file]['deploy_path'] + ' ...')
 
       except OSError as e:
         # with Error.exception(parameters, stop=True)
@@ -291,7 +291,7 @@ def templateEngine(code, parameters, output=None,
 
         # copy files
         Utilities.copyWithPermissions(files_to_copy[i], new_files_to_copy[i])
-        Utilities.logging.debug('Copied file ' + new_files_to_copy[i] + '...')
+        Utilities.logger.debug('Copied file ' + new_files_to_copy[i] + '...')
 
       except OSError as e:
         # with Error.exception(parameters, stop=True)
