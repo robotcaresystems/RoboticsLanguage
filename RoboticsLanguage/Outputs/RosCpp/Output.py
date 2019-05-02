@@ -105,15 +105,15 @@ def output(code, parameters):
                                        stderr=subprocess.STDOUT)
             process.wait()
             if process.returncode > 0:
-              Utilities.logger.error("Error beautifying code. Uncrustify has returned an error.")
+              Utilities.logging.error("Error beautifying code. Uncrustify has returned an error.")
           except:
             # open HTML in different platforms
             if 'darwin' in sys.platform:
-              Utilities.logger.error(
+              Utilities.logging.error(
                   "Error beautifying code. You may need to install uncrustify:\n\n  brew install uncrustify")
 
             if 'linux' in sys.platform:
-              Utilities.logger.error(
+              Utilities.logging.error(
                   "Error beautifying code. You may need to install uncrustify:\n\n  sudo apt install uncrustify")
 
         if parameters['globals']['beautifyEngine'] == 'clang-format':
@@ -128,7 +128,7 @@ def output(code, parameters):
               process.wait()
 
             if process.returncode > 0:
-              Utilities.logger.error("Error beautifying code [1]. clang-format has returned an error.")
+              Utilities.logging.error("Error beautifying code [1]. clang-format has returned an error.")
             else:
               command = 'rm {0}'.format(file)
               process = subprocess.Popen(shlex.split(command),
@@ -137,7 +137,7 @@ def output(code, parameters):
                                          stderr=subprocess.STDOUT)
               process.wait()
               if process.returncode > 0:
-                Utilities.logger.error("Error beautifying code [2]. clang-format has returned an error.")
+                Utilities.logging.error("Error beautifying code [2]. clang-format has returned an error.")
               command = 'mv {0}.beautify {0}'.format(file)
 
               process = subprocess.Popen(shlex.split(command),
@@ -147,7 +147,7 @@ def output(code, parameters):
               process.wait()
 
               if process.returncode > 0:
-                Utilities.logger.error("Error beautifying code [3]. clang-format has returned an error.")
+                Utilities.logging.error("Error beautifying code [3]. clang-format has returned an error.")
 
   # ############ compile code #####################################################
   # if the flag compile is set then run catkin
@@ -157,19 +157,19 @@ def output(code, parameters):
     else:
       command = ['catkin', 'build', node_name_underscore]
 
-    Utilities.logger.debug("Compiling with: `" + ' '.join(command) + "` in folder " + deploy_path + '/..')
+    Utilities.logging.debug("Compiling with: `" + ' '.join(command) + "` in folder " + deploy_path + '/..')
     process = subprocess.Popen(command, cwd=deploy_path + '/..')
     process.wait()
 
     if process.returncode > 0:
-      Utilities.logger.error("Compilation failed!!!")
+      Utilities.logging.error("Compilation failed!!!")
 
   # ############ edit code #####################################################
   # if the flag edit is set then open in editor
   if parameters['globals']['edit'] and parameters['globals']['editor'] != '':
     command = parameters['globals']['editor'] + ' ' + deploy_path + '/' + node_name_underscore
 
-    Utilities.logger.debug("editing: `" + command + '`')
+    Utilities.logging.debug("editing: `" + command + '`')
     process = subprocess.Popen(shlex.split(command))
     process.wait()
 
@@ -184,7 +184,7 @@ def output(code, parameters):
 
     command = 'roslaunch ' + node_name_underscore + ' ' + node_name_underscore + '.launch'
 
-    Utilities.logger.debug("launching: `" + command + '`')
+    Utilities.logging.debug("launching: `" + command + '`')
     process = subprocess.Popen(shlex.split(command))
     process.wait()
 

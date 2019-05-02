@@ -253,7 +253,7 @@ def templateEngine(code, parameters, output=None,
         # render the combined template
         result = preprocessed_template.render(code=code, parameters=parameters)
       except TemplateError as e:
-        Utilities.logger.error(e.__repr__())
+        Utilities.logging.error(e.__repr__())
         #   # with Error.exception(parameters, filename=files_to_process[i])
         # Utilities.logErrors(Utilities.formatJinjaErrorMessage(
         #     e, filename=files_to_process[file]['full_path']), parameters)

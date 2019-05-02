@@ -118,7 +118,7 @@ def handler(parameters, key='default', **options):
     message = default_error_message(parameters)
 
   # show the message
-  Utilities.logger.log(level, message)
+  Utilities.logging.log(level, message)
 
   # log the messages
   Utilities.logErrors(message, key, parameters)
@@ -157,7 +157,7 @@ def exception(e, parameters, key='default', **options):
         message = default_error_message(parameters)
 
     # show the message
-    Utilities.logger.log(level, message)
+    Utilities.logging.log(level, message)
 
     # log the messages
     Utilities.logErrors(message, key, parameters, exception=e)

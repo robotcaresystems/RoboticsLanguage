@@ -125,12 +125,12 @@ def output(code, parameters):
     else:
       command = ['catkin', 'build', node_name_underscore]
 
-    Utilities.logger.debug("Compiling with: `" + ' '.join(command) + "` in folder " + deploy_path + '/..')
+    Utilities.logging.debug("Compiling with: `" + ' '.join(command) + "` in folder " + deploy_path + '/..')
     process = subprocess.Popen(command, cwd=deploy_path +'/..')
     process.wait()
 
     if process.returncode > 0:
-      Utilities.logger.error("Compilation failed!!!")
+      Utilities.logging.error("Compilation failed!!!")
 
   # ############ run code #####################################################
   # if the flag launch is set then launch the node
@@ -141,7 +141,7 @@ def output(code, parameters):
     if package_location not in os.environ['ROS_PACKAGE_PATH']:
       os.environ['ROS_PACKAGE_PATH'] += ':' + package_location
 
-    Utilities.logger.debug("launching: `roslaunch " + node_name_underscore + " " + node_name_underscore + '.launch`')
+    Utilities.logging.debug("launching: `roslaunch " + node_name_underscore + " " + node_name_underscore + '.launch`')
     process = subprocess.Popen(['roslaunch', node_name_underscore, node_name_underscore + '.launch'])
     process.wait()
 
