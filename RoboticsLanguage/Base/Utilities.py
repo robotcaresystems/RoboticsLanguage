@@ -332,18 +332,15 @@ def cache_function(function):
 
 # Create a logger object.
 logger = logging.getLogger(__name__)
-coloredlogs.install(fmt='%(levelname)s: %(message)s')
-coloredlogs.install(level='WARN')
+coloredlogs.install(fmt='%(levelname)s: %(message)s', level='WARN')
+
 
 # install colours in the logger
-
-
 def setLoggerLevel(level):
-  coloredlogs.install(level=level.upper())
+  coloredlogs.install(fmt='%(levelname)s: %(message)s', level=level.upper())
+
 
 # command line codes for colors
-
-
 class color:
   PURPLE = '\033[95m'
   CYAN = '\033[96m'
