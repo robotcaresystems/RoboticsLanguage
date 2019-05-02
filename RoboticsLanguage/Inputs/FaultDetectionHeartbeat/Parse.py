@@ -15,7 +15,7 @@ from RoboticsLanguage.Inputs.RoL import Parse
 
 
 def parse(text, parameters):
-  Utilities.logger.info("Parsing Fault Detection Heartbeat language...")
+  Utilities.logging.info("Parsing Fault Detection Heartbeat language...")
 
   # parse JSON into dictionary
   text_dictionary = yaml.safe_load(text)

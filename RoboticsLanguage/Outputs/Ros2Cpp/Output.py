@@ -50,7 +50,7 @@ def output(code, parameters):
   # ############ generate code #####################################################
   # check if node tag is present
   if len(code.xpath('/node')) < 1:
-    Utilities.logger.warning('No `node` element found. ROS C++ will not generate code!')
+    Utilities.logging.warning('No `node` element found. ROS C++ will not generate code!')
     return
 
   # preprocess the code to provide information for templares
@@ -75,32 +75,32 @@ def output(code, parameters):
                                      stderr=subprocess.STDOUT)
           process.wait()
           if process.returncode > 0:
-            Utilities.logger.error("Error beautifying code. Uncrustify has returned an error.")
+            Utilities.logging.error("Error beautifying code. Uncrustify has returned an error.")
     except:
       # open HTML in different platforms
       if 'darwin' in sys.platform:
-        Utilities.logger.error(
+        Utilities.logging.error(
             "Error beautifying code. You may need to install uncrustify:\n\n  brew install uncrustify")
 
       if 'linux' in sys.platform:
-        Utilities.logger.error(
+        Utilities.logging.error(
             "Error beautifying code. You may need to install uncrustify:\n\n  sudo apt install uncrustify")
 
   # ############ compile code #####################################################
   # if the flag compile is set then run colcon
   if parameters['globals']['compile']:
     command = ['colcon', 'build', '--packages-select', node_name_underscore]
-    Utilities.logger.debug("Compiling with: `" + ' '.join(command) + "` in folder " + deploy_path + '/..')
+    Utilities.logging.debug("Compiling with: `" + ' '.join(command) + "` in folder " + deploy_path + '/..')
     process = subprocess.Popen(command, cwd=deploy_path +'/..')
     process.wait()
     if process.returncode > 0:
-      Utilities.logger.error("Compilation failed!!!")
+      Utilities.logging.error("Compilation failed!!!")
 
   # ############ run code #####################################################
   # if the flag launch is set then launch the node
   if parameters['globals']['launch']:
     command = ['ros2', 'run', node_name_underscore,  node_name_underscore ]
-    Utilities.logger.debug("Launching with: `" + ' '.join(command) + "` in folder " + deploy_path)
+    Utilities.logging.debug("Launching with: `" + ' '.join(command) + "` in folder " + deploy_path)
     process = subprocess.Popen(command, cwd=deploy_path)
     process.wait()
 

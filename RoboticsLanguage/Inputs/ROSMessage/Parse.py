@@ -24,7 +24,7 @@ main = ws name:n ws definition:d -> xml('message', [n,d])
 
 
 def parse(text, parameters):
-  Utilities.logger.info("Parsing ROS Message language...")
+  Utilities.logging.info("Parsing ROS Message language...")
 
   # make the grammar
   grammar = makeGrammar(grammar_definition, {'xml': Parsing.xmlNamespace('rosm')})

@@ -46,7 +46,7 @@ Open the file `Transform.py` and you will notice an empty function:
 from RoboticsLanguage.Base import Utilities
 
 def transform(code, parameters):
-  Utilities.logger.info("Transforming My Finite State Machine...")
+  Utilities.logging.info("Transforming My Finite State Machine...")
 
   return code, parameters
 ```

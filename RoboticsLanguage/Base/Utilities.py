@@ -217,7 +217,7 @@ def errorOptionalArgumentTypes(code, parameters, optional_names, optional_types)
           parameters['language'][code.tag]['definition']['optional'][name]['documentation'] + \
           '" instead of "' + types + '"\n'
   # show error
-  logger.error(formatSemanticTypeErrorMessage(
+  logging.error(formatSemanticTypeErrorMessage(
       parameters['text'], parameters, getTextMinimumPositionXML(code), 'Type', message))
 
 
@@ -231,7 +231,7 @@ def errorOptionalArgumentNotDefined(code, parameters, optional_names):
 
   message += 'The list of defined optional parameters is: ' + str(keys)
 
-  logger.error(formatSemanticTypeErrorMessage(
+  logging.error(formatSemanticTypeErrorMessage(
       parameters['text'], parameters, getTextMinimumPositionXML(code), 'Type', message))
 
 
@@ -243,7 +243,7 @@ def errorArgumentTypes(code, parameters, argument_types):
   message += '\nInstead received:\n   ' + code.tag + \
       '( ' + ','.join(argument_types) + ' )\n'
 
-  logger.error(formatSemanticTypeErrorMessage(
+  logging.error(formatSemanticTypeErrorMessage(
       parameters['text'], parameters, getTextMinimumPositionXML(code), 'Type', message))
 
 
@@ -251,7 +251,7 @@ def errorLanguageDefinition(code, parameters):
   message = 'Language element "' + code.tag + \
       '" ill defined. Please check definition.'
 
-  logger.error(formatSemanticTypeErrorMessage(
+  logging.error(formatSemanticTypeErrorMessage(
       parameters['text'], parameters, getTextMinimumPositionXML(code), 'Type', message))
 
 
@@ -331,7 +331,6 @@ def cache_function(function):
 
 
 # Create a logger object.
-logger = logging.getLogger(__name__)
 coloredlogs.install(fmt='%(levelname)s: %(message)s', level='WARN')
 
 
@@ -361,7 +360,7 @@ def incrementCompilerStep(parameters, group, name):
   parameters['developer']['stepName'] = name
 
   # log the current step
-  logger.info(
+  logging.info(
       'Step [' + str(parameters['developer']['stepCounter']) + "]: " + group + " - " + name)
 
   return parameters
@@ -428,7 +427,7 @@ def showDeveloperInformation(code, parameters):
         query, namespaces = checkQueryNamespaces(parameters['developer']['codePath'])
         printCode(code.xpath(query, **namespaces), parameters)
       except:
-        logger.warning(
+        logging.warning(
             "The path'" + parameters['developer']['codePath'] + "' is not present in the code")
 
     # show developer information for specific parameters
@@ -437,7 +436,7 @@ def showDeveloperInformation(code, parameters):
         for element in paths(parameters, parameters['developer']['parametersPath']):
           printParameters(element, parameters)
       except:
-        logger.warning(
+        logging.warning(
             "The path'" + parameters['developer']['parametersPath'] + "' is not defined in the internal parameters.")
 
     if parameters['developer']['stop']:
@@ -455,7 +454,7 @@ def importModule(z, a, b, c):
 
 def removeCache(cache_path='/.rol/cache'):
   global logger
-  logger.debug('Removing caching...')
+  logging.debug('Removing caching...')
   path = os.path.expanduser("~") + cache_path
   if os.path.isdir(path):
     rmtree(path)

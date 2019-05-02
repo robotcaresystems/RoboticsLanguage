@@ -15,7 +15,7 @@ from RoboticsLanguage.Base import Utilities
 from RoboticsLanguage.Tools import Templates
 
 def output(code, parameters):
-  Utilities.logger.info("Output Cpp...")
+  Utilities.logging.info("Output Cpp...")
 
   # run template engine to generate code
   if not Templates.templateEngine(code, parameters):

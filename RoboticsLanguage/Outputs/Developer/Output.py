@@ -120,7 +120,7 @@ def output(code, parameters):
                       with open(file_name, 'w') as output_file:
                         for element in result:
                           output_file.write(include_template.format(element))
-                        Utilities.logger.debug('Wrote file ' + file_name)
+                        Utilities.logging.debug('Wrote file ' + file_name)
 
       print('Created ' + module_type + ' plugin "' + filepatterns['name'] + '" in folder ' +
             parameters['globals']['plugins'] + '/' + module_type + '/' + filepatterns['name'])

@@ -62,7 +62,7 @@ def Apply(code, parameters):
 
   # check if semantic errors have occured
   if len(parameters['errors']) > 0:
-    Utilities.logger.error("Semantic errors found! Stopping.")
+    Utilities.logging.error("Semantic errors found! Stopping.")
     sys.exit(1)
 
   return code, parameters

@@ -16,7 +16,7 @@ from RoboticsLanguage.Base import Utilities
 
 
 def parse(text, parameters):
-  Utilities.logger.info("Parsing Deep Inference language...")
+  Utilities.logging.info("Parsing Deep Inference language...")
 
   # parse JSON into dictionary
   text_dictionary = yaml.safe_load(text)

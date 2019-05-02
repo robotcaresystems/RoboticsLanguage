@@ -92,7 +92,7 @@ def prepareParameters():
             package_order[module_name] = 100000000
 
       except Exception as e:
-        Utilities.logger.debug(e.__repr__())
+        Utilities.logging.debug(e.__repr__())
         pass
 
   # add package manifestos
@@ -118,7 +118,7 @@ def prepareParameters():
       for key, value in command_line.iteritems():
         command_line_flags[name_split[1] + ':' + name_split[2] + ':' + key] = value
     except Exception as e:
-      Utilities.logger.debug(e.__repr__())
+      Utilities.logging.debug(e.__repr__())
       pass
 
   # add command line options

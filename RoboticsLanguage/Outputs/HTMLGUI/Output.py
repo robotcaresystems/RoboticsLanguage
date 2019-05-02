@@ -52,11 +52,11 @@ def output(code, parameters):
       print(e)
       # open HTML in different platforms
       if 'darwin' in sys.platform:
-        Utilities.logger.error(
+        Utilities.logging.error(
             "Error beautifying code. You may need to install tidy:\n\n  brew install tidy-html5")
 
       if 'linux' in sys.platform:
-        Utilities.logger.error(
+        Utilities.logging.error(
             "Error beautifying code. You may need to install tidy:\n\n  sudo apt install tidy")
 
 

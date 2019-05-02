@@ -253,7 +253,7 @@ def templateEngine(code, parameters, output=None,
         # render the combined template
         result = preprocessed_template.render(code=code, parameters=parameters)
       except TemplateError as e:
-        Utilities.logger.error(e.__repr__())
+        Utilities.logging.error(e.__repr__())
         #   # with Error.exception(parameters, filename=files_to_process[i])
         # Utilities.logErrors(Utilities.formatJinjaErrorMessage(
         #     e, filename=files_to_process[file]['full_path']), parameters)
@@ -272,7 +272,7 @@ def templateEngine(code, parameters, output=None,
         os.chown(files_to_process[file]['deploy_path'], files_to_process[file]['permissions'].st_uid,
                                                         files_to_process[file]['permissions'].st_gid)
 
-        Utilities.logger.debug(files_to_process[file]['full_path'] + ' -> ' + files_to_process[file]['deploy_path'] + ' ...')
+        Utilities.logging.debug(files_to_process[file]['full_path'] + ' -> ' + files_to_process[file]['deploy_path'] + ' ...')
 
       except OSError as e:
         # with Error.exception(parameters, stop=True)
@@ -291,7 +291,7 @@ def templateEngine(code, parameters, output=None,
 
         # copy files
         Utilities.copyWithPermissions(files_to_copy[i], new_files_to_copy[i])
-        Utilities.logger.debug('Copied file ' + new_files_to_copy[i] + '...')
+        Utilities.logging.debug('Copied file ' + new_files_to_copy[i] + '...')
 
       except OSError as e:
         # with Error.exception(parameters, stop=True)

@@ -17,7 +17,7 @@ from RoboticsLanguage.Base import Utilities
 
 
 def parse(text, parameters):
-  Utilities.logger.info("Parsing {{parameters.Outputs.Developer.create.InputsXML}} language...")
+  Utilities.logging.info("Parsing {{parameters.Outputs.Developer.create.InputsXML}} language...")
 
   try:
     # create XML object from xml string

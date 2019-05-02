@@ -23,7 +23,7 @@ name = ws 'word' ws ':' ws word:w ws -> xml('word', text=w)
 
 
 def parse(text, parameters):
-  Utilities.logger.info("Parsing {{parameters.Outputs.Developer.create.Inputs}} language...")
+  Utilities.logging.info("Parsing {{parameters.Outputs.Developer.create.Inputs}} language...")
 
   # make the grammar
   grammar = makeGrammar(grammar_definition, {'xml': Parsing.xmlNamespace('{{parameters.Outputs.Developer.create.Inputs|initials|lower}}')})

@@ -53,7 +53,7 @@ def output(code, parameters):
   # ############ generate code #####################################################
   # check if node tag is present
   if len(code.xpath('/node')) < 1:
-    Utilities.logger.warning('No `node` element found. ROS Python will not generate code!')
+    Utilities.logging.warning('No `node` element found. ROS Python will not generate code!')
     return
 
   # preprocess the code to provide information for templares
@@ -79,7 +79,7 @@ def output(code, parameters):
       with open(folder + '/' + name + '.msg', 'w') as file:
         file.write(definition)
 
-        Utilities.logger.debug('Wrote file ' + folder + '/' + name + '.msg ...')
+        Utilities.logging.debug('Wrote file ' + folder + '/' + name + '.msg ...')
 
   # ############ Indentation #####################################################
   # Make sure indentation is respected
@@ -125,12 +125,12 @@ def output(code, parameters):
     else:
       command = ['catkin', 'build', node_name_underscore]
 
-    Utilities.logger.debug("Compiling with: `" + ' '.join(command) + "` in folder " + deploy_path + '/..')
+    Utilities.logging.debug("Compiling with: `" + ' '.join(command) + "` in folder " + deploy_path + '/..')
     process = subprocess.Popen(command, cwd=deploy_path +'/..')
     process.wait()
 
     if process.returncode > 0:
-      Utilities.logger.error("Compilation failed!!!")
+      Utilities.logging.error("Compilation failed!!!")
 
   # ############ run code #####################################################
   # if the flag launch is set then launch the node
@@ -141,7 +141,7 @@ def output(code, parameters):
     if package_location not in os.environ['ROS_PACKAGE_PATH']:
       os.environ['ROS_PACKAGE_PATH'] += ':' + package_location
 
-    Utilities.logger.debug("launching: `roslaunch " + node_name_underscore + " " + node_name_underscore + '.launch`')
+    Utilities.logging.debug("launching: `roslaunch " + node_name_underscore + " " + node_name_underscore + '.launch`')
     process = subprocess.Popen(['roslaunch', node_name_underscore, node_name_underscore + '.launch'])
     process.wait()
 
