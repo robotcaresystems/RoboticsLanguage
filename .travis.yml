@@ -1,11 +1,13 @@
-# Testing
 
 
 language: python
 python:
   - "2.7"
+
 install:
   - pip install -r requirements.txt
+  - pip install rospkg # required for now. Need to refactor
   - pip install .
+
 script:
   - rol --run-tests
