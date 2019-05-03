@@ -269,8 +269,8 @@ def templateEngine(code, parameters, output=None,
 
         # apply permissions
         os.chmod(files_to_process[file]['deploy_path'], files_to_process[file]['permissions'].st_mode)
-        os.chown(files_to_process[file]['deploy_path'], files_to_process[file]['permissions'].st_uid,
-                                                        files_to_process[file]['permissions'].st_gid)
+        # os.chown(files_to_process[file]['deploy_path'], files_to_process[file]['permissions'].st_uid,
+        #                                                 files_to_process[file]['permissions'].st_gid)
 
         Utilities.logging.debug(files_to_process[file]['full_path'] + ' -> ' + files_to_process[file]['deploy_path'] + ' ...')
 

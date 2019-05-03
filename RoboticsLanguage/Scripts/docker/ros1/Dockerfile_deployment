@@ -1,0 +1,17 @@
+FROM roboticslanguage/rol:development
+
+
+USER root
+
+# install Robotics Language
+RUN pip install --upgrade RoboticsLanguage
+
+# set default user when running the container
+USER roboticslanguage
+WORKDIR /home/roboticslanguage
+
+# copy examples
+RUN mkdir -p /home/roboticslanguage/examples
+WORKDIR /home/roboticslanguage/examples
+RUN rol --copy-examples-here
+WORKDIR /home/roboticslanguage
