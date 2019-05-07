@@ -679,7 +679,6 @@ def createFolderForFile(filename):
 def copyWithPermissions(source, destination):
     permissions = os.stat(source)
     copy(source, destination)
-    # os.chown(destination, permissions.st_uid, permissions.st_gid)
     os.chmod(destination, permissions.st_mode)
 # -------------------------------------------------------------------------------------------------
 #  XML utilities used in parsers
