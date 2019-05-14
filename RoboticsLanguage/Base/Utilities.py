@@ -30,6 +30,7 @@ import pprint
 import hashlib
 import logging
 import inspect
+import textwrap
 import datetime
 import dpath.util
 import coloredlogs
@@ -217,7 +218,7 @@ def errorOptionalArgumentTypes(code, parameters, optional_names, optional_types)
           parameters['language'][code.tag]['definition']['optional'][name]['documentation'] + \
           '" instead of "' + types + '"\n'
   # show error
-  logger.error(formatSemanticTypeErrorMessage(
+  logging.error(formatSemanticTypeErrorMessage(
       parameters['text'], parameters, getTextMinimumPositionXML(code), 'Type', message))
 
 
@@ -231,7 +232,7 @@ def errorOptionalArgumentNotDefined(code, parameters, optional_names):
 
   message += 'The list of defined optional parameters is: ' + str(keys)
 
-  logger.error(formatSemanticTypeErrorMessage(
+  logging.error(formatSemanticTypeErrorMessage(
       parameters['text'], parameters, getTextMinimumPositionXML(code), 'Type', message))
 
 
@@ -243,7 +244,7 @@ def errorArgumentTypes(code, parameters, argument_types):
   message += '\nInstead received:\n   ' + code.tag + \
       '( ' + ','.join(argument_types) + ' )\n'
 
-  logger.error(formatSemanticTypeErrorMessage(
+  logging.error(formatSemanticTypeErrorMessage(
       parameters['text'], parameters, getTextMinimumPositionXML(code), 'Type', message))
 
 
@@ -251,7 +252,7 @@ def errorLanguageDefinition(code, parameters):
   message = 'Language element "' + code.tag + \
       '" ill defined. Please check definition.'
 
-  logger.error(formatSemanticTypeErrorMessage(
+  logging.error(formatSemanticTypeErrorMessage(
       parameters['text'], parameters, getTextMinimumPositionXML(code), 'Type', message))
 
 
@@ -330,20 +331,16 @@ def cache_function(function):
 # -------------------------------------------------------------------------------------------------
 
 
-# Create a logger object.
-logger = logging.getLogger(__name__)
-coloredlogs.install(fmt='%(levelname)s: %(message)s')
-coloredlogs.install(level='WARN')
-
 # install colours in the logger
+coloredlogs.install(fmt='%(levelname)s: %(message)s', level='WARN')
 
 
+# set the logger level
 def setLoggerLevel(level):
-  coloredlogs.install(level=level.upper())
+  coloredlogs.install(fmt='%(levelname)s: %(message)s', level=level.upper())
+
 
 # command line codes for colors
-
-
 class color:
   PURPLE = '\033[95m'
   CYAN = '\033[96m'
@@ -364,7 +361,7 @@ def incrementCompilerStep(parameters, group, name):
   parameters['developer']['stepName'] = name
 
   # log the current step
-  logger.info(
+  logging.info(
       'Step [' + str(parameters['developer']['stepCounter']) + "]: " + group + " - " + name)
 
   return parameters
@@ -431,7 +428,7 @@ def showDeveloperInformation(code, parameters):
         query, namespaces = checkQueryNamespaces(parameters['developer']['codePath'])
         printCode(code.xpath(query, **namespaces), parameters)
       except:
-        logger.warning(
+        logging.warning(
             "The path'" + parameters['developer']['codePath'] + "' is not present in the code")
 
     # show developer information for specific parameters
@@ -440,7 +437,7 @@ def showDeveloperInformation(code, parameters):
         for element in paths(parameters, parameters['developer']['parametersPath']):
           printParameters(element, parameters)
       except:
-        logger.warning(
+        logging.warning(
             "The path'" + parameters['developer']['parametersPath'] + "' is not defined in the internal parameters.")
 
     if parameters['developer']['stop']:
@@ -458,7 +455,7 @@ def importModule(z, a, b, c):
 
 def removeCache(cache_path='/.rol/cache'):
   global logger
-  logger.debug('Removing caching...')
+  logging.debug('Removing caching...')
   path = os.path.expanduser("~") + cache_path
   if os.path.isdir(path):
     rmtree(path)
@@ -542,6 +539,10 @@ def paths(dictionary, dictionary_path):
 # -------------------------------------------------------------------------------------------------
 
 
+def textWrapBox(text):
+  return '\\n'.join(textwrap.wrap(text, int(13.9231 - 0.0769231 * len(text) + 0.846154 * len(text.split(' ')))))
+
+
 def replaceLast(string, source, destination):
   return source.join(string.split(source)[0:-1])+destination+string.split(source)[-1]
 
@@ -590,6 +591,11 @@ all_cap_re = re.compile('([a-z0-9])([A-Z])')
 def camelCaseToUnderscore(name):
     s1 = first_cap_re.sub(r'\1_\2', name)
     return all_cap_re.sub(r'\1_\2', s1).lower()
+
+
+def unCamelCase(name):
+    s1 = first_cap_re.sub(r'\1 \2', name)
+    return all_cap_re.sub(r'\1 \2', s1).lower()
 
 
 def initials(text):
@@ -683,7 +689,6 @@ def createFolderForFile(filename):
 def copyWithPermissions(source, destination):
     permissions = os.stat(source)
     copy(source, destination)
-    os.chown(destination, permissions.st_uid, permissions.st_gid)
     os.chmod(destination, permissions.st_mode)
 # -------------------------------------------------------------------------------------------------
 #  XML utilities used in parsers

@@ -50,6 +50,8 @@ default_template_engine_filters = {'tag': Utilities.tag,
                                    'ensureList': Utilities.ensureList,
                                    'attributes': Utilities.attributes,
                                    'underscore': Utilities.underscore,
+                                   'unCamelCase': Utilities.unCamelCase,
+                                   'textWrapBox': Utilities.textWrapBox,
                                    'mergeManyOrdered': Utilities.mergeManyOrdered,
                                    'optionalArguments': Utilities.optionalArguments,
                                    'underscoreFullCaps': Utilities.underscoreFullCaps,
@@ -253,7 +255,7 @@ def templateEngine(code, parameters, output=None,
         # render the combined template
         result = preprocessed_template.render(code=code, parameters=parameters)
       except TemplateError as e:
-        Utilities.logger.error(e.__repr__())
+        Utilities.logging.error(e.__repr__())
         #   # with Error.exception(parameters, filename=files_to_process[i])
         # Utilities.logErrors(Utilities.formatJinjaErrorMessage(
         #     e, filename=files_to_process[file]['full_path']), parameters)
@@ -269,8 +271,6 @@ def templateEngine(code, parameters, output=None,
 
         # apply permissions
         os.chmod(files_to_process[file]['deploy_path'], files_to_process[file]['permissions'].st_mode)
-        os.chown(files_to_process[file]['deploy_path'], files_to_process[file]['permissions'].st_uid,
-                                                        files_to_process[file]['permissions'].st_gid)
 
         Utilities.logging.debug(files_to_process[file]['full_path'] + ' -> ' + files_to_process[file]['deploy_path'] + ' ...')
 

@@ -188,16 +188,16 @@ def processFileParameters(args, file_formats, parameters):
 
   # return an error if files are unknown
   if len(unknown_files) > 0:
-    Utilities.logger.error('the following files have unknown formal: ' + str(unknown_files))
+    Utilities.logging.error('the following files have unknown formal: ' + str(unknown_files))
     sys.exit(1)
 
   if len(rol_files) == 0 and parameters['globals']['fileNeeded']:
-    Utilities.logger.error('no Robotics Language files detected!')
+    Utilities.logging.error('no Robotics Language files detected!')
     sys.exit(1)
     # @TODO: implement multiple file support
   elif len(rol_files) > 1:
     # @BUG if two files are repeated the message is displayed
-    Utilities.logger.warn('the following files are disregarded:\n' + '\n'.join([x['name'] for x in rol_files[1:]]))
+    Utilities.logging.warn('the following files are disregarded:\n' + '\n'.join([x['name'] for x in rol_files[1:]]))
 
   # @NOTE: this is loading all YAML files for all the ROL files supplied in the command line. This is meant for
   # a later implementation that supports for processing multiple rol files simultaneously. Must separate local
@@ -307,7 +307,7 @@ def loadRemainingParameters(parameters):
       if name_split[1] == 'Outputs':
         default_output[name_split[2]] = language_module.default_output
     except Exception as e:
-      Utilities.logger.debug(e.__repr__())
+      Utilities.logging.debug(e.__repr__())
       pass
 
     # The messages
@@ -317,7 +317,7 @@ def loadRemainingParameters(parameters):
       # append messages definitions
       messages = Utilities.mergeDictionaries(messages, messages_module.messages)
     except Exception as e:
-      Utilities.logger.debug(e.__repr__())
+      Utilities.logging.debug(e.__repr__())
       pass
 
     # The error handling functions
@@ -330,7 +330,7 @@ def loadRemainingParameters(parameters):
       # append error exceptions definitions
       error_exceptions = Utilities.mergeDictionaries(error_exceptions, error_module.error_exception_functions)
     except Exception as e:
-      Utilities.logger.debug(e.__repr__())
+      Utilities.logging.debug(e.__repr__())
       pass
 
   # add package language definitions

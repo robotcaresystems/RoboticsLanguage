@@ -123,6 +123,7 @@ parameters = {
             'author': {'name': 'name', 'email': 'email@email.edu'},
             'url': 'url',
             'license': 'license',
+            'longLicense': 'longLicense',
             'copyright': 'copyright',
             'year': 'year'
         }
