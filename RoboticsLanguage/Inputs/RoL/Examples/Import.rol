@@ -4,7 +4,7 @@ node(name:'example import',
     # A header only standard c++ library
     # The classes LinearAlgebra and IntegerAlgebra
     # are instantiated for this file
-    import(header:'external/headerOnly.hpp',
+    import(cppHeader:'external/headerOnly.hpp',
            definitions: block(
              instantiate(linear_algebra, LinearAlgebra, arguments(1,2)),
              instantiate(integer_algebra, namespace(space, IntegerAlgebra))
@@ -14,8 +14,8 @@ node(name:'example import',
     # A standard c++ file to be included
     # The classes Statistics and Logic
     # are instantiated for this file
-    import(source:'external/library.cpp',
-           header:'external/library.hpp',
+    import(cppSource:'external/library.cpp',
+           cppHeader:'external/library.hpp',
            definitions: block(
              instantiate(statistics,Statistics),
              instantiate(logic,namespace(spaceLibrary,Logic))
@@ -23,7 +23,7 @@ node(name:'example import',
           ),
 
     # a system library, with a header
-    import(systemLibrary:'libc', header:'libc.h'),
+    import(systemLibrary:'libc', cHeader:'libc.h'),
 
     # importing another rol file
     include('external/definitions.rol')
