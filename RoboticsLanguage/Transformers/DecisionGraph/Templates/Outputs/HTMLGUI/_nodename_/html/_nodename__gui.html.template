@@ -1,0 +1,184 @@
+
+{% set head %}
+{% if code|xpaths('//dg:DecisionGraph', {'dg':'dg'})|length > 0 %}
+<!-- VisJS for easy diagrams -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.css" />
+{% endif %}
+{% endset %}
+
+{% set beforeLoad %}
+
+
+function wrapText(context, text, x, y, maxWidth, lineHeight) {
+        var words = text.split(' ');
+        var line = '';
+
+        for(var n = 0; n < words.length; n++) {
+          var testLine = line + words[n] + ' ';
+          var metrics = context.measureText(testLine);
+          var testWidth = metrics.width;
+          if (testWidth > maxWidth && n > 0) {
+            context.fillText(line, x, y);
+            line = words[n] + ' ';
+            y += lineHeight;
+          }
+          else {
+            line = testLine;
+          }
+        }
+        context.fillText(line, x, y);
+      }
+
+{% for graph in parameters.Transformers.DecisionGraph.graphs %}
+var dg_nodes_{{graph}} = 0;
+var dg_edges_{{graph}} = 0;
+var dg_network_{{graph}} = 0;
+var dg_animation_{{graph}} = [ {% for arc in parameters.Transformers.DecisionGraph.graphs[graph].arcs -%}0,{% endfor %} ];
+;
+{% endfor %}
+{% endset %}
+
+
+{% set afterLoad %}
+
+{% for graph in parameters.Transformers.DecisionGraph.graphs %}
+  // subscribe to topic
+  var dg_{{graph}}_subscriber = 0;
+   dg_{{graph}}_subscriber = new ROSLIB.Topic({
+   ros: ros,
+   name: '/decision_graphs/{{parameters.node.name|underscore}}/{{graph}}',
+   messageType: 'std_msgs/Int32',
+  });
+
+  // subscribe function
+  dg_{{graph}}_subscriber.subscribe(function(message) {
+    console.log(message);
+    dg_edges_{{graph}}.update([{id: message.data, color: {color: 'rgb(255,0,0)'}}]);
+    dg_animation_{{graph}}[message.data - 1] = 255;
+
+  });
+
+  window.setInterval(function(){
+    for (i = 0; i < {{parameters.Transformers.DecisionGraph.graphs[graph].arcs|length}}; i++) {
+      dg_animation_{{graph}}[i] -= 3;
+      if (dg_animation_{{graph}}[i] < 0)
+      {
+        dg_animation_{{graph}}[i] = 0;
+      }
+    };
+
+    dg_edges_{{graph}}.update([
+    {% for i in range(parameters.Transformers.DecisionGraph.graphs[graph].arcs|length) -%}
+    {id: {{i+1}}, color: {color: 'rgb('+ dg_animation_{{graph}}[{{i}}] +',0,0)'}},
+    {% endfor %}
+    ]);
+
+  }, 100);
+
+  // create an array with nodes
+  dg_nodes_{{graph}} = new vis.DataSet([
+  {% for node in parameters.Transformers.DecisionGraph.graphs[graph].nodes %}
+    {id: {{parameters.Transformers.DecisionGraph.graphs[graph].nodes[node].id}},
+    label: '{% if parameters.Transformers.DecisionGraph.graphs[graph].nodes[node].type=='function'%}{{parameters.Transformers.DecisionGraph.graphs[graph].nodes[node].label|default(node)|unCamelCase|textWrapBox}}',
+    shape: 'box',
+    color: {background:'rgb(200,200,255)',
+     border:'black',highlight:{background:'rgb(220,220,255)',border:'black'},hover:{background:'rgb(220,220,255)',border:'blue'}}},
+     {%else%}',
+     shape: 'diamond',
+     size: 60,
+     color: {background:'rgb(200,255,200)',
+      border:'black',highlight:{background:'rgb(220,255,220)',border:'black'},hover:{background:'rgb(220,255,220)',border:'blue'}}},
+         {% endif %}
+
+  {% endfor %}
+
+  ]);
+
+  // create an array with edges
+  dg_edges_{{graph}} = new vis.DataSet([
+    {% for arc in parameters.Transformers.DecisionGraph.graphs[graph].arcs -%}
+    {id: {{arc.id}},
+     from: {{arc.from}},
+     to: {{arc.to}},
+     label: '{{arc.label|replace("'", "\\\'")}}',
+     arrows:'to',
+     color:'black'
+    },
+    {% endfor -%}
+  ]);
+
+  // create a network
+  var dg_container_{{graph}} = document.getElementById('dg_{{graph}}');
+  var dg_data_{{graph}} = {
+    nodes: dg_nodes_{{graph}},
+    edges: dg_edges_{{graph}}
+  };
+  var dg_options_{{graph}} = {};
+
+  dg_network_{{graph}} = new vis.Network(dg_container_{{graph}}, dg_data_{{graph}}, dg_options_{{graph}});
+  dg_network_{{graph}}.setSize(550,400);
+  dg_network_{{graph}}.moveTo({position: {x: 550, y: 400}});
+  dg_network_{{graph}}.fit();
+
+
+  dg_network_navigation_graph.on("afterDrawing", function (ctx) {
+    var nodeId = 0;
+    var nodePosition = 0;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    {% for node in parameters.Transformers.DecisionGraph.graphs[graph].nodes %}
+      {% if parameters.Transformers.DecisionGraph.graphs[graph].nodes[node].type!='function'%}
+    nodeId = {{parameters.Transformers.DecisionGraph.graphs[graph].nodes[node].id}};
+    nodePosition = dg_network_navigation_graph.getPositions([nodeId]);
+
+    ctx.fillStyle = "#000000";
+    wrapText(ctx, '{{parameters.Transformers.DecisionGraph.graphs[graph].nodes[node].label|default(node)|unCamelCase}}?', nodePosition[nodeId].x, nodePosition[nodeId].y-30, 60, 12);
+
+//    ctx.fillText('{{parameters.Transformers.DecisionGraph.graphs[graph].nodes[node].label|default(node)|unCamelCase|textWrapBox}}', nodePosition[nodeId].x, nodePosition[nodeId].y);
+      {% endif %}
+    {% endfor %}
+  });
+
+
+
+  $('#decision_graph_accordion').accordion({exclusive: false});
+
+  {% endfor %}
+
+{% endset %}
+
+
+{% set body %}
+
+{% if code|xpaths('//dg:DecisionGraph', {'dg':'dg'})|length > 0 %}
+
+  <h1>Decision Graphs</h1>
+
+
+    <div class="ui styled accordion" id="decision_graph_accordion">
+
+
+  {% for graph in parameters.Transformers.DecisionGraph.graphs %}
+
+      <div class="title">
+        <i class="dropdown icon"></i> {{graph}}
+      </div>
+      <div class="content hidden">
+        <div id="dg_{{graph}}"></div>
+      </div>
+    {% endfor -%}
+    </div>
+    <style type="text/css">
+    {% for graph in parameters.Transformers.DecisionGraph.graphs %}
+        #dg_{{graph}} {
+          width: 550px;
+          height: 400px;
+        }
+        {% endfor -%}
+      </style>
+
+
+{% endif %}
+
+{% endset %}

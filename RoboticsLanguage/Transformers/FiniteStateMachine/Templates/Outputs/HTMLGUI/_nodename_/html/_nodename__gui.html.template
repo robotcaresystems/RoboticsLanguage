@@ -1,0 +1,184 @@
+
+{% set head %}
+
+{% if code|xpaths('//fsm:machine', {'fsm':'fsm'})|length > 0 %}
+<!-- VisJS for easy diagrams -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.css" />
+{% endif %}
+
+{% endset %}
+
+
+
+{% set beforeLoad %}
+
+{% if code|xpaths('//fsm:machine', {'fsm':'fsm'})|length > 0 %}
+
+{% for machine in code|xpaths('//fsm:machine', {'fsm':'fsm'}) %}
+  {% set machine_name = machine|xpath('fsm:name/text()', {'fsm':'fsm'}) %}
+
+
+
+{% endfor %}
+
+{% endif %}
+
+{% endset %}
+
+{% set afterLoad %}
+
+{% if code|xpaths('//fsm:machine', {'fsm':'fsm'})|length > 0 %}
+
+{% for machine in code|xpaths('//fsm:machine', {'fsm':'fsm'}) -%}
+
+{# get the list of states from the code #}
+{% set machine_name = machine|xpath('fsm:name/text()', {'fsm':'fsm'})-%}
+{% set initial_state = machine|xpath('fsm:initial/text()', {'fsm':'fsm'}) -%}
+{% set begin_states = machine|xpaths('fsm:transition/fsm:begin/text()', {'fsm':'fsm'}) -%}
+{% set end_states = machine|xpaths('fsm:transition/fsm:end/text()', {'fsm':'fsm'}) -%}
+{% set states = ([initial_state] + begin_states + end_states)|unique|list %}
+{% set index_states = {} %}
+{% for state in states %}
+  {% set x = index_states.__setitem__(state, loop.index) %}
+{% endfor %}
+
+// connect to topics
+var fsm_{{machine_name}}_publisher = new ROSLIB.Topic({
+ ros: ros,
+ name: '/finite_state_machine/{{parameters.node.name|underscore}}/{{machine_name}}/fire',
+ messageType: 'std_msgs/String',
+});
+
+var fsm_{{machine_name}}_subscriber = new ROSLIB.Topic({
+ ros: ros,
+ name: '/finite_state_machine/{{parameters.node.name|underscore}}/{{machine_name}}/state',
+ messageType: 'std_msgs/String',
+});
+
+// subscribe function
+fsm_{{machine_name}}_subscriber.subscribe(function(message) {
+
+ for (i = 1; i < nodes_{{machine_name}}.length; i++)
+ {
+   if (nodes_{{machine_name}}._data[i]["label"] == message.data)
+   {
+     nodes_{{machine_name}}.update([{id:i, color:{background:'#00ff00', highlight:{background:'#00ff00',border:'black'}}}]);
+   }
+   else
+   {
+     nodes_{{machine_name}}.update([{id:i, color:{background:'white', highlight:{background:'white',border:'black'}}}]);
+   }
+ }
+});
+
+// create an array with nodes
+var nodes_{{machine_name}} = new vis.DataSet([
+  {id:0, shape:'dot', color: {background:'black', border:'black'}, size:2},
+{% for state in states %}
+  {id: {{loop.index}}, label: '{{state}}', color: {background:'white', border:'black',highlight:{background:'white',border:'black'},hover:{background:'white',border:'blue'}}},
+{% endfor %}
+
+]);
+
+// create an array with edges
+var edges_{{machine_name}} = new vis.DataSet([
+  {% for transition in machine|xpaths('.//fsm:transition', {'fsm':'fsm'}) -%}
+  {from: {{index_states[transition|xpath('fsm:begin/text()', {'fsm':'fsm'})]}},
+   to: {{index_states[transition|xpath('fsm:end/text()', {'fsm':'fsm'})]}},
+   label: "{{transition|xpath('fsm:label/text()', {'fsm':'fsm'})}}",
+   arrows:'to',
+   color:'black'
+  },
+  {% endfor -%}
+  // last edge is for the initial state
+  {% for state in states %}
+    {% if state == machine|xpath('fsm:initial/text()', {'fsm':'fsm'}) %}
+    {from:0, to:{{loop.index}}, color:'black', arrows:'to'}
+    {% endif %}
+  {% endfor %}
+]);
+
+// create a network
+var container_{{machine_name}} = document.getElementById('fsm_{{machine_name}}');
+var data_{{machine_name}} = {
+  nodes: nodes_{{machine_name}},
+  edges: edges_{{machine_name}}
+};
+var options_{{machine_name}} = {};
+var network_{{machine_name}} = new vis.Network(container_{{machine_name}}, data_{{machine_name}}, options_{{machine_name}});
+network_{{machine_name}}.setSize(550,400);
+network_{{machine_name}}.moveTo({position: {x: 550, y: 400}});
+network_{{machine_name}}.fit();
+
+network_{{machine_name}}.on("click", function (params)
+{
+  if ($("#fire_checkbox_{{machine_name}}").is(':checked') && params.edges.length == 1 && params.nodes.length == 0)
+  {
+      // create a ROS message
+      var message = new ROSLIB.Message({data : network_{{machine_name}}.body.data.edges._data[params.edges[0]]["label"]});
+
+      // publish
+      fsm_{{machine_name}}_publisher.publish(message)
+  }
+});
+
+
+$('#finite_state_machine_accordion').accordion({exclusive: false});
+
+{% endfor %}
+
+{% endif %}
+
+{% endset %}
+
+
+{% set body %}
+
+
+{% if code|xpaths('//fsm:machine', {'fsm':'fsm'})|length > 0 %}
+
+  <h1>Finite State Machine</h1>
+
+
+    <div class="ui styled accordion" id="finite_state_machine_accordion">
+
+
+  {% for machine in code|xpaths('//fsm:machine', {'fsm':'fsm'}) -%}
+
+  {# get the list of states from the code #}
+  {% set machine_name = machine|xpath('fsm:name/text()', {'fsm':'fsm'})-%}
+  {% set initial_state = machine|xpath('fsm:initial/text()', {'fsm':'fsm'}) -%}
+  {% set begin_states = machine|xpaths('fsm:transition/fsm:begin/text()', {'fsm':'fsm'}) -%}
+  {% set end_states = machine|xpaths('fsm:transition/fsm:end/text()', {'fsm':'fsm'}) -%}
+  {% set states = ([initial_state] + begin_states + end_states)|unique|list %}
+  {% set index_states = {} %}
+  {% for state in states %}
+    {% set x = index_states.__setitem__(state, loop.index) %}
+  {% endfor %}
+
+
+  <div class="title">
+    <i class="dropdown icon"></i> {{machine_name}}
+  </div>
+  <div class="content hidden">
+    <div class="ui checkbox">
+      <input type="checkbox" id="fire_checkbox_{{machine_name}}">
+      <label>Fire transition on click</label>
+    </div>
+
+    <div id="fsm_{{machine_name}}"></div>
+  </div>
+</div>
+    <style type="text/css">
+        #fsm_{{machine_name}} {
+          width: 550px;
+          height: 400px;
+        }
+      </style>
+
+  {% endfor -%}
+
+{% endif %}
+
+{% endset %}

@@ -1,0 +1,19 @@
+
+nodename: examples fault detection heartbeat
+
+fault_topic: /fault
+fault_type: example_fault_tolerance_system/Fault
+
+reset_topic: /reset
+reset_type:  std_msgs/String
+
+fault_prefix: hb_
+
+nodes:
+  - name: supervisor
+    heartbeat: 1
+    startup_time: 3
+
+  - name: navigator
+    heartbeat: 2
+    startup_time: 5

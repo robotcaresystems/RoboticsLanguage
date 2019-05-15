@@ -1,0 +1,7 @@
+node(
+  name:'example {{parameters.Outputs.Developer.Info.name}}',
+
+  initialise: block(
+    print('{{parameters.Outputs.Developer.Info.name|camelCase}}')
+  )
+)

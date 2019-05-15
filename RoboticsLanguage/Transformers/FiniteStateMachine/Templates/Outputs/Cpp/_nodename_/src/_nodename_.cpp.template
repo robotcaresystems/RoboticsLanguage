@@ -1,0 +1,66 @@
+
+{% set classInitialisation %}
+
+{% endset %}
+
+{% set initialise %}
+
+{% for machine in code|xpaths('//fsm:machine', {'fsm':'fsm'}) -%}
+  {% set machine_name = machine|xpath('fsm:name/text()', {'fsm':'fsm'})-%}
+
+    //////////////////////////////////////////////////////////
+    // Definitions for Finite State Machine "{{machine_name}}"
+
+    // Transitions
+  {% for transition in machine|xpaths('fsm:transition', {'fsm':'fsm'}) -%}
+    {{machine_name}}.addTransition("{{transition|xpath('fsm:label/text()', {'fsm':'fsm'})}}","{{transition|xpath('fsm:begin/text()', {'fsm':'fsm'})}}","{{transition|xpath('fsm:end/text()', {'fsm':'fsm'})}}");
+  {% endfor -%}
+
+    // Initial state
+    {{machine_name}}.setInitialState("{{machine|xpath('fsm:initial/text()', {'fsm':'fsm'})}}");
+
+  {% if 'HTMLGUI' in parameters.globals.output and 'RosCpp' in parameters.this_parents  -%}
+    fsm_{{machine_name}}_publisher = nh_.advertise<std_msgs::String>("/finite_state_machine/{{parameters.node.name|underscore}}/{{machine_name}}/state",10);
+    fsm_{{machine_name}}_subscriber = nh_.subscribe("/finite_state_machine/{{parameters.node.name|underscore}}/{{machine_name}}/fire", 10, &{{parameters.node.name|camelCase}}Class::fsm_{{machine_name}}_callback, this);
+
+    {{machine_name}}.addStateFeedbackPublisher(boost::bind(&{{parameters.node.name|camelCase}}Class::fsm_{{machine_name}}_publisher_function, this, _1));
+  {% endif %}
+
+{% endfor -%}
+
+{% endset %}
+
+{% set finalise %}
+
+{% endset %}
+
+{% set beforeSpin %}
+
+{% endset %}
+
+{% set afterSpin %}
+
+{% endset %}
+
+{% set functions %}
+
+{% if 'HTMLGUI' in parameters.globals.output and 'RosCpp' in parameters.this_parents -%}
+  {% for machine in code|xpaths('//fsm:machine', {'fsm':'fsm'}) -%}
+    {% set machine_name = machine|xpath('fsm:name/text()', {'fsm':'fsm'})-%}
+
+  void {{parameters.node.name|camelCase}}Class::fsm_{{machine_name}}_callback(const std_msgs::String& message)
+  {
+    {{machine_name}}.fire(message.data);
+  };
+
+  void {{parameters.node.name|camelCase}}Class::fsm_{{machine_name}}_publisher_function(const std::string state)
+  {
+    std_msgs::String ros_state;
+    ros_state.data = state;
+    fsm_{{machine_name}}_publisher.publish(ros_state);
+  }
+
+  {% endfor %}
+{% endif %}
+
+{% endset %}

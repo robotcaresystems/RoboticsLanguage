@@ -21,6 +21,10 @@
 #   limitations under the License.
 
 
-parameters = {}
+parameters = {
+    'indentation': False
+}
 
-command_line_flags = {}
+command_line_flags = {
+    'indentation': {'suppress': True}
+}

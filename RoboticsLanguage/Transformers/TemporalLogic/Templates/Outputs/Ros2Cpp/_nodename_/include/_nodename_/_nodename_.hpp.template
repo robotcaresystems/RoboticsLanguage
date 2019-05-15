@@ -1,0 +1,76 @@
+
+{% set includes %}
+{% set TemporalOperators = code|xpaths('//always|//eventually') %}
+
+
+{% if TemporalOperators|length>0 %}
+#include <deque>
+{% if 'HTMLGUI' in parameters.globals.output %}
+#include "std_msgs/Float32MultiArray.h"
+{% endif %}
+
+  // A structure used by interval temporal logic
+typedef struct {ros::Time time; bool rise;} TimedBoolean;
+
+{% endif %}
+
+
+{% endset %}
+
+{% set definitions %}
+  {% set TemporalOperators = code|xpaths('//always|//eventually')|sortListCodeByAttribute('temporalLogicId') %}
+    {% if TemporalOperators|length>0 %}
+        //Temporal logic operators
+        {% for item in TemporalOperators -%}
+          {% set name = item.attrib['temporalLogicName'] -%}
+            {% if item.getchildren()|length == 1 -%}
+                bool {{name}}; //simple always or eventually
+            {% elif item.getchildren()[1].text=='0' -%}
+                bool {{name}}; // always or eventually with min=0
+                bool {{name}}last_;
+                ros::Time {{name}}switch_;
+                ros::Timer {{name}}check_;
+                /*!
+                 * @brief Self-trigger for temporal logic callback.
+                 * @param e The event information: time and rise.
+                 */
+                void logic{{name|camelCase}}TimerCB(const ros::TimerEvent& e);
+            {% else -%}
+                bool {{name}}; // always or eventually with min>0
+                bool {{name}}last_;
+                std::deque<TimedBoolean> {{name}}signal_;
+                ros::Timer {{name}}check_max_;
+                ros::Timer {{name}}check_min_;
+                /*!
+                 * @brief Self-trigger for temporal logic callback.
+                 * @param e The event information: time and rise.
+                 */
+                void logic{{name|camelCase}}TimerCB(const ros::TimerEvent& e);
+            {% endif -%}
+        {% endfor %}
+    {% endif %}
+
+
+
+        {% for logic in TemporalOperators -%}
+        {% set name = logic.attrib['temporalLogicName'] -%}
+
+            /*!
+             * @brief Logic support function
+            */
+            void logic{{name|camelCase}}();
+        {% endfor %}
+
+        {% if 'HTMLGUI' in parameters.globals.output %}
+        // HTMLGUI: Creating publisher nodes to visualise the temporal logic expressions
+          {% for item in TemporalOperators -%}
+            {% if item.getchildren()|length > 1 -%}
+                  ros::Publisher sig_temporal_logic_gui_{{item.attrib['temporalLogicName']|underscore}}handle_out_;
+                  std_msgs::Float32MultiArray sig_temporal_logic_gui_{{item.attrib['temporalLogicName']|underscore}};
+              {% endif -%}
+          {% endfor -%}
+        {% endif %}
+
+
+
+{% endset %}

@@ -1,0 +1,26 @@
+
+
+
+{% set functions %}
+
+
+{% for when in code.xpath('//when') %}
+
+  void {{parameters.node.name|camelCase}}Class::when{{when|attribute('whenId')}}()
+  {
+    bool when_condition_{{when|attribute('whenId')}} = {{when.getchildren()[0]|serializedCode}};
+    bool when_run_{{when|attribute('whenId')}} = (when_last_{{when|attribute('whenId')}} != when_condition_{{when|attribute('whenId')}});
+    if (when_run_{{when|attribute('whenId')}})
+    {
+      when_last_{{when|attribute('whenId')}} = when_condition_{{when|attribute('whenId')}};
+      if (when_condition_{{when|attribute('whenId')}})
+      {
+        {{when.getchildren()[1]|serializedCode}};
+      }
+    }
+  }
+
+{% endfor %}
+
+
+{% endset %}

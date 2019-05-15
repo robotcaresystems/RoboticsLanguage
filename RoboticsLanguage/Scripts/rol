@@ -26,10 +26,10 @@ import sys
 if __name__ == "__main__":
 
   # initialise compiler, and check if it should remove the cache
-  parameters = Initialise.Initialise('--remove-cache' in sys.argv)
+  parameters = Initialise.Initialise('--remove-cache' in sys.argv or '-r' in sys.argv)
 
   # process command line arguments
-  file_name , file_type, outputs, parameters = CommandLine.ProcessArguments(sys.argv, parameters)
+  file_name , file_type, parameters = CommandLine.ProcessArguments(sys.argv, parameters)
 
   # parse input file
   xml_code, parameters = Inputs.Parse(file_name, file_type, parameters)
@@ -38,4 +38,4 @@ if __name__ == "__main__":
   xml_code, parameters = Transformations.Apply(xml_code, parameters)
 
   # Generate outputs
-  Outputs.Generate(outputs, xml_code, parameters)
+  Outputs.Generate(xml_code, parameters)

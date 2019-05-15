@@ -1,0 +1,27 @@
+node(
+  name:'{{nodename}}',
+
+  definitions: block(
+
+    {% for parameter in parameters %}
+    {{parameter.name}} in {{parameter.type}} = {{parameter.value}},
+    {% endfor %}
+
+    {% for topic in topics %}
+    {{topic.variable}} in Signals(rosType:'{{topic.type}}', rosTopic:'{{topic.name}}'),
+    {% endfor %}
+
+    {% for fault in faults %}
+    when( {{fault.detection}},
+      block(
+        fault.code = '{{fault.code}}',
+        fault.cause = '{{fault.cause}}',
+        fault.description = '{{fault.description}}',
+        fault.time = Cpp<{ros::Time::now()}>
+        )
+      ),
+    {% endfor %}
+
+    fault in Signals(rosType:'{{fault_type}}', rosTopic:'{{fault_topic}}')
+    )
+  )

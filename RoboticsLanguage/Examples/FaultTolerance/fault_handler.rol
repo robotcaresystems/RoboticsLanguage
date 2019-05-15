@@ -1,0 +1,24 @@
+node(name:"Example Fault Handler",
+  definitions: block(
+
+    fault in Signals(rosTopic:'/fault', rosType:'example_fault_messages/fault', onNew: FaultHandler()),
+    failure in Signals(rosTopic:'/failure', rosType:'example_fault_messages/failure'),
+    terminator in Signals(rosTopic:'/terminator', rosType:'std_msgs/String'),
+
+
+    FaultHandler<{
+      - fault: hb_supervisor
+        retry: 3
+        timeout: 5
+        action: terminator.data = 'supervisor'
+        on_fail: failure.code = 'fl_supervisor'
+
+      - fault: hb_navigator
+        retry: 5
+        timeout: 10
+        action: terminator.data = 'navigator'
+        on_fail: failure.code = 'fl_navigator'
+    }>
+
+  )
+)

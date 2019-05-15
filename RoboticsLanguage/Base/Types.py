@@ -19,84 +19,112 @@
 #   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
+import re
+from . import Utilities
+from parsley import makeGrammar
 
-atoms = {
-  'string':'Strings',
-  'boolean':'Booleans',
-  'real':'Reals',
-  'integer':'Integers'
-  }
+# tags that are not type checked
+type_atomic = [
+    'string',
+    'boolean',
+    'natural',
+    'real',
+    'integer',
+]
 
-def manySameNumbers(x):
-  '''number'''
-  return [all(map(lambda y: y in ['Reals', 'Integers'], x))]
+# dictionary tree defining type relations, e.g. a natural is a real, but the oposite may not be true
+type_relations_default = {'real': {'integer': {'natural': {}}}}
 
-def manySameNumbersStrings(x):
-  '''number or string'''
-  return [all(map(lambda y: y in ['Reals', 'Integers'], x)) or all(map(lambda y: y == 'Strings', x))]
 
-def manySameNumbersStringsBooleans(x):
-  '''number or string or boolean'''
-  return [all(map(lambda y: y in ['Reals', 'Integers'], x)) or all(map(lambda y: y == 'Strings', x)) or all(map(lambda y: y == 'Booleans', x))]
+def makeTypeRelationsGrammar(type_relations):
+  '''Traverses a dictionary tree of type relationships and returns a grammar. For
+  example, the relationship between reals, integers and naturals results in the grammar:
 
-def manySameBooleans(x):
-  '''boolean'''
-  return [all(map(lambda y: y == 'Booleans', x))]
+  real = ( integer | 'real' ) divider
+  integer = ( natural | 'integer' ) divider
+  natural = 'natural' divider
+  '''
+  text = ''
+  keys = type_relations.keys()
 
-def singleString(x):
-  '''string'''
-  return [len(x) == 1 and x[0] == 'Strings']
+  # for each children
+  for type, value in type_relations.iteritems():
+    if len(value.keys()) > 0:
+      # if children exist, then add relationships to grammar
+      text += type + ' = ( ' + '|'.join(value.keys()) + ' | \'' + type + '\' ) divider\n'
+    else:
+      # if not just define the type
+      text += type + ' = \'' + type + '\' divider\n'
+    # apply recursively
+    recursive_text, recursive_keys = makeTypeRelationsGrammar(value)
+    text += recursive_text
+    keys += recursive_keys
 
-def singleReal(x):
-  '''real'''
-  return [len(x) == 1 and (x[0] == 'Reals' or x[0] == 'Integers')]
+  return text, keys
 
-def singleInteger(x):
-  '''integer'''
-  return [len(x) == 1 and (x[0] == 'Integers')]
 
-def singleNatural(x):
-  '''natural'''
-  return [len(x) == 1 and (x[0] == 'Naturals')]
+@Utilities.cache_function
+def arguments(test, tag='nothing', type_relations=type_relations_default):
+  """Creates a structure that defines the arguments of a function. Used for type checking.
+  For example the operator "plus" has the definitions:
 
-def singleBoolean(x):
-  '''boolean'''
-  return [len(x) == 1 and x[0] == 'Booleans']
+  'plus': {
+      'definition': {
+          'arguments': arguments('( real real+ | string string+)'),
+          'returns': returns('same')
+      },
+    }
 
-def manyStrings(x):
-  '''string , ... , string'''
-  return [ xi == 'Strings' for xi in x ]
+  The string '( real real+ | string string+)' dictates that the arguments of the plus operator
+  are either two or more numbers or two or more strings. This function returns a dictionary with
+  the keys:
+  - documentation: used for printing materials and documentation
+  - test: a function that tests a list of argument tags against the 'test' definition in this function
+  - tag: a name used to create a tag for this element when creating new elements (e.g. filling in optional parameters)
+  """
+  if test == 'anything':
+    return {'documentation': 'anything', 'test': lambda x: True, 'tag': tag}
 
-def manyExpressions(x):
-  '''expression , ... , expression'''
-  return [True]
+  elif test == 'none':
+    return {'documentation': '', 'test': lambda x: len(x) == 0, 'tag': tag}
 
-def manyCodeBlocks(x):
-  '''block'''
-  return [ xi == 'Block' for xi in x ]
+  else:
+    # use predefined type relationships
+    type_grammar, type_keys = makeTypeRelationsGrammar(type_relations)
+    # find new types, and remove duplicated types
+    elements = set(re.findall(r'[a-zA-Z]+', test)) - set(type_keys)
+    # define the grammar
+    type_grammar += "divider = (';'){0,1}\n" + ''.join(["{} = '{}' divider\n".format(x, x) for x in elements])
 
-def codeBlock(x):
-  '''block'''
-  return [True]
+    grammar = makeGrammar(type_grammar + 'result = (' + test + ')', {})
 
-def anything(x):
-  '''anything'''
-  return [True]
+    # create a argument testing function
+    def test_function(x):
+      try:
+        grammar(';'.join(x)).result()
+        return True
+      except Exception:
+        return False
 
-# -----------------------------------------------------------------
-# return functions
+    return {'documentation': test, 'test': test_function, 'tag': tag}
 
-def returnNothing(x):
-  '''nothing'''
-  return 'Nothing'
 
-def returnCodeBlock(x):
-  '''code block'''
-  return 'Block'
+def optional(name, value):
+  '''Creates a structure that defines the optional arguments of a function. Used for type checking.'''
 
-def returnSameArgumentType(x):
-  return x[0]
+  # create new dictionary
+  data = {}
+  data['default'] = value
+  # add possible cached elements
+  data.update(arguments(name, tag=name))
 
-def returnBoolean(x):
-  '''boolean'''
-  return 'Booleans'
+  return data
+
+
+@Utilities.cache_function
+def returns(name):
+  '''Creates a return type for a function. Used for type checking.'''
+  if name == 'same':
+    return lambda x: x[0]
+  else:
+    return lambda x: name

@@ -42,7 +42,7 @@ def nodeParametersToDictionary(xml):
   return {'node': {key: value.text for (key, value) in Utilities.optionalArguments(xml).iteritems()}}
 
 
-
+@Utilities.cache_in_disk
 def prepareGrammarEngine(parameters):
   '''Build the grammer for the robotics language. Can be cached'''
   # keywords = {}
@@ -67,15 +67,15 @@ shortComment = ('#'  <(~('\n') anything)+>:c  '\n' -> xml('comment',str(c), self
 # types
 variable = functionName:a -> xmlVariable(a,self.input.position)
 
-type = ( number | string | boolean )
+type = ( real | integer | natural | string | boolean )
 
 string = (('"' | '\''):q <(~exactly(q) anything)*>:xs exactly(q)) -> xml('string',xs, self.input.position)
 
-number = ( real | integer )
-
 boolean = ( 'true' | 'false' ):b -> xml('boolean',b, self.input.position)
 
-integer = < '-'? wws digits >:x -> xml('integer',str(x), self.input.position)
+natural = digits:x -> xml('natural',str(x), self.input.position)
+
+integer = < '-' wws digits >:x -> xml('integer',str(x), self.input.position)
 
 real =  < ('-' wws)? (( '.' digits | digits '.' digits? ) ( ('e' | 'E') ('+' | '-')? digits)?
               |  digits ('e' | 'E') ('+' | '-')? digits
@@ -132,19 +132,28 @@ main = wws ( functionDefinition
   # create the bracket operators part of the grammar
   bracket_text, bracket_keys = Utilities.CreateBracketGrammar(definitions)
 
+  # create generic operators
+  generic_text, generic_keys = Utilities.CreateGenericGrammar(definitions)
+
   # add the brackets to the main list of elements
   if len(bracket_keys) > 0:
     bracket_keys_text = '         | ' + '\n         | '.join(bracket_keys)
   else:
     bracket_keys_text = ''
 
+  # add the generic key to the main list of elements
+  if len(generic_keys) > 0:
+    generic_keys_text = '         | ' + '\n         | '.join(generic_keys)
+  else:
+    generic_keys_text = ''
+
   # set the element with maximum precedence
   max_precedence_text = '\nP' + \
       str(max_precedence) + ' = ( parenthesis | main )\n'
 
   # the grammar is the concatenation of many definitions
-  grammar = base_grammar + fix_text + bracket_text + max_precedence_text + \
-      main_loop_start + bracket_keys_text + main_loop_end
+  grammar = base_grammar + fix_text + bracket_text + generic_text + max_precedence_text + \
+      main_loop_start + generic_keys_text + bracket_keys_text + main_loop_end
 
   return grammar
 
@@ -154,21 +163,24 @@ def parse(text, parameters):
 
   # @TODO need to reimplement language localisation
   # load cached language and grammar or create from scratch if needed
-  grammar = Utilities.cache('RoL-language-grammar',
-                            lambda: prepareGrammarEngine(parameters))
+  grammar = prepareGrammarEngine(parameters)
 
-  # show the grammar if `--debug-rol-grammar` is set in the command line
-  if parameters['Inputs']['RoL']['debug']['grammar']:
+  # show the grammar if `--show-rol-grammar` is set in the command line
+  if parameters['Inputs']['RoL']['developer']['grammar']:
     print(grammar)
 
   # @NOTE could not pickle the language itself to cache. Is there a way to solve this?
-  # create the grammar
-  language = parsley.makeGrammar(grammar, {'xml': Utilities.xml,
+  # create the grammar or load cached
+  if 'RoL' in parameters['parsing']['grammars'].keys():
+    language = parameters['parsing']['grammars']['RoL']
+  else:
+    language = parsley.makeGrammar(grammar, {'xml': Utilities.xml,
                                            'xmlAttributes': Utilities.xmlAttributes,
-                                           'xmlFunctionDefinition': Utilities.xmlFunctionDefinition,
+                                           'xmlFunctionDefinition': lambda x, y, z, w, k: Utilities.xmlFunctionDefinition(parameters, x, y, z, w, k),
                                            'xmlVariable': lambda x, y: Utilities.xmlVariable(parameters, x, y),
                                            'xmlFunction': lambda x, y, z: Utilities.xmlFunction(parameters, x, y, z),
                                            'xmlMiniLanguage': lambda x, y, z: Utilities.xmlMiniLanguage(parameters, x, y, z)})
+    parameters['parsing']['grammars']['RoL'] = language
 
   try:
     # parse the text against the grammar
@@ -176,7 +188,10 @@ def parse(text, parameters):
 
   except parsley.ParseError as error:
     # with Error.exception(parameters, stop=True)
-    Utilities.logErrors(Utilities.formatParsleyErrorMessage(error), parameters)
+    try:
+      Utilities.logErrors(Utilities.formatParsleyErrorMessage(error), parameters)
+    except:
+      pass
     sys.exit(1)
 
   try:

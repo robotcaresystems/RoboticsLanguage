@@ -1,0 +1,59 @@
+node(
+  name:'{{nodename}}',
+
+  definitions: block(
+
+      {% for node in nodes %}
+
+      define checkFault_{{underscore(node.name)}}(last_expected in Cpp<{const ros::TimerEvent&}>):
+        block(
+            fault.code = '{{fault_prefix}}{{node.name}}',
+            fault.cause = 'heartbeat {{node.name}} timeout',
+            fault.description = 'Node {{node.name}} heartbeat has stopped for longer than {{node.heartbeat}} seconds.',
+            fault.time = Cpp<{ros::Time::now()}>
+          ),
+
+      {{underscore(node.name)}} in Signals(rosType:'std_msgs/Int8',
+                               rosTopic:'/heartbeat/{{node.name}}',
+                               rosFlow:'incoming',
+                               onNew:block(
+                                  timer_{{underscore(node.name)}}.setPeriod(Cpp<{ros::Duration({{node.heartbeat}})}>),
+                                  timer_{{underscore(node.name)}}.start()
+                                 )
+                                ),
+
+
+      Cpp<{ros::Timer timer_{{underscore(node.name)}} }>,
+
+
+      {% endfor %}
+
+
+    define reset_timer():
+      switch(reset.data,
+        {% for node in nodes %}
+        case("{{node.name}}",
+          block(
+            timer_{{underscore(node.name)}}.stop(),
+            timer_{{underscore(node.name)}}.setPeriod(Cpp<{ros::Duration({{node.startup_time}})}>),
+            timer_{{underscore(node.name)}}.start()
+          )
+        )
+        {% if loop.index < loop.length %},{% endif %}
+        {% endfor %}
+      ),
+
+    fault in Signals(rosType:'{{fault_type}}', rosTopic:'{{fault_topic}}'),
+    reset in Signals(rosType:'{{reset_type}}', rosTopic:'{{reset_topic}}', onNew: reset_timer())
+      ),
+
+  initialise: block(
+
+    {% for node in nodes %}
+
+    Cpp<{timer_{{underscore(node.name)}} = nh_.createTimer(ros::Duration({{node.startup_time}}), &{{camelCase(nodename)}}Class::checkFault_{{underscore(node.name)}}, this, true)}>,
+
+    {% endfor %}
+      print("Fault Detection Heartbeat running.")
+    )
+  )

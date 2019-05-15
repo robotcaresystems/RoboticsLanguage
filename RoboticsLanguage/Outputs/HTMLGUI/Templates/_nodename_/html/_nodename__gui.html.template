@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<<<header->>>
+<!--
+ * Node name: {{parameters.node.name}}
+ *
+ * Generated on: {{"%d %B, %Y"|todaysDate}}
+ *       Author: {{parameters.Information.user.name}}
+ *      Licence: {{parameters.Information.software.license}}
+ *    Copyright: {{parameters.Information.software.copyright}}
+ *
+ *    THIS FILE WAS AUTOMATICALLY GENERATED USING THE ROBOTICS LANGUAGE
+ -->
+<html>
+
+<head>
+  <meta charset="utf-8" />
+
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+
+  <!-- semantic UI -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.13/semantic.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.13/semantic.min.css"/>
+
+  <<<'head'|group>>>
+
+  <script type="text/javascript">
+
+  // before page loads
+  <<<'beforeLoad'|group>>>
+
+  // after page loads
+  $(function() {
+    <<<'afterLoad'|group>>>
+  });
+
+  </script>
+
+  <style>
+    <<<'style'|group>>>
+  </style>
+
+</head>
+
+<!-- THIS IS THE HTML PART -->
+<body>
+  <div class="ui container">
+  <h1> {{parameters.node.name}} </h1>
+
+    <<<'body'|group>>>
+
+  </div>
+
+</body>
+
+</html>

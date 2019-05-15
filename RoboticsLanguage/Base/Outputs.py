@@ -22,18 +22,43 @@
 
 from . import Utilities
 
-def Generate(outputs, code, parameters):
+
+@Utilities.cache_in_disk
+def prepareOutputs(parameters):
+
+  outputs = parameters['manifesto']['Outputs']
+
+  return [{'data': outputs[x], 'name': x} for x in sorted(outputs, key=lambda k: outputs[k]['order'])]
+
+
+def Generate(code, parameters):
   """Generates the outputs"""
 
-  for output in outputs:
-    # update the compiler step
-    parameters = Utilities.incrementCompilerStep(parameters, 'Output ' + output)
+  outputs = parameters['globals']['output']
 
-    # load the module
-    output_function = Utilities.importModule('Outputs', output ,'Output')
+  # get a list of the outputs soted by order
+  sorted_outputs = prepareOutputs(parameters)
 
-    # apply transformations
-    output_function.Output.output(code,parameters)
+  for output in map(lambda k: k['name'], sorted_outputs):
 
-    # show debug information
-    Utilities.showDebugInformation(code,parameters)
+    if output in outputs:
+
+      # Checks if the plugin can run without code
+      if (code is not None) or (code is None and 'requiresCode' in parameters['manifesto']['Outputs'][output].keys() and not parameters['manifesto']['Outputs'][output]['requiresCode']):
+
+        # update the compiler step
+        parameters = Utilities.incrementCompilerStep(parameters, 'Outputs', output)
+
+        # load the module
+        output_function = Utilities.importModule(
+            parameters['manifesto']['Outputs'][output]['type'], 'Outputs', output, 'Output')
+
+        # apply transformations
+        output_function.Output.output(code, parameters)
+
+        # show developer information
+        Utilities.showDeveloperInformation(code, parameters)
+
+  # show final message
+  if parameters['developer']['progress']:
+    Utilities.progressDone(parameters)

@@ -19,37 +19,42 @@
 #   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
-from RoboticsLanguage.Base.Types import singleString, singleReal, manyStrings, manyExpressions, manyCodeBlocks, codeBlock, anything, singleBoolean
-from RoboticsLanguage.Base.Types import returnNothing, returnCodeBlock
+
+from RoboticsLanguage.Base.Types import optional, arguments, returns
+
+# from RoboticsLanguage.Base.Types import singleString, singleReal, manyStrings, manyExpressions, manyCodeBlocks, codeBlock, anything, singleBoolean
+# from RoboticsLanguage.Base.Types import returnNothing, returnCodeBlock
 
 
 language = {
+    'RosType': {
+        'definition':
+        {'arguments': arguments('string'),
+         'returns': returns('rosType')}
+    },
 
-    'Signals': {
-        'definition': {
-            'optionalArguments': {'rosTopic': singleString,
-                                  'flow': singleString,
-                                  'onChange': codeBlock,
-                                  'onNew': codeBlock
-                                  },
-            'optionalDefaults': {'rosTopic': '',
-                                 'flow': 'bidirectional', # @REFACTOR currently defaults to bidirectional. Detect automatically?
-                                  'onChange': '',
-                                  'onNew': ''
-                                 },
-            'argumentTypes': anything,
-            'returnType': returnNothing
-        },
-        'output':
-        {
-        },
-        'localisation':
-        {
-        },
-        'documentation':
-        {
+    'RosClass': {
+        'definition':  {
+            'arguments': arguments('none'),
+            'returns': returns('rosClass'),
+            'optional': {
+                'class': optional('string', ''),
+                'package': optional('string', ''),
+                'namespace': optional('string', ''),
+                'arguments': optional('set', []),
+            },
         }
     },
 
-
+    'Signals': {
+        'definition': {
+            'optional': {
+                'rosTopic': optional('string', ''),
+                'rosType': optional('string', ''),
+                'rosFlow': optional('string', ''),
+                'rosQueueSize': optional('integer', 10),
+                'rosTransportHints': optional('string', '')
+            },
+        },
+    }
 }

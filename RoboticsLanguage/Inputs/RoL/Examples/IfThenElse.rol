@@ -1,0 +1,11 @@
+node(
+  name:"example if then else",
+  definitions:
+      x ∈ ℤ = 1,
+
+
+  initialise: if(x == 1,
+    print('yes'),
+    print('no')
+  )
+)

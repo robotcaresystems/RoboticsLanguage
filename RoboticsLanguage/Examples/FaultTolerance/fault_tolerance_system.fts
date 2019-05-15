@@ -1,0 +1,12 @@
+# name of the fault tolerance system node
+name: example_fault_tolerance_system
+
+# topics
+log_topics: /fault /failure
+
+# names of the nodes
+fault_detection_topics: example_fault_detection_topics
+fault_detection_heartbeat: example_fault_detection_heartbeat
+fault_detection_processes: example_fault_detection_processes
+fault_handler: example_fault_handler
+failure_handler: example_failure_handler

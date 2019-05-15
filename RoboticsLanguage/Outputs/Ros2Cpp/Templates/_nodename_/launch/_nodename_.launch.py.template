@@ -1,0 +1,28 @@
+<<<header->>>
+#  Node name: {{parameters.node.name}}
+#
+#  Generated on: {{"%d %B, %Y"|todaysDate}}
+#        Author: {{parameters.Information.user.name}}
+#       Licence: {{parameters.Information.software.license}}
+#     Copyright: {{parameters.Information.software.copyright}}
+#
+#     THIS FILE WAS AUTOMATICALLY GENERATED USING THE ROBOTICS LANGUAGE
+
+"""{{parameters.node.name|underscore}}"""
+
+import launch
+import launch_ros.actions
+
+def generate_launch_description():
+    {{parameters.node.name|underscore}}_node = launch_ros.actions.Node(
+        package='{{parameters.node.name|underscore}}', node_executable='{{parameters.node.name|underscore}}', output='screen')
+    return launch.LaunchDescription([
+        {{parameters.node.name|underscore}}_node,
+        launch.actions.RegisterEventHandler(
+            event_handler=launch.event_handlers.OnProcessExit(
+                target_action={{parameters.node.name|underscore}}_node,
+                on_exit=[launch.actions.EmitEvent(event=launch.events.Shutdown())],
+            )),
+    ])
+
+<<<'launch'|group>>>

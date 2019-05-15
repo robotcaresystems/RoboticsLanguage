@@ -1,0 +1,281 @@
+
+{% set classInitialisation %}
+
+{% endset %}
+
+{% set initialise %}
+  {% set TemporalOperators = code|xpaths('//always|//eventually')|sortListCodeByAttribute('temporalLogicId') %}
+  {% if TemporalOperators|length>0 %}
+        //Initialise temporal logic operators
+        TimedBoolean now_;
+        {% for item in TemporalOperators -%}
+        {% set name = item.attrib['temporalLogicName'] -%}
+
+          // Logic element {{name}}
+        {% if item.getchildren()|length == 1 -%}
+            {% if item.tag=='always' -%}
+                // global always
+                {{name}}=true;
+            {% elif item.tag=='eventually' -%}
+                // global eventually
+                {{name}}=false;
+            {% endif %}
+        {% else %}
+          {% set minimum = item.getchildren()[1].attrib['RosCpp'] %}
+          {% set maximum = item.getchildren()[0].attrib['RosCpp'] %}
+          // operator {{item.tag}} with interval [{{minimum}},{{maximum}}]
+          {% if minimum!='0' %}
+              now_.rise = false;
+              now_.time = ros::Time::now()-ros::Duration({{maximum}})-ros::Duration(1);
+              {{name}}signal_.push_back(now_);
+              {{name}}check_max_=nh_.createTimer(ros::Duration(100), &{{parameters.node.name|camelCase}}Class::logic{{name|camelCase}}TimerCB,this,true);
+              {{name}}check_max_.stop();
+              {{name}}check_min_=nh_.createTimer(ros::Duration(100), &{{parameters.node.name|camelCase}}Class::logic{{name|camelCase}}TimerCB,this,true);
+              {{name}}check_min_.stop();
+          {% else %}
+              {{name}}check_=nh_.createTimer(ros::Duration(100), &{{parameters.node.name|camelCase}}Class::logic{{name|camelCase}}TimerCB,this,true);
+              {{name}}check_.stop();
+          {% endif %}
+          {% if minimum=='0' %}
+            {{name}}switch_=ros::Time::now()-ros::Duration({{maximum}})-ros::Duration(1);
+            {{name}}last_ = {{item.getchildren()[2].attrib['RosCpp']}};
+          {% endif %}
+          {% if 'HTMLGUI' in parameters.globals.output %}
+            // HTMLGUI: initialising signals for temporal logic expressions
+                    sig_temporal_logic_gui_{{name|underscore}}handle_out_= nh_.advertise<std_msgs::Float32MultiArray>("/temporal_logic/{{parameters.node.name|underscore}}/{{name}}", 1, true);
+                    sig_temporal_logic_gui_{{name|underscore}}.data.resize(4);
+                    sig_temporal_logic_gui_{{name|underscore}}.data[0]=0;
+                    sig_temporal_logic_gui_{{name|underscore}}.data[1]=0;
+                    sig_temporal_logic_gui_{{name|underscore}}.data[2]={{minimum}};
+                    sig_temporal_logic_gui_{{name|underscore}}.data[3]={{maximum}};
+                    sig_temporal_logic_gui_{{name|underscore}}handle_out_.publish(sig_temporal_logic_gui_{{name|underscore}});
+          {% endif %}
+        {% endif -%}
+        {% endfor %}
+    {% endif %}
+
+{% endset %}
+
+{% set finalise %}
+
+{% endset %}
+
+{% set beforeSpin %}
+
+{% endset %}
+
+{% set afterSpin %}
+
+{% endset %}
+
+{% set functions %}
+  {% set TemporalOperators = code|xpaths('//always|//eventually')|sortListCodeByAttribute('temporalLogicId') %}
+
+  {% if TemporalOperators|length>0 %}
+  /*************************************************************************************************
+  *** Logical expressions evaluation
+  **************************************************************************************************/
+  {% endif %}
+  {% for logic in TemporalOperators %}
+  {% set name = logic.attrib['temporalLogicName'] -%}
+
+  /********************************* Logic {{name|camelCase}} *********************************/
+  void {{parameters.node.name|camelCase}}Class::logic{{name|camelCase}}()
+  {
+
+    {% if logic.getchildren()|length == 1 -%}
+        {% if logic.tag=='always' -%}
+          {{name}}={{name}} && ({{logic.getchildren()[0].attrib['RosCpp']}});
+        {% elif logic.tag=='eventually' -%}
+          {{name}}={{name}} || ({{logic.getchildren()[0].attrib['RosCpp']}});
+        {% endif %}
+    {% else %}
+      {% set minimum = logic.getchildren()[1].attrib['RosCpp'] %}
+      {% set maximum = logic.getchildren()[0].attrib['RosCpp'] %}
+      {# /* --------------------------  Interval logic: Always, minimum=0 ------------------------------------ */ #}
+      {% if logic.tag=='always' -%}
+        {% if minimum=='0' -%}
+          // check the condition inside the operator
+          bool condition_ = {{logic.getchildren()[2].attrib['RosCpp']}};
+          // check if this condition has changed since last time. If so record the rise or fall times
+          if (condition_ != {{name}}last_)
+          {
+            {{name}}switch_ =ros::Time::now();
+            {{name}}check_.stop();
+            {{name}}check_.setPeriod(ros::Duration({{maximum}}));
+            {{name}}check_.start();
+          }
+          // update last value
+          {{name}}last_=condition_;
+          // set the outcome of the interval temporal logic operator
+          {{name}} = condition_ &&
+                    ({{name}}switch_ < ros::Time::now() - ros::Duration({{maximum}}));
+        {% else -%}
+          {# /* --------------------------  Interval logic: Always, minimum>0 ------------------------------------ */ #}
+          bool condition_ = {{logic.getchildren()[2].attrib['RosCpp']}};
+
+          // check if this condition has changed since last time. If so record the switching time
+          if (condition_ != {{name}}last_)
+          {
+            TimedBoolean now_;
+            now_.rise = condition_;
+            now_.time = ros::Time::now();
+            {{name}}signal_.push_back(now_);
+          }
+
+          // update last value
+          {{name}}last_=condition_;
+
+          // clean up the buffer events that have past the time region of interest
+          while ({{name}}signal_.size()>1 && {{name}}signal_[1].time < ros::Time::now() - ros::Duration({{maximum}}))
+          {
+            {{name}}signal_.pop_front();
+          }
+
+          // The front element of the buffer is always past the max time, so remember the condition
+          bool rise = {{name}}signal_.front().rise;
+
+          // traverse history of switches and check if they lie inside the desired interval
+          bool test = true;
+          bool inside = false;
+          bool first = true;
+          for (std::deque<TimedBoolean>::iterator it = {{name}}signal_.begin() ; it != {{name}}signal_.end(); ++it)
+          {
+            inside = it->time > ros::Time::now() - ros::Duration({{maximum}})
+                    && it->time < ros::Time::now() - ros::Duration({{minimum}});
+
+            if (inside && first)
+            {
+                {{name}}check_max_.stop();
+                {{name}}check_max_.setPeriod(ros::Duration(it->time - ros::Time::now() + ros::Duration({{maximum}})));
+                {{name}}check_max_.start();
+                first = false;
+            }
+
+            test = test && !inside;
+
+            if (it->time > ros::Time::now() - ros::Duration({{minimum}}) )
+            {
+                {{name}}check_min_.stop();
+                {{name}}check_min_.setPeriod(ros::Duration(it->time - ros::Time::now() + ros::Duration({{minimum}})));
+                {{name}}check_min_.start();
+                break;
+            }
+          }
+
+          // set the outcome of the interval temporal logic operator
+          {{name}} = test && rise;
+        {% endif -%}
+        {# /* --------------------------  HTMLGUI ------------------------------------ */ #}
+        {% if 'HTMLGUI' in parameters.globals.output %}
+          // HTMLGUI: publish interval temporal logic state
+          sig_temporal_logic_gui_{{name|underscore}}.data[0] = (condition_ ? 1 : 0);
+          sig_temporal_logic_gui_{{name|underscore}}.data[1] = ({{name}} ? 1 : 0);
+          sig_temporal_logic_gui_{{name|underscore}}.data[2] = {{minimum}};
+          sig_temporal_logic_gui_{{name|underscore}}.data[3] = {{maximum}};
+          sig_temporal_logic_gui_{{name|underscore}}handle_out_.publish(sig_temporal_logic_gui_{{name|underscore}});
+        {% endif %}
+        {# /* --------------------------  Interval logic: Eventually, minimum=0 ------------------------------------ */ #}
+      {% elif logic.tag=='eventually' -%}
+        {% if minimum=='0' -%}
+          // check the condition inside the operator
+          bool condition_ = {{logic.getchildren()[2].attrib['RosCpp']}};
+          // check if this condition has changed since last time. If so record the switching time
+          if (condition_ != {{name}}last_)
+          {
+           {{name}}switch_ =ros::Time::now();
+           {{name}}check_.stop();
+           {{name}}check_.setPeriod(ros::Duration({{maximum}}));
+           {{name}}check_.start();
+          }
+          // update last value
+          {{name}}last_=condition_;
+          // set the outcome of the interval temporal logic operator
+          {{name}} = condition_ ||
+                  ({{name}}switch_ > ros::Time::now() - ros::Duration({{maximum}})) ;
+        {% else -%}
+          {# /* --------------------------  Interval logic: Eventually, minimum>0 ------------------------------------ */ #}
+          bool condition_ = {{logic.getchildren()[2].attrib['RosCpp']}};
+
+          // check if this condition has changed since last time. If so record the switching time
+          if (condition_ != {{name}}last_)
+          {
+            TimedBoolean now_;
+            now_.rise = condition_;
+            now_.time = ros::Time::now();
+            {{name}}signal_.push_back(now_);
+          }
+
+          // update last value
+          {{name}}last_=condition_;
+
+          // clean up the buffer events that have past the time region of interest
+          while ({{name}}signal_.size()>1 && {{name}}signal_[1].time < ros::Time::now() - ros::Duration({{maximum}}))
+          {
+            {{name}}signal_.pop_front();
+          }
+
+          // The front element of the buffer is always past the max time, so remember the condition
+          bool rise = {{name}}signal_.front().rise;
+
+          // traverse history of switches and check if they lie inside the desired interval
+          bool test = false;
+          bool inside = false;
+          bool first = true;
+          for (std::deque<TimedBoolean>::iterator it = {{name}}signal_.begin() ; it != {{name}}signal_.end(); ++it)
+          {
+            inside = it->time > ros::Time::now() - ros::Duration({{maximum}})
+                    && it->time < ros::Time::now() - ros::Duration({{minimum}});
+
+            if (inside && first)
+            {
+                {{name}}check_max_.stop();
+                {{name}}check_max_.setPeriod(ros::Duration(it->time - ros::Time::now() + ros::Duration({{maximum}})));
+                {{name}}check_max_.start();
+                first = false;
+            }
+
+            test = test || inside;
+
+            if (it->time > ros::Time::now() - ros::Duration({{minimum}}) )
+            {
+                {{name}}check_min_.stop();
+                {{name}}check_min_.setPeriod(ros::Duration(it->time - ros::Time::now() + ros::Duration({{minimum}})));
+                {{name}}check_min_.start();
+                break;
+            }
+          }
+
+          // set the outcome of the interval temporal logic operator
+          {{name}} = test || rise;
+        {% endif -%}
+        {# /* --------------------------  HTMLGUI ------------------------------------ */ #}
+        {% if 'HTMLGUI' in parameters.globals.output %}
+          // HTMLGUI: publish interval temporal logic state
+          sig_temporal_logic_gui_{{name|underscore}}.data[0] = (condition_ ? 1 : 0);
+          sig_temporal_logic_gui_{{name|underscore}}.data[1] = ({{name}} ? 1 : 0);
+          sig_temporal_logic_gui_{{name|underscore}}.data[2] = {{minimum}};
+          sig_temporal_logic_gui_{{name|underscore}}.data[3] = {{maximum}};
+          sig_temporal_logic_gui_{{name|underscore}}handle_out_.publish(sig_temporal_logic_gui_{{name|underscore}});
+       {% endif %}
+     {% endif -%}
+   {% endif -%}
+  }
+  {% if logic.getchildren()|length > 1 -%}
+  void {{parameters.node.name|camelCase}}Class::logic{{name|camelCase}}TimerCB(const ros::TimerEvent& e)
+  {
+    {% if parameters.globals.debug -%}
+        ROS_INFO("Timer Callback: {{name}}");
+    {% endif -%}
+    {% for signal in logic.attrib['temporalLogicVariables']|ensureList -%}
+      {% if parameters|isDefined('Transformers/Base/variables/'+signal+'/operators/assign/post/RosCpp') -%}
+        {% for element in parameters.Transformers.Base.variables[signal].operators.assign.post.RosCpp -%}
+          {{element}};
+        {% endfor -%}
+      {% endif -%}
+    {% endfor -%}
+  }
+  {% endif %}
+  {% endfor %}
+
+{% endset %}

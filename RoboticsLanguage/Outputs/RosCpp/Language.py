@@ -25,154 +25,19 @@ default_output = ''
 
 language = {
 
-    'Reals': {
-        'output':
-        {
-            'RosCpp': '{% if "option" in childrenTags %}{% if option(code,"bits").text == "64"%}double{% else %}float{% endif %}{% else %}float{% endif %}',
-        },
-    },
 
-    'Integers': {
+    'RosType': {
         'output':
         {
-            'RosCpp': 'int{% if "option" in childrenTags %}{{option(code,"bits").text}}{% else %}32{% endif %}_t',
-        },
-    },
-
-    'Naturals': {
-        'output':
-        {
-            'RosCpp': 'uint{% if "option" in childrenTags %}{{option(code,"bits").text}}{% else %}32{% endif %}_t',
-        },
-    },
-
-    'Strings': {
-        'output':
-        {
-            'RosCpp': 'std::string',
-        },
-    },
-
-    'Booleans': {
-        'output':
-        {
-            'RosCpp': 'bool',
-        },
-    },
-
-    'string': {
-        'output':
-        {
-            'RosCpp': '"{{text}}"',
-        },
-    },
-
-    'integer': {
-        'output':
-        {
-            'RosCpp': '{% if parameters["Outputs"]["RosCpp"]["strict"] %}int({{text}}){% else %}{{text}}{% endif %}',
-        },
-    },
-
-    'natural': {
-        'output':
-        {
-            'RosCpp': '{% if parameters["Outputs"]["RosCpp"]["strict"] %}uint({{text}}){% else %}{{text}}{% endif %}',
-        },
-    },
-
-    'boolean': {
-        'output':
-        {
-            'RosCpp': '{{text}}',
-        },
-    },
-
-    'real': {
-        'output':
-        {
-            'RosCpp': '{% if parameters["Outputs"]["RosCpp"]["strict"] %}double({{text}}){% else %}{{text}}{% endif %}',
+            'RosCpp': '{{code.getchildren()[0].text|replace("/","::")}}'
         },
     },
 
 
-    'set': {
+    'RosClass': {
         'output':
         {
-          'RosCpp':'{% if parentTag=="assign"%}std::tie({{children|join(", ")}}){% else %}set({{children|join(", ")}}){% endif %}'
-        },
-    },
-
-
-    'function': {
-        'output':
-        {
-            'RosCpp': '{{attributes["name"]}}({{children|join(", ")}})',
-        },
-    },
-
-    'return': {
-        'output':
-        {
-          'RosCpp':'{% if children|length==1 %}return {{children|first}}{% else %}return std::make_tuple({{children|join(", ")}}){% endif %}'
-        },
-    },
-
-    'functionDefinition': {
-        'output':
-        {
-            'RosCpp': '{% set returns = attribute(xpaths(code,"returns"),"RosCpp") %}{% if returns=="" %}void{% else %}{{returns}}{% endif %} {{attributes["name"]}}({{attribute(xpaths(code,"arguments"),"RosCpp")}})',
-        },
-    },
-
-    'arguments': {
-        'output':
-        {
-            'RosCpp': '{{children|join(", ")}}',
-        },
-    },
-
-    'content': {
-        'output':
-        {
-            'RosCpp': '{{children|join(";\n")}}',
-        },
-    },
-
-    'returns': {
-        'output':
-        {
-            'RosCpp': '{% if children|length==0 %}void{% elif children|length==1 %}{{children|first}}{% else %}std::tuple<{{children|join(", ")}}>{% endif %}',
-        },
-    },
-
-
-    'variable': {
-        'output':
-        {
-            'RosCpp': '{{attributes["name"]}}',
-        },
-    },
-
-    'element': {
-        'output':
-        {
-          'RosCpp':'{% if children[1]|length > 0 %}{{children[1]}} {{attribute(code.xpath("variable"),"name")}}{% endif %}'
-        },
-    },
-
-    'block': {
-        'output':
-        {
-          'RosCpp':'{{";\n".join(children)}}'
-        },
-    },
-
-
-    'cycle': {
-        'output':
-        {
-            'RosCpp': '{{children|join(";\n")}};\n',
+            'RosCpp': '{{code.xpath(\'./option[@name="namespace"]/string/text()\')[0]}}::{{code.xpath(\'./option[@name="class"]/string/text()\')[0]}}'
         },
     },
 
@@ -180,7 +45,13 @@ language = {
     'print': {
         'output':
         {
-            'RosCpp': 'ROS_INFO_STREAM({{children|first}})',
+            'RosCpp': 'ROS_INFO_STREAM({{children|join(" << ")}})',
+        },
+    },
+
+    'assign': {
+        'output': {
+            'RosCpp': '{% if isDefined(parameters,"Transformers/Base/variables/"+children[0]+"/operators/assign/pre/Cpp") %}{{parameters["Transformers"]["Base"]["variables"][children[0]]["operators"]["assign"]["pre"]["Cpp"]|join(";\n")}}{% endif %}{{attributes["preRosCpp"]}}{{attributes["preCpp"]}}{{children[0]}}{{attributes["preAssignCpp"]}}={{attributes["postAssignCpp"]}}{{children[1]}}{{attributes["postCpp"]}}{{attributes["postRosCpp"]}}{% if isDefined(parameters,"Transformers/Base/variables/"+children[0]+"/operators/assign/post/Cpp") %}{{parameters["Transformers"]["Base"]["variables"][children[0]]["operators"]["assign"]["post"]["Cpp"]|join(";\n")}}{% endif %}'
         },
     },
 

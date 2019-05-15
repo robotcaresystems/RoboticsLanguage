@@ -1,0 +1,7 @@
+#!/bin/bash
+
+if [ ! "$(docker ps -q -f name=2RoboticsLanguage)" ]; then
+  docker run -it --rm --name=2RoboticsLanguage roboticslanguage/rol:ros2 bash
+else
+  docker exec -i -t 2RoboticsLanguage /bin/bash
+fi

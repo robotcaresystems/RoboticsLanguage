@@ -1,0 +1,336 @@
+
+
+
+{% set head %}
+
+<!-- Ros bridge -->
+<script type="text/javascript" src="https://static.robotwebtools.org/roslibjs/current/roslib.min.js"></script>
+
+<!-- dygraphs -->
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/dygraph/2.1.0/dygraph.min.js"></script>
+<link rel="stylesheet" type="text/css" src="https://cdnjs.cloudflare.com/ajax/libs/dygraph/2.1.0/dygraph.min.css" />
+
+{% endset %}
+
+{% set beforeLoad %}
+
+    var topic_max_string_length = 10;
+
+    // Connecting to ROS
+    // -----------------
+    var ros = new ROSLIB.Ros({
+      url: 'ws://localhost:9090' // this is the standard rosbridge port
+    });
+
+    ros.on('connection', function() {
+      console.log('Connected to websocket server.');
+    });
+
+    // Displays a message in case conection failed
+    ros.on('error', function(error) {
+      $('#ros_bridge').transition('show');
+      $('#ros_bridge_header').html('Error connecting to websocket server: ' + error);
+      console.log('Error connecting to websocket server: ', error);
+    });
+
+    // Displays a message when connection ends
+    ros.on('close', function() {
+      $('#ros_bridge').transition('show');
+      $('#ros_bridge_header').html('Connection to websocket server closed!');
+      console.log('Connection to websocket server closed.');
+    });
+
+
+    // dictionary of topic_plots for numeric type signals
+    var topic_plots = {
+      {% for topic in parameters|dpath('/Transformers/ROS/topicDefinitions') -%}
+        {% if 'std_msgs::Float' in topic.ros_type or 'std_msgs::Int' in topic.ros_type or 'std_msgs::UInt' in topic.ros_type %}
+            '{{topic.topic_name|underscore}}':false,
+        {% endif -%}
+      {% endfor -%}
+    };
+
+    // topic_plot_data buffer for all topics
+    var topic_plot_data = {
+      {% for topic in parameters|dpath('/Transformers/ROS/topicDefinitions') -%}
+          '{{topic.topic_name|underscore}}':[],
+      {% endfor -%}
+    };
+
+{% endset %}
+
+{% set afterLoad %}
+
+      // remember initial time
+      var initial_time = Date.now();
+
+      // activate the accordion list
+      $('#ros_topics_accordion').accordion({
+          exclusive: false,
+          onOpen: function () {
+            this_id = this.id.substr(11) // length("ros_topics_")
+            if (topic_plots[this_id] == false)
+            {
+              // create plot the first time the accordion is open
+              topic_plots[this_id] = new Dygraph(
+                      document.getElementById("ros_topics_plot_" + this_id),
+                      topic_plot_data[this_id], {
+                        labels: ['time', this_id],
+                      });
+            }
+          }
+      });
+
+      {% for topic in parameters|dpath('/Transformers/ROS/topicDefinitions') %}
+      // ROS definitions
+
+      // connect to topic
+      var topic_{{topic.topic_name|underscore}} = new ROSLIB.Topic({
+        ros: ros,
+        name: '{{topic.topic_name}}',
+        messageType: '{{topic.ros_type|replace('::','/')}}',
+      });
+
+
+      {% if 'std_msgs::Bool' in topic.ros_type %}
+
+      // publish function
+      $('#ros_topics_publish_true_button_{{topic.topic_name|underscore}}').click(
+        function() {
+          // create a ROS message
+          var message = new ROSLIB.Message({ data : true });
+          // publish
+          topic_{{topic.topic_name|underscore}}.publish(message)
+        }
+      )
+
+      // publish function
+      $('#ros_topics_publish_false_button_{{topic.topic_name|underscore}}').click(
+        function() {
+          // create a ROS message
+          var message = new ROSLIB.Message({ data : false });
+          // publish
+          topic_{{topic.topic_name|underscore}}.publish(message)
+        }
+      )
+
+
+      {% else %}
+      // publish function
+      $('#ros_topics_publish_button_{{topic.topic_name|underscore}}').click(
+        function() {
+
+          // create a ROS message
+          var message = new ROSLIB.Message({
+            {% if 'std_msgs::Float' in topic.ros_type or 'std_msgs::Int' in topic.ros_type or 'std_msgs::UInt' in topic.ros_type %}
+              data : parseFloat($('#ros_topics_input_{{topic.topic_name|underscore}}').val())
+            {% elif 'std_msgs::Empty' in topic.ros_type %}
+            {% else %}
+              data : $('#ros_topics_input_{{topic.topic_name|underscore}}').val()
+            {% endif %}
+          });
+
+          // publish
+          topic_{{topic.topic_name|underscore}}.publish(message)
+        }
+      )
+
+      {% endif %}
+
+      // subscribe function
+      topic_{{topic.topic_name|underscore}}.subscribe(function(message) {
+
+        {% if 'std_msgs::Float' in topic.ros_type or 'std_msgs::Int' in topic.ros_type or 'std_msgs::UInt' in topic.ros_type %}
+        // numeric type
+
+        // prepare the topic_plot_data
+        now = (Date.now() - initial_time) / 1000;
+        sample = [now, message.data];
+        topic_plot_data['{{topic.topic_name|underscore}}'].push(sample);
+        options = {'file': topic_plot_data['{{topic.topic_name|underscore}}'] , 'dateWindow': [now - 15, now]};
+
+        // update value
+        $('#ros_topics_value_{{topic.topic_name|underscore}}').html(message.data);
+
+        // update plot
+        topic_plots['{{topic.topic_name|underscore}}'].updateOptions(options);
+        {% endif %}
+
+        {% if 'std_msgs::Empty' in topic.ros_type %}
+        // empty type
+
+        now = Date();
+
+        // string type
+        $('#ros_topics_empty_{{topic.topic_name|underscore}}').html($('#ros_topics_empty_{{topic.topic_name|underscore}}').html() + '\n' + now.toLocaleString('en-GB'));
+
+        var textarea = document.getElementById('ros_topics_empty_{{topic.topic_name|underscore}}');
+        textarea.scrollTop = textarea.scrollHeight;
+
+        {% endif %}
+
+        {% if topic.ros_type == 'std_msgs::String' %}
+
+        // string type
+        $('#ros_topics_string_{{topic.topic_name|underscore}}').html($('#ros_topics_string_{{topic.topic_name|underscore}}').html() + '\n' + message.data);
+
+        var textarea = document.getElementById('ros_topics_string_{{topic.topic_name|underscore}}');
+        textarea.scrollTop = textarea.scrollHeight;
+
+        // trim text if necessary
+        if (message.data.length > topic_max_string_length)
+        {
+          var message = message.data.substring(0, topic_max_string_length) + ' ...';
+        }
+        else
+        {
+          var message = message.data;
+        }
+        // update value
+        $('#ros_topics_value_{{topic.topic_name|underscore}}').html(message);
+
+
+        {% endif %}
+
+        {% if topic.ros_type == 'std_msgs::Bool' %}
+
+        // bool type
+        $('#ros_topics_bool_{{topic.topic_name|underscore}}').html($('#ros_topics_bool_{{topic.topic_name|underscore}}').html() + '\n' + message.data.toString());
+
+        var textarea = document.getElementById('ros_topics_bool_{{topic.topic_name|underscore}}');
+        textarea.scrollTop = textarea.scrollHeight;
+
+        // update value
+        $('#ros_topics_value_{{topic.topic_name|underscore}}').html(message.data.toString());
+
+        {% endif %}
+
+
+      });
+      {% endfor %}
+
+{% endset %}
+
+{% set body %}
+
+  <!-- This part is hidden from view unless there is an error connecting to rosbridge.
+      Please do not change this part -->
+  <div class="ui icon error big message hidden" id="ros_bridge">
+    <i class="warning circle icon"></i>
+    <div class="content" >
+      <div class="header" id="ros_bridge_header">
+
+      </div>
+      <p id="ros_bridge_text">
+      Please make sure that you run "<code>roslaunch rosbridge_server rosbridge_websocket.launch</code>" in the terminal. Then refresh this page.</p>
+    </div>
+  </div>
+
+  {% if parameters|dpath('/Transformers/ROS/topicDefinitions')|length > 0 %}
+  <h2>List of ROS topics</h2>
+
+  <div class="ui styled accordion" id="ros_topics_accordion">
+  {% for topic in parameters|dpath('/Transformers/ROS/topicDefinitions') %}
+
+
+    <div class="title">
+      <i class="dropdown icon"></i> {{topic.topic_name}}
+    </div>
+    <div class="content hidden" id='ros_topics_{{topic.topic_name|underscore}}'>
+
+<div class="ui segment">
+  {% if topic.ros_type != 'std_msgs::Empty' %}
+      <div class="ui labeled button" tabindex="0">
+        <div class="ui button">
+          Value
+        </div>
+        <a class="ui basic label" id="ros_topics_value_{{topic.topic_name|underscore}}">
+        </a>
+      </div>
+    {% endif %}
+      <div class="ui labeled button" tabindex="0">
+        <div class="ui button">
+          Type
+        </div>
+        <a class="ui basic label" id="ros_topics_type_{{topic.topic_name|underscore}}">
+          {{topic.ros_type}}
+        </a>
+      </div>
+
+      <div class="ui labeled button" tabindex="0">
+        <div class="ui button">
+          Flow
+        </div>
+        <a class="ui basic label" id="ros_topics_flow_{{topic.topic_name|underscore}}">
+          {{topic.flow}}
+        </a>
+      </div>
+
+</div>
+
+      {% if topic.ros_type == 'std_msgs::Empty' %}
+        <!-- Empty topics  -->
+        <div class="ui form">
+          <div class="field">
+            <label>Time history of messages received</label>
+            <textarea readonly id="ros_topics_empty_{{topic.topic_name|underscore}}"></textarea>
+          </div>
+        </div>
+
+        <div class="ui action input">
+          <button class="ui button" id="ros_topics_publish_button_{{topic.topic_name|underscore}}">publish</button>
+        </div>
+      {% endif %}
+
+
+      {% if topic.ros_type == 'std_msgs::String' %}
+        <!-- string topics  -->
+        <div class="ui form">
+          <div class="field">
+            <label>History</label>
+            <textarea readonly id="ros_topics_string_{{topic.topic_name|underscore}}"></textarea>
+          </div>
+        </div>
+
+        <div class="ui action input">
+          <input type="text" placeholder="publish" id="ros_topics_input_{{topic.topic_name|underscore}}">
+          <button class="ui button" id="ros_topics_publish_button_{{topic.topic_name|underscore}}">publish</button>
+        </div>
+      {% endif %}
+
+
+      {% if topic.ros_type == 'std_msgs::Bool' %}
+        <!-- Bool topics  -->
+        <div class="ui form">
+          <div class="field">
+            <label>History of messages received</label>
+            <textarea readonly id="ros_topics_bool_{{topic.topic_name|underscore}}"></textarea>
+          </div>
+        </div>
+
+        <div class="ui action input">
+          <button class="ui green button" id="ros_topics_publish_true_button_{{topic.topic_name|underscore}}">publish True</button>
+          <button class="ui red button" id="ros_topics_publish_false_button_{{topic.topic_name|underscore}}">publish False</button>
+        </div>
+      {% endif %}
+
+
+      {% if 'std_msgs::Float' in topic.ros_type or 'std_msgs::Int' in topic.ros_type or 'std_msgs::UInt' in topic.ros_type %}
+        <!-- numeric topic  -->
+        <div class="ui segment">
+          <div id="ros_topics_plot_{{topic.topic_name|underscore}}"></div>
+        </div>
+
+        <div class="ui action input">
+          <input type="text" placeholder="publish" id="ros_topics_input_{{topic.topic_name|underscore}}">
+          <button class="ui button" id="ros_topics_publish_button_{{topic.topic_name|underscore}}">publish</button>
+        </div>
+      {% endif %}
+    </div>
+
+  {% endfor %}
+  </div>
+
+  {% endif %}
+
+{% endset %}

@@ -1,0 +1,45 @@
+# An example of a simple definition of ROS topics
+
+node(
+  name:"example signals",
+
+  # An incoming signal
+  definitions:block(
+    x ∈ Signals(Reals,
+      rosTopic:'/test/x',
+      rosFlow:'incoming',
+      onChange: block(
+        print('x has changed')
+      ),
+      onNew: block(
+        print('x is new')
+      )
+    ),
+
+    # An outgoing signal
+    y ∈ Signals(Reals,
+      rosTopic:'/test/y',
+      rosFlow:'outgoing'
+    ),
+
+    # flows defaults to bidirectional
+    z ∈ Signals(Strings, rosTopic:'/test/z'),
+    w ∈ Signals(Strings, rosTopic:'/test/w',
+      onNew: block(
+        print(w),
+        z = w
+      )
+    ),
+
+    # All options
+    p ∈ Signals(Reals,
+      rosTopic:'/test/p',
+      rosFlow:'incoming',
+      rosQueueSize:5,
+      rosTransportHints:['unreliable','reliable', 'maxDatagramSize(1000)', 'tcpNoDelay']
+    )
+
+  ),
+
+  initialise: print('Starting node.')
+)

@@ -20,7 +20,45 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
+from RoboticsLanguage.Base import Utilities
+
+
+def CreateTypeList(code, parameters):
+  parameters['Transformers']['Base']['types'] = {}
+
+  return code, parameters
+
+
+def CreateVariableList(code, parameters):
+  parameters['Transformers']['Base']['variables'] = {}
+
+  for variable in code.xpath('/node/option[@name="definitions"]/*//element/variable'):
+    parameters['Transformers']['Base']['variables'][variable.attrib['name']] = {'definition': variable.getparent().getchildren()[1]}
+
+  return code, parameters
+
+
+def CreateFunctionList(code, parameters):
+  parameters['Transformers']['Base']['functions'] = {}
+
+  for function in code.xpath('/node/option[@name="definitions"]/*//function_definition'):
+    parameters['Transformers']['Base']['functions'][function.attrib['name']] = {'definition': function }
+
+  return code, parameters
+
+
+
 
 def transform(code, parameters):
+
+  # fill in defaults in optional arguments
+  code, parameters = Utilities.fillDefaultsInOptionalArguments(code, parameters)
+
+  code, parameters = CreateTypeList(code, parameters)
+
+  code, parameters = CreateVariableList(code, parameters)
+
+  code, parameters = CreateFunctionList(code, parameters)
+
 
   return code, parameters

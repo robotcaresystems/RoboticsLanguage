@@ -1,0 +1,44 @@
+
+{% set includes %}
+
+{% for item in code.xpath('//element/RosType/string/text()') %}
+#include <{{item}}.h>
+{% endfor %}
+
+{% for message in code.xpath('//rosm:message', namespaces={'rosm': 'rosm'}) -%}
+#include <{{parameters.node.name|underscore}}/{{message.xpath('.//rosm:name', namespaces={'rosm': 'rosm'})|first|text}}.h>
+{% endfor -%}
+
+{% for item in code.xpath('//element/RosClass') %}
+#include <{{item.xpath('./option[@name="package"]/string/text()')[0]}}/{{item.xpath('./option[@name="package"]/string/text()')[0]}}.h>
+{% endfor %}
+
+{% endset %}
+
+
+
+{% set definitions %}
+
+      {# ROS TOPICS #################################### #}
+      {% if parameters.Transformers.ROS.topicDefinitions|length > 0 -%}
+      /* ROS topics */
+        {% for topic in parameters.Transformers.ROS.topicDefinitions -%}
+      /* signal {{topic.variable}} */
+        {# PUBLISHER #################################### #}
+          {% if topic.flow == 'outgoing' or topic.flow == 'bidirectional' -%}
+      ros::Publisher {{topic.variable}}_publisher;
+          {% endif -%}
+
+          {# SUBSCRIBER + CALLBACK #################################### #}
+          {% if topic.flow == 'incoming' or topic.flow == 'bidirectional' -%}
+      ros::Subscriber {{topic.variable}}_subscriber;
+      void signal_{{topic.variable}}_callback(const {{topic.ros_type}}& signal_{{topic.variable}}_message);
+          {% endif -%}
+
+
+      {{topic.ros_type}} {{topic.variable}};
+
+        {% endfor %}
+      {% endif -%}
+
+{% endset %}

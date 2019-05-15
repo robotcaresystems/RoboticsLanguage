@@ -53,6 +53,15 @@ language = {
         },
     },
 
+    'assign': {
+        'input': {
+            'RoL': {
+                'infix': {'key': '=',
+                          'order': 100}
+            }
+        },
+    },
+
     'Booleans': {
         'input':
         {
@@ -98,6 +107,15 @@ language = {
             'RoL': {
                 'infix': {'key': ['in', '∈'],
                           'order': 150}
+            }
+        },
+    },
+    'domain': {
+        'input': {
+            'RoL': {
+                'infix': {'key': '.',
+                          'order': 1400,
+                          'flat': True}
             }
         },
     },

@@ -25,30 +25,73 @@ from iso639 import languages
 
 parameters = {
     'globals': {
+        'version': False,
         'output': 'RosCpp',
+        'input': '',
         'debug': False,
         'compile': False,
         'launch': False,
+        'beautify': False,
+        'beautifyEngine': '',
+        'edit': False,
+        'editor': '',
         'verbose': 'none',
+        'deployOutputs': {
+            'RosCpp': os.path.expanduser('~') + '/catkin_ws/src/',
+            'Ros2Cpp': os.path.expanduser('~') + '/ros2_ws/src/'
+        },
         'deploy': os.path.expanduser('~') + '/deploy/',
+        'plugins': os.path.expanduser('~') + '/.rol/plugins/',
+        'RoboticsLanguagePath': os.path.abspath(os.path.dirname(__file__) + '/../') + '/',
         'removeCache': False,
         'language': 'en',
-        'compilerLanguage': 'en'
+        'compilerLanguage': 'en',
+        'loadOrder': [],
+        'skipCopyFiles': [],
+        'skipTemplateFiles': [],
+        'noColours': False
     },
 
-    'debug': {
+    'developer': {
         'code': False,
         'codePath': '',
         'parameters': False,
         'parametersPath': '',
         'step': 1,
         'stepCounter': 0,
+        'stepGroup': '',
+        'stepName': '',
         'stop': False,
-        'ignoreSemanticErrors': False,
-        'ignoreErrors': False
+        'info': False,
+        'infoPackage': '',
+        'skip': '',
+        'ignoreErrors': False,
+        'intermediateTemplates': False,
+        'progress': False,
+        'progressBar': 0,
+        'progressTotal': 10,
+        'progressPercentage': 0,
+        'progressStartTime': 0,
+        'showOutputDependency': False,
+        'makeConfigurationFile': False,
+        'copyExamplesHere': False,
+        'runTests': False,
+        'coverage': False,
+        'coverageFolder': os.path.expanduser('~') + '/.rol/coverage',
+        'makeExamples': False,
+    },
+
+    'symbols':
+    {
+        'functions': [],
+        'variables': [],
+        'types': []
     },
 
     'errors': [],
+
+    'parsing': {'position':0,
+                'grammars':{}},
 
     'Information':
     {
@@ -74,12 +117,13 @@ parameters = {
         'software':
         {
             'name': 'name',
-            'version': '1.0.0',
+            'version': '0.0.0',
             'description': 'description',
             'maintainer': {'name': 'name', 'email': 'email@email.edu'},
             'author': {'name': 'name', 'email': 'email@email.edu'},
             'url': 'url',
             'license': 'license',
+            'longLicense': 'longLicense',
             'copyright': 'copyright',
             'year': 'year'
         }
@@ -87,39 +131,118 @@ parameters = {
 }
 
 command_line_flags = {
-    'debug:code': {
+    'developer:info': {
         'noArgument': True,
-        'longFlag': 'debug-code',
+        'longFlag': 'info',
+        'fileNotNeeded': True,
+        'description': 'Shows Rol and package information'
+    },
+    'developer:infoPackage': {
+        'longFlag': 'info-package',
+        'fileNotNeeded': True,
+        'description': 'Shows information about a specific packages'
+    },
+    'developer:showOutputDependency': {
+        'noArgument': True,
+        'longFlag': 'show-output-dependencies',
+        'fileNotNeeded': True,
+        'description': 'Shows output package dependencies'
+    },
+    'developer:makeConfigurationFile': {
+        'noArgument': True,
+        'longFlag': 'make-configuration-file',
+        'fileNotNeeded': True,
+        'description': 'Makes a configuration parameters file'
+    },
+    'developer:code': {
+        'noArgument': True,
+        'flag': 'x',
+        'longFlag': 'show-code',
         'description': 'Prints the internal XML representation of the code'
     },
-    'debug:codePath': {
-        'longFlag': 'debug-code-path',
+    'developer:codePath': {
+        'flag': 'X',
+        'longFlag': 'show-code-path',
         'description': 'Prints the internal XML representation of the code for a specific path'
     },
-    'debug:parameters': {
+    'developer:parameters': {
+        'flag': 'p',
+        'longFlag': 'show-parameters',
         'noArgument': True,
+        'fileNotNeeded': True,
         'description': 'Prints the internal parameters'
     },
-    'debug:parametersPath': {
-        'longFlag': 'debug-parameters-path',
+    'developer:parametersPath': {
+        'flag': 'P',
+        'longFlag': 'show-parameters-path',
+        'fileNotNeeded': True,
         'description': 'Prints the internal parameters for a specific path'
     },
-    'debug:step': {
+    'developer:step': {
+        'flag': 's',
+        'longFlag': 'show-step',
         'description': 'Prints parameters or code for a specific compiler step'
     },
-    'debug:stop': {
+    'developer:stop': {
+        'flag': 'S',
+        'longFlag': 'show-stop',
         'noArgument': True,
-        'description': 'Stops the compiler after the step defined by \'--debug-step\''
+        'description': 'Stops the compiler after the step defined by \'--show-step\''
     },
-    'debug:ignoreSemanticErrors': {
-        'longFlag': 'ignore-semantic-errors',
-        'noArgument': True,
-        'description': 'Ignores the semantic errors and attempts to generate code. Result may not compile.'
+    'developer:skip': {
+        'longFlag': 'skip',
+        'description': 'Skip transformer modules',
+        'numberArguments': '*'
     },
-    'debug:ignoreErrors': {
+    'developer:ignoreErrors': {
         'longFlag': 'ignore-errors',
         'noArgument': True,
         'description': 'Ignores errors and attempts to generate code. Result may not compile.'
+    },
+    'developer:intermediateTemplates': {
+        'longFlag': 'show-intermediate-templates',
+        'noArgument': True,
+        'description': 'Show the intermidiate templates created by the template engine.'
+    },
+    'developer:progress': {
+        'longFlag': 'progress',
+        'noArgument': True,
+        'description': 'Shows progress.'
+    },
+    'developer:copyExamplesHere': {
+        'longFlag': 'copy-examples-here',
+        'noArgument': True,
+        'fileNotNeeded': True,
+        'description': 'Copies a set of examples into the current folder'
+    },
+    'developer:runTests': {
+        'longFlag': 'run-tests',
+        'noArgument': True,
+        'fileNotNeeded': True,
+        'description': 'Runs unit tests for compiler and plugins'
+    },
+    'developer:coverage': {
+        'longFlag': 'coverage',
+        'noArgument': True,
+        'fileNotNeeded': True,
+        'description': 'Runs coverage together with the unit tests for compiler and plugins'
+    },
+    'developer:coverageFolder': {
+        'longFlag': 'coverage-folder',
+        'fileNotNeeded': True,
+        'description': 'Folder where coverage report is saved'
+    },
+    'developer:makeExamples': {
+        'longFlag': 'make-examples',
+        'noArgument': True,
+        'fileNotNeeded': True,
+        'description': 'Makes all examples in plugins'
+    },
+    'globals:version': {
+        'longFlag': 'version',
+        'noArgument': True,
+        'fileNotNeeded': True,
+        'description': 'Shows the version of the Robotics Language and exit.'
     },
     'globals:output': {
         'flag': 'o',
@@ -127,6 +250,12 @@ command_line_flags = {
         'description': 'Outputs',
         'choices': [],
         'numberArguments': '*'
+    },
+    'globals:input': {
+        'flag': 'i',
+        'longFlag': 'input',
+        'description': 'Use a specific input parser',
+        'choices': []
     },
     'globals:debug': {
         'flag': 'd',
@@ -140,6 +269,12 @@ command_line_flags = {
         'noArgument': True,
         'description': 'Compiles the output of all modules'
     },
+    'globals:beautify': {
+        'flag': 'b',
+        'longFlag': 'beautify',
+        'noArgument': True,
+        'description': 'beautifies the output code'
+    },
     'globals:verbose': {
         'flag': 'v',
         'longFlag': 'verbose',
@@ -152,15 +287,45 @@ command_line_flags = {
         'noArgument': True,
         'description': 'Launches the output generated by all modules'
     },
+    'globals:edit': {
+        'flag': 'e',
+        'longFlag': 'edit',
+        'noArgument': True,
+        'description': 'Opens the output code generated on the chosen editor'
+    },
+    'globals:editor': {
+        'flag': 'E',
+        'longFlag': 'use-editor',
+        'description': 'Chooses editor'
+    },
+    'globals:beautifyEngine': {
+        'flag': 'B',
+        'longFlag': 'use-beautifier',
+        'description': 'Chooses beautifier engine'
+    },
     'globals:deploy': {
-        'flag': 'p',
         'longFlag': 'deploy-path',
-        'description': 'The path where the generated code is saved'
+        'description': 'The generic path where the generated code is saved'
+    },
+    'globals:deployOutputs:RosCpp': {
+        'longFlag': 'deploy-ros-cpp-path',
+        'description': 'The path where the generated ROS code is saved'
+    },
+    'globals:deployOutputs:Ros2Cpp': {
+        'longFlag': 'deploy-ros-2-cpp-path',
+        'description': 'The path where the generated ROS 2 code is saved'
     },
     'globals:removeCache': {
+        'flag': 'r',
         'longFlag': 'remove-cache',
         'noArgument': True,
+        'fileNotNeeded': True,
         'description': 'Deletes the compiler cache'
+    },
+    'globals:noColours': {
+        'longFlag': 'no-colours',
+        'noArgument': True,
+        'description': 'Suppreses syntax highlighting when showing code'
     },
     'globals:language': {
         'longFlag': 'language',
@@ -174,7 +339,23 @@ command_line_flags = {
     },
 
     'errors': {'suppress': True},
-    'debug:stepCounter': {'suppress': True},
+    'developer:stepCounter': {'suppress': True},
+    'developer:stepGroup': {'suppress': True},
+    'developer:stepName': {'suppress': True},
+    'developer:progressBar': {'suppress': True},
+    'developer:progressTotal': {'suppress': True},
+    'developer:progressPercentage': {'suppress': True},
+    'developer:progressStartTime': {'suppress': True},
+    'globals:plugins': {'suppress': True},
+    'globals:RoboticsLanguagePath': {'suppress': True},
+    'globals:loadOrder': {'suppress': True},
+    'globals:skipCopyFiles': {'suppress': True},
+    'globals:skipTemplateFiles': {'suppress': True},
+    'parsing:position': {'suppress': True},
+    'parsing:grammars': {'suppress': True},
+    'symbols:functions': {'suppress': True},
+    'symbols:variables': {'suppress': True},
+    'symbols:types': {'suppress': True},
     'Information:user:name': {'suppress': True},
     'Information:user:email': {'suppress': True},
     'Information:user:web': {'suppress': True},

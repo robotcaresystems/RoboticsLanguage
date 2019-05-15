@@ -1,0 +1,8 @@
+#!/bin/bash
+ROL_PATH=`python -c "import os; import RoboticsLanguage; print os.path.dirname(os.path.abspath(RoboticsLanguage.__file__)) + '/..'"`
+
+if [ ! "$(docker ps -q -f name=Development2RoboticsLanguage)" ]; then
+  docker run -it --rm -v $ROL_PATH:/home/roboticslanguage/RoboticsLanguage --workdir=/home/roboticslanguage/RoboticsLanguage --name=Development2RoboticsLanguage roboticslanguage/rol:ros2 bash -c "sudo pip -q uninstall RoboticsLanguage; cd /home/roboticslanguage/RoboticsLanguage; sudo pip install -e .; bash"
+else
+  docker exec -i -t Development2RoboticsLanguage /bin/bash
+fi

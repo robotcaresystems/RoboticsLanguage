@@ -1,0 +1,50 @@
+<<<header->>>
+cmake_minimum_required(VERSION 2.8.3)
+project({{parameters.node.name|underscore }})
+
+## Find catkin and any catkin packages
+find_package(catkin REQUIRED COMPONENTS
+    rospy
+    std_msgs
+    {% if parameters.Transformers.ROS.addingNewMessages -%}
+    message_generation
+    {% endif -%}
+    <<<'findPackage'|group>>>
+)
+
+{% if parameters.Transformers.ROS.addingNewMessages -%}
+add_message_files(
+  FILES
+  <<<'addMessageFiles'|group>>>
+)
+
+generate_messages(
+   DEPENDENCIES
+   std_msgs
+   <<<'generateMessages'|group>>>
+)
+{% endif -%}
+
+
+## Declare a catkin package
+catkin_package(
+  CATKIN_DEPENDS
+    rospy
+    std_msgs
+    {% if parameters.Transformers.ROS.addingNewMessages -%}
+    message_runtime
+    {% endif -%}
+    <<<'catkinDepends'|group>>>
+)
+
+
+catkin_install_python(PROGRAMS scripts/{{parameters.node.name|underscore}}.py
+                      DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+
+install(DIRECTORY
+          launch
+        DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+)
+
+
+<<<'extras'|group>>>
