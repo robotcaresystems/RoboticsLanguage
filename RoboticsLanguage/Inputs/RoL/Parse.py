@@ -29,7 +29,7 @@
 #   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
-
+import os
 import parsley
 from lxml import etree
 from RoboticsLanguage.Base import Utilities
@@ -37,6 +37,8 @@ import sys
 import funcy
 
 # @TODO generalise when RoL parameters become dictionaries
+
+
 def nodeParametersToDictionary(xml):
   '''Extracts the optional parameters given in the `node` function and adds them to the parameters dictionary'''
   return {'node': {key: value.text for (key, value) in Utilities.optionalArguments(xml).iteritems()}}
@@ -158,6 +160,46 @@ main = wws ( functionDefinition
   return grammar
 
 
+def includeFiles(code, parameters):
+    # get the path of the current file being parsed
+  current_path = os.path.dirname(parameters['globals']['codeFiles'][0]['name'])
+
+  # look for all the include tags and replace them with the parsed content of the file
+  for include_file in code.xpath('//include/string'):
+    if include_file.text[0] not in ['/', '~']:
+      include_file_text = os.path.expanduser(current_path + '/' + include_file.text)
+    else:
+      include_file_text = os.path.expanduser(include_file.text)
+
+    if not os.path.exists(include_file_text):
+      Utilities.logging.error("Unable to include the file '{}'. File is not found!".format(include_file.text))
+    else:
+
+      filename, file_extension = os.path.splitext(include_file_text)
+
+      if file_extension[0] == '.':
+        file_extension = file_extension[1:]
+
+      if file_extension.lower() not in parameters['globals']['fileFormats'].keys():
+        Utilities.logging.error(
+            "Unable to include the file '{}'. File format not recognized!".format(include_file.text))
+        print file_extension.lower()
+      else:
+        with open(include_file_text) as file:
+          text = file.read()
+
+        key = parameters['globals']['fileFormats'][file_extension.lower()]
+
+        try:
+          include_code, parameters = Utilities.importModule(
+              parameters['manifesto']['Inputs'][key]['type'], 'Inputs', key, 'Parse').Parse.parse(text, parameters)
+
+          include_file.getparent().getparent().replace(include_file.getparent(), include_code)
+        except:
+          Utilities.logging.error("Unable to include the file '{}'. Error parsing the file!".format(include_file.text))
+  return code, parameters
+
+
 def parse(text, parameters):
   '''Main parser for the robotics language'''
 
@@ -175,16 +217,16 @@ def parse(text, parameters):
     language = parameters['parsing']['grammars']['RoL']
   else:
     language = parsley.makeGrammar(grammar, {'xml': Utilities.xml,
-                                           'xmlAttributes': Utilities.xmlAttributes,
-                                           'xmlFunctionDefinition': lambda x, y, z, w, k: Utilities.xmlFunctionDefinition(parameters, x, y, z, w, k),
-                                           'xmlVariable': lambda x, y: Utilities.xmlVariable(parameters, x, y),
-                                           'xmlFunction': lambda x, y, z: Utilities.xmlFunction(parameters, x, y, z),
-                                           'xmlMiniLanguage': lambda x, y, z: Utilities.xmlMiniLanguage(parameters, x, y, z)})
+                                             'xmlAttributes': Utilities.xmlAttributes,
+                                             'xmlFunctionDefinition': lambda x, y, z, w, k: Utilities.xmlFunctionDefinition(parameters, x, y, z, w, k),
+                                             'xmlVariable': lambda x, y: Utilities.xmlVariable(parameters, x, y),
+                                             'xmlFunction': lambda x, y, z: Utilities.xmlFunction(parameters, x, y, z),
+                                             'xmlMiniLanguage': lambda x, y, z: Utilities.xmlMiniLanguage(parameters, x, y, z)})
     parameters['parsing']['grammars']['RoL'] = language
 
   try:
     # parse the text against the grammar
-    parsed_xml_text = ''.join(language(text).main())
+    code_text = ''.join(language(text).main())
 
   except parsley.ParseError as error:
     # with Error.exception(parameters, stop=True)
@@ -196,15 +238,17 @@ def parse(text, parameters):
 
   try:
     # create XML object from xml string
-    parsed_xml = etree.fromstring(parsed_xml_text)
+    code = etree.fromstring(code_text)
 
   except etree.XMLSyntaxError as error:
     # with Error.exception(parameters, stop=True)
     Utilities.logErrors(Utilities.formatLxmlErrorMessage(error), parameters)
     sys.exit(1)
 
+  code, parameters = includeFiles(code, parameters)
+
   # If the node has parameters, then add them to the global parameters dictionary
   parameters = Utilities.mergeDictionaries(
-      nodeParametersToDictionary(parsed_xml), parameters)
+      nodeParametersToDictionary(code), parameters)
 
-  return parsed_xml, parameters
+  return code, parameters

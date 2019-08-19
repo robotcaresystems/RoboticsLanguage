@@ -107,9 +107,12 @@ def prepareCommandLineArguments(parameters):
   # get all file formats
   file_formats = []
   file_package_name = []
+  parameters['globals']['fileFormats'] = {}
   for key, value in parameters['manifesto']['Inputs'].iteritems():
 
     # @TODO Add support to multiple file extensions per format
+
+    parameters['globals']['fileFormats'][value['fileFormat']] = key
 
     # the file extension
     file_formats.append(value['fileFormat'])
@@ -120,7 +123,7 @@ def prepareCommandLineArguments(parameters):
   # parameter files are always YAML
   file_package_name.append('yaml: optional parameter files; \n')
 
-  return flags, arguments, file_package_name, file_formats
+  return flags, arguments, file_package_name, file_formats, parameters
 
 
 def runCommandLineParser(parameters, arguments, flags, file_formats, file_package_name, command_line_arguments):
@@ -235,6 +238,9 @@ def processCommandLineParameters(args, file_formats, parameters):
 
   # check for files parameters
   rol_files, parameter_files = processFileParameters(args, file_formats, parameters)
+
+  parameters['globals']['codeFiles'] = rol_files
+  parameters['globals']['parameterFiles'] = parameter_files
 
   # now concatenate all parameters starting with
   # 1. defaults from RoL and from modules (can be cached)
@@ -507,7 +513,7 @@ def ProcessArguments(command_line_parameters, parameters):
   parameters['commandLineParameters'] = command_line_parameters
 
   # load cached command line flags or create if necessary
-  flags, arguments, file_package_name, file_formats = prepareCommandLineArguments(parameters)
+  flags, arguments, file_package_name, file_formats, parameters = prepareCommandLineArguments(parameters)
 
   # run the command line parser
   parser, args = runCommandLineParser(parameters, arguments, flags, file_formats,

@@ -454,7 +454,6 @@ def importModule(z, a, b, c):
 
 
 def removeCache(cache_path='/.rol/cache'):
-  global logger
   logging.debug('Removing caching...')
   path = os.path.expanduser("~") + cache_path
   if os.path.isdir(path):
