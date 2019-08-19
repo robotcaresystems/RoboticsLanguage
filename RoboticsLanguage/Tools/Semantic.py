@@ -119,11 +119,11 @@ def FunctionsTypeChecker(code, parameters):
 
     functions[function_name] = {'mandatory': [], 'optional': {}, 'returns': []}
 
-    print '----------------------' + function_name + '-------------------'
+    print('----------------------' + function_name + '-------------------')
     Utilities.printCode(function)
 
     # 1. check the inputs/outputs of function
-    print 'Function arguments ============'
+    print('Function arguments ============')
     arguments = function.xpath('function_arguments')
 
     # for each function argument
@@ -207,7 +207,7 @@ def FunctionsTypeChecker(code, parameters):
 def RecursiveTypeChecker(code, parameters):
 
   # if element already has a type return
-  if 'type' in code.attrib.keys():
+  if 'type' in list(code.attrib.keys()):
     return code, parameters
 
   # if the element is part of the language
@@ -245,7 +245,7 @@ def RecursiveTypeChecker(code, parameters):
       if 'optional' in keys[code.tag]['definition']:
 
         # check if optional arguments are defined
-        if all([x in keys[code.tag]['definition']['optional'].keys() for x in optional_names]):
+        if all([x in list(keys[code.tag]['definition']['optional'].keys()) for x in optional_names]):
 
           # check types for optional arguments
           if not all(map(lambda x, y: keys[code.tag]['definition']['optional']

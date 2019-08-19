@@ -20,6 +20,10 @@
 #   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
+import future        # pip install future
+import builtins      # pip install future
+import past          # pip install future
+import six
 import os
 import sys
 import time
@@ -81,7 +85,7 @@ def prepareParameters():
         manifesto[name_split[1]][name_split[2]]['type'] = name_split[0]
 
         # get the load order for the packages
-        if 'order' in manifesto_module.manifesto.keys():
+        if 'order' in list(manifesto_module.manifesto.keys()):
             package_order[module_name] = manifesto_module.manifesto['order']
         else:
           # Inputs are loaded first
@@ -115,7 +119,7 @@ def prepareParameters():
 
       # read command_line_flags
       command_line = parameters_module.command_line_flags
-      for key, value in command_line.iteritems():
+      for key, value in command_line.items():
         command_line_flags[name_split[1] + ':' + name_split[2] + ':' + key] = value
     except Exception as e:
       Utilities.logging.debug(e.__repr__())

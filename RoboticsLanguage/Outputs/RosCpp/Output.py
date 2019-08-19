@@ -42,12 +42,12 @@ def runPreparations(code, parameters):
                        'Strings': 'string'}
 
   # add only the required libraries
-  for tag, library in include_libraries.iteritems():
+  for tag, library in include_libraries.items():
     if len(code.xpath('//' + tag)) > 0:
       parameters['Outputs']['RosCpp']['globalIncludes'].add(library)
 
   # get the path to deploy the code
-  if 'RosCpp' in parameters['globals']['deployOutputs'].keys():
+  if 'RosCpp' in list(parameters['globals']['deployOutputs'].keys()):
     deploy_path = parameters['globals']['deployOutputs']['RosCpp']
   else:
     deploy_path = parameters['globals']['deploy']
@@ -98,7 +98,7 @@ def output(code, parameters):
       for file in list_of_cpp_files:
         if parameters['globals']['beautifyEngine'] == 'uncrustify':
           try:
-            process = subprocess.Popen(['uncrustify', '-c',  unicode(Utilities.myPluginPath(parameters) + '/Resources/uncrustify.cfg'),
+            process = subprocess.Popen(['uncrustify', '-c',  str(Utilities.myPluginPath(parameters) + '/Resources/uncrustify.cfg'),
                                         file,  '--replace', '--no-backup'],
                                        cwd=deploy_path + '/' + node_name_underscore,
                                        stdout=output_file,

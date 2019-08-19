@@ -81,8 +81,8 @@ def exception(key='default', code=None, parameters={}, **options):
   except Exception as e:
 
     # get the logger level and action if defined.
-    level = options['level'] if 'level' in options.keys() else 'error'
-    action = options['action'] if 'action' in options.keys() else None
+    level = options['level'] if 'level' in list(options.keys()) else 'error'
+    action = options['action'] if 'action' in list(options.keys()) else None
 
     try:
       # try to identify who sent the exception
@@ -103,11 +103,11 @@ def exception(key='default', code=None, parameters={}, **options):
 
 
 def showExceptionMessage(emitter, key, exception, level, action):
-  print 'emitter: ' + emitter
-  print 'key: ' + key
-  print 'exception: ' + str(exception)
-  print 'level: ' + level
-  print 'action: ' + str(action)
+  print('emitter: ' + emitter)
+  print('key: ' + key)
+  print('exception: ' + str(exception))
+  print('level: ' + level)
+  print('action: ' + str(action))
 
 
 def raiseException(group, key, code=None, parameters={}):

@@ -53,7 +53,7 @@ def processTemporalOperators(code, parameters, logic_id_counter):
     all_variables = list(set(all_variables))
 
     # remove empty elements
-    all_variables = filter(lambda x: x != '', all_variables)
+    all_variables = [x for x in all_variables if x != '']
 
     # fill information about logic operator
     logic_id_counter += 1

@@ -51,8 +51,8 @@ def transform(code, parameters):
 
         # check if pairs already exist
         if pair in pairs:
-          print('Error: repeated transitions in FSM "{}": ({}) -{}-> ... '.format(
-              machine.xpath('.//fsm:name/text()', **namespace)[0], *pair))
+          print(('Error: repeated transitions in FSM "{}": ({}) -{}-> ... '.format(
+              machine.xpath('.//fsm:name/text()', **namespace)[0], *pair)))
         else:
           pairs.append(pair)
 

@@ -68,7 +68,7 @@ def serialise(code, parameters, keywords, language, filters=default_template_eng
       template = Template(keyword)
 
       # load the text filters
-      for key, value in filters.iteritems():
+      for key, value in filters.items():
         template.globals[key] = value
 
       # get all children that are not 'option'
@@ -78,13 +78,10 @@ def serialise(code, parameters, keywords, language, filters=default_template_eng
       # children_elements = code.getchildren()
 
       # render tags according to dictionary
-      snippet = template.render(children=map(lambda x: serialise(x, parameters, keywords, language, filters),
-                                             children_elements),
-                                childrenTags=map(
-          lambda x: x.tag, children_elements),
-          options=dict(zip(code.xpath('option/@name'), map(lambda x: serialise(x,
-                                                                               parameters, keywords, language, filters),
-                                                           code.xpath('option')))),
+      snippet = template.render(children=[serialise(x, parameters, keywords, language, filters) for x in children_elements],
+                                childrenTags=[x.tag for x in children_elements],
+          options=dict(list(zip(code.xpath('option/@name'), [serialise(x,
+                                                                               parameters, keywords, language, filters) for x in code.xpath('option')]))),
           attributes=code.attrib,
           parentAttributes=code.getparent().attrib,
           parentTag=code.getparent().tag,
@@ -103,7 +100,7 @@ def serialise(code, parameters, keywords, language, filters=default_template_eng
 
   except KeyError:
     # get the line and column numbers
-    if 'p' in code.keys():
+    if 'p' in list(code.keys()):
       line_number, column_number, line = Utilities.positionToLineColumn(
           int(code.attrib['p']), parameters['text'])
     else:

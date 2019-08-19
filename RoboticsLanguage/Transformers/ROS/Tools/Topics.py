@@ -109,11 +109,11 @@ def setPublish(variable, flow, assignments, signal):
     for variable_element in assignments:
       assignment = Utilities.getFirstParent(variable_element, 'assign')
 
-      if 'postRosCpp' not in assignment.attrib.keys():
+      if 'postRosCpp' not in list(assignment.attrib.keys()):
         assignment.attrib['postRosCpp'] = ''
-      if 'postRos2Cpp' not in assignment.attrib.keys():
+      if 'postRos2Cpp' not in list(assignment.attrib.keys()):
         assignment.attrib['postRos2Cpp'] = ''
-      if 'postRosPy' not in assignment.attrib.keys():
+      if 'postRosPy' not in list(assignment.attrib.keys()):
         assignment.attrib['postRosPy'] = ''
 
       publish = True
@@ -225,7 +225,7 @@ def checkTypes(signal, variable, assignments, usages, code, parameters):
     transport_hints = transport_hints_code[0].xpath('./string/text()')[0]
   elif len(transport_hints_code[0].xpath('./vector')) > 0:
     # transport hints are passes as a list
-    transport_hints = '.'.join(map(lambda x: x.strip() if x.strip()[-1] == ')' else x.strip() + '()', transport_hints_code[0].xpath('./vector/string/text()')))
+    transport_hints = '.'.join([x.strip() if x.strip()[-1] == ')' else x.strip() + '()' for x in transport_hints_code[0].xpath('./vector/string/text()')])
 
   return code, parameters, ros_type, cpp_type, ros_2_type, ros_py_type, queue_size, transport_hints
 

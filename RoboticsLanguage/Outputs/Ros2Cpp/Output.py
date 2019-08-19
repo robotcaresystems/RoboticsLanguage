@@ -37,7 +37,7 @@ def runPreparations(code, parameters):
   node_name_underscore = Utilities.underscore(parameters['node']['name'])
 
   # get the path to deploy the code
-  if 'Ros2Cpp' in parameters['globals']['deployOutputs'].keys():
+  if 'Ros2Cpp' in list(parameters['globals']['deployOutputs'].keys()):
     deploy_path = parameters['globals']['deployOutputs']['Ros2Cpp']
   else:
     deploy_path = parameters['globals']['deploy']
@@ -68,7 +68,7 @@ def output(code, parameters):
         list_of_cpp_files = ['src/' + node_name_underscore + '.cpp',
                              'include/' + node_name_underscore + '/' + node_name_underscore + '.hpp']
         for file in list_of_cpp_files:
-          process = subprocess.Popen(['uncrustify', '-c',  unicode(Utilities.myPluginPath(parameters) + '/Resources/uncrustify.cfg'),
+          process = subprocess.Popen(['uncrustify', '-c',  str(Utilities.myPluginPath(parameters) + '/Resources/uncrustify.cfg'),
                                       file,  '--replace', '--no-backup'],
                                      cwd=deploy_path + '/' + node_name_underscore,
                                      stdout=output_file,

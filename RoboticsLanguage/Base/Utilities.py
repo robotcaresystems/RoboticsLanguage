@@ -20,6 +20,11 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
+import future        # pip install future
+import builtins      # pip install future
+import past          # pip install future
+import six
+
 import re
 import os
 import sys
@@ -41,13 +46,19 @@ from shutil import copy, rmtree
 from pygments.formatters import Terminal256Formatter
 from pygments.lexers import PythonLexer, XmlLexer, get_lexer_by_name
 from jinja2 import Environment, FileSystemLoader, Template, TemplateSyntaxError, TemplateAssertionError, TemplateError
+from functools import reduce
+import importlib
 
 # -------------------------------------------------------------------------------------------------
 #  Default encoding is Unicode
 # -------------------------------------------------------------------------------------------------
 
-reload(sys)
-sys.setdefaultencoding('utf-8')
+
+if sys.version_info[:2] == (2, 7):
+  reload(sys)
+else:
+  importlib.reload(sys)
+# sys.setdefaultencoding('utf-8')
 
 
 # -------------------------------------------------------------------------------------------------
@@ -58,7 +69,7 @@ def printSource(text, language, parameters=None, style='monokai'):
   if parameters is not None and parameters['globals']['noColours']:
     print(text)
   else:
-    print(highlight(text, get_lexer_by_name(language), Terminal256Formatter(style=Terminal256Formatter().style)))
+    print((highlight(text, get_lexer_by_name(language), Terminal256Formatter(style=Terminal256Formatter().style))))
 
 
 def printCode(code, parameters=None, style='monokai'):
@@ -69,9 +80,9 @@ def printCode(code, parameters=None, style='monokai'):
   for element in code:
     if isinstance(element, etree._Element):
      if parameters is not None and parameters['globals']['noColours']:
-       print(etree.tostring(element, pretty_print=True))
+       print((etree.tostring(element, pretty_print=True)))
      else:
-       print(highlight(etree.tostring(element, pretty_print=True), XmlLexer(), Terminal256Formatter(style=Terminal256Formatter(style=style).style)))
+       print((highlight(etree.tostring(element, pretty_print=True), XmlLexer(), Terminal256Formatter(style=Terminal256Formatter(style=style).style))))
   # a list of string
   if all([isinstance(element, etree._ElementStringResult) for element in code]):
     print(code)
@@ -81,15 +92,15 @@ def printParameters(elements, parameters=None, style='monokai'):
   if parameters is not None and parameters['globals']['noColours']:
     pprint.pprint(elements)
   else:
-    print(highlight(pprint.pformat(elements), PythonLexer(),
-                    Terminal256Formatter(style=Terminal256Formatter(style=style).style)))
+    print((highlight(pprint.pformat(elements), PythonLexer(),
+                    Terminal256Formatter(style=Terminal256Formatter(style=style).style))))
 
 
 def printVariable(x):
   frame = inspect.currentframe().f_back
   s = inspect.getframeinfo(frame).code_context[0]
   r = re.search(r"\((.*)\)", s).group(1)
-  print("{} = {}".format(r, x))
+  print(("{} = {}".format(r, x)))
 
 
 # -------------------------------------------------------------------------------------------------
@@ -111,7 +122,7 @@ def logErrors(errors, parameters):
 
 def fileLineNumberToLine(filename, line_number):
   with open(filename) as file:
-    line = [next(file) for x in xrange(line_number)][-1]
+    line = [next(file) for x in range(line_number)][-1]
   return line
 
 # given a text string and a line number, returns the text line
@@ -225,7 +236,7 @@ def errorOptionalArgumentTypes(code, parameters, optional_names, optional_types)
 def errorOptionalArgumentNotDefined(code, parameters, optional_names):
   # Error! figure out which parameter is not defined
   message = ''
-  keys = parameters['language'][code.tag]['definition']['optional'].keys()
+  keys = list(parameters['language'][code.tag]['definition']['optional'].keys())
 
   for x in set(optional_names) - set(keys):
     message += 'The optional parameter "' + x + '" is not defined.\n'
@@ -263,13 +274,13 @@ def errorLanguageDefinition(code, parameters):
 
 @decorator
 def log_all_calls(function):
-  print('function name: ' + function._func.__name__ + ' arguments: ' + str(function._args))
+  print(('function name: ' + function._func.__name__ + ' arguments: ' + str(function._args)))
   return function()
 
 
 @decorator
 def name_all_calls(function):
-  print('function name:' + function._func.__name__)
+  print(('function name:' + function._func.__name__))
   return function()
 
 
@@ -279,7 +290,7 @@ def time_all_calls(function):
   sys.stdout.write('<<<')
   sys.stdout.flush()
   result = function()
-  print('function name: ' + function._func.__name__ + 'execution time: ' + str(time.time() - start) + ' seconds>>>')
+  print(('function name: ' + function._func.__name__ + 'execution time: ' + str(time.time() - start) + ' seconds>>>'))
   return result
 
 
@@ -315,7 +326,7 @@ def cache_function(function):
     hash = hashlib.md5(function.__name__ + str(arguments) + str(options)).hexdigest()
     # hash = hash(function.__name__ + str(arguments) + str(options))
     # print '<<<call: [' + hash + ']' + function.__name__ + str(arguments) + str(options)
-    if hash not in global_function_cache.keys():
+    if hash not in list(global_function_cache.keys()):
       result = function(*arguments, **options)
       global_function_cache[hash] = result
       # print 'cache: + ' + str(hash) + '>>>'
@@ -466,7 +477,7 @@ def myPluginPath(parameters):
 
 
 def myOutputPath(parameters):
-  if parameters['developer']['stepName'] in parameters['globals']['deployOutputs'].keys():
+  if parameters['developer']['stepName'] in list(parameters['globals']['deployOutputs'].keys()):
     return parameters['globals']['deployOutputs'][parameters['developer']['stepName']]
   else:
     return parameters['globals']['deploy']
@@ -474,7 +485,7 @@ def myOutputPath(parameters):
 
 
 def getPackageOutputParents(parameters, package):
-  if 'parent' in parameters['manifesto']['Outputs'][package].keys():
+  if 'parent' in list(parameters['manifesto']['Outputs'][package].keys()):
     return [package] + getPackageOutputParents(parameters, parameters['manifesto']['Outputs'][package]['parent'])
   else:
     return [package]
@@ -487,7 +498,7 @@ def getPackageOutputParents(parameters, package):
 
 def isKeyDefined(key, d):
   if isinstance(d, dict):
-    return key in d.keys()
+    return key in list(d.keys())
   else:
     return False
 
@@ -512,7 +523,7 @@ def mergeDictionaries(a, b):
 def flatDictionary(d, s='-', list=None, name=''):
   if list is None:
     list = {}
-  for key, value in d.iteritems():
+  for key, value in d.items():
     if isinstance(value, dict):
       list.update(flatDictionary(value, s, list, name + s + key))
     else:
@@ -522,7 +533,7 @@ def flatDictionary(d, s='-', list=None, name=''):
 
 def unflatDictionary(l, s='-'):
   dictionary = {}
-  for key, value in l.iteritems():
+  for key, value in l.items():
     dpath.util.new(dictionary, key.replace(s, '/'), value)
   return dictionary
 
@@ -704,14 +715,14 @@ def xml(tag, content, position=0):
 def xmlAttributes(tag, content, position=0, attributes={}):
   '''creates XML text for entry with attributes'''
   attributes_text = ' '.join(
-      [key + '="' + str(value) + '"' for key, value in attributes.iteritems()])
+      [key + '="' + str(value) + '"' for key, value in attributes.items()])
   text = ''.join(content) if isinstance(content, list) else content
   return '<' + tag + ' p="' + str(position) + '" ' + attributes_text + '>' + text + '</' + tag + '>'
 
 
 def xmlFunction(parameters, tag, content, position=0):
   '''creates XML for functions'''
-  if tag in parameters['language'].keys():
+  if tag in list(parameters['language'].keys()):
     # its a known function
     return xml(tag, content, position)
   else:
@@ -724,18 +735,18 @@ def xmlFunctionDefinition(parameters, name, arguments, returns, content, positio
   parameters['symbols']['functions'].append(name)
 
   arguments_text = xml('function_arguments', arguments,
-                       position) if isinstance(arguments, basestring) else ''
+                       position) if isinstance(arguments, str) else ''
   returns_text = xml('function_returns', returns, position) if isinstance(
-      returns, basestring) else ''
+      returns, str) else ''
   content_text = xml('function_content', content, position) if isinstance(
-      content, basestring) else ''
+      content, str) else ''
 
   return xmlAttributes('function_definition', arguments_text + returns_text + content_text, position, attributes={'name': name})
 
 
 def xmlVariable(parameters, name, position=0):
   '''creates XML for variables'''
-  if name in parameters['language'].keys():
+  if name in list(parameters['language'].keys()):
     # its a known function
     return xmlFunction(parameters, name, '', position)
   else:
@@ -806,7 +817,7 @@ def attribute(xml, name):
         xml = xml[0]
       else:
         return ''
-    if name in xml.attrib.keys():
+    if name in list(xml.attrib.keys()):
       return xml.attrib[name]
     else:
       return ''
@@ -816,7 +827,7 @@ def attribute(xml, name):
 
 def allAttribute(xml_list, name):
   if isinstance(xml_list, list):
-    return map(lambda xml: attribute(xml, name), xml_list)
+    return [attribute(xml, name) for xml in xml_list]
   else:
     return attribute(xml_list, name)
 
@@ -832,7 +843,7 @@ def optionalArguments(xml):
 
 
 def getTextMinimumPositionXML(xml):
-  minimum = xml.attrib['p'] if 'p' in xml.attrib else sys.maxint
+  minimum = xml.attrib['p'] if 'p' in xml.attrib else sys.maxsize
 
   childrens_minimum = [getTextMinimumPositionXML(x) for x in xml.getchildren()]
 
@@ -956,7 +967,7 @@ def templateEngine(code, parameters, filepatterns, templates_path, deploy_path,
                       for x in files_to_copy]
 
     # rename files acording to file pattern names
-    for key, value in filepatterns.iteritems():
+    for key, value in filepatterns.items():
       for i in range(len(new_files)):
         new_files[i] = new_files[i].replace('_' + key + '_', value)
       for i in range(len(new_copy_files)):
@@ -966,7 +977,7 @@ def templateEngine(code, parameters, filepatterns, templates_path, deploy_path,
     env = Environment(loader=FileSystemLoader('/'))
 
     # add filters
-    for key, value in filters.iteritems():
+    for key, value in filters.items():
       env.filters[key] = value
 
     # process all files
@@ -1070,7 +1081,7 @@ def templateEngine(code, parameters, filepatterns, templates_path, deploy_path,
 # -------------------------------------------------------------------------------------------------
 
 def ExtractLanguageDefinitions(language, type, module):
-  return {key: value[type][module] for key, value in dpath.util.search(language, '/*/' + type + '/' + module + '/*').iteritems()}
+  return {key: value[type][module] for key, value in dpath.util.search(language, '/*/' + type + '/' + module + '/*').items()}
 
 
 def CreateBracketGrammar(definitions):
@@ -1079,14 +1090,14 @@ def CreateBracketGrammar(definitions):
 
   text = '\n# Bracket operators\n'
 
-  for key, value in bracket.iteritems():
+  for key, value in bracket.items():
     text += key + ' = ( \'' + value['bracket']['open'] + '\' wws ' + value['bracket']['arguments'] + \
         ':a wws \'' + value['bracket']['close'] + \
         '\' -> xml(\'' + key + '\',a,self.input.position)\n      | \'' + value['bracket']['open'] + \
         '\' wws \'' + value['bracket']['close'] + \
         '\' -> xml(\'' + key + '\',\'\',self.input.position)\n      )\n'
 
-  return text, bracket.keys()
+  return text, list(bracket.keys())
 
 
 def CreateGenericGrammar(definitions):
@@ -1095,10 +1106,10 @@ def CreateGenericGrammar(definitions):
 
   text = '\n# Generic operators\n'
 
-  for key, value in generic.iteritems():
-    text += key + 'Generic = \'' + ''.join([x + '\' wws values:'+chr(97+y)+' wws \'' for x, y in zip(value['generic'], range(len(value['generic'])))][:-1]) + value['generic'][-1] + '\' -> xml(\'' + key + '\',' + '+'.join([chr(97+x) for x in range(len(value['generic'])-1)]) + ',self.input.position)\n'
+  for key, value in generic.items():
+    text += key + 'Generic = \'' + ''.join([x + '\' wws values:'+chr(97+y)+' wws \'' for x, y in zip(value['generic'], list(range(len(value['generic']))))][:-1]) + value['generic'][-1] + '\' -> xml(\'' + key + '\',' + '+'.join([chr(97+x) for x in range(len(value['generic'])-1)]) + ',self.input.position)\n'
 
-  return text, [x + 'Generic' for x in generic.keys()]
+  return text, [x + 'Generic' for x in list(generic.keys())]
 
 
 def CreatePreInPostFixGrammar(definitions):
@@ -1112,28 +1123,28 @@ def CreatePreInPostFixGrammar(definitions):
   # get the precedence orders
   orders = list(set(dpath.util.values(definitions, '/*/*/order')))
   orders.sort()
-  previousOrder = dict(zip(orders + ['max'], ['min'] + orders))
+  previousOrder = dict(list(zip(orders + ['max'], ['min'] + orders)))
 
   text = ''
 
   # create grammar for alternatives
   text += '\n# function names alternatives\n'
 
-  for key, value in alternatives.iteritems():
+  for key, value in alternatives.items():
     text += key + \
         ' = ( \'' + ' | '.join(value['alternatives']) + \
         '\' | \'' + key + '\' ) -> \'' + key + '\'\n'
 
-  if len(alternatives.keys()) > 0:
+  if len(list(alternatives.keys())) > 0:
     text += 'functionName = ( ' + \
-        ' | '.join(alternatives.keys()) + ' | objectName )\n'
+        ' | '.join(list(alternatives.keys())) + ' | objectName )\n'
   else:
     text += 'functionName = objectName\n'
 
   # create grammar for infix operators
   text += '\n# Infix operators\n'
 
-  for key, value in infix.iteritems():
+  for key, value in infix.items():
 
     flat = 'flat' in value['infix'] and value['infix']['flat'] is True
 
@@ -1159,7 +1170,7 @@ def CreatePreInPostFixGrammar(definitions):
   # create grammar for prefix operators
   text += '\n# Prefix operators\n'
 
-  for key, value in prefix.iteritems():
+  for key, value in prefix.items():
 
     text += key + ' = '
 
@@ -1174,7 +1185,7 @@ def CreatePreInPostFixGrammar(definitions):
   # create grammar for postfix operators
   text += '\n# Postfix operators\n'
 
-  for key, value in postfix.iteritems():
+  for key, value in postfix.items():
 
     text += key + ' = P' + str(value['postfix']['order']) + ':a wws '
 
@@ -1194,7 +1205,7 @@ def CreatePreInPostFixGrammar(definitions):
                              afilter=lambda x: x == order)
 
     text += 'P' + str(previousOrder[order]) + ' = ( ' + \
-        ' | '.join(keys.keys()) + ' | P' + str(order) + ' )\n'
+        ' | '.join(list(keys.keys())) + ' | P' + str(order) + ' )\n'
 
   if len(orders) > 0:
     return text, orders[-1]

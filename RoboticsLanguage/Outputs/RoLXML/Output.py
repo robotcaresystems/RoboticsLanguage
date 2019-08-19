@@ -39,7 +39,7 @@ def output(code, parameters):
   # delete all atributes except for 'name'
   for element in xml_copy.iter():
     name = ''
-    if 'name' in element.attrib.keys():
+    if 'name' in list(element.attrib.keys()):
       name = element.attrib['name']
 
     element.attrib.clear()

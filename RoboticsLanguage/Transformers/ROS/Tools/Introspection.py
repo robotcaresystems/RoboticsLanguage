@@ -24,16 +24,16 @@ import inspect
 def printMsgInfo(type, indent=''):
   '''Print a tree structure of the message type'''
 
-  names = filter(lambda x: x[0] == '__slots__', inspect.getmembers(type))[0][1]
-  types = filter(lambda x: x[0] == '_slot_types', inspect.getmembers(type))[0][1]
+  names = [x for x in inspect.getmembers(type) if x[0] == '__slots__'][0][1]
+  types = [x for x in inspect.getmembers(type) if x[0] == '_slot_types'][0][1]
 
   for t, n in zip(types, names):
     if '/' in t:
-      print indent + n
+      print(indent + n)
       printMsgInfo(getattr(__import__(t.split('/')[0] + '.msg', globals(),
                                        locals(), [t.split('/')[1]]), t.split('/')[1]), indent + '  ')
     else:
-      print indent + n + ': ' + t
+      print(indent + n + ': ' + t)
 
 
 def getMsgInfo(type):
@@ -41,8 +41,8 @@ def getMsgInfo(type):
 
   elements = {}
 
-  names = filter(lambda x: x[0] == '__slots__', inspect.getmembers(type))[0][1]
-  types = filter(lambda x: x[0] == '_slot_types', inspect.getmembers(type))[0][1]
+  names = [x for x in inspect.getmembers(type) if x[0] == '__slots__'][0][1]
+  types = [x for x in inspect.getmembers(type) if x[0] == '_slot_types'][0][1]
 
   for t, n in zip(types, names):
     if '/' in t:

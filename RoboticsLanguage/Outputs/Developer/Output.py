@@ -42,7 +42,7 @@ def prepareGroups(parameters):
   '''group keyword by package'''
   groups = {}
 
-  for keyword, value in parameters['language'].iteritems():
+  for keyword, value in parameters['language'].items():
     group, module = tuple(value['package'].split(':'))
     if not Utilities.isDefined(groups, '/' + group + '/' + module):
       dpath.util.new(groups, '/' + group + '/' + module, [])
@@ -67,7 +67,7 @@ def output(code, parameters):
 
   paths = [parameters['globals']['RoboticsLanguagePath'], parameters['globals']['plugins']]
 
-  outputs = parameters['Outputs'].keys()
+  outputs = list(parameters['Outputs'].keys())
 
   for type in ['Inputs', 'InputsJSON', 'InputsYAML', 'InputsXML', 'Transformers', 'Outputs']:
     if parameters['Outputs']['Developer']['create'][type] is not '':
@@ -122,8 +122,8 @@ def output(code, parameters):
                           output_file.write(include_template.format(element))
                         Utilities.logging.debug('Wrote file ' + file_name)
 
-      print('Created ' + module_type + ' plugin "' + filepatterns['name'] + '" in folder ' +
-            parameters['globals']['plugins'] + '/' + module_type + '/' + filepatterns['name'])
+      print(('Created ' + module_type + ' plugin "' + filepatterns['name'] + '" in folder ' +
+            parameters['globals']['plugins'] + '/' + module_type + '/' + filepatterns['name']))
 
       # clean cache in disk
       Utilities.removeCache()

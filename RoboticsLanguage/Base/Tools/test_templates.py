@@ -52,7 +52,7 @@ def templateEngine(code, parameters, output_name, file_patterns=default_file_pat
 
 
   # search for the same file in transformers plugins to include as plugins
-  for file in files_to_process.keys():
+  for file in list(files_to_process.keys()):
     for module in transformers:
       if os.path.isfile(path + 'Transformers/' + module + '/Templates/Outputs/' + output + file):
         # save the include name
@@ -69,7 +69,7 @@ def templateEngine(code, parameters, output_name, file_patterns=default_file_pat
     files_to_process[file]['group_function'] = CreateGroupFunction(files_to_process[file]['elements'])
 
   # all the data is now ready, time to apply templates
-  for file in files_to_process.keys():
+  for file in list(files_to_process.keys()):
 
     # start the jinja environment with special delimiters
     env = Environment(loader=FileSystemLoader('/'), **delimeters)
@@ -92,5 +92,5 @@ def templateEngine(code, parameters, output_name, file_patterns=default_file_pat
 
     # render the combined template
     print('-----------------------------------')
-    print(preprocessed_template.render(message="hello", number="3"))
+    print((preprocessed_template.render(message="hello", number="3")))
     print('-----------------------------------')

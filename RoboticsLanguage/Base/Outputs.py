@@ -39,12 +39,12 @@ def Generate(code, parameters):
   # get a list of the outputs soted by order
   sorted_outputs = prepareOutputs(parameters)
 
-  for output in map(lambda k: k['name'], sorted_outputs):
+  for output in [k['name'] for k in sorted_outputs]:
 
     if output in outputs:
 
       # Checks if the plugin can run without code
-      if (code is not None) or (code is None and 'requiresCode' in parameters['manifesto']['Outputs'][output].keys() and not parameters['manifesto']['Outputs'][output]['requiresCode']):
+      if (code is not None) or (code is None and 'requiresCode' in list(parameters['manifesto']['Outputs'][output].keys()) and not parameters['manifesto']['Outputs'][output]['requiresCode']):
 
         # update the compiler step
         parameters = Utilities.incrementCompilerStep(parameters, 'Outputs', output)

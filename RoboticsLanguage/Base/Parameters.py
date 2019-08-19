@@ -330,12 +330,12 @@ command_line_flags = {
     'globals:language': {
         'longFlag': 'language',
         'description': 'Spoken language used for the robotics language file',
-        'choices': languages.part1.keys()
+        'choices': list(languages.part1.keys())
     },
     'globals:compilerLanguage': {
         'longFlag': 'compiler-language',
         'description': 'Spoken language used by the compiler',
-        'choices': languages.part1.keys()
+        'choices': list(languages.part1.keys())
     },
 
     'errors': {'suppress': True},

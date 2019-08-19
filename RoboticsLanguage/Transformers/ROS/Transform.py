@@ -20,7 +20,7 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 from rospkg import distro
-from Tools import Topics, Types, RosMessage, RosClass
+from .Tools import Topics, Types, RosMessage, RosClass
 
 
 def transform(code, parameters):

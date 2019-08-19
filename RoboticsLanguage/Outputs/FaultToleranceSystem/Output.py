@@ -27,7 +27,7 @@ def output(code, parameters):
   node_name_underscore = Utilities.underscore(parameters['node']['name'])
 
   # get the path to deploy the code
-  if 'FaultToleranceSystem' in parameters['globals']['deployOutputs'].keys():
+  if 'FaultToleranceSystem' in list(parameters['globals']['deployOutputs'].keys()):
     deploy_path = parameters['globals']['deployOutputs']['FaultToleranceSystem']
   else:
     deploy_path = parameters['globals']['deploy']

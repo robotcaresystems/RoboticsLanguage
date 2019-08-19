@@ -45,13 +45,13 @@ def makeTypeRelationsGrammar(type_relations):
   natural = 'natural' divider
   '''
   text = ''
-  keys = type_relations.keys()
+  keys = list(type_relations.keys())
 
   # for each children
-  for type, value in type_relations.iteritems():
-    if len(value.keys()) > 0:
+  for type, value in type_relations.items():
+    if len(list(value.keys())) > 0:
       # if children exist, then add relationships to grammar
-      text += type + ' = ( ' + '|'.join(value.keys()) + ' | \'' + type + '\' ) divider\n'
+      text += type + ' = ( ' + '|'.join(list(value.keys())) + ' | \'' + type + '\' ) divider\n'
     else:
       # if not just define the type
       text += type + ' = \'' + type + '\' divider\n'

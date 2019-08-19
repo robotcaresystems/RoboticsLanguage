@@ -40,7 +40,7 @@ def runPreparations(code, parameters):
   node_name_underscore = Utilities.underscore(parameters['node']['name'])
 
   # get the path to deploy the code
-  if 'RosPy' in parameters['globals']['deployOutputs'].keys():
+  if 'RosPy' in list(parameters['globals']['deployOutputs'].keys()):
     deploy_path = parameters['globals']['deployOutputs']['RosPy']
   else:
     deploy_path = parameters['globals']['deploy']

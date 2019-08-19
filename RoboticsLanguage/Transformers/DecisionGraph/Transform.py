@@ -31,7 +31,7 @@ def transform(code, parameters):
 
       ros_topic.text = '/decision_graphs/' + node_name + '/' + name
 
-      map(lambda x: definitions.insert(0, x), copy.deepcopy(graph.getchildren()))
+      list(map(lambda x: definitions.insert(0, x), copy.deepcopy(graph.getchildren())))
 
       graph.getparent().remove(graph)
   except Exception as e:

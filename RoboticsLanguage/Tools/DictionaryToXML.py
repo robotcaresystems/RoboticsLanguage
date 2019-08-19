@@ -12,7 +12,7 @@ Supports item (`int`, `float`, `long`, `decimal.Decimal`, `bool`, `str`, `unicod
 This module works with both Python 2 and 3.
 """
 
-from __future__ import unicode_literals
+
 
 __version__ = '1.7.4'
 version = __version__
@@ -28,13 +28,13 @@ LOG = logging.getLogger("dicttoxml")
 
 # python 3 doesn't have a unicode type
 try:
-    unicode
+    str
 except:
-    unicode = str
+    str = str
 
 # python 3 doesn't have a long type
 try:
-    long
+    int
 except:
     long = int
 
@@ -42,7 +42,7 @@ except:
 def set_debug(debug=True, filename='dicttoxml.log'):
     if debug:
         import datetime
-        print('Debug mode is on. Events are logged at: %s' % (filename))
+        print(('Debug mode is on. Events are logged at: %s' % (filename)))
         logging.basicConfig(filename=filename, level=logging.INFO)
         LOG.info('\nLogging session starts: %s' % (
             str(datetime.datetime.today()))
@@ -58,9 +58,9 @@ def unicode_me(something):
     for `str()`, but `str()` doesn't take a second argument, hence this kludge.
     """
     try:
-        return unicode(something, 'utf-8')
+        return str(something, 'utf-8')
     except:
-        return unicode(something)
+        return str(something)
 
 
 ids = [] # initialize list of unique ids
@@ -105,7 +105,7 @@ def get_xml_type(val):
 
 
 def escape_xml(s):
-    if type(s) in (str, unicode):
+    if type(s) in (str, str):
         s = unicode_me(s) # avoid UnicodeDecodeError
         s = s.replace('&', '&amp;')
         s = s.replace('"', '&quot;')
@@ -117,7 +117,7 @@ def escape_xml(s):
 
 def make_attrstring(attr):
     """Returns an attribute string in the form key="val" """
-    attrstring = ' '.join(['%s="%s"' % (k, v) for k, v in attr.items()])
+    attrstring = ' '.join(['%s="%s"' % (k, v) for k, v in list(attr.items())])
     return '%s%s' % (' ' if attrstring != '' else '', attrstring)
 
 
@@ -176,7 +176,7 @@ def convert(obj, ids, attr_type, item_func, cdata, parent='root', namespace=''):
 
     item_name = item_func(parent)
 
-    if isinstance(obj, numbers.Number) or type(obj) in (str, unicode):
+    if isinstance(obj, numbers.Number) or type(obj) in (str, str):
         return convert_kv(item_name, obj, attr_type, cdata, namespace=namespace)
 
     if hasattr(obj, 'isoformat'):
@@ -207,7 +207,7 @@ def convert_dict(obj, ids, parent, attr_type, item_func, cdata, namespace=''):
 
     item_name = item_func(parent)
 
-    for key, val in obj.items():
+    for key, val in list(obj.items()):
         LOG.info('Looping inside convert_dict(): key="%s%s", val="%s", type(val)="%s"' % (
             unicode_me(namespace), unicode_me(key), unicode_me(val), type(val).__name__)
         )
@@ -216,7 +216,7 @@ def convert_dict(obj, ids, parent, attr_type, item_func, cdata, namespace=''):
 
         key, attr = make_valid_xml_name(key, attr)
 
-        if isinstance(val, numbers.Number) or type(val) in (str, unicode):
+        if isinstance(val, numbers.Number) or type(val) in (str, str):
             addline(convert_kv(key, val, attr_type, attr, cdata, namespace=namespace))
 
         elif hasattr(val, 'isoformat'): # datetime
@@ -273,7 +273,7 @@ def convert_list(items, ids, parent, attr_type, item_func, cdata, namespace=''):
             unicode_me(item), item_name, type(item).__name__)
         )
         attr = {} if not ids else { 'id': '%s_%s' % (this_id, i+1) }
-        if isinstance(item, numbers.Number) or type(item) in (str, unicode):
+        if isinstance(item, numbers.Number) or type(item) in (str, str):
             addline(convert_kv(item_name, item, attr_type, attr, cdata, namespace=namespace))
 
         elif hasattr(item, 'isoformat'): # datetime
@@ -353,7 +353,7 @@ def convert_bool(key, val, attr_type, attr={}, cdata=False, namespace=''):
     if attr_type:
         attr['type'] = get_xml_type(val)
     attrstring = make_attrstring(attr)
-    return '<%s%s%s>%s</%s%s>' % (namespace, key, attrstring, unicode(val).lower(), namespace, key)
+    return '<%s%s%s>%s</%s%s>' % (namespace, key, attrstring, str(val).lower(), namespace, key)
 
 
 def convert_none(key, val, attr_type, attr={}, cdata=False, namespace=''):

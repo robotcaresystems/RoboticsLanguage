@@ -31,6 +31,7 @@ import argcomplete
 from copy import copy
 from . import Utilities
 from . import Parameters
+from functools import reduce
 
 # paths to be searched automatically for parameters
 parameters_home_file = '.rol/parameters.yaml'
@@ -42,7 +43,7 @@ def generateArgparseArguments(parameters, flags):
   arguments = {}
   command_line_flags = {}
 
-  for key, value in flat.iteritems():
+  for key, value in flat.items():
     special_key = key.replace('-', ':')[1:]
     arguments[special_key] = {}
     arguments[special_key]['dest'] = key
@@ -51,7 +52,7 @@ def generateArgparseArguments(parameters, flags):
 
     arguments[special_key]['default'] = None  # value
 
-    if special_key in flags.keys():
+    if special_key in list(flags.keys()):
 
       if Utilities.isKeyDefined('longFlag', flags[special_key]):
         command_line_flags[special_key] = ['--' + flags[special_key]['longFlag']]
@@ -94,8 +95,8 @@ def generateArgparseArguments(parameters, flags):
 def prepareCommandLineArguments(parameters):
 
   # remember the available choices for outputs
-  Parameters.command_line_flags['globals:output']['choices'] = parameters['manifesto']['Outputs'].keys()
-  Parameters.command_line_flags['globals:input']['choices'] = parameters['manifesto']['Inputs'].keys()
+  Parameters.command_line_flags['globals:output']['choices'] = list(parameters['manifesto']['Outputs'].keys())
+  Parameters.command_line_flags['globals:input']['choices'] = list(parameters['manifesto']['Inputs'].keys())
 
   # create a subset of all the parameters
   subset = dict((x, parameters[x])
@@ -107,7 +108,7 @@ def prepareCommandLineArguments(parameters):
   # get all file formats
   file_formats = []
   file_package_name = []
-  for key, value in parameters['manifesto']['Inputs'].iteritems():
+  for key, value in parameters['manifesto']['Inputs'].items():
 
     # @TODO Add support to multiple file extensions per format
 
@@ -140,8 +141,8 @@ def runCommandLineParser(parameters, arguments, flags, file_formats, file_packag
 
   try:
     # get a list of flags where a file is not needed
-    list_of_no_file_needed_flags = reduce(lambda a, b: a + b, [flags[x] for x in dpath.util.search(
-        parameters, 'command_line_flags/*/fileNotNeeded')['command_line_flags'].keys()])
+    list_of_no_file_needed_flags = reduce(lambda a, b: a + b, [flags[x] for x in list(dpath.util.search(
+        parameters, 'command_line_flags/*/fileNotNeeded')['command_line_flags'].keys())])
   except:
     list_of_no_file_needed_flags = []
 
@@ -155,7 +156,7 @@ def runCommandLineParser(parameters, arguments, flags, file_formats, file_packag
 
   # the files to process
   parser.add_argument('filename',
-                      metavar='[ ' + ' | '.join(map(lambda x: 'file.' + x, file_formats)) + ' ] [ profile.yaml ... ]',
+                      metavar='[ ' + ' | '.join(['file.' + x for x in file_formats]) + ' ] [ profile.yaml ... ]',
                       type=argparse.FileType('r'),
                       nargs=nargs,
                       # default=sys.stdin,
@@ -176,7 +177,7 @@ def processFileParameters(args, file_formats, parameters):
 
   for element in args.filename:
     name, extension = os.path.splitext(os.path.abspath(element.name))
-    if extension.lower() in map(lambda x: '.' + x.lower(), file_formats):
+    if extension.lower() in ['.' + x.lower() for x in file_formats]:
       # it is a RoL file
       rol_files.append({'file': element, 'name': name + extension, 'type': extension[1:]})
     elif extension.lower() in ['.yaml', '.yml']:
@@ -222,7 +223,7 @@ def processFileParameters(args, file_formats, parameters):
 def processCommandLineParameters(args, file_formats, parameters):
   # select only the parameters that are referenced in the command line
   command_line_parameters_flat = {}
-  for key, value in vars(args).iteritems():
+  for key, value in vars(args).items():
     if value is not None:
       command_line_parameters_flat[key] = value
 
@@ -269,9 +270,9 @@ def processCommandLineParameters(args, file_formats, parameters):
 
 # @NOTE for speed should we `try/catch` or check first?
 def getTemplateTextForOutputPackage(parameters, keyword, package):
-  if package in parameters['language'][keyword]['output'].keys():
+  if package in list(parameters['language'][keyword]['output'].keys()):
     return parameters['language'][keyword]['output'][package], package
-  elif 'parent' in parameters['manifesto']['Outputs'][package].keys():
+  elif 'parent' in list(parameters['manifesto']['Outputs'][package].keys()):
     return getTemplateTextForOutputPackage(parameters, keyword, parameters['manifesto']['Outputs'][package]['parent'])
   else:
     raise
@@ -297,7 +298,7 @@ def loadRemainingParameters(parameters):
       language_module = __import__(module_name + '.Language', globals(), locals(), ['Language'])
 
       # append to each keyword in the language information from which package it comes from
-      for keyword in language_module.language.keys():
+      for keyword in list(language_module.language.keys()):
         language_module.language[keyword]['package'] = name_split[1] + ':' + name_split[2]
 
       # append language definitions
@@ -346,14 +347,14 @@ def loadRemainingParameters(parameters):
   parameters['errorHandling'] = error_handling
 
   # fill in the languages using each outputs default language structure
-  for keyword, value in parameters['language'].iteritems():
+  for keyword, value in parameters['language'].items():
     # make sure the `output` tag is defined
-    if 'output' in value.keys():
+    if 'output' in list(value.keys()):
       # find missing outputs
       missing = list(set(parameters['Outputs'].keys()) - set(value['output'].keys()))
     else:
       # all outputs are missing
-      missing = parameters['Outputs'].keys()
+      missing = list(parameters['Outputs'].keys())
       parameters['language'][keyword]['output'] = {}
 
     parameters['language'][keyword]['defaultOutput'] = []
@@ -380,33 +381,35 @@ def postCommandLineParser(parameters):
   # Version
   if parameters['globals']['version']:
     import pkg_resources
-    print('The Robotics Language version: ' + pkg_resources.get_distribution('RoboticsLanguage').version)
+    import platform
+    print(('The Robotics Language version: ' + pkg_resources.get_distribution('RoboticsLanguage').version))
+    print(('Python version: ' + platform.python_version()))
 
   # Package information
   if parameters['developer']['info']:
     import pkg_resources
-    print('The Robotics Language version: ' + pkg_resources.get_distribution('RoboticsLanguage').version)
-    for key, value in parameters['manifesto'].iteritems():
-      print key + ':'
-      for item, content in value.iteritems():
+    print(('The Robotics Language version: ' + pkg_resources.get_distribution('RoboticsLanguage').version))
+    for key, value in parameters['manifesto'].items():
+      print(key + ':')
+      for item, content in value.items():
         extra = ' *' if parameters['globals']['plugins'] in content['path'] else ''
-        print '  ' + item + ' (' + content['version'] + ')' + extra
+        print('  ' + item + ' (' + content['version'] + ')' + extra)
 
   # Detailed Package information
   if parameters['developer']['infoPackage'] != '':
     for type in ['Inputs', 'Transformers', 'Outputs']:
-      if parameters['developer']['infoPackage'] in parameters['manifesto'][type].keys():
+      if parameters['developer']['infoPackage'] in list(parameters['manifesto'][type].keys()):
         package = parameters['manifesto'][type][parameters['developer']['infoPackage']]
-        print('Package ' + type + '/' + parameters['developer']['infoPackage'])
-        print('Version: ' + package['version'])
-        print('Path: ' + package['path'])
+        print(('Package ' + type + '/' + parameters['developer']['infoPackage']))
+        print(('Version: ' + package['version']))
+        print(('Path: ' + package['path']))
         print('Information:')
         Utilities.printParameters(package['information'])
 
   # generate configuration script
   if parameters['developer']['makeConfigurationFile']:
     data = parameters['command_line_flags']
-    filtered = filter(lambda x: x[0:11] == 'Information' or 'suppress' not in data[x].keys() or data[x]['suppress'] is not True, data.iterkeys())
+    filtered = [x for x in iter(data.keys()) if x[0:11] == 'Information' or 'suppress' not in list(data[x].keys()) or data[x]['suppress'] is not True]
     commands = {x: dpath.util.get(parameters, x.replace(':', '/')) for x in filtered}
     commands_dictionary = Utilities.unflatDictionary(commands, ':')
     commands_dictionary['developer']['makeConfigurationFile'] = False
@@ -416,21 +419,21 @@ def postCommandLineParser(parameters):
       if os.path.isfile(os.path.expanduser('~/.rol/parameters.yaml')):
         with open(os.path.expanduser('~/.rol/parameters.yaml.template'), 'w') as output:
           yaml.dump(commands_dictionary, output, default_flow_style=False)
-        print 'Created the file "~/.rol/parameters.yaml.template".'
-        print 'Please modify this file and rename it to "~/.rol/parameters.yaml"'
+        print('Created the file "~/.rol/parameters.yaml.template".')
+        print('Please modify this file and rename it to "~/.rol/parameters.yaml"')
       else:
         with open(os.path.expanduser('~/.rol/parameters.yaml'), 'w') as output:
           yaml.dump(commands_dictionary, output, default_flow_style=False)
-        print 'Created the file "~/.rol/parameters.yaml".'
+        print('Created the file "~/.rol/parameters.yaml".')
     except Exception as e:
-      print 'Error creating configuration file!'
-      print e
+      print('Error creating configuration file!')
+      print(e)
 
   # Outputs dependency
   if parameters['developer']['showOutputDependency']:
     for package in parameters['manifesto']['Outputs']:
-      if 'parent' in parameters['manifesto']['Outputs'][package].keys():
-        print parameters['manifesto']['Outputs'][package]['parent'] + ' <- ' + package
+      if 'parent' in list(parameters['manifesto']['Outputs'][package].keys()):
+        print(parameters['manifesto']['Outputs'][package]['parent'] + ' <- ' + package)
 
   # Copy examples here
   if parameters['developer']['copyExamplesHere']:
@@ -471,7 +474,7 @@ def postCommandLineParser(parameters):
       cov.stop()
       cov.save()
       cov.html_report(directory=parameters['developer']['coverageFolder'], ignore_errors=True)
-      print('Coverage report is: ' + parameters['developer']['coverageFolder'] + '/index.html')
+      print(('Coverage report is: ' + parameters['developer']['coverageFolder'] + '/index.html'))
 
     # remove the parameters file
     os.remove('/tmp/parameters.pickle')
@@ -492,8 +495,8 @@ def postCommandLineParser(parameters):
     for name in glob.glob(parameters['globals']['RoboticsLanguagePath'] + '/*/*/Examples/*.*'):
       list_commands.append([command_line_arguments[0], name] + command_line_arguments[1:])
 
-    for command, index in zip(list_commands, range(len(list_commands))):
-      print '[' + str(index + 1) + '/' + str(len(list_commands)) + '] ' + command[1]
+    for command, index in zip(list_commands, list(range(len(list_commands)))):
+      print('[' + str(index + 1) + '/' + str(len(list_commands)) + '] ' + command[1])
       process = subprocess.Popen(command)
       process.wait()
 

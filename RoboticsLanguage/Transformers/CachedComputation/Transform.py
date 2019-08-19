@@ -24,9 +24,9 @@ from RoboticsLanguage.Tools import Serialise
 #     )
 
 
-def buildCachedComputationGraph(parameters, code, list, id=0, leafs=[]):
+def buildCachedComputationGraph(parameters, code, alist, id=0, leafs=[]):
 
-  for expression, index in zip(list, range(len(list))):
+  for expression, index in zip(alist, list(range(len(alist)))):
     id = id + 1
 
     if expression.tag != 'if':
@@ -54,7 +54,7 @@ def buildCachedComputationGraph(parameters, code, list, id=0, leafs=[]):
           expression.attrib['cacheInputs'] = ','.join(Utilities.unique(inputs_to_check.xpath('.//variable/@name')))
 
         # connect the cache to the next block being executed
-        if index == len(list) - 1:
+        if index == len(alist) - 1:
           # if unknow save it to a list
           leafs.append(id)
         else:
@@ -116,21 +116,21 @@ def printGraphvizDot(code, parameters):
     elements = code.xpath('/node/option[@name="cachedComputation"]//*[@cacheId]')
 
     # header of the graphviz plot
-    print 'digraph test{'
-    print '0 [shape="point"]'
-    print '0->1'
+    print('digraph test{')
+    print('0 [shape="point"]')
+    print('0->1')
 
     max_cache_next = -1
 
     for element in elements:
       # look for if clauses
       if element.attrib['cacheClass'] == 'if':
-        print element.attrib['cacheId'] + ' [shape = "diamond", color="blue", fontcolor="blue", label="' + \
+        print(element.attrib['cacheId'] + ' [shape = "diamond", color="blue", fontcolor="blue", label="' + \
             element.attrib['cacheId'] + ': if' + element.getchildren()[0].attrib['RoL'] + \
-            '" xlabel="{' + element.attrib['cacheInputs'] + '}"]'
-        print element.attrib['cacheId'] + '->' + element.attrib['cacheTrue'] + ' [label="yes"]'
+            '" xlabel="{' + element.attrib['cacheInputs'] + '}"]')
+        print(element.attrib['cacheId'] + '->' + element.attrib['cacheTrue'] + ' [label="yes"]')
         if 'cacheFalse' in element.attrib:
-          print element.attrib['cacheId'] + '->' + element.attrib['cacheFalse'] + ' [label="no"]'
+          print(element.attrib['cacheId'] + '->' + element.attrib['cacheFalse'] + ' [label="no"]')
 
       # look for computations
       if element.attrib['cacheClass'] == 'computation':
@@ -140,22 +140,22 @@ def printGraphvizDot(code, parameters):
         else:
           output = ''
 
-        print element.attrib['cacheId'] + ' [shape = "box", label="' + \
+        print(element.attrib['cacheId'] + ' [shape = "box", label="' + \
             element.attrib['cacheId'] + ': ' + element.attrib['RoL'] + \
-            '" xlabel="{' + element.attrib['cacheInputs'] + output + '}"]'
+            '" xlabel="{' + element.attrib['cacheInputs'] + output + '}"]')
         if 'cacheNext' in element.attrib:
-          print element.attrib['cacheId'] + '->' + element.attrib['cacheNext']
+          print(element.attrib['cacheId'] + '->' + element.attrib['cacheNext'])
           max_cache_next = max(max_cache_next, int(element.attrib['cacheNext']))
 
     # make the end node
     if max_cache_next > len(elements):
-      print str(max_cache_next) + ' [shape="point"]'
+      print(str(max_cache_next) + ' [shape="point"]')
     else:
-      print str(max_cache_next + 1) + ' [shape="point"]'
-      print str(max_cache_next) + '->' + str(max_cache_next + 1)
+      print(str(max_cache_next + 1) + ' [shape="point"]')
+      print(str(max_cache_next) + '->' + str(max_cache_next + 1))
 
     # done
-    print '}'
+    print('}')
 
 
 def transform(code, parameters):

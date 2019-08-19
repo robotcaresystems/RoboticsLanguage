@@ -49,7 +49,7 @@ def Apply(code, parameters):
     if transform_name not in parameters['developer']['skip']:
 
       # Checks if the plugin can run without code
-      if (code is not None) or (code is None and 'requiresCode' in parameters['manifesto']['Transformers'][transform_name].keys() and not parameters['manifesto']['Transformers'][transform_name]['requiresCode']):
+      if (code is not None) or (code is None and 'requiresCode' in list(parameters['manifesto']['Transformers'][transform_name].keys()) and not parameters['manifesto']['Transformers'][transform_name]['requiresCode']):
 
         # update the compiler step
         parameters = Utilities.incrementCompilerStep(parameters, 'Transformers', transform_name)

@@ -14,7 +14,7 @@ from RoboticsLanguage.Base import Utilities
 
 def transform(code, parameters):
 
-  if len(filter(lambda x: isinstance(x, basestring) and x != '', parameters['Outputs']['Developer']['create'].itervalues())) > 0:
+  if len([x for x in iter(parameters['Outputs']['Developer']['create'].values()) if isinstance(x, str) and x != '']) > 0:
     if isinstance(parameters['globals']['output'], list):
       parameters['globals']['output'].append('Developer')
     else:

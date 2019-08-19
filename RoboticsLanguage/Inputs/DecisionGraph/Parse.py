@@ -194,7 +194,7 @@ def parse(text, parameters):
 
   # add functions for terminal branches
   for element in nodes:
-    if 'definition' not in nodes[element].keys():
+    if 'definition' not in list(nodes[element].keys()):
       function_definition = etree.SubElement(functions, 'function_definition', attrib={'name': prefix + element})
       function_content = etree.SubElement(function_definition, 'function_content')
       etree.SubElement(function_content, 'function', attrib={'name': element})
@@ -204,12 +204,12 @@ def parse(text, parameters):
 
   # add unique id's to nodes and arcs
   # map(lambda (x, y): x.update({'id': y}), zip(arcs, range(len(arcs))))
-  map(lambda (x, y): x.update({'id': y}), zip(
-      nodes.itervalues(), range(len(nodes))))
+  list(map(lambda x_y: x_y[0].update({'id': x_y[1]}), list(zip(
+      iter(nodes.values()), list(range(len(nodes)))))))
 
   # add from and to id's to arcs
-  map(lambda x: x.update({'from': nodes[x['begin']]['id']}), arcs)
-  map(lambda x: x.update({'to': nodes[x['end']]['id']}), arcs)
+  list(map(lambda x: x.update({'from': nodes[x['begin']]['id']}), arcs))
+  list(map(lambda x: x.update({'to': nodes[x['end']]['id']}), arcs))
 
   parameters['Transformers']['DecisionGraph']['graphs'][name] = {}
   parameters['Transformers']['DecisionGraph']['graphs'][name]['nodes'] = nodes

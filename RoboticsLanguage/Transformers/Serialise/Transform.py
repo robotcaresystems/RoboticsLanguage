@@ -28,8 +28,8 @@ def transform(code, parameters):
 
 
   # look for all variables with an assign function
-  for variable, value in parameters['Transformers']['Base']['variables'].iteritems():
-    if 'assign' in value.keys():
+  for variable, value in parameters['Transformers']['Base']['variables'].items():
+    if 'assign' in list(value.keys()):
       for assignment in code.xpath('//assign/variable[@name="' + variable + '"]/..'):
         assignment.attrib['assignFunction'] = 'true'
 

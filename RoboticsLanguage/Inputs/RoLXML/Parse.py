@@ -29,7 +29,7 @@ import sys
 
 
 def nodeParametersToDictionary(xml):
-  return {'node': {key: value.text for (key, value) in Utilities.optionalArguments(xml).iteritems()}}
+  return {'node': {key: value.text for (key, value) in Utilities.optionalArguments(xml).items()}}
 
 
 def parse(text, parameters):

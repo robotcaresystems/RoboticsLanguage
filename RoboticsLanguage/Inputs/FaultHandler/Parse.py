@@ -53,7 +53,7 @@ def parse(text, parameters):
     # parse generated rol code
     code, parameters = RoL.parse('block(' + rol_code + ')', parameters)
   except Exception as e:
-    print e
+    print(e)
 
   if parameters['Inputs']['FaultHandler']['showXML']:
     Utilities.printCode(code, parameters)

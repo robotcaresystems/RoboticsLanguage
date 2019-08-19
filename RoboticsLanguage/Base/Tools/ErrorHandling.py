@@ -54,7 +54,7 @@ def tryMessageInLanguage(parameters, key):
 
 
 def tryInLanguage(text, language):
-  if language in text.keys():
+  if language in list(text.keys()):
     return text[language]
   else:
     # revert to english
@@ -69,7 +69,7 @@ def default_error_message(parameters):
 def fileLineNumberToLine(filename, line_number):
   '''given a file name and a line number, returns the text line'''
   with open(filename) as file:
-    line = [next(file) for x in xrange(line_number)][-1]
+    line = [next(file) for x in range(line_number)][-1]
   return line
 
 
@@ -109,7 +109,7 @@ def tryToProceed():
 
 def handler(parameters, key='default', **options):
   # get the logger level if defined. If not, default to error
-  level = options['level'] if 'level' in options.keys() else 'error'
+  level = options['level'] if 'level' in list(options.keys()) else 'error'
 
   try:
     # create a message
@@ -124,7 +124,7 @@ def handler(parameters, key='default', **options):
   Utilities.logErrors(message, key, parameters)
 
   # apply actions
-  if 'action' in options.keys() and not parameters['developer']['ignoreErrors']:
+  if 'action' in list(options.keys()) and not parameters['developer']['ignoreErrors']:
     if options['action'] == 'stop':
       # stop the RoL script
       sys.exit(1)
@@ -140,7 +140,7 @@ def exception(e, parameters, key='default', **options):
   except Exception as e:
 
     # get the logger level if defined. If not, default to error
-    level = options['level'] if 'level' in options.keys() else 'error'
+    level = options['level'] if 'level' in list(options.keys()) else 'error'
 
     try:
       # try the desired exception
@@ -163,7 +163,7 @@ def exception(e, parameters, key='default', **options):
     Utilities.logErrors(message, key, parameters, exception=e)
 
     # apply actions
-    if 'action' in options.keys() and not parameters['developer']['ignoreErrors']:
+    if 'action' in list(options.keys()) and not parameters['developer']['ignoreErrors']:
       if options['action'] == 'stop':
         # stop the RoL script
         sys.exit(1)

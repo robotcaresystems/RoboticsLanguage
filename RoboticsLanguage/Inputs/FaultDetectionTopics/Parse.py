@@ -30,7 +30,7 @@ from RoboticsLanguage.Inputs.RoL import Parse
 def getType(value):
   mapping = {'str': 'Strings', 'int': 'Integers', 'float': 'Reals', 'bool': 'Booleans'}
 
-  return mapping[filter(lambda x: type(value) is x, [bool, int, float, str])[0].__name__]
+  return mapping[[x for x in [bool, int, float, str] if type(value) is x][0].__name__]
 
 
 def convertParameters(input):
@@ -38,7 +38,7 @@ def convertParameters(input):
 
   # extract parameters
   output['parameters'] = []
-  for key, value in input['parameters'].iteritems():
+  for key, value in input['parameters'].items():
     type = getType(value)
     if type == 'Strings':
       value = '"' + value + '"'
@@ -46,7 +46,7 @@ def convertParameters(input):
 
   # extract topics
   output['topics'] = []
-  for key, value in input['topics'].iteritems():
+  for key, value in input['topics'].items():
     [name, type] = value.split(' ')
     output['topics'].append({'variable': key, 'type': type, 'name': name})
 

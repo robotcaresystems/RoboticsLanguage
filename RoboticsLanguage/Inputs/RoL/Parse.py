@@ -39,7 +39,7 @@ import funcy
 # @TODO generalise when RoL parameters become dictionaries
 def nodeParametersToDictionary(xml):
   '''Extracts the optional parameters given in the `node` function and adds them to the parameters dictionary'''
-  return {'node': {key: value.text for (key, value) in Utilities.optionalArguments(xml).iteritems()}}
+  return {'node': {key: value.text for (key, value) in Utilities.optionalArguments(xml).items()}}
 
 
 @Utilities.cache_in_disk
@@ -171,7 +171,7 @@ def parse(text, parameters):
 
   # @NOTE could not pickle the language itself to cache. Is there a way to solve this?
   # create the grammar or load cached
-  if 'RoL' in parameters['parsing']['grammars'].keys():
+  if 'RoL' in list(parameters['parsing']['grammars'].keys()):
     language = parameters['parsing']['grammars']['RoL']
   else:
     language = parsley.makeGrammar(grammar, {'xml': Utilities.xml,

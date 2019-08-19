@@ -34,7 +34,7 @@ def Parse(file_name, file_type, parameters):
     # save the source code in the parameters
     parameters['text'] = text
 
-    for key, value in parameters['manifesto']['Inputs'].iteritems():
+    for key, value in parameters['manifesto']['Inputs'].items():
       # @TODO Add support to multiple file extensions per format, e.g.:
       #       if file_type.lower() in value['fileFormat'].lower():
       if ((file_type.lower() == value['fileFormat'].lower() and parameters['globals']['input'] == '') or (parameters['globals']['input'] == value['packageShortName'])):

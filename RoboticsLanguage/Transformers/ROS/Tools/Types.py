@@ -41,8 +41,8 @@ def process(code, parameters):
       packages.append(ros_type.split('/')[0])
 
   # add message generation dependencies
-  map(lambda x: parameters['Transformers']['ROS']['messageDependencies'].add(x), message_dependency)
-  map(lambda x: parameters['Transformers']['ROS']['buildDependencies'].add(x), packages)
-  map(lambda x: parameters['Transformers']['ROS']['runDependencies'].add(x), packages)
+  list(map(lambda x: parameters['Transformers']['ROS']['messageDependencies'].add(x), message_dependency))
+  list(map(lambda x: parameters['Transformers']['ROS']['buildDependencies'].add(x), packages))
+  list(map(lambda x: parameters['Transformers']['ROS']['runDependencies'].add(x), packages))
 
   return code, parameters

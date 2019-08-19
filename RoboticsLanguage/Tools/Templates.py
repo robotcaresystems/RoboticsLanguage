@@ -88,7 +88,7 @@ def templateEngine(code, parameters, output=None,
 
   # check the deploy folder for the code generated
   if deploy_path is None:
-    if parameters['developer']['stepName'] in parameters['globals']['deployOutputs'].keys():
+    if parameters['developer']['stepName'] in list(parameters['globals']['deployOutputs'].keys()):
       deploy_path = parameters['globals']['deployOutputs'][parameters['developer']['stepName']]
     else:
       deploy_path = parameters['globals']['deploy']
@@ -104,7 +104,7 @@ def templateEngine(code, parameters, output=None,
     templates_paths = [templates_path]
 
 
-  transformers = [x.split('.')[-1] for x in filter(lambda x: 'Transformers' in x, parameters['globals']['loadOrder'])]
+  transformers = [x.split('.')[-1] for x in [x for x in parameters['globals']['loadOrder'] if 'Transformers' in x]]
 
   files_to_process = {}
   files_to_copy = []
@@ -123,7 +123,7 @@ def templateEngine(code, parameters, output=None,
           file_deploy_path = Utilities.replaceLast(Utilities.replaceFirst(file_full_path, templates_path, deploy_path), '.template', '')
 
           # apply file template names
-          for key, value in file_patterns.iteritems():
+          for key, value in file_patterns.items():
             file_deploy_path = file_deploy_path.replace('_' + key + '_', value)
 
           # save it
@@ -162,13 +162,13 @@ def templateEngine(code, parameters, output=None,
               new_files_to_copy.append(Utilities.replaceFirst(copy_file_name, transformer_path, deploy_path))
 
   # rename files acording to file pattern names
-  for key, value in file_patterns.iteritems():
+  for key, value in file_patterns.items():
     for i in range(len(new_files_to_copy)):
       new_files_to_copy[i] = new_files_to_copy[i].replace('_' + key + '_', value)
 
   # search for the same file in transformers plugins to include as plugins
   for parent_output in reversed(package_parents):
-    for file in files_to_process.keys():
+    for file in list(files_to_process.keys()):
       for module in transformers:
         if os.path.isfile(path + 'Transformers/' + module + '/Templates/Outputs/' + parent_output + '/' + file):
 
@@ -200,7 +200,7 @@ def templateEngine(code, parameters, output=None,
 
 
   # all the data is now ready, time to apply templates
-  for file in files_to_process.keys():
+  for file in list(files_to_process.keys()):
 
     if os.path.realpath(files_to_process[file]['full_path']) not in parameters['globals']['skipTemplateFiles']:
 
@@ -220,17 +220,17 @@ def templateEngine(code, parameters, output=None,
         # debug
         if parameters['developer']['intermediateTemplates']:
           if not parameters['globals']['noColours']:
-            print Utilities.color.BOLD
-            print Utilities.color.YELLOW
-          print '=============================================================================='
-          print 'File: ' + file
-          print 'Full path:' + files_to_process[file]['full_path']
-          print 'Deploy path:' + files_to_process[file]['deploy_path']
-          print '------------------------------------------------------------------------------'
+            print(Utilities.color.BOLD)
+            print(Utilities.color.YELLOW)
+          print('==============================================================================')
+          print('File: ' + file)
+          print('Full path:' + files_to_process[file]['full_path'])
+          print('Deploy path:' + files_to_process[file]['deploy_path'])
+          print('------------------------------------------------------------------------------')
           if not parameters['globals']['noColours']:
-            print Utilities.color.END
+            print(Utilities.color.END)
             try:
-              print(highlight(render, get_lexer_for_filename(files_to_process[file]['deploy_path']),Terminal256Formatter(style=Terminal256Formatter().style)))
+              print((highlight(render, get_lexer_for_filename(files_to_process[file]['deploy_path']),Terminal256Formatter(style=Terminal256Formatter().style))))
             except:
               print(render)
           else:
