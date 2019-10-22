@@ -1,0 +1,7 @@
+node(
+  name:'example generic',
+
+  initialise: block(
+    print('Generic')
+  )
+)
