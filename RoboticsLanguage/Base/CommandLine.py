@@ -382,6 +382,11 @@ def postCommandLineParser(parameters):
     import pkg_resources
     print('The Robotics Language version: ' + pkg_resources.get_distribution('RoboticsLanguage').version)
 
+  # Version
+  if parameters['developer']['showDeployPath']:
+    print(parameters['globals']['deploy'])
+
+
   # Package information
   if parameters['developer']['info']:
     import pkg_resources

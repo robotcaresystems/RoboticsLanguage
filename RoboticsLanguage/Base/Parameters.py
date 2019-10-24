@@ -79,6 +79,7 @@ parameters = {
         'coverage': False,
         'coverageFolder': os.path.expanduser('~') + '/.rol/coverage',
         'makeExamples': False,
+        'showDeployPath': False
     },
 
     'symbols':
@@ -147,6 +148,12 @@ command_line_flags = {
         'longFlag': 'show-output-dependencies',
         'fileNotNeeded': True,
         'description': 'Shows output package dependencies'
+    },
+    'developer:showDeployPath': {
+        'noArgument': True,
+        'longFlag': 'show-deploy-path',
+        'fileNotNeeded': True,
+        'description': 'Shows the generic deploy path used by rol'
     },
     'developer:makeConfigurationFile': {
         'noArgument': True,
