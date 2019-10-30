@@ -31,6 +31,7 @@ RUN pip install h5py
 RUN apt install -y ros-kinetic-rosbridge-server
 
 # install Robotics Language
+RUN echo "Installing rol..."
 RUN pip install --upgrade RoboticsLanguage
 
 # Create roboticslanguage user and add it to sudoers
@@ -60,8 +61,8 @@ RUN echo 'source /home/roboticslanguage/catkin_ws/devel/setup.bash &> /dev/null'
 RUN echo '"\eOA": history-search-backward\n"\eOB": history-search-forward\n"\e[A": history-search-backward\n"\e[B": history-search-forward\n' > /home/roboticslanguage/.inputrc
 
 
-# set the development path
-RUN rol --version
+# create the parameters file
+RUN rol --version -v info
 RUN yq w -i /home/roboticslanguage/.rol/parameters.yaml globals.deploy /home/roboticslanguage/catkin_ws/src/
 
 # copy examples

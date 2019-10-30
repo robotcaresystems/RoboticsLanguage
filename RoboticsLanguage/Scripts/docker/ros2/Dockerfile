@@ -39,6 +39,12 @@ RUN echo 'roboticslanguage:me' | chpasswd
 RUN usermod -a -G sudo,dialout roboticslanguage
 RUN echo "roboticslanguage ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers #roboticslanguage can always sudo without password
 
+# install yq
+RUN apt install software-properties-common -y
+RUN add-apt-repository ppa:rmescandon/yq
+RUN apt update
+RUN apt install yq -y
+
 # set default user when running the container
 USER roboticslanguage
 WORKDIR /home/roboticslanguage
@@ -61,9 +67,10 @@ RUN echo 'source /home/roboticslanguage/ros2_ws/install/setup.bash' >> /home/rob
 
 
 
-# set the development path
-RUN mkdir -p /home/roboticslanguage/.rol
-RUN echo 'globals:\n  deploy: /root/ros2_ws/src/deploy\n  output: "Ros2Cpp"' > /home/roboticslanguage/.rol/parameters.yaml
+# create the parameters file
+RUN rol --version -v info
+RUN yq w -i /home/roboticslanguage/.rol/parameters.yaml globals.deploy /home/ros2_ws/src/deploy
+RUN yq w -i /home/roboticslanguage/.rol/parameters.yaml globals.output Ros2Cpp
 
 
 # copy examples
