@@ -152,17 +152,21 @@ def output(code, parameters):
   # ############ compile code #####################################################
   # if the flag compile is set then run catkin
   if parameters['globals']['compile']:
-    if parameters['Outputs']['RosCpp']['useColcon']:
+    if parameters['Outputs']['RosCpp']['rosBuildingEngine'] == 'colcon':
       command = ['colcon', 'build', '--packages-select', node_name_underscore]
-    else:
+
+    if parameters['Outputs']['RosCpp']['rosBuildingEngine'] == 'catkin':
       command = ['catkin', 'build', node_name_underscore]
 
-    Utilities.logging.debug("Compiling with: `" + ' '.join(command) + "` in folder " + deploy_path + '/..')
-    process = subprocess.Popen(command, cwd=deploy_path + '/..')
-    process.wait()
+    if parameters['Outputs']['RosCpp']['rosBuildingEngine'] != '':
+      Utilities.logging.debug("Compiling with: `" + ' '.join(command) + "` in folder " + deploy_path + '/..')
+      process = subprocess.Popen(command, cwd=deploy_path + '/..')
+      process.wait()
 
-    if process.returncode > 0:
-      Utilities.logging.error("Compilation failed!!!")
+      if process.returncode > 0:
+        Utilities.logging.error("Compilation failed!!!")
+    else:
+      Utilities.logging.error("Building engine note defined! (catkin/colcon?) Please check the RosCpp configuration parameters in rol.")
 
   # ############ edit code #####################################################
   # if the flag edit is set then open in editor

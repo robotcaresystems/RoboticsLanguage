@@ -39,6 +39,8 @@ class TestBaseTransformations(unittest.TestCase):
     with open('/tmp/parameters.pickle', 'rb') as file:
       parameters = cloudpickle.load(file)
 
+    parameters['globals']['output'] = 'RosCpp'
+
     # apply transformations
     xml_code, parameters = Transformations.Apply(xml, parameters)
 

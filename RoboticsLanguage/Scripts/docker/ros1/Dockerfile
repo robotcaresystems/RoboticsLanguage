@@ -39,6 +39,12 @@ RUN echo 'roboticslanguage:me' | chpasswd
 RUN usermod -a -G sudo,dialout roboticslanguage
 RUN echo "roboticslanguage ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers #roboticslanguage can always sudo without password
 
+# install yq
+RUN apt install software-properties-common -y
+RUN add-apt-repository ppa:rmescandon/yq
+RUN apt update
+RUN apt install yq -y
+
 # set default user when running the container
 USER roboticslanguage
 WORKDIR /home/roboticslanguage
@@ -53,9 +59,10 @@ RUN echo 'source /home/roboticslanguage/catkin_ws/devel/setup.bash &> /dev/null'
 
 RUN echo '"\eOA": history-search-backward\n"\eOB": history-search-forward\n"\e[A": history-search-backward\n"\e[B": history-search-forward\n' > /home/roboticslanguage/.inputrc
 
+
 # set the development path
-RUN mkdir -p /home/roboticslanguage/.rol
-RUN echo 'globals:\n  deploy: /home/roboticslanguage/catkin_ws/src/' > /home/roboticslanguage/.rol/parameters.yaml
+RUN rol --version
+RUN yq w -i /home/roboticslanguage/.rol/parameters.yaml globals.deploy /home/roboticslanguage/catkin_ws/src/
 
 # copy examples
 RUN mkdir -p /home/roboticslanguage/examples

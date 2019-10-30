@@ -1,7 +1,7 @@
 #
 #   This is the Robotics Language compiler
 #
-#   Parameters.py: Definition of the parameters for this package
+#   __init__.py: Initialisation of the package
 #
 #   Created on: June 22, 2017
 #       Author: Gabriel A. D. Lopes
@@ -19,19 +19,3 @@
 #   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
-
-
-parameters = {
-    'globalIncludes': set(),
-    'localIncludes': set(),
-    'rosBuildingEngine': ''
-}
-
-command_line_flags = {
-    'globalIncludes': {'suppress': True},
-    'localIncludes': {'suppress': True},
-    'rosBuildingEngine': {
-        'longFlag': 'ros-building-engine-cpp',
-        'description': 'Use either the "colcon" system or "catkin" in c++'
-    }
-}

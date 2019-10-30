@@ -215,8 +215,35 @@ def processFileParameters(args, file_formats, parameters):
   home_file = os.path.expanduser('~') + '/' + parameters_home_file
   if os.path.isfile(home_file):
     parameter_files.insert(0, {'file': open(home_file, 'r'), 'name': home_file})
+    first_time = False
+  else:
+    first_time = True
 
-  return rol_files, parameter_files
+  return rol_files, parameter_files, first_time
+
+
+def runAllWizards(personalized_parameters, parameters):
+
+  for module_name in parameters['globals']['loadOrder']:
+
+    name_split = module_name.split('.')
+
+    # The parameters
+    try:
+      wizard_module = __import__(module_name + '.Wizard', globals(), locals(), ['Wizard'])
+
+      # run wizard function
+      personalized_parameters, parameters = wizard_module.wizard(personalized_parameters, parameters)
+      print('-----------')
+      print(personalized_parameters)
+
+    except Exception as e:
+      Utilities.logging.debug(e.__repr__())
+      pass
+
+  return personalized_parameters, parameters
+
+
 
 
 def processCommandLineParameters(args, file_formats, parameters):
@@ -234,7 +261,7 @@ def processCommandLineParameters(args, file_formats, parameters):
     Utilities.setLoggerLevel(command_line_parameters['globals']['verbose'])
 
   # check for files parameters
-  rol_files, parameter_files = processFileParameters(args, file_formats, parameters)
+  rol_files, parameter_files, first_time = processFileParameters(args, file_formats, parameters)
 
   # now concatenate all parameters starting with
   # 1. defaults from RoL and from modules (can be cached)
@@ -260,6 +287,21 @@ def processCommandLineParameters(args, file_formats, parameters):
   # Set the total number of plugins being processed
   parameters['developer']['progressTotal'] = 1 + \
       len(parameters['manifesto']['Transformers']) + len(parameters['globals']['output'])
+
+  # on the first time
+  if first_time:
+    personalized_parameters, parameters = runAllWizards({}, parameters)
+
+    # create rol folder and parameters file
+    Utilities.createFolder(os.path.expanduser('~/.rol'))
+    with open(os.path.expanduser('~/.rol/parameters.yaml'), 'w') as output:
+      yaml.dump(personalized_parameters, output, default_flow_style=False)
+
+    # warn the user
+    Utilities.logging.warning('Created parameters file "~/.rol/parameters.yaml".')
+
+    # remember if it is the first time the script is executed
+    parameters['globals']['firstTime'] = personalized_parameters
 
   if len(rol_files) == 0:
     return None, None, parameters
@@ -382,15 +424,20 @@ def postCommandLineParser(parameters):
     import pkg_resources
     print('The Robotics Language version: ' + pkg_resources.get_distribution('RoboticsLanguage').version)
 
+  # Version
+  if parameters['developer']['showDeployPath']:
+    print(parameters['globals']['deploy'])
+
+
   # Package information
   if parameters['developer']['info']:
     import pkg_resources
     print('The Robotics Language version: ' + pkg_resources.get_distribution('RoboticsLanguage').version)
     for key, value in parameters['manifesto'].iteritems():
-      print key + ':'
+      print(key + ':')
       for item, content in value.iteritems():
         extra = ' *' if parameters['globals']['plugins'] in content['path'] else ''
-        print '  ' + item + ' (' + content['version'] + ')' + extra
+        print('  ' + item + ' (' + content['version'] + ')' + extra)
 
   # Detailed Package information
   if parameters['developer']['infoPackage'] != '':
