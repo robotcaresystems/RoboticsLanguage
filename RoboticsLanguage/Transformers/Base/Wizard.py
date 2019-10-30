@@ -1,12 +1,11 @@
 #
 #   This is the Robotics Language compiler
 #
-#   Parameters.py: Definition of the parameters for this package
+#   Wizard.py: Setting up the parameters for this package automatically or with help
 #
-#   Created on: June 22, 2017
+#   Created on: 29 October, 2019
 #       Author: Gabriel A. D. Lopes
 #      Licence: Apache 2.0
-#    Copyright: 2014-2017 Robot Care Systems BV, The Hague, The Netherlands. All rights reserved.
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -19,19 +18,18 @@
 #   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
+import os
+from RoboticsLanguage.Base import Utilities
 
+def wizard(personalized_parameters, parameters):
 
-parameters = {
-    'globalIncludes': set(),
-    'localIncludes': set(),
-    'rosBuildingEngine': ''
-}
+  Utilities.logging.info('Running Base wizard...')
 
-command_line_flags = {
-    'globalIncludes': {'suppress': True},
-    'localIncludes': {'suppress': True},
-    'rosBuildingEngine': {
-        'longFlag': 'ros-building-engine-cpp',
-        'description': 'Use either the "colcon" system or "catkin" in c++'
-    }
-}
+  personalized_parameters['Outputs'] = {}
+  personalized_parameters['Inputs'] = {}
+  personalized_parameters['Transformers'] = {}
+  personalized_parameters['developer'] = {}
+  personalized_parameters['globals'] = {}
+  personalized_parameters['globals']['deploy'] = os.path.expanduser('~') + '/deploy/'
+
+  return personalized_parameters, parameters
