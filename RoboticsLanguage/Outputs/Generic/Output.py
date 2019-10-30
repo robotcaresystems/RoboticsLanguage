@@ -21,6 +21,10 @@ import yaml
 import json
 from RoboticsLanguage.Base import Utilities
 from RoboticsLanguage.Tools import Templates
+try:
+    from yaml import CLoader as Loader, CDumper as Dumper
+except ImportError:
+    from yaml import Loader, Dumper
 
 def output(code, parameters):
   Utilities.logging.info("Output generic...")
@@ -36,7 +40,7 @@ def output(code, parameters):
   if yamlInput != '':
       try:
         with open(yamlInput, 'r') as file:
-          parameters['data'] = yaml.load(file.read())
+          parameters['data'] = yaml.load(file.read(), Loader=Loader)
 
       except Exception as e:
         print('Error reading file: ' + yamlInput)
@@ -68,6 +72,7 @@ def output(code, parameters):
         file_patterns = parameters['data']['file_patters']
       else:
         file_patterns = {}
+
 
       # run template engine to generate code API
       if not Templates.templateEngine(code, parameters,
