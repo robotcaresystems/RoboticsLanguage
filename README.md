@@ -1,11 +1,13 @@
 
-[![PyPI version fury.io](https://badge.fury.io/py/RoboticsLanguage.svg)](https://pypi.python.org/pypi/RoboticsLanguage/) [![GitHub license](https://img.shields.io/github/license/robotcaresystems/RoboticsLanguage.svg)](https://github.com/robotcaresystems/RoboticsLanguage/blob/master/LICENSE) [![PyPI pyversions](https://img.shields.io/pypi/pyversions/RoboticsLanguage.svg)](https://pypi.python.org/pypi/RoboticsLanguage/) 
+[![PyPI version fury.io](https://badge.fury.io/py/RoboticsLanguage.svg)](https://pypi.python.org/pypi/RoboticsLanguage/) [![GitHub license](https://img.shields.io/github/license/robotcaresystems/RoboticsLanguage.svg)](https://github.com/robotcaresystems/RoboticsLanguage/blob/master/LICENSE) [![PyPI pyversions](https://img.shields.io/pypi/pyversions/RoboticsLanguage.svg)](https://pypi.python.org/pypi/RoboticsLanguage/)
 <!-- ![Docker Build Status](https://img.shields.io/docker/build/roboticslanguage/rol.svg) -->
 
 
 ![](RoboticsLanguage/Documentation/Assets/rol-logo.png)
 
 ## News
+
+- We will ge giving a [tutorial at IROS 2019 in Macau](https://abstractionlanguages.github.io/IROS2019/).
 
  - We presented a tutorial at [IEEE IRC 2019](http://irc.asia.edu.tw/2019/). [Slides are available here](Documentation/Tutorials/IEEE-IRC-2019/README.md).
  - We presented recently at the [AWS re:invent conference 2018](https://youtu.be/HAela66zov0?t=1692)
