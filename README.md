@@ -10,7 +10,10 @@
 - We will ge giving a [tutorial at IROS 2019 in Macau](https://abstractionlanguages.github.io/IROS2019/).
 
  - We presented a tutorial at [IEEE IRC 2019](http://irc.asia.edu.tw/2019/). [Slides are available here](Documentation/Tutorials/IEEE-IRC-2019/README.md).
- - We presented recently at the [AWS re:invent conference 2018](https://youtu.be/HAela66zov0?t=1692)
+
+ - We presented at the [Amazon reMARS conference 2019](https://youtu.be/AjclrL7Fe_A?t=1854)
+
+ - We presented at the [AWS re:invent conference 2018](https://youtu.be/HAela66zov0?t=1692)
 
 # What is the language of Robotics?
 
