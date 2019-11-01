@@ -40,6 +40,11 @@ manifesto = {
     {
         'AWSRobomakerHelloWorld':
         {
+            'Transformers': {
+                'ROS': {
+                    'useSimulationTime': True
+                }
+            },
             'Outputs':
             {
                 'RosCpp':
@@ -52,29 +57,10 @@ manifesto = {
                 'output': 'RosCpp',
                 'deployOutputs':
                 {
-                    'RosCpp': '/home/ubuntu/environment/robot_ws/src'
+                    'RosCpp': '/home/ubuntu/environment/HelloWorld/robot_ws/src'
                 }
             }
         }
-        ,
-                'AWSRobomaker':
-                {
-                    'Outputs':
-                    {
-                        'RosCpp':
-                        {
-                            'rosBuildingEngine': 'colcon'
-                        }
-                    },
-                    'globals':
-                    {
-                        'output': 'RosCpp',
-                        'deployOutputs':
-                        {
-                            'RosCpp': '/home/ubuntu/environment/robot_ws/src'
-                        }
-                    }
-                }
 
     }
 
