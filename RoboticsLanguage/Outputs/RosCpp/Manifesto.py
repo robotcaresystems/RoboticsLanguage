@@ -19,6 +19,7 @@
 #   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
+import os
 
 manifesto = {
     'packageName': 'ROS c++',
@@ -46,6 +47,27 @@ manifesto = {
             'email': 'info@robotcaresystems.com',
             'web': 'http://www.robotcaresystems.com',
             'telephone': '+31 88 111 00 90',
+        }
+    },
+    'environments':
+    {
+        'ROS1':
+        {
+            'Outputs':
+            {
+                'RosCpp':
+                {
+                    'rosBuildingEngine': 'catkin'
+                }
+            },
+            'globals':
+            {
+                'output': 'RosCpp',
+                'deployOutputs':
+                {
+                    'RosCpp': os.path.expanduser('~') + '/catkin_ws/src'
+                }
+            }
         }
     }
 }

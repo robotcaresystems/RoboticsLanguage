@@ -27,7 +27,8 @@ parameters = {
     'buildDependencies': set(),
     'runDependencies': set(),
     'messageDependencies': set(),
-    'distribution': ''
+    'distribution': '',
+    'useSimulationTime': False
 }
 
 command_line_flags = {
@@ -37,4 +38,10 @@ command_line_flags = {
     'runDependencies': {'suppress': True},
     'messageDependencies': {'suppress': True},
     'distribution': {'suppress': True},
+    'useSimulationTime': {
+        'longFlag': 'ros-use-simulation-time',
+        'noArgument': True,
+        'description': 'Uses simulation clock in ROS'
+    },
+
 }

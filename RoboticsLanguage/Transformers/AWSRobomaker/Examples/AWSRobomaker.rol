@@ -1,0 +1,7 @@
+node(
+  name:'example AWS Robomaker',
+
+  initialise: block(
+    print('AWSRobomaker')
+  )
+)

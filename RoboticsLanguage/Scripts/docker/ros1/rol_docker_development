@@ -7,7 +7,7 @@ ROL_PATH=`python -c "import os; import RoboticsLanguage; print os.path.dirname(o
 # remove rol
 # install rol using the mapping of the rol installation folder
 if [ ! "$(docker ps -q -f name=DevelopmentRoboticsLanguage)" ]; then
-  docker run -it --rm -v $ROL_PATH:/home/roboticslanguage/RoboticsLanguage --workdir=/home/roboticslanguage/RoboticsLanguage --name=DevelopmentRoboticsLanguage roboticslanguage/rol bash -c "sudo pip -q uninstall --yes RoboticsLanguage; cd /home/roboticslanguage/RoboticsLanguage; sudo pip install -e .; bash"
+  docker run -it --rm -v $ROL_PATH:/home/roboticslanguage/RoboticsLanguage --workdir=/home/roboticslanguage/RoboticsLanguage --name=DevelopmentRoboticsLanguage -p 9090:9090 -p 8000:80 roboticslanguage/rol bash -c "sudo pip -q uninstall --yes RoboticsLanguage; cd /home/roboticslanguage/RoboticsLanguage; sudo pip install -e .; bash"
 else
   docker exec -i -t DevelopmentRoboticsLanguage /bin/bash
 fi
