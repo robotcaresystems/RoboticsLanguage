@@ -75,12 +75,20 @@ node(
 The RoL is in practice an open compiler where users can develop their own languages by means of plug-ins. The RoL is programmed in python and uses XML as the internal abstract syntax tree.
 """
 
+
+long_description = """
+The Robotics Language (RoL) is an open extensible domain-specific (or model-based) language for robotics. RoL is an abstraction on top of ROS to efficiently and quickly develop ROS applications using a mathematics-centred language. RoL generates ROS c++ nodes, HTML interfaces, or any other elements.
+
+For more information see [the Robotics Language github repository](https://github.com/robotcaresystems/RoboticsLanguage)
+
+"""
+
 path = os.path.abspath(os.path.dirname(__file__))+'/RoboticsLanguage'
 result = [os.path.join(dp, f) for dp, dn, filenames in os.walk(path) for f in filenames]
 
 
 setup(name='RoboticsLanguage',
-      version='0.3.22',
+      version='0.3.25',
       description='The Robotics Language',
       long_description=long_description,
       long_description_content_type='text/markdown',
@@ -99,6 +107,8 @@ setup(name='RoboticsLanguage',
                'RoboticsLanguage/Scripts/docker/ros1/rol_docker_development',
                'RoboticsLanguage/Scripts/docker/ros2/rol2_docker',
                'RoboticsLanguage/Scripts/docker/ros2/rol2_docker_development',
+               'RoboticsLanguage/Scripts/docker/AWSRobomaker/rol_aws_docker',
+               'RoboticsLanguage/Scripts/docker/AWSRobomaker/rol_aws_docker_development',
                ],
       install_requires=[
           'parsley', 'argparse', 'argcomplete', 'jinja2', 'dpath', 'coloredlogs', 'lxml', 'iso-639', 'funcy', 'dill', 'pygments', 'fso', 'pyyaml', 'autopep8', 'cloudpickle', 'coverage'

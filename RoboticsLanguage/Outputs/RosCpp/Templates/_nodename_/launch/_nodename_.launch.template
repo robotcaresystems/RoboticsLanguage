@@ -10,6 +10,10 @@
      THIS FILE WAS AUTOMATICALLY GENERATED USING THE ROBOTICS LANGUAGE
 -->
 <launch>
+      {% if parameters.Transformers.ROS.useSimulationTime %}
+        <arg name="use_sim_time" default="true"/>
+        <param name="use_sim_time" value="$(arg use_sim_time)"/>
+      {% endif %}
 
         <node name="{{parameters.node.name|underscore}}" pkg="{{parameters.node.name|underscore}}" type="{{parameters.node.name|underscore}}" output="screen">
         </node>

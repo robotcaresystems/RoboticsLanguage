@@ -96,6 +96,7 @@ def prepareCommandLineArguments(parameters):
   # remember the available choices for outputs
   Parameters.command_line_flags['globals:output']['choices'] = parameters['manifesto']['Outputs'].keys()
   Parameters.command_line_flags['globals:input']['choices'] = parameters['manifesto']['Inputs'].keys()
+  Parameters.command_line_flags['globals:setEnvironment']['choices'] = sum([ x.keys() for x in dpath.util.values(parameters,'manifesto/*/*/environments')],[])
 
   # create a subset of all the parameters
   subset = dict((x, parameters[x])
@@ -234,8 +235,6 @@ def runAllWizards(personalized_parameters, parameters):
 
       # run wizard function
       personalized_parameters, parameters = wizard_module.wizard(personalized_parameters, parameters)
-      print('-----------')
-      print(personalized_parameters)
 
     except Exception as e:
       Utilities.logging.debug(e.__repr__())
@@ -424,9 +423,45 @@ def postCommandLineParser(parameters):
     import pkg_resources
     print('The Robotics Language version: ' + pkg_resources.get_distribution('RoboticsLanguage').version)
 
-  # Version
+  # Deploy path
   if parameters['developer']['showDeployPath']:
     print(parameters['globals']['deploy'])
+
+  # environments
+  if parameters['globals']['setEnvironment'] != '':
+    for environment in dpath.util.values(parameters,'manifesto/*/*/environments'):
+      if parameters['globals']['setEnvironment'] in environment.keys():
+
+        parameters_filename = os.path.expanduser('~') + '/.rol/parameters.yaml'
+
+        try:
+          if os.path.exists(parameters_filename):
+            with open(parameters_filename, 'r') as file:
+              # read current environment
+              current_environment = yaml.safe_load(file)
+
+            # update environment with new definitions
+            new_environment = Utilities.mergeDictionaries(environment[parameters['globals']['setEnvironment']], current_environment)
+
+            # backup old parameters
+            old_parameters_filename = Utilities.getNonexistantPath(parameters_filename)
+            shutil.move(parameters_filename, old_parameters_filename)
+          else:
+            # copy environment
+            new_environment = environment[parameters['globals']['setEnvironment']]
+
+          # create new parameters file
+          with open(parameters_filename, 'w') as file:
+            # read current environment
+            file.write(yaml.safe_dump(new_environment, default_flow_style=False))
+
+          print("Create new parameters file at '" + parameters_filename + "'.\nOld parameters file saved in '"+ old_parameters_filename + "'")
+
+        except Exception as e:
+          Utilities.logging.warning('Unable to set environment to "' + parameters['globals']['setEnvironment'] + '". Please check the permissions of the file "' + parameters_filename + '"')
+          print(e)
+
+
 
 
   # Package information

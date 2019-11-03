@@ -49,7 +49,8 @@ parameters = {
         'loadOrder': [],
         'skipCopyFiles': [],
         'skipTemplateFiles': [],
-        'noColours': False
+        'noColours': False,
+        'setEnvironment':'',
     },
 
     'developer': {
@@ -250,6 +251,12 @@ command_line_flags = {
         'noArgument': True,
         'fileNotNeeded': True,
         'description': 'Shows the version of the Robotics Language and exit.'
+    },
+    'globals:setEnvironment': {
+        'longFlag': 'set-environment',
+        'fileNotNeeded': True,
+        'description': 'Sets a pre-defined environment in the "~/.rol/parameters.yaml" file.',
+        'choices': []
     },
     'globals:output': {
         'flag': 'o',

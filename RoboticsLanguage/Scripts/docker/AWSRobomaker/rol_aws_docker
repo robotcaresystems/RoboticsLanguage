@@ -1,0 +1,12 @@
+#!/bin/bash
+
+if [ ! "$(docker ps -q -f name=AWSRoboticsLanguage)" ]; then
+  docker run -it --rm --name=AWSRoboticsLanguage \
+    --env="DISPLAY" \
+    --env="QT_X11_NO_MITSHM=1" \
+    --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
+    -p 9090:9090 -p 8000:80 \
+    roboticslanguage/aws bash
+else
+  docker exec -i -t AWSRoboticsLanguage /bin/bash
+fi

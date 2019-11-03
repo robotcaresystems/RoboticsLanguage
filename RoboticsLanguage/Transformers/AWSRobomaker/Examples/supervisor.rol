@@ -1,0 +1,49 @@
+# A simple topic echo node
+node(
+  name:"supervisor",
+
+  definitions: block(
+
+    # a desired velocity command for the robot
+    velocity ∈ Signals(
+      rosType:'geometry_msgs/Twist',
+      rosTopic:'/cmd_vel',
+      rosFlow:'outgoing'),
+
+    state ∈ Strings,
+
+    # a mini-language: code is defined within `<{ }>`
+    FiniteStateMachine<{
+
+        name:machine
+        initial:idle
+        (idle) -start-> (running) -stop-> (idle)
+
+      }>,
+
+    define enteringIdle(): block (
+      state = 'idle',
+      velocity.linear.x = 0,
+      print('Entering idle')
+    ),
+
+    define enteringRunning(): block (
+      state = 'running',
+      velocity.linear.x = 1,
+      print('Running...')
+    ),
+
+    when(□[2,0](state == 'idle'),
+      machine.fire('start')),
+
+    when(□[5,0](state == 'running'),
+      machine.fire('stop'))
+
+  ),
+
+  initialise: block(
+    state = 'idle',
+    machine.addInitFunction(enteringRunning, "running"),
+    machine.addInitFunction(enteringIdle, "idle")
+    )
+)
