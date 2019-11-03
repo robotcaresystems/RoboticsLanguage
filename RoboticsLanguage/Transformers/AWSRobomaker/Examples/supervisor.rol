@@ -3,12 +3,51 @@ node(
   name:"supervisor",
 
   definitions: block(
+
+    # a desired velocity command for the robot
     velocity ∈ Signals(
       rosType:'geometry_msgs/Twist',
       rosTopic:'/cmd_vel',
-      rosFlow:'outgoing')
-  )
+      rosFlow:'outgoing'),
 
+    state ∈ Strings = '',
 
+    # a mini-language: code is defined within `<{ }>`
+    FiniteStateMachine<{
 
+        name:machine
+        initial:calibration
+        (calibration) -calibrationCompleted-> (idle) -start-> (running) -stop-> (idle)
+
+      }>,
+
+    define enteringCalibration(): block
+    (
+      print('Performing calibration... '),
+      machine.fire('calibration_completed')
+    ),
+
+    define enteringIdle(): block (
+      state = 'idle',
+      print('Entering idle')
+    ),
+
+    define enteringRunning(): block (
+      state = 'running',
+      print('Running...')
+    ),
+
+    when(□[0,2](state == 'idle'),
+      machine.fire('start')),
+
+    when(□[0,5](state == 'running'),
+      machine.fire('stop'))
+
+  ),
+
+  init: block(
+    machine.addInitFunction(enteringCalibration, "calibration"),
+    machine.addInitFunction(enteringRunning, "running"),
+    machine.addInitFunction(enteredIdle, "idle")
+    )
 )
