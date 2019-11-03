@@ -10,46 +10,40 @@ node(
       rosTopic:'/cmd_vel',
       rosFlow:'outgoing'),
 
-    state ∈ Strings = '',
+    state ∈ Strings,
 
     # a mini-language: code is defined within `<{ }>`
     FiniteStateMachine<{
 
         name:machine
-        initial:calibration
-        (calibration) -calibrationCompleted-> (idle) -start-> (running) -stop-> (idle)
+        initial:idle
+        (idle) -start-> (running) -stop-> (idle)
 
       }>,
 
-    define enteringCalibration(): block
-    (
-      print('Performing calibration... '),
-      machine.fire('calibration_completed')
-    ),
-
     define enteringIdle(): block (
       state = 'idle',
-      velocity.linear.x = 1,
+      velocity.linear.x = 0,
       print('Entering idle')
     ),
 
     define enteringRunning(): block (
       state = 'running',
-      velocity.linear.x = 0,
+      velocity.linear.x = 1,
       print('Running...')
     ),
 
-    when(□[0,2](state == 'idle'),
+    when(□[2,0](state == 'idle'),
       machine.fire('start')),
 
-    when(□[0,5](state == 'running'),
+    when(□[5,0](state == 'running'),
       machine.fire('stop'))
 
   ),
 
-  init: block(
-    machine.addInitFunction(enteringCalibration, "calibration"),
+  initialise: block(
+    state = 'idle',
     machine.addInitFunction(enteringRunning, "running"),
-    machine.addInitFunction(enteredIdle, "idle")
+    machine.addInitFunction(enteringIdle, "idle")
     )
 )
