@@ -1,0 +1,14 @@
+# A simple topic echo node
+node(
+  name:"supervisor",
+
+  definitions: block(
+    velocity ∈ Signals(
+      rosType:'geometry_msgs/Twist',
+      rosTopic:'/cmd_vel',
+      rosFlow:'outgoing')
+  )
+
+
+
+)

@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# find where rol is installed
+ROL_PATH=`python -c "import os; import RoboticsLanguage; print os.path.dirname(os.path.abspath(RoboticsLanguage.__file__)) + '/..'"`
+
+# start the docker
+# remove rol
+# install rol using the mapping of the rol installation folder
+if [ ! "$(docker ps -q -f name=AWSDevelopmentRoboticsLanguage)" ]; then
+  docker run -it --rm -v $ROL_PATH:/home/roboticslanguage/RoboticsLanguage \
+    --workdir=/home/roboticslanguage/RoboticsLanguage \
+    --name=AWSDevelopmentRoboticsLanguage \
+    --env="DISPLAY" \
+    --env="QT_X11_NO_MITSHM=1" \
+    --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
+    -p 9090:9090 -p 8000:80 \
+    roboticslanguage/aws bash \
+    -c "sudo pip -q uninstall --yes RoboticsLanguage; cd /home/roboticslanguage/RoboticsLanguage; sudo pip install -e .; bash"
+else
+  docker exec -i -t AWSDevelopmentRoboticsLanguage /bin/bash
+fi

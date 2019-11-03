@@ -82,7 +82,7 @@ RUN echo '"\eOA": history-search-backward\n"\eOB": history-search-forward\n"\e[A
 USER root
 
 # install Robotics Language
-RUN echo "Installing rol..."
+RUN echo "Installing rol...."
 RUN pip install --upgrade RoboticsLanguage
 
 USER ubuntu
@@ -90,3 +90,23 @@ WORKDIR /home/ubuntu
 
 # set the environment
 RUN rol --set-environment AWSRobomakerHelloWorld
+
+WORKDIR /home/ubuntu/environment
+RUN ln -s aws/aws-robomaker-sample-application-helloworld HelloWorld
+
+RUN echo 'ok'
+USER root
+#
+
+
+RUN curl -sSL http://get.gazebosim.org | sh
+
+# RUN sudo sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" /etc/apt/sources.list.d/gazebo-stable.list'
+# RUN wget http://packages.osrfoundation.org/gazebo.key -O - | sudo apt-key add -
+#
+#
+# RUN sudo apt-get update
+#
+# RUN sudo apt-get install ros-melodic-gazebo9-*
+#
+USER ubuntu

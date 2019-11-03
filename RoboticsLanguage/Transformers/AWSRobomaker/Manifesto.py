@@ -15,6 +15,7 @@ manifesto = {
     'packageShortName': 'AWSRobomaker',
     'order': 100,
     'version': '0.0.0',
+    'requiresCode': False,
 
     'information': {
         'author':

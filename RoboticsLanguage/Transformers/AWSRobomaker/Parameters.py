@@ -11,6 +11,15 @@
 #   longLicense
 #
 
-parameters = {}
+parameters = {
+    'copyAWSExamplesHere': False
+}
 
-command_line_flags = {}
+command_line_flags = {
+    'copyAWSExamplesHere': {
+        'longFlag': 'copy-aws-examples-here',
+        'noArgument': True,
+        'fileNotNeeded': True,
+        'description': 'Copies a set of examples from AWS plugin into the current folder'
+    }
+}
