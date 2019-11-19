@@ -1,0 +1,15 @@
+node(
+  name:"my msgs",
+
+  definitions:block(
+
+    # the ROS Message mini-language
+    ROSMessage<{
+
+      name:FooMsg
+
+      std_msgs/String foo
+
+      }>
+  )
+)

@@ -1,0 +1,13 @@
+node(
+  name:"function example",
+
+  definitions:block(
+
+    question ∈ Signals(rosType:'my_msgs/FooMsg', rosTopic: '/metrics', onNew: answer = DistanceToGoal(question)),
+
+    answer ∈ Signals(Strings, rosTopic: '/monitor/test/bar'),
+
+    define DistanceToGoal(x ∈ RosType('my_msgs/FooMsg')) -> Strings:
+      return(x.foo.data)
+  )
+)
