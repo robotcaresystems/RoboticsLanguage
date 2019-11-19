@@ -1,0 +1,17 @@
+node( name:"example mathematics",
+
+  definitions: block(
+    a in Reals = 2,
+    b in Reals = 3,
+    c in Reals = 4
+    ),
+
+  initialise: block(
+    print('a = ', a),
+    print('b = ', b),
+    print('a + b = ' , a + b),
+    print('a - b = ' , a - b),
+    print('a * b = ' , a * b),
+    print('a / b = ' , a / b)
+    )
+)

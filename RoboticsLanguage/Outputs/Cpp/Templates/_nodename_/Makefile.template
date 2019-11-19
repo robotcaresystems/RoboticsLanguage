@@ -1,0 +1,7 @@
+all: {{parameters.node.name|underscore}}
+
+{{parameters.node.name|underscore}}:
+	c++ src/{{parameters.node.name|underscore}}.cpp -o build/{{parameters.node.name|underscore}} -Iinclude
+
+clean:
+	rm build/{{parameters.node.name|underscore}}
