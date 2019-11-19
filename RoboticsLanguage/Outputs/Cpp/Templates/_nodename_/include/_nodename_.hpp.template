@@ -1,0 +1,26 @@
+<<<header->>>
+/*
+ * Node name: {{parameters.node.name}}
+ *
+ * Generated on: {{"%d %B, %Y"|todaysDate}}
+ *       Author: {{parameters.Information.user.name}}
+ *      Licence: {{parameters.Information.software.license}}
+ *    Copyright: {{parameters.Information.software.copyright}}
+ *
+ *    THIS FILE WAS AUTOMATICALLY GENERATED USING THE ROBOTICS LANGUAGE
+ *
+ */
+#ifndef {{parameters.node.name|underscoreFullCaps}}_{{parameters.node.name|underscoreFullCaps}}_H
+#define {{parameters.node.name|underscoreFullCaps}}_{{parameters.node.name|underscoreFullCaps}}_H
+
+// Base libraries
+#include <iostream>
+
+<<<'includes'|group>>>
+
+/* definitions */
+{{code|xpath('/node')|option('definitions')|serializedCode}};
+
+<<<'definitions'|group>>>
+
+#endif // {{parameters.node.name|underscoreFullCaps }}_{{parameters.node.name|underscoreFullCaps}}_H
